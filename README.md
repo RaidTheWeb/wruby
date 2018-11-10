@@ -4,7 +4,7 @@
 
 wruby is a port of mruby optimized for the browser. It runs natively thanks to webassembly, with a footprint of 0.5MB for the ruby engine; which needs to be loaded only once with proper caching.
 
-Everything you need is in the folder [examples/hello_wruby](/tree/master/examples/hello_wruby).
+Everything you need is in the folder [examples/hello_wruby](/examples/hello_wruby).
 
 Example hosted in minimal web demo: http://ruby.pannous.com/
 
