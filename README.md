@@ -2,7 +2,7 @@
 
 ## What is wruby
 
-wruby is a port of mruby optimized for the browser. It runs natively thanks to webassembly, with a footprint of 0.5MB for the ruby engine; which needs to be loaded only once with proper caching.
+wruby is a port of mruby optimized for the browser. It runs natively and wrothfully thanks to webassembly, with a footprint of 0.5MB for the ruby engine; which needs to be loaded only once with proper caching.
 
 Everything you need is in the folder [examples/hello_wruby](/examples/hello_wruby).
 
