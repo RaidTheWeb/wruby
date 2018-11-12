@@ -1024,29 +1024,7 @@ function allocateUTF8OnStack(str) {
 }
 
 function demangle(func) {
-  var __cxa_demangle_func = Module['___cxa_demangle'] || Module['__cxa_demangle'];
-  assert(__cxa_demangle_func);
-  try {
-    var s = func;
-    if (s.startsWith('__Z'))
-      s = s.substr(1);
-    var len = lengthBytesUTF8(s)+1;
-    var buf = _malloc(len);
-    stringToUTF8(s, buf, len);
-    var status = _malloc(4);
-    var ret = __cxa_demangle_func(buf, 0, 0, status);
-    if (HEAP32[((status)>>2)] === 0 && ret) {
-      return Pointer_stringify(ret);
-    }
-    // otherwise, libcxxabi failed
-  } catch(e) {
-    // ignore problems here
-  } finally {
-    if (buf) _free(buf);
-    if (status) _free(status);
-    if (ret) _free(ret);
-  }
-  // failure when using libcxxabi, don't demangle
+  warnOnce('warning: build with  -s DEMANGLE_SUPPORT=1  to link in libcxxabi demangling');
   return func;
 }
 
@@ -1768,7 +1746,7 @@ var ASM_CONSTS = [];
 
 STATIC_BASE = GLOBAL_BASE;
 
-STATICTOP = STATIC_BASE + 104528;
+STATICTOP = STATIC_BASE + 102048;
 /* global initializers */  __ATINIT__.push({ func: function() { ___emscripten_environ_constructor() } });
 
 
@@ -1777,7 +1755,7 @@ STATICTOP = STATIC_BASE + 104528;
 
 
 
-var STATIC_BUMP = 104528;
+var STATIC_BUMP = 102048;
 Module["STATIC_BASE"] = STATIC_BASE;
 Module["STATIC_BUMP"] = STATIC_BUMP;
 
@@ -1872,99 +1850,6 @@ function copyTempDouble(ptr) {
         poolPtr += line.length + 1;
       }
       HEAP32[(((envPtr)+(strings.length * ptrSize))>>2)]=0;
-    }
-
-  
-  function __ZSt18uncaught_exceptionv() { // std::uncaught_exception()
-      return !!__ZSt18uncaught_exceptionv.uncaught_exception;
-    }
-  
-  var EXCEPTIONS={last:0,caught:[],infos:{},deAdjust:function (adjusted) {
-        if (!adjusted || EXCEPTIONS.infos[adjusted]) return adjusted;
-        for (var key in EXCEPTIONS.infos) {
-          var ptr = +key; // the iteration key is a string, and if we throw this, it must be an integer as that is what we look for
-          var info = EXCEPTIONS.infos[ptr];
-          if (info.adjusted === adjusted) {
-            return ptr;
-          }
-        }
-        return adjusted;
-      },addRef:function (ptr) {
-        if (!ptr) return;
-        var info = EXCEPTIONS.infos[ptr];
-        info.refcount++;
-      },decRef:function (ptr) {
-        if (!ptr) return;
-        var info = EXCEPTIONS.infos[ptr];
-        assert(info.refcount > 0);
-        info.refcount--;
-        // A rethrown exception can reach refcount 0; it must not be discarded
-        // Its next handler will clear the rethrown flag and addRef it, prior to
-        // final decRef and destruction here
-        if (info.refcount === 0 && !info.rethrown) {
-          if (info.destructor) {
-            Module['dynCall_vi'](info.destructor, ptr);
-          }
-          delete EXCEPTIONS.infos[ptr];
-          ___cxa_free_exception(ptr);
-        }
-      },clearRef:function (ptr) {
-        if (!ptr) return;
-        var info = EXCEPTIONS.infos[ptr];
-        info.refcount = 0;
-      }};function ___cxa_begin_catch(ptr) {
-      var info = EXCEPTIONS.infos[ptr];
-      if (info && !info.caught) {
-        info.caught = true;
-        __ZSt18uncaught_exceptionv.uncaught_exception--;
-      }
-      if (info) info.rethrown = false;
-      EXCEPTIONS.caught.push(ptr);
-      EXCEPTIONS.addRef(EXCEPTIONS.deAdjust(ptr));
-      return ptr;
-    }
-
-  
-  
-  function ___resumeException(ptr) {
-      if (!EXCEPTIONS.last) { EXCEPTIONS.last = ptr; }
-      throw ptr + " - Exception catching is disabled, this exception cannot be caught. Compile with -s DISABLE_EXCEPTION_CATCHING=0 or DISABLE_EXCEPTION_CATCHING=2 to catch.";
-    }function ___cxa_find_matching_catch() {
-      var thrown = EXCEPTIONS.last;
-      if (!thrown) {
-        // just pass through the null ptr
-        return ((setTempRet0(0),0)|0);
-      }
-      var info = EXCEPTIONS.infos[thrown];
-      var throwntype = info.type;
-      if (!throwntype) {
-        // just pass through the thrown ptr
-        return ((setTempRet0(0),thrown)|0);
-      }
-      var typeArray = Array.prototype.slice.call(arguments);
-  
-      var pointer = Module['___cxa_is_pointer_type'](throwntype);
-      // can_catch receives a **, add indirection
-      if (!___cxa_find_matching_catch.buffer) ___cxa_find_matching_catch.buffer = _malloc(4);
-      HEAP32[((___cxa_find_matching_catch.buffer)>>2)]=thrown;
-      thrown = ___cxa_find_matching_catch.buffer;
-      // The different catch blocks are denoted by different types.
-      // Due to inheritance, those types may not precisely match the
-      // type of the thrown object. Find one which matches, and
-      // return the type of the catch block which should be called.
-      for (var i = 0; i < typeArray.length; i++) {
-        if (typeArray[i] && Module['___cxa_can_catch'](typeArray[i], throwntype, thrown)) {
-          thrown = HEAP32[((thrown)>>2)]; // undo indirection
-          info.adjusted = thrown;
-          return ((setTempRet0(typeArray[i]),thrown)|0);
-        }
-      }
-      // Shouldn't happen unless we have bogus data in typeArray
-      // or encounter a type for which emscripten doesn't have suitable
-      // typeinfo defined. Best-efforts match just in case.
-      thrown = HEAP32[((thrown)>>2)]; // undo indirection
-      return ((setTempRet0(throwntype),thrown)|0);
-    }function ___gxx_personality_v0() {
     }
 
   function ___lock() {}
@@ -5920,38 +5805,6 @@ function copyTempDouble(ptr) {
       return (date.getTime() / 1000)|0;
     }
 
-  
-  var PTHREAD_SPECIFIC={};function _pthread_getspecific(key) {
-      return PTHREAD_SPECIFIC[key] || 0;
-    }
-
-  
-  var PTHREAD_SPECIFIC_NEXT_KEY=1;function _pthread_key_create(key, destructor) {
-      if (key == 0) {
-        return ERRNO_CODES.EINVAL;
-      }
-      HEAP32[((key)>>2)]=PTHREAD_SPECIFIC_NEXT_KEY;
-      // values start at 0
-      PTHREAD_SPECIFIC[PTHREAD_SPECIFIC_NEXT_KEY] = 0;
-      PTHREAD_SPECIFIC_NEXT_KEY++;
-      return 0;
-    }
-
-  function _pthread_once(ptr, func) {
-      if (!_pthread_once.seen) _pthread_once.seen = {};
-      if (ptr in _pthread_once.seen) return;
-      Module['dynCall_v'](func);
-      _pthread_once.seen[ptr] = 1;
-    }
-
-  function _pthread_setspecific(key, value) {
-      if (!(key in PTHREAD_SPECIFIC)) {
-        return ERRNO_CODES.EINVAL;
-      }
-      PTHREAD_SPECIFIC[key] = value;
-      return 0;
-    }
-
    
 
 
@@ -6078,8 +5931,6 @@ function nullFunc_iiii(x) { err("Invalid function pointer called with signature 
 
 function nullFunc_iiiii(x) { err("Invalid function pointer called with signature 'iiiii'. Perhaps this is an invalid value (e.g. caused by calling a virtual method on a NULL pointer)? Or calling a function with an incorrect type, which will fail? (it is worth building your source files with -Werror (warnings are errors), as warnings can indicate undefined behavior which can cause this)");  err("Build with ASSERTIONS=2 for more info.");abort(x) }
 
-function nullFunc_v(x) { err("Invalid function pointer called with signature 'v'. Perhaps this is an invalid value (e.g. caused by calling a virtual method on a NULL pointer)? Or calling a function with an incorrect type, which will fail? (it is worth building your source files with -Werror (warnings are errors), as warnings can indicate undefined behavior which can cause this)");  err("Build with ASSERTIONS=2 for more info.");abort(x) }
-
 function nullFunc_vi(x) { err("Invalid function pointer called with signature 'vi'. Perhaps this is an invalid value (e.g. caused by calling a virtual method on a NULL pointer)? Or calling a function with an incorrect type, which will fail? (it is worth building your source files with -Werror (warnings are errors), as warnings can indicate undefined behavior which can cause this)");  err("Build with ASSERTIONS=2 for more info.");abort(x) }
 
 function nullFunc_vii(x) { err("Invalid function pointer called with signature 'vii'. Perhaps this is an invalid value (e.g. caused by calling a virtual method on a NULL pointer)? Or calling a function with an incorrect type, which will fail? (it is worth building your source files with -Werror (warnings are errors), as warnings can indicate undefined behavior which can cause this)");  err("Build with ASSERTIONS=2 for more info.");abort(x) }
@@ -6094,9 +5945,9 @@ function nullFunc_viiiiii(x) { err("Invalid function pointer called with signatu
 
 function nullFunc_viiiiiii(x) { err("Invalid function pointer called with signature 'viiiiiii'. Perhaps this is an invalid value (e.g. caused by calling a virtual method on a NULL pointer)? Or calling a function with an incorrect type, which will fail? (it is worth building your source files with -Werror (warnings are errors), as warnings can indicate undefined behavior which can cause this)");  err("Build with ASSERTIONS=2 for more info.");abort(x) }
 
-Module['wasmTableSize'] = 6528;
+Module['wasmTableSize'] = 4736;
 
-Module['wasmMaxTableSize'] = 6528;
+Module['wasmMaxTableSize'] = 4736;
 
 function invoke_ii(index,a1) {
   var sp = stackSave();
@@ -6135,17 +5986,6 @@ function invoke_iiiii(index,a1,a2,a3,a4) {
   var sp = stackSave();
   try {
     return Module["dynCall_iiiii"](index,a1,a2,a3,a4);
-  } catch(e) {
-    stackRestore(sp);
-    if (typeof e !== 'number' && e !== 'longjmp') throw e;
-    Module["setThrew"](1, 0);
-  }
-}
-
-function invoke_v(index) {
-  var sp = stackSave();
-  try {
-    Module["dynCall_v"](index);
   } catch(e) {
     stackRestore(sp);
     if (typeof e !== 'number' && e !== 'longjmp') throw e;
@@ -6232,16 +6072,10 @@ function invoke_viiiiiii(index,a1,a2,a3,a4,a5,a6,a7) {
 
 Module.asmGlobalArg = {};
 
-Module.asmLibraryArg = { "abort": abort, "assert": assert, "enlargeMemory": enlargeMemory, "getTotalMemory": getTotalMemory, "abortOnCannotGrowMemory": abortOnCannotGrowMemory, "abortStackOverflow": abortStackOverflow, "nullFunc_ii": nullFunc_ii, "nullFunc_iii": nullFunc_iii, "nullFunc_iiii": nullFunc_iiii, "nullFunc_iiiii": nullFunc_iiiii, "nullFunc_v": nullFunc_v, "nullFunc_vi": nullFunc_vi, "nullFunc_vii": nullFunc_vii, "nullFunc_viii": nullFunc_viii, "nullFunc_viiii": nullFunc_viiii, "nullFunc_viiiii": nullFunc_viiiii, "nullFunc_viiiiii": nullFunc_viiiiii, "nullFunc_viiiiiii": nullFunc_viiiiiii, "invoke_ii": invoke_ii, "invoke_iii": invoke_iii, "invoke_iiii": invoke_iiii, "invoke_iiiii": invoke_iiiii, "invoke_v": invoke_v, "invoke_vi": invoke_vi, "invoke_vii": invoke_vii, "invoke_viii": invoke_viii, "invoke_viiii": invoke_viiii, "invoke_viiiii": invoke_viiiii, "invoke_viiiiii": invoke_viiiiii, "invoke_viiiiiii": invoke_viiiiiii, "__ZSt18uncaught_exceptionv": __ZSt18uncaught_exceptionv, "___buildEnvironment": ___buildEnvironment, "___cxa_begin_catch": ___cxa_begin_catch, "___cxa_find_matching_catch": ___cxa_find_matching_catch, "___gxx_personality_v0": ___gxx_personality_v0, "___lock": ___lock, "___resumeException": ___resumeException, "___setErrNo": ___setErrNo, "___syscall10": ___syscall10, "___syscall140": ___syscall140, "___syscall142": ___syscall142, "___syscall145": ___syscall145, "___syscall146": ___syscall146, "___syscall15": ___syscall15, "___syscall183": ___syscall183, "___syscall195": ___syscall195, "___syscall196": ___syscall196, "___syscall197": ___syscall197, "___syscall221": ___syscall221, "___syscall3": ___syscall3, "___syscall38": ___syscall38, "___syscall4": ___syscall4, "___syscall41": ___syscall41, "___syscall42": ___syscall42, "___syscall5": ___syscall5, "___syscall54": ___syscall54, "___syscall6": ___syscall6, "___syscall60": ___syscall60, "___syscall63": ___syscall63, "___syscall83": ___syscall83, "___syscall85": ___syscall85, "___unlock": ___unlock, "__exit": __exit, "_abort": _abort, "_clock_gettime": _clock_gettime, "_emscripten_get_now": _emscripten_get_now, "_emscripten_get_now_is_monotonic": _emscripten_get_now_is_monotonic, "_emscripten_longjmp": _emscripten_longjmp, "_emscripten_memcpy_big": _emscripten_memcpy_big, "_execl": _execl, "_exit": _exit, "_flock": _flock, "_fork": _fork, "_getenv": _getenv, "_getpwnam": _getpwnam, "_gmtime_r": _gmtime_r, "_llvm_ceil_f64": _llvm_ceil_f64, "_llvm_fabs_f64": _llvm_fabs_f64, "_llvm_floor_f64": _llvm_floor_f64, "_llvm_log10_f32": _llvm_log10_f32, "_llvm_log10_f64": _llvm_log10_f64, "_llvm_log2_f32": _llvm_log2_f32, "_llvm_log2_f64": _llvm_log2_f64, "_localtime_r": _localtime_r, "_longjmp": _longjmp, "_mktime": _mktime, "_pthread_getspecific": _pthread_getspecific, "_pthread_key_create": _pthread_key_create, "_pthread_once": _pthread_once, "_pthread_setspecific": _pthread_setspecific, "_time": _time, "_timespec_get": _timespec_get, "_tzset": _tzset, "_wait": _wait, "_waitpid": _waitpid, "DYNAMICTOP_PTR": DYNAMICTOP_PTR, "tempDoublePtr": tempDoublePtr, "STACKTOP": STACKTOP, "STACK_MAX": STACK_MAX };
+Module.asmLibraryArg = { "abort": abort, "assert": assert, "enlargeMemory": enlargeMemory, "getTotalMemory": getTotalMemory, "abortOnCannotGrowMemory": abortOnCannotGrowMemory, "abortStackOverflow": abortStackOverflow, "nullFunc_ii": nullFunc_ii, "nullFunc_iii": nullFunc_iii, "nullFunc_iiii": nullFunc_iiii, "nullFunc_iiiii": nullFunc_iiiii, "nullFunc_vi": nullFunc_vi, "nullFunc_vii": nullFunc_vii, "nullFunc_viii": nullFunc_viii, "nullFunc_viiii": nullFunc_viiii, "nullFunc_viiiii": nullFunc_viiiii, "nullFunc_viiiiii": nullFunc_viiiiii, "nullFunc_viiiiiii": nullFunc_viiiiiii, "invoke_ii": invoke_ii, "invoke_iii": invoke_iii, "invoke_iiii": invoke_iiii, "invoke_iiiii": invoke_iiiii, "invoke_vi": invoke_vi, "invoke_vii": invoke_vii, "invoke_viii": invoke_viii, "invoke_viiii": invoke_viiii, "invoke_viiiii": invoke_viiiii, "invoke_viiiiii": invoke_viiiiii, "invoke_viiiiiii": invoke_viiiiiii, "___buildEnvironment": ___buildEnvironment, "___lock": ___lock, "___setErrNo": ___setErrNo, "___syscall10": ___syscall10, "___syscall140": ___syscall140, "___syscall142": ___syscall142, "___syscall145": ___syscall145, "___syscall146": ___syscall146, "___syscall15": ___syscall15, "___syscall183": ___syscall183, "___syscall195": ___syscall195, "___syscall196": ___syscall196, "___syscall197": ___syscall197, "___syscall221": ___syscall221, "___syscall3": ___syscall3, "___syscall38": ___syscall38, "___syscall4": ___syscall4, "___syscall41": ___syscall41, "___syscall42": ___syscall42, "___syscall5": ___syscall5, "___syscall54": ___syscall54, "___syscall6": ___syscall6, "___syscall60": ___syscall60, "___syscall63": ___syscall63, "___syscall83": ___syscall83, "___syscall85": ___syscall85, "___unlock": ___unlock, "__exit": __exit, "_abort": _abort, "_clock_gettime": _clock_gettime, "_emscripten_get_now": _emscripten_get_now, "_emscripten_get_now_is_monotonic": _emscripten_get_now_is_monotonic, "_emscripten_longjmp": _emscripten_longjmp, "_emscripten_memcpy_big": _emscripten_memcpy_big, "_execl": _execl, "_exit": _exit, "_flock": _flock, "_fork": _fork, "_getenv": _getenv, "_getpwnam": _getpwnam, "_gmtime_r": _gmtime_r, "_llvm_ceil_f64": _llvm_ceil_f64, "_llvm_fabs_f64": _llvm_fabs_f64, "_llvm_floor_f64": _llvm_floor_f64, "_llvm_log10_f32": _llvm_log10_f32, "_llvm_log10_f64": _llvm_log10_f64, "_llvm_log2_f32": _llvm_log2_f32, "_llvm_log2_f64": _llvm_log2_f64, "_localtime_r": _localtime_r, "_longjmp": _longjmp, "_mktime": _mktime, "_time": _time, "_timespec_get": _timespec_get, "_tzset": _tzset, "_wait": _wait, "_waitpid": _waitpid, "DYNAMICTOP_PTR": DYNAMICTOP_PTR, "tempDoublePtr": tempDoublePtr, "STACKTOP": STACKTOP, "STACK_MAX": STACK_MAX };
 // EMSCRIPTEN_START_ASM
 var asm =Module["asm"]// EMSCRIPTEN_END_ASM
 (Module.asmGlobalArg, Module.asmLibraryArg, buffer);
-
-var real____cxa_demangle = asm["___cxa_demangle"]; asm["___cxa_demangle"] = function() {
-  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
-  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return real____cxa_demangle.apply(null, arguments);
-};
 
 var real____emscripten_environ_constructor = asm["___emscripten_environ_constructor"]; asm["___emscripten_environ_constructor"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
@@ -6393,10 +6227,6 @@ var real_stackSave = asm["stackSave"]; asm["stackSave"] = function() {
   return real_stackSave.apply(null, arguments);
 };
 Module["asm"] = asm;
-var ___cxa_demangle = Module["___cxa_demangle"] = function() {
-  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
-  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["___cxa_demangle"].apply(null, arguments) };
 var ___emscripten_environ_constructor = Module["___emscripten_environ_constructor"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
@@ -6525,10 +6355,6 @@ var dynCall_iiiii = Module["dynCall_iiiii"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return Module["asm"]["dynCall_iiiii"].apply(null, arguments) };
-var dynCall_v = Module["dynCall_v"] = function() {
-  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
-  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["dynCall_v"].apply(null, arguments) };
 var dynCall_vi = Module["dynCall_vi"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
