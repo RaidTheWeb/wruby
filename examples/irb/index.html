@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Ruby on WebAssembly</title>
+  </head>
+  <body>
+  	> <input id='command' onKeyPress="if(event && event.keyCode == 13)handle(this.value)" value="3+3"/>
+		<div id='result'/>
+  </body>
+  <script type="text/javascript">
+  	function handle(value){
+  		result.innerText=command.value||value
+  		evaluatus(command.value)
+  	}
+  </script>
+  <!-- <script src="wruby.js"></script> -->
+  <script src="wruby.irb.min.js"></script>
+</html>

@@ -5,9 +5,13 @@ cp hello_ruby.rb program.rb
 echo "../../bin/mrbc -B_binary_program_mrb_start program.rb # generates program.c "
 ../../bin/mrbc -B_binary_program_mrb_start program.rb # generates program.c 
 echo "emcc -Os -I ../../mruby/include wrapper.c libmruby.a -o program.js"
-emcc -I /opt/mruby/include wrapper.c libmruby.a -o program.js -s DEMANGLE_SUPPORT=1 #develop
-echo "add -Os --closure 1 for size-optimized release"
-emcc -Os -I /opt/mruby/include wrapper.c libmruby.a -o program.min.js --closure 1
+
+# --emit-symbol-map -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall']" --pre-js -s MODULARIZE=1
+DEV_CONFIG="-s LINKABLE=1 -g3 -s \"EXPORTED_FUNCTIONS=['_main', '_load_module']\" -s DEMANGLE_SUPPORT=1"
+RELEASE_CONFIG="-Os --closure 1"
+echo "emcc $DEV_CONFIG -I /opt/mruby/include wrapper.c libmruby.a -o program.js  #develop / debug"
+EMCC_DEBUG=1 emcc $DEV_CONFIG -I /opt/mruby/include wrapper.c libmruby.a -o program.js  #develop / debug
+emcc $RELEASE_CONFIG -I /opt/mruby/include wrapper.c libmruby.a -o program.min.js 
 
 time node program.js
 # Hello wruby!
