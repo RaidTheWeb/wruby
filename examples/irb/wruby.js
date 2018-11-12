@@ -9725,6 +9725,9 @@ Module["noExitRuntime"] = true;
 // if (Module['noInitialRun']) {
 //     shouldRunNow = false;
 // }
+
+Module.stdin=nextInput
+
 run();
 
 
@@ -9734,7 +9737,19 @@ run();
 // {{MODULE_ADDITIONS}}
 
 async function nextInput2(){
-
+return new Promise(resolve => {
+ setTimeout(() => {
+    let value=command.value
+  if(value!=""){
+    command.value=""
+    console.log("command.value",value)
+    resolve(value+'\n');
+}
+ }, 200);
+ });
+}
+async function nextInput3(){
+  return await nextInput2()
 }
 
 function nextInput(){
@@ -9742,8 +9757,8 @@ function nextInput(){
   let value=command.value
   command.value=""
   console.log("command.value",value)
-  if(value=="")value='\u001b'// ESC
-  // if(value=="")value=null
+  // if(value=="")value='\u001b'// ESC
+  if(value=="")value=null
   return value
 }
 
@@ -9765,6 +9780,7 @@ backtrace = function (print = 1) {
     }
 }
 
-
 // Module.stdin=x=>console.log(x) 
 // FS.init(x=>console.log(x))
+
+// signal(SIGINT, ctrl_c_handler);
