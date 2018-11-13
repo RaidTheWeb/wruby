@@ -9,28 +9,34 @@ emcc -s WASM=1  -Os -I /opt/mruby/include program.o wrapper.c libmruby.a -o prog
 wasm-dis program.wasm> program.wast
 */
 
+#include <mruby.h>
+#include <mruby/irep.h>
 
-// WITH UNDERSCORE???
 #import "program.c"
 // extern const char _binary_program_mrb_start;
 // extern const char _binary_program_mrb_end;
 // extern const int _binary_program_mrb_size;
+uint8_t* other_module;
 
-#include <mruby.h>
-#include <mruby/irep.h>
+#include <stdlib.h>
+// returns address of program to be written via js
+int reserve_mrb(int size){
+	if(size>0)
+		other_module=(uint8_t *)malloc(size);// new one
+	else
+		other_module=(uint8_t *)_binary_program_mrb_start;// old one
+	return (int)&other_module;
+}
 
 
-void load_module(uint8_t* mrb_program){
+int run_mrb(uint8_t* mrb_program){
   mrb_state *mrb = mrb_open();
   mrb_load_irep(mrb, mrb_program);
+  // mrb_load_string(mrb, "puts 'hello world'");
   mrb_close(mrb);
+  return (int)mrb_program;
 }
 
 int main() {
-	load_module((uint8_t*)&_binary_program_mrb_start);
+	run_mrb((uint8_t*)&_binary_program_mrb_start);
 }
-
-
-// int main(int mrb_program) {
-// 	load_module((uint8_t*)mrb_program||(uint8_t*)&_binary_program_mrb_start);
-// }
