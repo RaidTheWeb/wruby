@@ -1,6 +1,7 @@
 MRuby::Build.new do |conf|
   toolchain :gcc
   conf.gembox 'default'
+  conf.gem :github => 'mattn/mruby-require'
 end
 
 MRuby::CrossBuild.new('emscripten') do |conf|
