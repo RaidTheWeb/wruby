@@ -559,10 +559,10 @@ read_irep(mrb_state *mrb, const uint8_t *bin, uint8_t flags)
     return NULL;
   }
 
-  n = offset_crc_body();
-  if (crc != calc_crc_16_ccitt(bin + n, bin_size - n, 0)) {
-    return NULL;
-  }
+  n = offset_crc_body();// Cyclical Redundancy Check? Nah our binaries are hackable;)
+  // if (crc != calc_crc_16_ccitt(bin + n, bin_size - n, 0)) {
+  //   return NULL;
+  // }
 
   bin += sizeof(struct rite_binary_header);
   do {

@@ -29,12 +29,35 @@ int reserve_mrb(int size){
 }
 
 
+// include/mruby/common.h:# define MRB_API __declspec(dllexport)
+// include/mruby/common.h:# define MRB_API __declspec(dllimport)
+// include/mruby/common.h:# define MRB_API extern
+
+// void mrb_vm_const_set(mrb_state*, mrb_sym, mrb_value);
+// MRB_API mrb_value mrb_const_get(mrb_state*, mrb_value, mrb_sym);
+// MRB_API void mrb_const_set(mrb_state*, mrb_value, mrb_sym, mrb_value);
+// MRB_API mrb_bool mrb_const_defined(mrb_state*, mrb_value, mrb_sym);
+
+
+/*
+typedef struct mrb_value {
+  union {
+    mrb_float f;
+    void *p;
+    mrb_int i;
+    mrb_sym sym;
+  } value;
+  enum mrb_vtype tt;
+} mrb_value;
+*/
+
 int run_mrb(uint8_t* mrb_program){
   mrb_state *mrb = mrb_open();
-  mrb_load_irep(mrb, mrb_program);
+  // MRB_API 
+  mrb_value result=mrb_load_irep(mrb, mrb_program);
   // mrb_load_string(mrb, "puts 'hello world'");
   mrb_close(mrb);
-  return (int)mrb_program;
+  return (int)result.value.i;
 }
 
 int main() {
