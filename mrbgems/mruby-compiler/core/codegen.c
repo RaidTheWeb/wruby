@@ -3141,11 +3141,11 @@ generate_code(state *mrb, parser_state *p, int val)
   END_EXC(&scope->jmp);
 }
 
-API struct RProc*
-generate_code(state *mrb, parser_state *p)
-{
-  return generate_code(mrb, p, VAL);
-}
+//API struct RProc*
+//generate_code(state *mrb, parser_state *p)
+//{
+//  return generate_code(mrb, p, VAL);
+//}
 
 void
 irep_remove_lv(state *mrb, irep *irep)

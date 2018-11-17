@@ -2,6 +2,7 @@
 #define VALUE_ARRAY_H__
 
 #include <mruby.h>
+#include "../include/mruby/value.h"
 
 static inline void
 value_move(value *s1, const value *s2, size_t n)

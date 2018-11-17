@@ -143,7 +143,7 @@ end
 #end
 
 # Define cross build settings
-# MRuby::CrossBuild.new('32bit') do |conf|
+# MRuby::CrossBuild.new('RB32BIT') do |conf|
 #   toolchain :gcc
 #
 #   conf.cc.flags << "-m32"

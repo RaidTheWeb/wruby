@@ -64,7 +64,7 @@ typedef struct value {
 #define fixnum(o)   (o).value.i
 #define symbol(o)   (o).value.sym
 
-#ifdef 64BIT
+#ifdef RB64BIT
 #define BOXNAN_SHIFT_LONG_POINTER(v) (((uintptr_t)(v)>>34)&0x3fff)
 #else
 #define BOXNAN_SHIFT_LONG_POINTER(v) 0

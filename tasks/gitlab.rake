@@ -75,7 +75,7 @@ task :gitlab_config do
             end.compact.join(' ')
             bit = mode_32 ? '-m32 ' : ''
             _info = ''
-            _info += mode_32 ? '32bit ' : '64bit '
+            _info += mode_32 ? 'RB32BIT ' : '64bit '
             _info += float_conf['USE'] ? 'float ' : ''
             _info += int_conf['16'] ? 'int16 ' : ''
             _info += int_conf['64'] ? 'int64 ' : ''

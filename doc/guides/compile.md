@@ -290,7 +290,7 @@ achieve this the *build_config.rb* needs to contain an instance of
 tools and flags for the target platform. An example could look
 like this:
 ```ruby
-MRuby::CrossBuild.new('32bit') do |conf|
+MRuby::CrossBuild.new('RB32BIT') do |conf|
   toolchain :gcc
 
   conf.cc.flags << "-m32"

@@ -37,7 +37,7 @@ struct state;
 #endif
 
 #if defined(INT64)
-  typedef int64_t int;
+  typedef int64_t rb_int;
 # define INT_BIT 64
 # define INT_MIN (INT64_MIN>>FIXNUM_SHIFT)
 # define INT_MAX (INT64_MAX>>FIXNUM_SHIFT)
@@ -53,7 +53,7 @@ struct state;
 # define PRId PRId16
 # define PRIx PRIx16
 #else
-  typedef int32_t int;
+  typedef int32_t rb_int;
 # define INT_BIT 32
 # define INT_MIN (INT32_MIN>>FIXNUM_SHIFT)
 # define INT_MAX (INT32_MAX>>FIXNUM_SHIFT)
@@ -68,7 +68,7 @@ API double float_read(const char*, char**);
 #ifdef USE_FLOAT
   typedef float float;
 #else
-  typedef double float;
+  typedef double rb_float;
 #endif
 #endif
 

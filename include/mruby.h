@@ -1187,7 +1187,7 @@ API void gc_register(state *mrb, value obj);
 API void gc_unregister(state *mrb, value obj);
 
 API value to_int(state *mrb, value val);
-#define int(mrb, val) fixnum(to_int(mrb, val))
+#define mrb_int(mrb, val) fixnum(to_int(mrb, val))
 API void check_type(state *mrb, value x, enum vtype t);
 
 typedef enum call_type {

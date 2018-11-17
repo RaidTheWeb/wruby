@@ -59,7 +59,7 @@ value num_div(state *mrb, value x, value y);
 */
 #ifdef HAVE_TYPE_GENERIC_CHECKED_ARITHMETIC_BUILTINS
 #if defined(__clang__) && (__clang_major__ == 3) && (__clang_minor__ >= 8) && \
-    defined(32BIT) && defined(INT64)
+    defined(RB32BIT) && defined(INT64)
 #undef HAVE_TYPE_GENERIC_CHECKED_ARITHMETIC_BUILTINS
 #endif
 #endif

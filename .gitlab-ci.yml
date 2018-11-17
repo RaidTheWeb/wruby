@@ -12,7 +12,7 @@ pretest:
     CXX: g++-4.7
     LD: gcc-4.7
   script: "./minirake all test"
-Test gcc-4.7 32bit:
+Test gcc-4.7 RB32BIT:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc47_0.7
   variables:
@@ -22,7 +22,7 @@ Test gcc-4.7 32bit:
     CFLAGS: "-m32 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.7 32bit_utf8:
+Test gcc-4.7 RB32BIT_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc47_0.7
   variables:
@@ -32,7 +32,7 @@ Test gcc-4.7 32bit_utf8:
     CFLAGS: "-m32 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.7 32bit_nan:
+Test gcc-4.7 RB32BIT_nan:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc47_0.7
   variables:
@@ -42,7 +42,7 @@ Test gcc-4.7 32bit_nan:
     CFLAGS: "-m32 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.7 32bit_nan_utf8:
+Test gcc-4.7 RB32BIT_nan_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc47_0.7
   variables:
@@ -52,7 +52,7 @@ Test gcc-4.7 32bit_nan_utf8:
     CFLAGS: "-m32 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.7 32bit_int16:
+Test gcc-4.7 RB32BIT_int16:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc47_0.7
   variables:
@@ -62,7 +62,7 @@ Test gcc-4.7 32bit_int16:
     CFLAGS: "-m32 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.7 32bit_int16_utf8:
+Test gcc-4.7 RB32BIT_int16_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc47_0.7
   variables:
@@ -72,7 +72,7 @@ Test gcc-4.7 32bit_int16_utf8:
     CFLAGS: "-m32 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.7 32bit_int16_nan:
+Test gcc-4.7 RB32BIT_int16_nan:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc47_0.7
   variables:
@@ -82,7 +82,7 @@ Test gcc-4.7 32bit_int16_nan:
     CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.7 32bit_int16_nan_utf8:
+Test gcc-4.7 RB32BIT_int16_nan_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc47_0.7
   variables:
@@ -92,7 +92,7 @@ Test gcc-4.7 32bit_int16_nan_utf8:
     CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.7 32bit_int64:
+Test gcc-4.7 RB32BIT_int64:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc47_0.7
   variables:
@@ -102,7 +102,7 @@ Test gcc-4.7 32bit_int64:
     CFLAGS: "-m32 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.7 32bit_int64_utf8:
+Test gcc-4.7 RB32BIT_int64_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc47_0.7
   variables:
@@ -112,7 +112,7 @@ Test gcc-4.7 32bit_int64_utf8:
     CFLAGS: "-m32 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.7 32bit_float:
+Test gcc-4.7 RB32BIT_float:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc47_0.7
   variables:
@@ -122,7 +122,7 @@ Test gcc-4.7 32bit_float:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.7 32bit_float_utf8:
+Test gcc-4.7 RB32BIT_float_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc47_0.7
   variables:
@@ -132,7 +132,7 @@ Test gcc-4.7 32bit_float_utf8:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.7 32bit_float_int16:
+Test gcc-4.7 RB32BIT_float_int16:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc47_0.7
   variables:
@@ -142,7 +142,7 @@ Test gcc-4.7 32bit_float_int16:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.7 32bit_float_int16_utf8:
+Test gcc-4.7 RB32BIT_float_int16_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc47_0.7
   variables:
@@ -152,7 +152,7 @@ Test gcc-4.7 32bit_float_int16_utf8:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.7 32bit_float_int64:
+Test gcc-4.7 RB32BIT_float_int64:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc47_0.7
   variables:
@@ -162,7 +162,7 @@ Test gcc-4.7 32bit_float_int64:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.7 32bit_float_int64_utf8:
+Test gcc-4.7 RB32BIT_float_int64_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc47_0.7
   variables:
@@ -332,7 +332,7 @@ Test gcc-4.7 64bit_float_int64_utf8:
     CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
-Test gcc-4.8 32bit:
+Test gcc-4.8 RB32BIT:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc48_0.7
   variables:
@@ -342,7 +342,7 @@ Test gcc-4.8 32bit:
     CFLAGS: "-m32 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.8 32bit_utf8:
+Test gcc-4.8 RB32BIT_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc48_0.7
   variables:
@@ -352,7 +352,7 @@ Test gcc-4.8 32bit_utf8:
     CFLAGS: "-m32 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.8 32bit_nan:
+Test gcc-4.8 RB32BIT_nan:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc48_0.7
   variables:
@@ -362,7 +362,7 @@ Test gcc-4.8 32bit_nan:
     CFLAGS: "-m32 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.8 32bit_nan_utf8:
+Test gcc-4.8 RB32BIT_nan_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc48_0.7
   variables:
@@ -372,7 +372,7 @@ Test gcc-4.8 32bit_nan_utf8:
     CFLAGS: "-m32 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.8 32bit_int16:
+Test gcc-4.8 RB32BIT_int16:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc48_0.7
   variables:
@@ -382,7 +382,7 @@ Test gcc-4.8 32bit_int16:
     CFLAGS: "-m32 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.8 32bit_int16_utf8:
+Test gcc-4.8 RB32BIT_int16_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc48_0.7
   variables:
@@ -392,7 +392,7 @@ Test gcc-4.8 32bit_int16_utf8:
     CFLAGS: "-m32 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.8 32bit_int16_nan:
+Test gcc-4.8 RB32BIT_int16_nan:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc48_0.7
   variables:
@@ -402,7 +402,7 @@ Test gcc-4.8 32bit_int16_nan:
     CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.8 32bit_int16_nan_utf8:
+Test gcc-4.8 RB32BIT_int16_nan_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc48_0.7
   variables:
@@ -412,7 +412,7 @@ Test gcc-4.8 32bit_int16_nan_utf8:
     CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.8 32bit_int64:
+Test gcc-4.8 RB32BIT_int64:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc48_0.7
   variables:
@@ -422,7 +422,7 @@ Test gcc-4.8 32bit_int64:
     CFLAGS: "-m32 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.8 32bit_int64_utf8:
+Test gcc-4.8 RB32BIT_int64_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc48_0.7
   variables:
@@ -432,7 +432,7 @@ Test gcc-4.8 32bit_int64_utf8:
     CFLAGS: "-m32 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.8 32bit_float:
+Test gcc-4.8 RB32BIT_float:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc48_0.7
   variables:
@@ -442,7 +442,7 @@ Test gcc-4.8 32bit_float:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.8 32bit_float_utf8:
+Test gcc-4.8 RB32BIT_float_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc48_0.7
   variables:
@@ -452,7 +452,7 @@ Test gcc-4.8 32bit_float_utf8:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.8 32bit_float_int16:
+Test gcc-4.8 RB32BIT_float_int16:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc48_0.7
   variables:
@@ -462,7 +462,7 @@ Test gcc-4.8 32bit_float_int16:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.8 32bit_float_int16_utf8:
+Test gcc-4.8 RB32BIT_float_int16_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc48_0.7
   variables:
@@ -472,7 +472,7 @@ Test gcc-4.8 32bit_float_int16_utf8:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.8 32bit_float_int64:
+Test gcc-4.8 RB32BIT_float_int64:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc48_0.7
   variables:
@@ -482,7 +482,7 @@ Test gcc-4.8 32bit_float_int64:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.8 32bit_float_int64_utf8:
+Test gcc-4.8 RB32BIT_float_int64_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc48_0.7
   variables:
@@ -652,7 +652,7 @@ Test gcc-4.8 64bit_float_int64_utf8:
     CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
-Test gcc-4.9 32bit:
+Test gcc-4.9 RB32BIT:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc49_0.7
   variables:
@@ -662,7 +662,7 @@ Test gcc-4.9 32bit:
     CFLAGS: "-m32 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.9 32bit_utf8:
+Test gcc-4.9 RB32BIT_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc49_0.7
   variables:
@@ -672,7 +672,7 @@ Test gcc-4.9 32bit_utf8:
     CFLAGS: "-m32 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.9 32bit_nan:
+Test gcc-4.9 RB32BIT_nan:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc49_0.7
   variables:
@@ -682,7 +682,7 @@ Test gcc-4.9 32bit_nan:
     CFLAGS: "-m32 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.9 32bit_nan_utf8:
+Test gcc-4.9 RB32BIT_nan_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc49_0.7
   variables:
@@ -692,7 +692,7 @@ Test gcc-4.9 32bit_nan_utf8:
     CFLAGS: "-m32 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.9 32bit_int16:
+Test gcc-4.9 RB32BIT_int16:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc49_0.7
   variables:
@@ -702,7 +702,7 @@ Test gcc-4.9 32bit_int16:
     CFLAGS: "-m32 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.9 32bit_int16_utf8:
+Test gcc-4.9 RB32BIT_int16_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc49_0.7
   variables:
@@ -712,7 +712,7 @@ Test gcc-4.9 32bit_int16_utf8:
     CFLAGS: "-m32 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.9 32bit_int16_nan:
+Test gcc-4.9 RB32BIT_int16_nan:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc49_0.7
   variables:
@@ -722,7 +722,7 @@ Test gcc-4.9 32bit_int16_nan:
     CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.9 32bit_int16_nan_utf8:
+Test gcc-4.9 RB32BIT_int16_nan_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc49_0.7
   variables:
@@ -732,7 +732,7 @@ Test gcc-4.9 32bit_int16_nan_utf8:
     CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.9 32bit_int64:
+Test gcc-4.9 RB32BIT_int64:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc49_0.7
   variables:
@@ -742,7 +742,7 @@ Test gcc-4.9 32bit_int64:
     CFLAGS: "-m32 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.9 32bit_int64_utf8:
+Test gcc-4.9 RB32BIT_int64_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc49_0.7
   variables:
@@ -752,7 +752,7 @@ Test gcc-4.9 32bit_int64_utf8:
     CFLAGS: "-m32 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.9 32bit_float:
+Test gcc-4.9 RB32BIT_float:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc49_0.7
   variables:
@@ -762,7 +762,7 @@ Test gcc-4.9 32bit_float:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.9 32bit_float_utf8:
+Test gcc-4.9 RB32BIT_float_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc49_0.7
   variables:
@@ -772,7 +772,7 @@ Test gcc-4.9 32bit_float_utf8:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.9 32bit_float_int16:
+Test gcc-4.9 RB32BIT_float_int16:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc49_0.7
   variables:
@@ -782,7 +782,7 @@ Test gcc-4.9 32bit_float_int16:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.9 32bit_float_int16_utf8:
+Test gcc-4.9 RB32BIT_float_int16_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc49_0.7
   variables:
@@ -792,7 +792,7 @@ Test gcc-4.9 32bit_float_int16_utf8:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.9 32bit_float_int64:
+Test gcc-4.9 RB32BIT_float_int64:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc49_0.7
   variables:
@@ -802,7 +802,7 @@ Test gcc-4.9 32bit_float_int64:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-4.9 32bit_float_int64_utf8:
+Test gcc-4.9 RB32BIT_float_int64_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc49_0.7
   variables:
@@ -972,7 +972,7 @@ Test gcc-4.9 64bit_float_int64_utf8:
     CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
-Test gcc-5 32bit:
+Test gcc-5 RB32BIT:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc5_0.7
   variables:
@@ -982,7 +982,7 @@ Test gcc-5 32bit:
     CFLAGS: "-m32 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-5 32bit_utf8:
+Test gcc-5 RB32BIT_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc5_0.7
   variables:
@@ -992,7 +992,7 @@ Test gcc-5 32bit_utf8:
     CFLAGS: "-m32 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-5 32bit_nan:
+Test gcc-5 RB32BIT_nan:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc5_0.7
   variables:
@@ -1002,7 +1002,7 @@ Test gcc-5 32bit_nan:
     CFLAGS: "-m32 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-5 32bit_nan_utf8:
+Test gcc-5 RB32BIT_nan_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc5_0.7
   variables:
@@ -1012,7 +1012,7 @@ Test gcc-5 32bit_nan_utf8:
     CFLAGS: "-m32 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-5 32bit_int16:
+Test gcc-5 RB32BIT_int16:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc5_0.7
   variables:
@@ -1022,7 +1022,7 @@ Test gcc-5 32bit_int16:
     CFLAGS: "-m32 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-5 32bit_int16_utf8:
+Test gcc-5 RB32BIT_int16_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc5_0.7
   variables:
@@ -1032,7 +1032,7 @@ Test gcc-5 32bit_int16_utf8:
     CFLAGS: "-m32 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-5 32bit_int16_nan:
+Test gcc-5 RB32BIT_int16_nan:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc5_0.7
   variables:
@@ -1042,7 +1042,7 @@ Test gcc-5 32bit_int16_nan:
     CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-5 32bit_int16_nan_utf8:
+Test gcc-5 RB32BIT_int16_nan_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc5_0.7
   variables:
@@ -1052,7 +1052,7 @@ Test gcc-5 32bit_int16_nan_utf8:
     CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-5 32bit_int64:
+Test gcc-5 RB32BIT_int64:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc5_0.7
   variables:
@@ -1062,7 +1062,7 @@ Test gcc-5 32bit_int64:
     CFLAGS: "-m32 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-5 32bit_int64_utf8:
+Test gcc-5 RB32BIT_int64_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc5_0.7
   variables:
@@ -1072,7 +1072,7 @@ Test gcc-5 32bit_int64_utf8:
     CFLAGS: "-m32 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-5 32bit_float:
+Test gcc-5 RB32BIT_float:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc5_0.7
   variables:
@@ -1082,7 +1082,7 @@ Test gcc-5 32bit_float:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-5 32bit_float_utf8:
+Test gcc-5 RB32BIT_float_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc5_0.7
   variables:
@@ -1092,7 +1092,7 @@ Test gcc-5 32bit_float_utf8:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-5 32bit_float_int16:
+Test gcc-5 RB32BIT_float_int16:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc5_0.7
   variables:
@@ -1102,7 +1102,7 @@ Test gcc-5 32bit_float_int16:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-5 32bit_float_int16_utf8:
+Test gcc-5 RB32BIT_float_int16_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc5_0.7
   variables:
@@ -1112,7 +1112,7 @@ Test gcc-5 32bit_float_int16_utf8:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-5 32bit_float_int64:
+Test gcc-5 RB32BIT_float_int64:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc5_0.7
   variables:
@@ -1122,7 +1122,7 @@ Test gcc-5 32bit_float_int64:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-5 32bit_float_int64_utf8:
+Test gcc-5 RB32BIT_float_int64_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc5_0.7
   variables:
@@ -1292,7 +1292,7 @@ Test gcc-5 64bit_float_int64_utf8:
     CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
-Test gcc-6 32bit:
+Test gcc-6 RB32BIT:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc6_0.7
   variables:
@@ -1302,7 +1302,7 @@ Test gcc-6 32bit:
     CFLAGS: "-m32 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-6 32bit_utf8:
+Test gcc-6 RB32BIT_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc6_0.7
   variables:
@@ -1312,7 +1312,7 @@ Test gcc-6 32bit_utf8:
     CFLAGS: "-m32 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-6 32bit_nan:
+Test gcc-6 RB32BIT_nan:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc6_0.7
   variables:
@@ -1322,7 +1322,7 @@ Test gcc-6 32bit_nan:
     CFLAGS: "-m32 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-6 32bit_nan_utf8:
+Test gcc-6 RB32BIT_nan_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc6_0.7
   variables:
@@ -1332,7 +1332,7 @@ Test gcc-6 32bit_nan_utf8:
     CFLAGS: "-m32 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-6 32bit_int16:
+Test gcc-6 RB32BIT_int16:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc6_0.7
   variables:
@@ -1342,7 +1342,7 @@ Test gcc-6 32bit_int16:
     CFLAGS: "-m32 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-6 32bit_int16_utf8:
+Test gcc-6 RB32BIT_int16_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc6_0.7
   variables:
@@ -1352,7 +1352,7 @@ Test gcc-6 32bit_int16_utf8:
     CFLAGS: "-m32 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-6 32bit_int16_nan:
+Test gcc-6 RB32BIT_int16_nan:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc6_0.7
   variables:
@@ -1362,7 +1362,7 @@ Test gcc-6 32bit_int16_nan:
     CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-6 32bit_int16_nan_utf8:
+Test gcc-6 RB32BIT_int16_nan_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc6_0.7
   variables:
@@ -1372,7 +1372,7 @@ Test gcc-6 32bit_int16_nan_utf8:
     CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-6 32bit_int64:
+Test gcc-6 RB32BIT_int64:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc6_0.7
   variables:
@@ -1382,7 +1382,7 @@ Test gcc-6 32bit_int64:
     CFLAGS: "-m32 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-6 32bit_int64_utf8:
+Test gcc-6 RB32BIT_int64_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc6_0.7
   variables:
@@ -1392,7 +1392,7 @@ Test gcc-6 32bit_int64_utf8:
     CFLAGS: "-m32 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-6 32bit_float:
+Test gcc-6 RB32BIT_float:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc6_0.7
   variables:
@@ -1402,7 +1402,7 @@ Test gcc-6 32bit_float:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-6 32bit_float_utf8:
+Test gcc-6 RB32BIT_float_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc6_0.7
   variables:
@@ -1412,7 +1412,7 @@ Test gcc-6 32bit_float_utf8:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-6 32bit_float_int16:
+Test gcc-6 RB32BIT_float_int16:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc6_0.7
   variables:
@@ -1422,7 +1422,7 @@ Test gcc-6 32bit_float_int16:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-6 32bit_float_int16_utf8:
+Test gcc-6 RB32BIT_float_int16_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc6_0.7
   variables:
@@ -1432,7 +1432,7 @@ Test gcc-6 32bit_float_int16_utf8:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-6 32bit_float_int64:
+Test gcc-6 RB32BIT_float_int64:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc6_0.7
   variables:
@@ -1442,7 +1442,7 @@ Test gcc-6 32bit_float_int64:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test gcc-6 32bit_float_int64_utf8:
+Test gcc-6 RB32BIT_float_int64_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:gcc6_0.7
   variables:
@@ -1612,7 +1612,7 @@ Test gcc-6 64bit_float_int64_utf8:
     CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
-Test clang-3.5 32bit:
+Test clang-3.5 RB32BIT:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang35_0.7
   variables:
@@ -1622,7 +1622,7 @@ Test clang-3.5 32bit:
     CFLAGS: "-m32 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.5 32bit_utf8:
+Test clang-3.5 RB32BIT_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang35_0.7
   variables:
@@ -1632,7 +1632,7 @@ Test clang-3.5 32bit_utf8:
     CFLAGS: "-m32 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.5 32bit_nan:
+Test clang-3.5 RB32BIT_nan:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang35_0.7
   variables:
@@ -1642,7 +1642,7 @@ Test clang-3.5 32bit_nan:
     CFLAGS: "-m32 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.5 32bit_nan_utf8:
+Test clang-3.5 RB32BIT_nan_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang35_0.7
   variables:
@@ -1652,7 +1652,7 @@ Test clang-3.5 32bit_nan_utf8:
     CFLAGS: "-m32 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.5 32bit_int16:
+Test clang-3.5 RB32BIT_int16:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang35_0.7
   variables:
@@ -1662,7 +1662,7 @@ Test clang-3.5 32bit_int16:
     CFLAGS: "-m32 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.5 32bit_int16_utf8:
+Test clang-3.5 RB32BIT_int16_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang35_0.7
   variables:
@@ -1672,7 +1672,7 @@ Test clang-3.5 32bit_int16_utf8:
     CFLAGS: "-m32 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.5 32bit_int16_nan:
+Test clang-3.5 RB32BIT_int16_nan:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang35_0.7
   variables:
@@ -1682,7 +1682,7 @@ Test clang-3.5 32bit_int16_nan:
     CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.5 32bit_int16_nan_utf8:
+Test clang-3.5 RB32BIT_int16_nan_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang35_0.7
   variables:
@@ -1692,7 +1692,7 @@ Test clang-3.5 32bit_int16_nan_utf8:
     CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.5 32bit_int64:
+Test clang-3.5 RB32BIT_int64:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang35_0.7
   variables:
@@ -1702,7 +1702,7 @@ Test clang-3.5 32bit_int64:
     CFLAGS: "-m32 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.5 32bit_int64_utf8:
+Test clang-3.5 RB32BIT_int64_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang35_0.7
   variables:
@@ -1712,7 +1712,7 @@ Test clang-3.5 32bit_int64_utf8:
     CFLAGS: "-m32 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.5 32bit_float:
+Test clang-3.5 RB32BIT_float:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang35_0.7
   variables:
@@ -1722,7 +1722,7 @@ Test clang-3.5 32bit_float:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.5 32bit_float_utf8:
+Test clang-3.5 RB32BIT_float_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang35_0.7
   variables:
@@ -1732,7 +1732,7 @@ Test clang-3.5 32bit_float_utf8:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.5 32bit_float_int16:
+Test clang-3.5 RB32BIT_float_int16:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang35_0.7
   variables:
@@ -1742,7 +1742,7 @@ Test clang-3.5 32bit_float_int16:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.5 32bit_float_int16_utf8:
+Test clang-3.5 RB32BIT_float_int16_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang35_0.7
   variables:
@@ -1752,7 +1752,7 @@ Test clang-3.5 32bit_float_int16_utf8:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.5 32bit_float_int64:
+Test clang-3.5 RB32BIT_float_int64:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang35_0.7
   variables:
@@ -1762,7 +1762,7 @@ Test clang-3.5 32bit_float_int64:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.5 32bit_float_int64_utf8:
+Test clang-3.5 RB32BIT_float_int64_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang35_0.7
   variables:
@@ -1932,7 +1932,7 @@ Test clang-3.5 64bit_float_int64_utf8:
     CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
-Test clang-3.6 32bit:
+Test clang-3.6 RB32BIT:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang36_0.7
   variables:
@@ -1942,7 +1942,7 @@ Test clang-3.6 32bit:
     CFLAGS: "-m32 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.6 32bit_utf8:
+Test clang-3.6 RB32BIT_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang36_0.7
   variables:
@@ -1952,7 +1952,7 @@ Test clang-3.6 32bit_utf8:
     CFLAGS: "-m32 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.6 32bit_nan:
+Test clang-3.6 RB32BIT_nan:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang36_0.7
   variables:
@@ -1962,7 +1962,7 @@ Test clang-3.6 32bit_nan:
     CFLAGS: "-m32 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.6 32bit_nan_utf8:
+Test clang-3.6 RB32BIT_nan_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang36_0.7
   variables:
@@ -1972,7 +1972,7 @@ Test clang-3.6 32bit_nan_utf8:
     CFLAGS: "-m32 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.6 32bit_int16:
+Test clang-3.6 RB32BIT_int16:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang36_0.7
   variables:
@@ -1982,7 +1982,7 @@ Test clang-3.6 32bit_int16:
     CFLAGS: "-m32 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.6 32bit_int16_utf8:
+Test clang-3.6 RB32BIT_int16_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang36_0.7
   variables:
@@ -1992,7 +1992,7 @@ Test clang-3.6 32bit_int16_utf8:
     CFLAGS: "-m32 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.6 32bit_int16_nan:
+Test clang-3.6 RB32BIT_int16_nan:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang36_0.7
   variables:
@@ -2002,7 +2002,7 @@ Test clang-3.6 32bit_int16_nan:
     CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.6 32bit_int16_nan_utf8:
+Test clang-3.6 RB32BIT_int16_nan_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang36_0.7
   variables:
@@ -2012,7 +2012,7 @@ Test clang-3.6 32bit_int16_nan_utf8:
     CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.6 32bit_int64:
+Test clang-3.6 RB32BIT_int64:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang36_0.7
   variables:
@@ -2022,7 +2022,7 @@ Test clang-3.6 32bit_int64:
     CFLAGS: "-m32 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.6 32bit_int64_utf8:
+Test clang-3.6 RB32BIT_int64_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang36_0.7
   variables:
@@ -2032,7 +2032,7 @@ Test clang-3.6 32bit_int64_utf8:
     CFLAGS: "-m32 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.6 32bit_float:
+Test clang-3.6 RB32BIT_float:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang36_0.7
   variables:
@@ -2042,7 +2042,7 @@ Test clang-3.6 32bit_float:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.6 32bit_float_utf8:
+Test clang-3.6 RB32BIT_float_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang36_0.7
   variables:
@@ -2052,7 +2052,7 @@ Test clang-3.6 32bit_float_utf8:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.6 32bit_float_int16:
+Test clang-3.6 RB32BIT_float_int16:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang36_0.7
   variables:
@@ -2062,7 +2062,7 @@ Test clang-3.6 32bit_float_int16:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.6 32bit_float_int16_utf8:
+Test clang-3.6 RB32BIT_float_int16_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang36_0.7
   variables:
@@ -2072,7 +2072,7 @@ Test clang-3.6 32bit_float_int16_utf8:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.6 32bit_float_int64:
+Test clang-3.6 RB32BIT_float_int64:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang36_0.7
   variables:
@@ -2082,7 +2082,7 @@ Test clang-3.6 32bit_float_int64:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.6 32bit_float_int64_utf8:
+Test clang-3.6 RB32BIT_float_int64_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang36_0.7
   variables:
@@ -2252,7 +2252,7 @@ Test clang-3.6 64bit_float_int64_utf8:
     CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
-Test clang-3.7 32bit:
+Test clang-3.7 RB32BIT:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang37_0.7
   variables:
@@ -2262,7 +2262,7 @@ Test clang-3.7 32bit:
     CFLAGS: "-m32 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.7 32bit_utf8:
+Test clang-3.7 RB32BIT_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang37_0.7
   variables:
@@ -2272,7 +2272,7 @@ Test clang-3.7 32bit_utf8:
     CFLAGS: "-m32 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.7 32bit_nan:
+Test clang-3.7 RB32BIT_nan:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang37_0.7
   variables:
@@ -2282,7 +2282,7 @@ Test clang-3.7 32bit_nan:
     CFLAGS: "-m32 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.7 32bit_nan_utf8:
+Test clang-3.7 RB32BIT_nan_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang37_0.7
   variables:
@@ -2292,7 +2292,7 @@ Test clang-3.7 32bit_nan_utf8:
     CFLAGS: "-m32 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.7 32bit_int16:
+Test clang-3.7 RB32BIT_int16:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang37_0.7
   variables:
@@ -2302,7 +2302,7 @@ Test clang-3.7 32bit_int16:
     CFLAGS: "-m32 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.7 32bit_int16_utf8:
+Test clang-3.7 RB32BIT_int16_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang37_0.7
   variables:
@@ -2312,7 +2312,7 @@ Test clang-3.7 32bit_int16_utf8:
     CFLAGS: "-m32 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.7 32bit_int16_nan:
+Test clang-3.7 RB32BIT_int16_nan:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang37_0.7
   variables:
@@ -2322,7 +2322,7 @@ Test clang-3.7 32bit_int16_nan:
     CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.7 32bit_int16_nan_utf8:
+Test clang-3.7 RB32BIT_int16_nan_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang37_0.7
   variables:
@@ -2332,7 +2332,7 @@ Test clang-3.7 32bit_int16_nan_utf8:
     CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.7 32bit_int64:
+Test clang-3.7 RB32BIT_int64:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang37_0.7
   variables:
@@ -2342,7 +2342,7 @@ Test clang-3.7 32bit_int64:
     CFLAGS: "-m32 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.7 32bit_int64_utf8:
+Test clang-3.7 RB32BIT_int64_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang37_0.7
   variables:
@@ -2352,7 +2352,7 @@ Test clang-3.7 32bit_int64_utf8:
     CFLAGS: "-m32 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.7 32bit_float:
+Test clang-3.7 RB32BIT_float:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang37_0.7
   variables:
@@ -2362,7 +2362,7 @@ Test clang-3.7 32bit_float:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.7 32bit_float_utf8:
+Test clang-3.7 RB32BIT_float_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang37_0.7
   variables:
@@ -2372,7 +2372,7 @@ Test clang-3.7 32bit_float_utf8:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.7 32bit_float_int16:
+Test clang-3.7 RB32BIT_float_int16:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang37_0.7
   variables:
@@ -2382,7 +2382,7 @@ Test clang-3.7 32bit_float_int16:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.7 32bit_float_int16_utf8:
+Test clang-3.7 RB32BIT_float_int16_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang37_0.7
   variables:
@@ -2392,7 +2392,7 @@ Test clang-3.7 32bit_float_int16_utf8:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.7 32bit_float_int64:
+Test clang-3.7 RB32BIT_float_int64:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang37_0.7
   variables:
@@ -2402,7 +2402,7 @@ Test clang-3.7 32bit_float_int64:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.7 32bit_float_int64_utf8:
+Test clang-3.7 RB32BIT_float_int64_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang37_0.7
   variables:
@@ -2572,7 +2572,7 @@ Test clang-3.7 64bit_float_int64_utf8:
     CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
-Test clang-3.8 32bit:
+Test clang-3.8 RB32BIT:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang38_0.7
   variables:
@@ -2582,7 +2582,7 @@ Test clang-3.8 32bit:
     CFLAGS: "-m32 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.8 32bit_utf8:
+Test clang-3.8 RB32BIT_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang38_0.7
   variables:
@@ -2592,7 +2592,7 @@ Test clang-3.8 32bit_utf8:
     CFLAGS: "-m32 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.8 32bit_nan:
+Test clang-3.8 RB32BIT_nan:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang38_0.7
   variables:
@@ -2602,7 +2602,7 @@ Test clang-3.8 32bit_nan:
     CFLAGS: "-m32 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.8 32bit_nan_utf8:
+Test clang-3.8 RB32BIT_nan_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang38_0.7
   variables:
@@ -2612,7 +2612,7 @@ Test clang-3.8 32bit_nan_utf8:
     CFLAGS: "-m32 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.8 32bit_int16:
+Test clang-3.8 RB32BIT_int16:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang38_0.7
   variables:
@@ -2622,7 +2622,7 @@ Test clang-3.8 32bit_int16:
     CFLAGS: "-m32 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.8 32bit_int16_utf8:
+Test clang-3.8 RB32BIT_int16_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang38_0.7
   variables:
@@ -2632,7 +2632,7 @@ Test clang-3.8 32bit_int16_utf8:
     CFLAGS: "-m32 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.8 32bit_int16_nan:
+Test clang-3.8 RB32BIT_int16_nan:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang38_0.7
   variables:
@@ -2642,7 +2642,7 @@ Test clang-3.8 32bit_int16_nan:
     CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.8 32bit_int16_nan_utf8:
+Test clang-3.8 RB32BIT_int16_nan_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang38_0.7
   variables:
@@ -2652,7 +2652,7 @@ Test clang-3.8 32bit_int16_nan_utf8:
     CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.8 32bit_int64:
+Test clang-3.8 RB32BIT_int64:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang38_0.7
   variables:
@@ -2662,7 +2662,7 @@ Test clang-3.8 32bit_int64:
     CFLAGS: "-m32 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.8 32bit_int64_utf8:
+Test clang-3.8 RB32BIT_int64_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang38_0.7
   variables:
@@ -2672,7 +2672,7 @@ Test clang-3.8 32bit_int64_utf8:
     CFLAGS: "-m32 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.8 32bit_float:
+Test clang-3.8 RB32BIT_float:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang38_0.7
   variables:
@@ -2682,7 +2682,7 @@ Test clang-3.8 32bit_float:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.8 32bit_float_utf8:
+Test clang-3.8 RB32BIT_float_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang38_0.7
   variables:
@@ -2692,7 +2692,7 @@ Test clang-3.8 32bit_float_utf8:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.8 32bit_float_int16:
+Test clang-3.8 RB32BIT_float_int16:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang38_0.7
   variables:
@@ -2702,7 +2702,7 @@ Test clang-3.8 32bit_float_int16:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.8 32bit_float_int16_utf8:
+Test clang-3.8 RB32BIT_float_int16_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang38_0.7
   variables:
@@ -2712,7 +2712,7 @@ Test clang-3.8 32bit_float_int16_utf8:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.8 32bit_float_int64:
+Test clang-3.8 RB32BIT_float_int64:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang38_0.7
   variables:
@@ -2722,7 +2722,7 @@ Test clang-3.8 32bit_float_int64:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.8 32bit_float_int64_utf8:
+Test clang-3.8 RB32BIT_float_int64_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang38_0.7
   variables:
@@ -2892,7 +2892,7 @@ Test clang-3.8 64bit_float_int64_utf8:
     CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
-Test clang-3.9 32bit:
+Test clang-3.9 RB32BIT:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang39_0.7
   variables:
@@ -2902,7 +2902,7 @@ Test clang-3.9 32bit:
     CFLAGS: "-m32 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.9 32bit_utf8:
+Test clang-3.9 RB32BIT_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang39_0.7
   variables:
@@ -2912,7 +2912,7 @@ Test clang-3.9 32bit_utf8:
     CFLAGS: "-m32 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.9 32bit_nan:
+Test clang-3.9 RB32BIT_nan:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang39_0.7
   variables:
@@ -2922,7 +2922,7 @@ Test clang-3.9 32bit_nan:
     CFLAGS: "-m32 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.9 32bit_nan_utf8:
+Test clang-3.9 RB32BIT_nan_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang39_0.7
   variables:
@@ -2932,7 +2932,7 @@ Test clang-3.9 32bit_nan_utf8:
     CFLAGS: "-m32 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.9 32bit_int16:
+Test clang-3.9 RB32BIT_int16:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang39_0.7
   variables:
@@ -2942,7 +2942,7 @@ Test clang-3.9 32bit_int16:
     CFLAGS: "-m32 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.9 32bit_int16_utf8:
+Test clang-3.9 RB32BIT_int16_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang39_0.7
   variables:
@@ -2952,7 +2952,7 @@ Test clang-3.9 32bit_int16_utf8:
     CFLAGS: "-m32 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.9 32bit_int16_nan:
+Test clang-3.9 RB32BIT_int16_nan:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang39_0.7
   variables:
@@ -2962,7 +2962,7 @@ Test clang-3.9 32bit_int16_nan:
     CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.9 32bit_int16_nan_utf8:
+Test clang-3.9 RB32BIT_int16_nan_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang39_0.7
   variables:
@@ -2972,7 +2972,7 @@ Test clang-3.9 32bit_int16_nan_utf8:
     CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.9 32bit_int64:
+Test clang-3.9 RB32BIT_int64:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang39_0.7
   variables:
@@ -2982,7 +2982,7 @@ Test clang-3.9 32bit_int64:
     CFLAGS: "-m32 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.9 32bit_int64_utf8:
+Test clang-3.9 RB32BIT_int64_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang39_0.7
   variables:
@@ -2992,7 +2992,7 @@ Test clang-3.9 32bit_int64_utf8:
     CFLAGS: "-m32 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.9 32bit_float:
+Test clang-3.9 RB32BIT_float:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang39_0.7
   variables:
@@ -3002,7 +3002,7 @@ Test clang-3.9 32bit_float:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.9 32bit_float_utf8:
+Test clang-3.9 RB32BIT_float_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang39_0.7
   variables:
@@ -3012,7 +3012,7 @@ Test clang-3.9 32bit_float_utf8:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.9 32bit_float_int16:
+Test clang-3.9 RB32BIT_float_int16:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang39_0.7
   variables:
@@ -3022,7 +3022,7 @@ Test clang-3.9 32bit_float_int16:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.9 32bit_float_int16_utf8:
+Test clang-3.9 RB32BIT_float_int16_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang39_0.7
   variables:
@@ -3032,7 +3032,7 @@ Test clang-3.9 32bit_float_int16_utf8:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.9 32bit_float_int64:
+Test clang-3.9 RB32BIT_float_int64:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang39_0.7
   variables:
@@ -3042,7 +3042,7 @@ Test clang-3.9 32bit_float_int64:
     CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
-Test clang-3.9 32bit_float_int64_utf8:
+Test clang-3.9 RB32BIT_float_int64_utf8:
   stage: test
   image: registry.gitlab.com/dabroz/mruby:clang39_0.7
   variables:

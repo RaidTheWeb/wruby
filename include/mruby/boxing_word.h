@@ -11,7 +11,7 @@
 # error INT16 is too small for WORD_BOXING.
 #endif
 
-#if defined(INT64) && !defined(64BIT)
+#if defined(INT64) && !defined(RB64BIT)
 #error INT64 cannot be used with WORD_BOXING in 32-bit mode.
 #endif
 
@@ -45,7 +45,7 @@ enum special_consts {
 #define SYMBOL_FLAG   0x0e
 #define SPECIAL_SHIFT 8
 
-#if defined(64BIT)
+#if defined(RB64BIT)
 #define SYMBOL_BITSIZE  (sizeof(sym) * CHAR_BIT)
 #define SYMBOL_MAX      UINT32_MAX
 #else

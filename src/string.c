@@ -2631,7 +2631,7 @@ str_append(state *mrb, value str1, value str2)
   return str_cat_str(mrb, str1, str2);
 }
 
-#define CHAR_ESC_LEN 13 /* sizeof(\x{ hex of 32bit unsigned int } \0) */
+#define CHAR_ESC_LEN 13 /* sizeof(\x{ hex of RB32BIT unsigned int } \0) */
 
 /*
  * call-seq:

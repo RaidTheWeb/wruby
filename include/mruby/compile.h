@@ -26,6 +26,8 @@ typedef struct mrbc_context {
   char *filename;
   short lineno;
   int (*partial_hook)(struct parser_state*);
+//    int (*partial_hook);
+//    struct parser_state*;
   void *partial_data;
   struct RClass *target_class;
   bool capture_errors:1;

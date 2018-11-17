@@ -11,16 +11,16 @@
 #include <stdint.h>
 
 /* architecture selection: */
-/* specify -D32BIT or -D64BIT to override */
-#if !defined(32BIT) && !defined(64BIT)
+/* specify -DRB32BIT or -DRB64BIT to override */
+#if !defined(RB32BIT) && !defined(RB64BIT)
 #if UINT64_MAX == SIZE_MAX
-#define 64BIT
+#define RB64BIT
 #else
-#define 32BIT
+#define RB32BIT
 #endif
 #endif
 
-#if defined(32BIT) && defined(64BIT)
+#if defined(RB32BIT) && defined(RB64BIT)
 #error Cannot build for 32 and 64 bit architecture at the same time
 #endif
 
@@ -49,11 +49,11 @@
 
 /* if no specific integer type is chosen */
 #if !defined(INT16) && !defined(INT32) && !defined(INT64)
-# if defined(64BIT) && !defined(NAN_BOXING)
+# if defined(RB64BIT) && !defined(NAN_BOXING)
 /* Use 64bit integers on 64bit architecture (without NAN_BOXING) */
 #  define INT64
 # else
-/* Otherwise use 32bit integers */
+/* Otherwise use RB32BIT integers */
 #  define INT32
 # endif
 #endif
