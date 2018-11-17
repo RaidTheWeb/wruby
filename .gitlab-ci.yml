@@ -19,7 +19,7 @@ Test gcc-4.7 32bit:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-m32 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-m32 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.7 32bit_utf8:
@@ -29,7 +29,7 @@ Test gcc-4.7 32bit_utf8:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-m32 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.7 32bit_nan:
@@ -39,7 +39,7 @@ Test gcc-4.7 32bit_nan:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-m32 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-m32 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.7 32bit_nan_utf8:
@@ -49,7 +49,7 @@ Test gcc-4.7 32bit_nan_utf8:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-m32 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.7 32bit_int16:
@@ -59,7 +59,7 @@ Test gcc-4.7 32bit_int16:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-m32 -DMRB_INT16=1"
+    CFLAGS: "-m32 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.7 32bit_int16_utf8:
@@ -69,7 +69,7 @@ Test gcc-4.7 32bit_int16_utf8:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.7 32bit_int16_nan:
@@ -79,7 +79,7 @@ Test gcc-4.7 32bit_int16_nan:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.7 32bit_int16_nan_utf8:
@@ -89,7 +89,7 @@ Test gcc-4.7 32bit_int16_nan_utf8:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.7 32bit_int64:
@@ -99,7 +99,7 @@ Test gcc-4.7 32bit_int64:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-m32 -DMRB_INT64=1"
+    CFLAGS: "-m32 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.7 32bit_int64_utf8:
@@ -109,7 +109,7 @@ Test gcc-4.7 32bit_int64_utf8:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-m32 -DMRB_INT64=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.7 32bit_float:
@@ -119,7 +119,7 @@ Test gcc-4.7 32bit_float:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.7 32bit_float_utf8:
@@ -129,7 +129,7 @@ Test gcc-4.7 32bit_float_utf8:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.7 32bit_float_int16:
@@ -139,7 +139,7 @@ Test gcc-4.7 32bit_float_int16:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT16=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.7 32bit_float_int16_utf8:
@@ -149,7 +149,7 @@ Test gcc-4.7 32bit_float_int16_utf8:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.7 32bit_float_int64:
@@ -159,7 +159,7 @@ Test gcc-4.7 32bit_float_int64:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT64=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.7 32bit_float_int64_utf8:
@@ -169,7 +169,7 @@ Test gcc-4.7 32bit_float_int64_utf8:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.7 64bit:
@@ -179,7 +179,7 @@ Test gcc-4.7 64bit:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-DMRB_WORD_BOXING=1"
+    CFLAGS: "-DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.7 64bit_utf8:
@@ -189,7 +189,7 @@ Test gcc-4.7 64bit_utf8:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.7 64bit_nan:
@@ -199,7 +199,7 @@ Test gcc-4.7 64bit_nan:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-DMRB_NAN_BOXING=1"
+    CFLAGS: "-DNAN_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.7 64bit_nan_utf8:
@@ -209,7 +209,7 @@ Test gcc-4.7 64bit_nan_utf8:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.7 64bit_int16:
@@ -219,7 +219,7 @@ Test gcc-4.7 64bit_int16:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-DMRB_INT16=1"
+    CFLAGS: "-DINT16=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.7 64bit_int16_utf8:
@@ -229,7 +229,7 @@ Test gcc-4.7 64bit_int16_utf8:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.7 64bit_int16_nan:
@@ -239,7 +239,7 @@ Test gcc-4.7 64bit_int16_nan:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-DMRB_INT16=1 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.7 64bit_int16_nan_utf8:
@@ -249,7 +249,7 @@ Test gcc-4.7 64bit_int16_nan_utf8:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-DMRB_INT16=1 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.7 64bit_int64:
@@ -259,7 +259,7 @@ Test gcc-4.7 64bit_int64:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-DMRB_INT64=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DINT64=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.7 64bit_int64_utf8:
@@ -269,7 +269,7 @@ Test gcc-4.7 64bit_int64_utf8:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-DMRB_INT64=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.7 64bit_float:
@@ -279,7 +279,7 @@ Test gcc-4.7 64bit_float:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.7 64bit_float_utf8:
@@ -289,7 +289,7 @@ Test gcc-4.7 64bit_float_utf8:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.7 64bit_float_int16:
@@ -299,7 +299,7 @@ Test gcc-4.7 64bit_float_int16:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT16=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.7 64bit_float_int16_utf8:
@@ -309,7 +309,7 @@ Test gcc-4.7 64bit_float_int16_utf8:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.7 64bit_float_int64:
@@ -319,7 +319,7 @@ Test gcc-4.7 64bit_float_int64:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.7 64bit_float_int64_utf8:
@@ -329,7 +329,7 @@ Test gcc-4.7 64bit_float_int64_utf8:
     CC: gcc-4.7
     CXX: g++-4.7
     LD: gcc-4.7
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.8 32bit:
@@ -339,7 +339,7 @@ Test gcc-4.8 32bit:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-m32 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-m32 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.8 32bit_utf8:
@@ -349,7 +349,7 @@ Test gcc-4.8 32bit_utf8:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-m32 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.8 32bit_nan:
@@ -359,7 +359,7 @@ Test gcc-4.8 32bit_nan:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-m32 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-m32 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.8 32bit_nan_utf8:
@@ -369,7 +369,7 @@ Test gcc-4.8 32bit_nan_utf8:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-m32 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.8 32bit_int16:
@@ -379,7 +379,7 @@ Test gcc-4.8 32bit_int16:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-m32 -DMRB_INT16=1"
+    CFLAGS: "-m32 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.8 32bit_int16_utf8:
@@ -389,7 +389,7 @@ Test gcc-4.8 32bit_int16_utf8:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.8 32bit_int16_nan:
@@ -399,7 +399,7 @@ Test gcc-4.8 32bit_int16_nan:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.8 32bit_int16_nan_utf8:
@@ -409,7 +409,7 @@ Test gcc-4.8 32bit_int16_nan_utf8:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.8 32bit_int64:
@@ -419,7 +419,7 @@ Test gcc-4.8 32bit_int64:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-m32 -DMRB_INT64=1"
+    CFLAGS: "-m32 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.8 32bit_int64_utf8:
@@ -429,7 +429,7 @@ Test gcc-4.8 32bit_int64_utf8:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-m32 -DMRB_INT64=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.8 32bit_float:
@@ -439,7 +439,7 @@ Test gcc-4.8 32bit_float:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.8 32bit_float_utf8:
@@ -449,7 +449,7 @@ Test gcc-4.8 32bit_float_utf8:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.8 32bit_float_int16:
@@ -459,7 +459,7 @@ Test gcc-4.8 32bit_float_int16:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT16=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.8 32bit_float_int16_utf8:
@@ -469,7 +469,7 @@ Test gcc-4.8 32bit_float_int16_utf8:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.8 32bit_float_int64:
@@ -479,7 +479,7 @@ Test gcc-4.8 32bit_float_int64:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT64=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.8 32bit_float_int64_utf8:
@@ -489,7 +489,7 @@ Test gcc-4.8 32bit_float_int64_utf8:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.8 64bit:
@@ -499,7 +499,7 @@ Test gcc-4.8 64bit:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-DMRB_WORD_BOXING=1"
+    CFLAGS: "-DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.8 64bit_utf8:
@@ -509,7 +509,7 @@ Test gcc-4.8 64bit_utf8:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.8 64bit_nan:
@@ -519,7 +519,7 @@ Test gcc-4.8 64bit_nan:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-DMRB_NAN_BOXING=1"
+    CFLAGS: "-DNAN_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.8 64bit_nan_utf8:
@@ -529,7 +529,7 @@ Test gcc-4.8 64bit_nan_utf8:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.8 64bit_int16:
@@ -539,7 +539,7 @@ Test gcc-4.8 64bit_int16:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-DMRB_INT16=1"
+    CFLAGS: "-DINT16=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.8 64bit_int16_utf8:
@@ -549,7 +549,7 @@ Test gcc-4.8 64bit_int16_utf8:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.8 64bit_int16_nan:
@@ -559,7 +559,7 @@ Test gcc-4.8 64bit_int16_nan:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-DMRB_INT16=1 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.8 64bit_int16_nan_utf8:
@@ -569,7 +569,7 @@ Test gcc-4.8 64bit_int16_nan_utf8:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-DMRB_INT16=1 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.8 64bit_int64:
@@ -579,7 +579,7 @@ Test gcc-4.8 64bit_int64:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-DMRB_INT64=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DINT64=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.8 64bit_int64_utf8:
@@ -589,7 +589,7 @@ Test gcc-4.8 64bit_int64_utf8:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-DMRB_INT64=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.8 64bit_float:
@@ -599,7 +599,7 @@ Test gcc-4.8 64bit_float:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.8 64bit_float_utf8:
@@ -609,7 +609,7 @@ Test gcc-4.8 64bit_float_utf8:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.8 64bit_float_int16:
@@ -619,7 +619,7 @@ Test gcc-4.8 64bit_float_int16:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT16=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.8 64bit_float_int16_utf8:
@@ -629,7 +629,7 @@ Test gcc-4.8 64bit_float_int16_utf8:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.8 64bit_float_int64:
@@ -639,7 +639,7 @@ Test gcc-4.8 64bit_float_int64:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.8 64bit_float_int64_utf8:
@@ -649,7 +649,7 @@ Test gcc-4.8 64bit_float_int64_utf8:
     CC: gcc-4.8
     CXX: g++-4.8
     LD: gcc-4.8
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.9 32bit:
@@ -659,7 +659,7 @@ Test gcc-4.9 32bit:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-m32 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-m32 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.9 32bit_utf8:
@@ -669,7 +669,7 @@ Test gcc-4.9 32bit_utf8:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-m32 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.9 32bit_nan:
@@ -679,7 +679,7 @@ Test gcc-4.9 32bit_nan:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-m32 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-m32 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.9 32bit_nan_utf8:
@@ -689,7 +689,7 @@ Test gcc-4.9 32bit_nan_utf8:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-m32 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.9 32bit_int16:
@@ -699,7 +699,7 @@ Test gcc-4.9 32bit_int16:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-m32 -DMRB_INT16=1"
+    CFLAGS: "-m32 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.9 32bit_int16_utf8:
@@ -709,7 +709,7 @@ Test gcc-4.9 32bit_int16_utf8:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.9 32bit_int16_nan:
@@ -719,7 +719,7 @@ Test gcc-4.9 32bit_int16_nan:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.9 32bit_int16_nan_utf8:
@@ -729,7 +729,7 @@ Test gcc-4.9 32bit_int16_nan_utf8:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.9 32bit_int64:
@@ -739,7 +739,7 @@ Test gcc-4.9 32bit_int64:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-m32 -DMRB_INT64=1"
+    CFLAGS: "-m32 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.9 32bit_int64_utf8:
@@ -749,7 +749,7 @@ Test gcc-4.9 32bit_int64_utf8:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-m32 -DMRB_INT64=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.9 32bit_float:
@@ -759,7 +759,7 @@ Test gcc-4.9 32bit_float:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.9 32bit_float_utf8:
@@ -769,7 +769,7 @@ Test gcc-4.9 32bit_float_utf8:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.9 32bit_float_int16:
@@ -779,7 +779,7 @@ Test gcc-4.9 32bit_float_int16:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT16=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.9 32bit_float_int16_utf8:
@@ -789,7 +789,7 @@ Test gcc-4.9 32bit_float_int16_utf8:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.9 32bit_float_int64:
@@ -799,7 +799,7 @@ Test gcc-4.9 32bit_float_int64:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT64=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.9 32bit_float_int64_utf8:
@@ -809,7 +809,7 @@ Test gcc-4.9 32bit_float_int64_utf8:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-4.9 64bit:
@@ -819,7 +819,7 @@ Test gcc-4.9 64bit:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-DMRB_WORD_BOXING=1"
+    CFLAGS: "-DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.9 64bit_utf8:
@@ -829,7 +829,7 @@ Test gcc-4.9 64bit_utf8:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.9 64bit_nan:
@@ -839,7 +839,7 @@ Test gcc-4.9 64bit_nan:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-DMRB_NAN_BOXING=1"
+    CFLAGS: "-DNAN_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.9 64bit_nan_utf8:
@@ -849,7 +849,7 @@ Test gcc-4.9 64bit_nan_utf8:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.9 64bit_int16:
@@ -859,7 +859,7 @@ Test gcc-4.9 64bit_int16:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-DMRB_INT16=1"
+    CFLAGS: "-DINT16=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.9 64bit_int16_utf8:
@@ -869,7 +869,7 @@ Test gcc-4.9 64bit_int16_utf8:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.9 64bit_int16_nan:
@@ -879,7 +879,7 @@ Test gcc-4.9 64bit_int16_nan:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-DMRB_INT16=1 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.9 64bit_int16_nan_utf8:
@@ -889,7 +889,7 @@ Test gcc-4.9 64bit_int16_nan_utf8:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-DMRB_INT16=1 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.9 64bit_int64:
@@ -899,7 +899,7 @@ Test gcc-4.9 64bit_int64:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-DMRB_INT64=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DINT64=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.9 64bit_int64_utf8:
@@ -909,7 +909,7 @@ Test gcc-4.9 64bit_int64_utf8:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-DMRB_INT64=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.9 64bit_float:
@@ -919,7 +919,7 @@ Test gcc-4.9 64bit_float:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.9 64bit_float_utf8:
@@ -929,7 +929,7 @@ Test gcc-4.9 64bit_float_utf8:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.9 64bit_float_int16:
@@ -939,7 +939,7 @@ Test gcc-4.9 64bit_float_int16:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT16=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.9 64bit_float_int16_utf8:
@@ -949,7 +949,7 @@ Test gcc-4.9 64bit_float_int16_utf8:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.9 64bit_float_int64:
@@ -959,7 +959,7 @@ Test gcc-4.9 64bit_float_int64:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-4.9 64bit_float_int64_utf8:
@@ -969,7 +969,7 @@ Test gcc-4.9 64bit_float_int64_utf8:
     CC: gcc-4.9
     CXX: g++-4.9
     LD: gcc-4.9
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-5 32bit:
@@ -979,7 +979,7 @@ Test gcc-5 32bit:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-m32 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-m32 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-5 32bit_utf8:
@@ -989,7 +989,7 @@ Test gcc-5 32bit_utf8:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-m32 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-5 32bit_nan:
@@ -999,7 +999,7 @@ Test gcc-5 32bit_nan:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-m32 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-m32 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-5 32bit_nan_utf8:
@@ -1009,7 +1009,7 @@ Test gcc-5 32bit_nan_utf8:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-m32 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-5 32bit_int16:
@@ -1019,7 +1019,7 @@ Test gcc-5 32bit_int16:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-m32 -DMRB_INT16=1"
+    CFLAGS: "-m32 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-5 32bit_int16_utf8:
@@ -1029,7 +1029,7 @@ Test gcc-5 32bit_int16_utf8:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-5 32bit_int16_nan:
@@ -1039,7 +1039,7 @@ Test gcc-5 32bit_int16_nan:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-5 32bit_int16_nan_utf8:
@@ -1049,7 +1049,7 @@ Test gcc-5 32bit_int16_nan_utf8:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-5 32bit_int64:
@@ -1059,7 +1059,7 @@ Test gcc-5 32bit_int64:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-m32 -DMRB_INT64=1"
+    CFLAGS: "-m32 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-5 32bit_int64_utf8:
@@ -1069,7 +1069,7 @@ Test gcc-5 32bit_int64_utf8:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-m32 -DMRB_INT64=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-5 32bit_float:
@@ -1079,7 +1079,7 @@ Test gcc-5 32bit_float:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-5 32bit_float_utf8:
@@ -1089,7 +1089,7 @@ Test gcc-5 32bit_float_utf8:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-5 32bit_float_int16:
@@ -1099,7 +1099,7 @@ Test gcc-5 32bit_float_int16:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT16=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-5 32bit_float_int16_utf8:
@@ -1109,7 +1109,7 @@ Test gcc-5 32bit_float_int16_utf8:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-5 32bit_float_int64:
@@ -1119,7 +1119,7 @@ Test gcc-5 32bit_float_int64:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT64=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-5 32bit_float_int64_utf8:
@@ -1129,7 +1129,7 @@ Test gcc-5 32bit_float_int64_utf8:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-5 64bit:
@@ -1139,7 +1139,7 @@ Test gcc-5 64bit:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-DMRB_WORD_BOXING=1"
+    CFLAGS: "-DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-5 64bit_utf8:
@@ -1149,7 +1149,7 @@ Test gcc-5 64bit_utf8:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-5 64bit_nan:
@@ -1159,7 +1159,7 @@ Test gcc-5 64bit_nan:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-DMRB_NAN_BOXING=1"
+    CFLAGS: "-DNAN_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-5 64bit_nan_utf8:
@@ -1169,7 +1169,7 @@ Test gcc-5 64bit_nan_utf8:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-5 64bit_int16:
@@ -1179,7 +1179,7 @@ Test gcc-5 64bit_int16:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-DMRB_INT16=1"
+    CFLAGS: "-DINT16=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-5 64bit_int16_utf8:
@@ -1189,7 +1189,7 @@ Test gcc-5 64bit_int16_utf8:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-5 64bit_int16_nan:
@@ -1199,7 +1199,7 @@ Test gcc-5 64bit_int16_nan:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-DMRB_INT16=1 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-5 64bit_int16_nan_utf8:
@@ -1209,7 +1209,7 @@ Test gcc-5 64bit_int16_nan_utf8:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-DMRB_INT16=1 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-5 64bit_int64:
@@ -1219,7 +1219,7 @@ Test gcc-5 64bit_int64:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-DMRB_INT64=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DINT64=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-5 64bit_int64_utf8:
@@ -1229,7 +1229,7 @@ Test gcc-5 64bit_int64_utf8:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-DMRB_INT64=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-5 64bit_float:
@@ -1239,7 +1239,7 @@ Test gcc-5 64bit_float:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-5 64bit_float_utf8:
@@ -1249,7 +1249,7 @@ Test gcc-5 64bit_float_utf8:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-5 64bit_float_int16:
@@ -1259,7 +1259,7 @@ Test gcc-5 64bit_float_int16:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT16=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-5 64bit_float_int16_utf8:
@@ -1269,7 +1269,7 @@ Test gcc-5 64bit_float_int16_utf8:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-5 64bit_float_int64:
@@ -1279,7 +1279,7 @@ Test gcc-5 64bit_float_int64:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-5 64bit_float_int64_utf8:
@@ -1289,7 +1289,7 @@ Test gcc-5 64bit_float_int64_utf8:
     CC: gcc-5
     CXX: g++-5
     LD: gcc-5
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-6 32bit:
@@ -1299,7 +1299,7 @@ Test gcc-6 32bit:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-m32 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-m32 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-6 32bit_utf8:
@@ -1309,7 +1309,7 @@ Test gcc-6 32bit_utf8:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-m32 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-6 32bit_nan:
@@ -1319,7 +1319,7 @@ Test gcc-6 32bit_nan:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-m32 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-m32 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-6 32bit_nan_utf8:
@@ -1329,7 +1329,7 @@ Test gcc-6 32bit_nan_utf8:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-m32 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-6 32bit_int16:
@@ -1339,7 +1339,7 @@ Test gcc-6 32bit_int16:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-m32 -DMRB_INT16=1"
+    CFLAGS: "-m32 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-6 32bit_int16_utf8:
@@ -1349,7 +1349,7 @@ Test gcc-6 32bit_int16_utf8:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-6 32bit_int16_nan:
@@ -1359,7 +1359,7 @@ Test gcc-6 32bit_int16_nan:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-6 32bit_int16_nan_utf8:
@@ -1369,7 +1369,7 @@ Test gcc-6 32bit_int16_nan_utf8:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-6 32bit_int64:
@@ -1379,7 +1379,7 @@ Test gcc-6 32bit_int64:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-m32 -DMRB_INT64=1"
+    CFLAGS: "-m32 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-6 32bit_int64_utf8:
@@ -1389,7 +1389,7 @@ Test gcc-6 32bit_int64_utf8:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-m32 -DMRB_INT64=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-6 32bit_float:
@@ -1399,7 +1399,7 @@ Test gcc-6 32bit_float:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-6 32bit_float_utf8:
@@ -1409,7 +1409,7 @@ Test gcc-6 32bit_float_utf8:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-6 32bit_float_int16:
@@ -1419,7 +1419,7 @@ Test gcc-6 32bit_float_int16:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT16=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-6 32bit_float_int16_utf8:
@@ -1429,7 +1429,7 @@ Test gcc-6 32bit_float_int16_utf8:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-6 32bit_float_int64:
@@ -1439,7 +1439,7 @@ Test gcc-6 32bit_float_int64:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT64=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-6 32bit_float_int64_utf8:
@@ -1449,7 +1449,7 @@ Test gcc-6 32bit_float_int64_utf8:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test gcc-6 64bit:
@@ -1459,7 +1459,7 @@ Test gcc-6 64bit:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-DMRB_WORD_BOXING=1"
+    CFLAGS: "-DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-6 64bit_utf8:
@@ -1469,7 +1469,7 @@ Test gcc-6 64bit_utf8:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-6 64bit_nan:
@@ -1479,7 +1479,7 @@ Test gcc-6 64bit_nan:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-DMRB_NAN_BOXING=1"
+    CFLAGS: "-DNAN_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-6 64bit_nan_utf8:
@@ -1489,7 +1489,7 @@ Test gcc-6 64bit_nan_utf8:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-6 64bit_int16:
@@ -1499,7 +1499,7 @@ Test gcc-6 64bit_int16:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-DMRB_INT16=1"
+    CFLAGS: "-DINT16=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-6 64bit_int16_utf8:
@@ -1509,7 +1509,7 @@ Test gcc-6 64bit_int16_utf8:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-6 64bit_int16_nan:
@@ -1519,7 +1519,7 @@ Test gcc-6 64bit_int16_nan:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-DMRB_INT16=1 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-6 64bit_int16_nan_utf8:
@@ -1529,7 +1529,7 @@ Test gcc-6 64bit_int16_nan_utf8:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-DMRB_INT16=1 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-6 64bit_int64:
@@ -1539,7 +1539,7 @@ Test gcc-6 64bit_int64:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-DMRB_INT64=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DINT64=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-6 64bit_int64_utf8:
@@ -1549,7 +1549,7 @@ Test gcc-6 64bit_int64_utf8:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-DMRB_INT64=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-6 64bit_float:
@@ -1559,7 +1559,7 @@ Test gcc-6 64bit_float:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-6 64bit_float_utf8:
@@ -1569,7 +1569,7 @@ Test gcc-6 64bit_float_utf8:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-6 64bit_float_int16:
@@ -1579,7 +1579,7 @@ Test gcc-6 64bit_float_int16:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT16=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-6 64bit_float_int16_utf8:
@@ -1589,7 +1589,7 @@ Test gcc-6 64bit_float_int16_utf8:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-6 64bit_float_int64:
@@ -1599,7 +1599,7 @@ Test gcc-6 64bit_float_int64:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test gcc-6 64bit_float_int64_utf8:
@@ -1609,7 +1609,7 @@ Test gcc-6 64bit_float_int64_utf8:
     CC: gcc-6
     CXX: g++-6
     LD: gcc-6
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.5 32bit:
@@ -1619,7 +1619,7 @@ Test clang-3.5 32bit:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-m32 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-m32 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.5 32bit_utf8:
@@ -1629,7 +1629,7 @@ Test clang-3.5 32bit_utf8:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-m32 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.5 32bit_nan:
@@ -1639,7 +1639,7 @@ Test clang-3.5 32bit_nan:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-m32 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-m32 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.5 32bit_nan_utf8:
@@ -1649,7 +1649,7 @@ Test clang-3.5 32bit_nan_utf8:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-m32 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.5 32bit_int16:
@@ -1659,7 +1659,7 @@ Test clang-3.5 32bit_int16:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-m32 -DMRB_INT16=1"
+    CFLAGS: "-m32 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.5 32bit_int16_utf8:
@@ -1669,7 +1669,7 @@ Test clang-3.5 32bit_int16_utf8:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.5 32bit_int16_nan:
@@ -1679,7 +1679,7 @@ Test clang-3.5 32bit_int16_nan:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.5 32bit_int16_nan_utf8:
@@ -1689,7 +1689,7 @@ Test clang-3.5 32bit_int16_nan_utf8:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.5 32bit_int64:
@@ -1699,7 +1699,7 @@ Test clang-3.5 32bit_int64:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-m32 -DMRB_INT64=1"
+    CFLAGS: "-m32 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.5 32bit_int64_utf8:
@@ -1709,7 +1709,7 @@ Test clang-3.5 32bit_int64_utf8:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-m32 -DMRB_INT64=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.5 32bit_float:
@@ -1719,7 +1719,7 @@ Test clang-3.5 32bit_float:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.5 32bit_float_utf8:
@@ -1729,7 +1729,7 @@ Test clang-3.5 32bit_float_utf8:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.5 32bit_float_int16:
@@ -1739,7 +1739,7 @@ Test clang-3.5 32bit_float_int16:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT16=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.5 32bit_float_int16_utf8:
@@ -1749,7 +1749,7 @@ Test clang-3.5 32bit_float_int16_utf8:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.5 32bit_float_int64:
@@ -1759,7 +1759,7 @@ Test clang-3.5 32bit_float_int64:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT64=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.5 32bit_float_int64_utf8:
@@ -1769,7 +1769,7 @@ Test clang-3.5 32bit_float_int64_utf8:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.5 64bit:
@@ -1779,7 +1779,7 @@ Test clang-3.5 64bit:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-DMRB_WORD_BOXING=1"
+    CFLAGS: "-DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.5 64bit_utf8:
@@ -1789,7 +1789,7 @@ Test clang-3.5 64bit_utf8:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.5 64bit_nan:
@@ -1799,7 +1799,7 @@ Test clang-3.5 64bit_nan:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-DMRB_NAN_BOXING=1"
+    CFLAGS: "-DNAN_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.5 64bit_nan_utf8:
@@ -1809,7 +1809,7 @@ Test clang-3.5 64bit_nan_utf8:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.5 64bit_int16:
@@ -1819,7 +1819,7 @@ Test clang-3.5 64bit_int16:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-DMRB_INT16=1"
+    CFLAGS: "-DINT16=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.5 64bit_int16_utf8:
@@ -1829,7 +1829,7 @@ Test clang-3.5 64bit_int16_utf8:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.5 64bit_int16_nan:
@@ -1839,7 +1839,7 @@ Test clang-3.5 64bit_int16_nan:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-DMRB_INT16=1 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.5 64bit_int16_nan_utf8:
@@ -1849,7 +1849,7 @@ Test clang-3.5 64bit_int16_nan_utf8:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-DMRB_INT16=1 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.5 64bit_int64:
@@ -1859,7 +1859,7 @@ Test clang-3.5 64bit_int64:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-DMRB_INT64=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DINT64=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.5 64bit_int64_utf8:
@@ -1869,7 +1869,7 @@ Test clang-3.5 64bit_int64_utf8:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-DMRB_INT64=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.5 64bit_float:
@@ -1879,7 +1879,7 @@ Test clang-3.5 64bit_float:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.5 64bit_float_utf8:
@@ -1889,7 +1889,7 @@ Test clang-3.5 64bit_float_utf8:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.5 64bit_float_int16:
@@ -1899,7 +1899,7 @@ Test clang-3.5 64bit_float_int16:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT16=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.5 64bit_float_int16_utf8:
@@ -1909,7 +1909,7 @@ Test clang-3.5 64bit_float_int16_utf8:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.5 64bit_float_int64:
@@ -1919,7 +1919,7 @@ Test clang-3.5 64bit_float_int64:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.5 64bit_float_int64_utf8:
@@ -1929,7 +1929,7 @@ Test clang-3.5 64bit_float_int64_utf8:
     CC: clang-3.5
     CXX: clang++-3.5
     LD: clang-3.5
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.6 32bit:
@@ -1939,7 +1939,7 @@ Test clang-3.6 32bit:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-m32 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-m32 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.6 32bit_utf8:
@@ -1949,7 +1949,7 @@ Test clang-3.6 32bit_utf8:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-m32 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.6 32bit_nan:
@@ -1959,7 +1959,7 @@ Test clang-3.6 32bit_nan:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-m32 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-m32 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.6 32bit_nan_utf8:
@@ -1969,7 +1969,7 @@ Test clang-3.6 32bit_nan_utf8:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-m32 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.6 32bit_int16:
@@ -1979,7 +1979,7 @@ Test clang-3.6 32bit_int16:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-m32 -DMRB_INT16=1"
+    CFLAGS: "-m32 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.6 32bit_int16_utf8:
@@ -1989,7 +1989,7 @@ Test clang-3.6 32bit_int16_utf8:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.6 32bit_int16_nan:
@@ -1999,7 +1999,7 @@ Test clang-3.6 32bit_int16_nan:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.6 32bit_int16_nan_utf8:
@@ -2009,7 +2009,7 @@ Test clang-3.6 32bit_int16_nan_utf8:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.6 32bit_int64:
@@ -2019,7 +2019,7 @@ Test clang-3.6 32bit_int64:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-m32 -DMRB_INT64=1"
+    CFLAGS: "-m32 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.6 32bit_int64_utf8:
@@ -2029,7 +2029,7 @@ Test clang-3.6 32bit_int64_utf8:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-m32 -DMRB_INT64=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.6 32bit_float:
@@ -2039,7 +2039,7 @@ Test clang-3.6 32bit_float:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.6 32bit_float_utf8:
@@ -2049,7 +2049,7 @@ Test clang-3.6 32bit_float_utf8:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.6 32bit_float_int16:
@@ -2059,7 +2059,7 @@ Test clang-3.6 32bit_float_int16:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT16=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.6 32bit_float_int16_utf8:
@@ -2069,7 +2069,7 @@ Test clang-3.6 32bit_float_int16_utf8:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.6 32bit_float_int64:
@@ -2079,7 +2079,7 @@ Test clang-3.6 32bit_float_int64:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT64=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.6 32bit_float_int64_utf8:
@@ -2089,7 +2089,7 @@ Test clang-3.6 32bit_float_int64_utf8:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.6 64bit:
@@ -2099,7 +2099,7 @@ Test clang-3.6 64bit:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-DMRB_WORD_BOXING=1"
+    CFLAGS: "-DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.6 64bit_utf8:
@@ -2109,7 +2109,7 @@ Test clang-3.6 64bit_utf8:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.6 64bit_nan:
@@ -2119,7 +2119,7 @@ Test clang-3.6 64bit_nan:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-DMRB_NAN_BOXING=1"
+    CFLAGS: "-DNAN_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.6 64bit_nan_utf8:
@@ -2129,7 +2129,7 @@ Test clang-3.6 64bit_nan_utf8:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.6 64bit_int16:
@@ -2139,7 +2139,7 @@ Test clang-3.6 64bit_int16:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-DMRB_INT16=1"
+    CFLAGS: "-DINT16=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.6 64bit_int16_utf8:
@@ -2149,7 +2149,7 @@ Test clang-3.6 64bit_int16_utf8:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.6 64bit_int16_nan:
@@ -2159,7 +2159,7 @@ Test clang-3.6 64bit_int16_nan:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-DMRB_INT16=1 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.6 64bit_int16_nan_utf8:
@@ -2169,7 +2169,7 @@ Test clang-3.6 64bit_int16_nan_utf8:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-DMRB_INT16=1 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.6 64bit_int64:
@@ -2179,7 +2179,7 @@ Test clang-3.6 64bit_int64:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-DMRB_INT64=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DINT64=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.6 64bit_int64_utf8:
@@ -2189,7 +2189,7 @@ Test clang-3.6 64bit_int64_utf8:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-DMRB_INT64=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.6 64bit_float:
@@ -2199,7 +2199,7 @@ Test clang-3.6 64bit_float:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.6 64bit_float_utf8:
@@ -2209,7 +2209,7 @@ Test clang-3.6 64bit_float_utf8:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.6 64bit_float_int16:
@@ -2219,7 +2219,7 @@ Test clang-3.6 64bit_float_int16:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT16=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.6 64bit_float_int16_utf8:
@@ -2229,7 +2229,7 @@ Test clang-3.6 64bit_float_int16_utf8:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.6 64bit_float_int64:
@@ -2239,7 +2239,7 @@ Test clang-3.6 64bit_float_int64:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.6 64bit_float_int64_utf8:
@@ -2249,7 +2249,7 @@ Test clang-3.6 64bit_float_int64_utf8:
     CC: clang-3.6
     CXX: clang++-3.6
     LD: clang-3.6
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.7 32bit:
@@ -2259,7 +2259,7 @@ Test clang-3.7 32bit:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-m32 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-m32 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.7 32bit_utf8:
@@ -2269,7 +2269,7 @@ Test clang-3.7 32bit_utf8:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-m32 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.7 32bit_nan:
@@ -2279,7 +2279,7 @@ Test clang-3.7 32bit_nan:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-m32 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-m32 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.7 32bit_nan_utf8:
@@ -2289,7 +2289,7 @@ Test clang-3.7 32bit_nan_utf8:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-m32 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.7 32bit_int16:
@@ -2299,7 +2299,7 @@ Test clang-3.7 32bit_int16:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-m32 -DMRB_INT16=1"
+    CFLAGS: "-m32 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.7 32bit_int16_utf8:
@@ -2309,7 +2309,7 @@ Test clang-3.7 32bit_int16_utf8:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.7 32bit_int16_nan:
@@ -2319,7 +2319,7 @@ Test clang-3.7 32bit_int16_nan:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.7 32bit_int16_nan_utf8:
@@ -2329,7 +2329,7 @@ Test clang-3.7 32bit_int16_nan_utf8:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.7 32bit_int64:
@@ -2339,7 +2339,7 @@ Test clang-3.7 32bit_int64:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-m32 -DMRB_INT64=1"
+    CFLAGS: "-m32 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.7 32bit_int64_utf8:
@@ -2349,7 +2349,7 @@ Test clang-3.7 32bit_int64_utf8:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-m32 -DMRB_INT64=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.7 32bit_float:
@@ -2359,7 +2359,7 @@ Test clang-3.7 32bit_float:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.7 32bit_float_utf8:
@@ -2369,7 +2369,7 @@ Test clang-3.7 32bit_float_utf8:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.7 32bit_float_int16:
@@ -2379,7 +2379,7 @@ Test clang-3.7 32bit_float_int16:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT16=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.7 32bit_float_int16_utf8:
@@ -2389,7 +2389,7 @@ Test clang-3.7 32bit_float_int16_utf8:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.7 32bit_float_int64:
@@ -2399,7 +2399,7 @@ Test clang-3.7 32bit_float_int64:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT64=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.7 32bit_float_int64_utf8:
@@ -2409,7 +2409,7 @@ Test clang-3.7 32bit_float_int64_utf8:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.7 64bit:
@@ -2419,7 +2419,7 @@ Test clang-3.7 64bit:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-DMRB_WORD_BOXING=1"
+    CFLAGS: "-DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.7 64bit_utf8:
@@ -2429,7 +2429,7 @@ Test clang-3.7 64bit_utf8:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.7 64bit_nan:
@@ -2439,7 +2439,7 @@ Test clang-3.7 64bit_nan:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-DMRB_NAN_BOXING=1"
+    CFLAGS: "-DNAN_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.7 64bit_nan_utf8:
@@ -2449,7 +2449,7 @@ Test clang-3.7 64bit_nan_utf8:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.7 64bit_int16:
@@ -2459,7 +2459,7 @@ Test clang-3.7 64bit_int16:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-DMRB_INT16=1"
+    CFLAGS: "-DINT16=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.7 64bit_int16_utf8:
@@ -2469,7 +2469,7 @@ Test clang-3.7 64bit_int16_utf8:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.7 64bit_int16_nan:
@@ -2479,7 +2479,7 @@ Test clang-3.7 64bit_int16_nan:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-DMRB_INT16=1 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.7 64bit_int16_nan_utf8:
@@ -2489,7 +2489,7 @@ Test clang-3.7 64bit_int16_nan_utf8:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-DMRB_INT16=1 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.7 64bit_int64:
@@ -2499,7 +2499,7 @@ Test clang-3.7 64bit_int64:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-DMRB_INT64=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DINT64=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.7 64bit_int64_utf8:
@@ -2509,7 +2509,7 @@ Test clang-3.7 64bit_int64_utf8:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-DMRB_INT64=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.7 64bit_float:
@@ -2519,7 +2519,7 @@ Test clang-3.7 64bit_float:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.7 64bit_float_utf8:
@@ -2529,7 +2529,7 @@ Test clang-3.7 64bit_float_utf8:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.7 64bit_float_int16:
@@ -2539,7 +2539,7 @@ Test clang-3.7 64bit_float_int16:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT16=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.7 64bit_float_int16_utf8:
@@ -2549,7 +2549,7 @@ Test clang-3.7 64bit_float_int16_utf8:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.7 64bit_float_int64:
@@ -2559,7 +2559,7 @@ Test clang-3.7 64bit_float_int64:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.7 64bit_float_int64_utf8:
@@ -2569,7 +2569,7 @@ Test clang-3.7 64bit_float_int64_utf8:
     CC: clang-3.7
     CXX: clang++-3.7
     LD: clang-3.7
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.8 32bit:
@@ -2579,7 +2579,7 @@ Test clang-3.8 32bit:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-m32 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-m32 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.8 32bit_utf8:
@@ -2589,7 +2589,7 @@ Test clang-3.8 32bit_utf8:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-m32 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.8 32bit_nan:
@@ -2599,7 +2599,7 @@ Test clang-3.8 32bit_nan:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-m32 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-m32 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.8 32bit_nan_utf8:
@@ -2609,7 +2609,7 @@ Test clang-3.8 32bit_nan_utf8:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-m32 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.8 32bit_int16:
@@ -2619,7 +2619,7 @@ Test clang-3.8 32bit_int16:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-m32 -DMRB_INT16=1"
+    CFLAGS: "-m32 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.8 32bit_int16_utf8:
@@ -2629,7 +2629,7 @@ Test clang-3.8 32bit_int16_utf8:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.8 32bit_int16_nan:
@@ -2639,7 +2639,7 @@ Test clang-3.8 32bit_int16_nan:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.8 32bit_int16_nan_utf8:
@@ -2649,7 +2649,7 @@ Test clang-3.8 32bit_int16_nan_utf8:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.8 32bit_int64:
@@ -2659,7 +2659,7 @@ Test clang-3.8 32bit_int64:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-m32 -DMRB_INT64=1"
+    CFLAGS: "-m32 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.8 32bit_int64_utf8:
@@ -2669,7 +2669,7 @@ Test clang-3.8 32bit_int64_utf8:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-m32 -DMRB_INT64=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.8 32bit_float:
@@ -2679,7 +2679,7 @@ Test clang-3.8 32bit_float:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.8 32bit_float_utf8:
@@ -2689,7 +2689,7 @@ Test clang-3.8 32bit_float_utf8:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.8 32bit_float_int16:
@@ -2699,7 +2699,7 @@ Test clang-3.8 32bit_float_int16:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT16=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.8 32bit_float_int16_utf8:
@@ -2709,7 +2709,7 @@ Test clang-3.8 32bit_float_int16_utf8:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.8 32bit_float_int64:
@@ -2719,7 +2719,7 @@ Test clang-3.8 32bit_float_int64:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT64=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.8 32bit_float_int64_utf8:
@@ -2729,7 +2729,7 @@ Test clang-3.8 32bit_float_int64_utf8:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.8 64bit:
@@ -2739,7 +2739,7 @@ Test clang-3.8 64bit:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-DMRB_WORD_BOXING=1"
+    CFLAGS: "-DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.8 64bit_utf8:
@@ -2749,7 +2749,7 @@ Test clang-3.8 64bit_utf8:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.8 64bit_nan:
@@ -2759,7 +2759,7 @@ Test clang-3.8 64bit_nan:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-DMRB_NAN_BOXING=1"
+    CFLAGS: "-DNAN_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.8 64bit_nan_utf8:
@@ -2769,7 +2769,7 @@ Test clang-3.8 64bit_nan_utf8:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.8 64bit_int16:
@@ -2779,7 +2779,7 @@ Test clang-3.8 64bit_int16:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-DMRB_INT16=1"
+    CFLAGS: "-DINT16=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.8 64bit_int16_utf8:
@@ -2789,7 +2789,7 @@ Test clang-3.8 64bit_int16_utf8:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.8 64bit_int16_nan:
@@ -2799,7 +2799,7 @@ Test clang-3.8 64bit_int16_nan:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-DMRB_INT16=1 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.8 64bit_int16_nan_utf8:
@@ -2809,7 +2809,7 @@ Test clang-3.8 64bit_int16_nan_utf8:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-DMRB_INT16=1 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.8 64bit_int64:
@@ -2819,7 +2819,7 @@ Test clang-3.8 64bit_int64:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-DMRB_INT64=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DINT64=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.8 64bit_int64_utf8:
@@ -2829,7 +2829,7 @@ Test clang-3.8 64bit_int64_utf8:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-DMRB_INT64=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.8 64bit_float:
@@ -2839,7 +2839,7 @@ Test clang-3.8 64bit_float:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.8 64bit_float_utf8:
@@ -2849,7 +2849,7 @@ Test clang-3.8 64bit_float_utf8:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.8 64bit_float_int16:
@@ -2859,7 +2859,7 @@ Test clang-3.8 64bit_float_int16:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT16=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.8 64bit_float_int16_utf8:
@@ -2869,7 +2869,7 @@ Test clang-3.8 64bit_float_int16_utf8:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.8 64bit_float_int64:
@@ -2879,7 +2879,7 @@ Test clang-3.8 64bit_float_int64:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.8 64bit_float_int64_utf8:
@@ -2889,7 +2889,7 @@ Test clang-3.8 64bit_float_int64_utf8:
     CC: clang-3.8
     CXX: clang++-3.8
     LD: clang-3.8
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.9 32bit:
@@ -2899,7 +2899,7 @@ Test clang-3.9 32bit:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-m32 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-m32 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.9 32bit_utf8:
@@ -2909,7 +2909,7 @@ Test clang-3.9 32bit_utf8:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-m32 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.9 32bit_nan:
@@ -2919,7 +2919,7 @@ Test clang-3.9 32bit_nan:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-m32 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-m32 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.9 32bit_nan_utf8:
@@ -2929,7 +2929,7 @@ Test clang-3.9 32bit_nan_utf8:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-m32 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.9 32bit_int16:
@@ -2939,7 +2939,7 @@ Test clang-3.9 32bit_int16:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-m32 -DMRB_INT16=1"
+    CFLAGS: "-m32 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.9 32bit_int16_utf8:
@@ -2949,7 +2949,7 @@ Test clang-3.9 32bit_int16_utf8:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.9 32bit_int16_nan:
@@ -2959,7 +2959,7 @@ Test clang-3.9 32bit_int16_nan:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.9 32bit_int16_nan_utf8:
@@ -2969,7 +2969,7 @@ Test clang-3.9 32bit_int16_nan_utf8:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-m32 -DMRB_INT16=1 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.9 32bit_int64:
@@ -2979,7 +2979,7 @@ Test clang-3.9 32bit_int64:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-m32 -DMRB_INT64=1"
+    CFLAGS: "-m32 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.9 32bit_int64_utf8:
@@ -2989,7 +2989,7 @@ Test clang-3.9 32bit_int64_utf8:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-m32 -DMRB_INT64=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.9 32bit_float:
@@ -2999,7 +2999,7 @@ Test clang-3.9 32bit_float:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.9 32bit_float_utf8:
@@ -3009,7 +3009,7 @@ Test clang-3.9 32bit_float_utf8:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.9 32bit_float_int16:
@@ -3019,7 +3019,7 @@ Test clang-3.9 32bit_float_int16:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT16=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.9 32bit_float_int16_utf8:
@@ -3029,7 +3029,7 @@ Test clang-3.9 32bit_float_int16_utf8:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.9 32bit_float_int64:
@@ -3039,7 +3039,7 @@ Test clang-3.9 32bit_float_int64:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT64=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.9 32bit_float_int64_utf8:
@@ -3049,7 +3049,7 @@ Test clang-3.9 32bit_float_int64_utf8:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-m32 -DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-m32 -DUSE_FLOAT=1 -DINT64=1 -DUTF8_STRING=1"
     LDFLAGS: "-m32"
   script: env; ./minirake --verbose all test
 Test clang-3.9 64bit:
@@ -3059,7 +3059,7 @@ Test clang-3.9 64bit:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-DMRB_WORD_BOXING=1"
+    CFLAGS: "-DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.9 64bit_utf8:
@@ -3069,7 +3069,7 @@ Test clang-3.9 64bit_utf8:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.9 64bit_nan:
@@ -3079,7 +3079,7 @@ Test clang-3.9 64bit_nan:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-DMRB_NAN_BOXING=1"
+    CFLAGS: "-DNAN_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.9 64bit_nan_utf8:
@@ -3089,7 +3089,7 @@ Test clang-3.9 64bit_nan_utf8:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.9 64bit_int16:
@@ -3099,7 +3099,7 @@ Test clang-3.9 64bit_int16:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-DMRB_INT16=1"
+    CFLAGS: "-DINT16=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.9 64bit_int16_utf8:
@@ -3109,7 +3109,7 @@ Test clang-3.9 64bit_int16_utf8:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.9 64bit_int16_nan:
@@ -3119,7 +3119,7 @@ Test clang-3.9 64bit_int16_nan:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-DMRB_INT16=1 -DMRB_NAN_BOXING=1"
+    CFLAGS: "-DINT16=1 -DNAN_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.9 64bit_int16_nan_utf8:
@@ -3129,7 +3129,7 @@ Test clang-3.9 64bit_int16_nan_utf8:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-DMRB_INT16=1 -DMRB_NAN_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT16=1 -DNAN_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.9 64bit_int64:
@@ -3139,7 +3139,7 @@ Test clang-3.9 64bit_int64:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-DMRB_INT64=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DINT64=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.9 64bit_int64_utf8:
@@ -3149,7 +3149,7 @@ Test clang-3.9 64bit_int64_utf8:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-DMRB_INT64=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.9 64bit_float:
@@ -3159,7 +3159,7 @@ Test clang-3.9 64bit_float:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.9 64bit_float_utf8:
@@ -3169,7 +3169,7 @@ Test clang-3.9 64bit_float_utf8:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.9 64bit_float_int16:
@@ -3179,7 +3179,7 @@ Test clang-3.9 64bit_float_int16:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT16=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT16=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.9 64bit_float_int16_utf8:
@@ -3189,7 +3189,7 @@ Test clang-3.9 64bit_float_int16_utf8:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT16=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT16=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.9 64bit_float_int64:
@@ -3199,7 +3199,7 @@ Test clang-3.9 64bit_float_int64:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_WORD_BOXING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test
 Test clang-3.9 64bit_float_int64_utf8:
@@ -3209,6 +3209,6 @@ Test clang-3.9 64bit_float_int64_utf8:
     CC: clang-3.9
     CXX: clang++-3.9
     LD: clang-3.9
-    CFLAGS: "-DMRB_USE_FLOAT=1 -DMRB_INT64=1 -DMRB_WORD_BOXING=1 -DMRB_UTF8_STRING=1"
+    CFLAGS: "-DUSE_FLOAT=1 -DINT64=1 -DWORD_BOXING=1 -DUTF8_STRING=1"
     LDFLAGS: ''
   script: env; ./minirake --verbose all test

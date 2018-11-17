@@ -14,64 +14,64 @@
 #endif
 
 #ifdef __cplusplus
-#ifdef MRB_ENABLE_CXX_ABI
-#define MRB_BEGIN_DECL
-#define MRB_END_DECL
+#ifdef ENABLE_CXX_ABI
+#define BEGIN_DECL
+#define END_DECL
 #else
-# define MRB_BEGIN_DECL extern "C" {
-# define MRB_END_DECL }
+# define BEGIN_DECL extern "C" {
+# define END_DECL }
 #endif
 #else
 /** Start declarations in C mode */
-# define MRB_BEGIN_DECL
+# define BEGIN_DECL
 /** End declarations in C mode */
-# define MRB_END_DECL
+# define END_DECL
 #endif
 
 /**
  * Shared compiler macros
  */
-MRB_BEGIN_DECL
+BEGIN_DECL
 
 /** Declare a function that never returns. */
 #if __STDC_VERSION__ >= 201112L
-# define mrb_noreturn _Noreturn
+# define noreturn _Noreturn
 #elif defined __GNUC__ && !defined __STRICT_ANSI__
-# define mrb_noreturn __attribute__((noreturn))
+# define noreturn __attribute__((noreturn))
 #elif defined _MSC_VER
-# define mrb_noreturn __declspec(noreturn)
+# define noreturn __declspec(noreturn)
 #else
-# define mrb_noreturn
+# define noreturn
 #endif
 
 /** Mark a function as deprecated. */
 #if defined __GNUC__ && !defined __STRICT_ANSI__
-# define mrb_deprecated __attribute__((deprecated))
+# define deprecated __attribute__((deprecated))
 #elif defined _MSC_VER
-# define mrb_deprecated __declspec(deprecated)
+# define deprecated __declspec(deprecated)
 #else
-# define mrb_deprecated
+# define deprecated
 #endif
 
 /** Declare a function as always inlined. */
 #if defined(_MSC_VER)
-# define MRB_INLINE static __inline
+# define INLINE static __inline
 #else
-# define MRB_INLINE static inline
+# define INLINE static inline
 #endif
 
 
 /** Declare a public MRuby API function. */
-#if defined(MRB_BUILD_AS_DLL)
-#if defined(MRB_CORE) || defined(MRB_LIB)
-# define MRB_API __declspec(dllexport)
+#if defined(BUILD_AS_DLL)
+#if defined(CORE) || defined(LIB)
+# define API __declspec(dllexport)
 #else
-# define MRB_API __declspec(dllimport)
+# define API __declspec(dllimport)
 #endif
 #else
-# define MRB_API extern
+# define API extern
 #endif
 
-MRB_END_DECL
+END_DECL
 
 #endif  /* MRUBY_COMMON_H */

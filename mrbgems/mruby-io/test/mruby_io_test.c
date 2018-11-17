@@ -62,8 +62,8 @@ mkdtemp(char *temp)
 #include "mruby/string.h"
 #include "mruby/variable.h"
 
-static mrb_value
-mrb_io_test_io_setup(mrb_state *mrb, mrb_value self)
+static value
+io_test_io_setup(state *mrb, value self)
 {
   char rfname[]      = "tmp.mruby-io-test-r.XXXXXXXX";
   char wfname[]      = "tmp.mruby-io-test-w.XXXXXXXX";
@@ -83,8 +83,8 @@ mrb_io_test_io_setup(mrb_state *mrb, mrb_value self)
   fd0 = mkstemp(rfname);
   fd1 = mkstemp(wfname);
   if (fd0 == -1 || fd1 == -1) {
-    mrb_raise(mrb, E_RUNTIME_ERROR, "can't create temporary file");
-    return mrb_nil_value();
+    raise(mrb, E_RUNTIME_ERROR, "can't create temporary file");
+    return nil_value();
   }
   close(fd0);
   close(fd1);
@@ -93,30 +93,30 @@ mrb_io_test_io_setup(mrb_state *mrb, mrb_value self)
   fd2 = mkstemp(symlinkname);
   fd3 = mkstemp(socketname);
   if (fd2 == -1 || fd3 == -1) {
-    mrb_raise(mrb, E_RUNTIME_ERROR, "can't create temporary file");
-    return mrb_nil_value();
+    raise(mrb, E_RUNTIME_ERROR, "can't create temporary file");
+    return nil_value();
   }
 #endif
   umask(mask);
 
-  mrb_gv_set(mrb, mrb_intern_cstr(mrb, "$mrbtest_io_rfname"), mrb_str_new_cstr(mrb, rfname));
-  mrb_gv_set(mrb, mrb_intern_cstr(mrb, "$mrbtest_io_wfname"), mrb_str_new_cstr(mrb, wfname));
-  mrb_gv_set(mrb, mrb_intern_cstr(mrb, "$mrbtest_io_symlinkname"), mrb_str_new_cstr(mrb, symlinkname));
-  mrb_gv_set(mrb, mrb_intern_cstr(mrb, "$mrbtest_io_socketname"), mrb_str_new_cstr(mrb, socketname));
-  mrb_gv_set(mrb, mrb_intern_cstr(mrb, "$mrbtest_io_msg"), mrb_str_new_cstr(mrb, msg));
+  gv_set(mrb, intern_cstr(mrb, "$mrbtest_io_rfname"), str_new_cstr(mrb, rfname));
+  gv_set(mrb, intern_cstr(mrb, "$mrbtest_io_wfname"), str_new_cstr(mrb, wfname));
+  gv_set(mrb, intern_cstr(mrb, "$mrbtest_io_symlinkname"), str_new_cstr(mrb, symlinkname));
+  gv_set(mrb, intern_cstr(mrb, "$mrbtest_io_socketname"), str_new_cstr(mrb, socketname));
+  gv_set(mrb, intern_cstr(mrb, "$mrbtest_io_msg"), str_new_cstr(mrb, msg));
 
   fp = fopen(rfname, "wb");
   if (fp == NULL) {
-    mrb_raise(mrb, E_RUNTIME_ERROR, "can't open temporary file");
-    return mrb_nil_value();
+    raise(mrb, E_RUNTIME_ERROR, "can't open temporary file");
+    return nil_value();
   }
   fputs(msg, fp);
   fclose(fp);
 
   fp = fopen(wfname, "wb");
   if (fp == NULL) {
-    mrb_raise(mrb, E_RUNTIME_ERROR, "can't open temporary file");
-    return mrb_nil_value();
+    raise(mrb, E_RUNTIME_ERROR, "can't open temporary file");
+    return nil_value();
   }
   fclose(fp);
 
@@ -124,133 +124,133 @@ mrb_io_test_io_setup(mrb_state *mrb, mrb_value self)
   unlink(symlinkname);
   close(fd2);
   if (symlink(rfname, symlinkname) == -1) {
-    mrb_raise(mrb, E_RUNTIME_ERROR, "can't make a symbolic link");
+    raise(mrb, E_RUNTIME_ERROR, "can't make a symbolic link");
   }
 
   unlink(socketname);
   close(fd3);
   fd3 = socket(AF_UNIX, SOCK_STREAM, 0);
   if (fd3 == -1) {
-    mrb_raise(mrb, E_RUNTIME_ERROR, "can't make a socket");
+    raise(mrb, E_RUNTIME_ERROR, "can't make a socket");
   }
   sun0.sun_family = AF_UNIX;
   snprintf(sun0.sun_path, sizeof(sun0.sun_path), "%s", socketname);
   if (bind(fd3, (struct sockaddr *)&sun0, sizeof(sun0)) == -1) {
-    mrb_raisef(mrb, E_RUNTIME_ERROR, "can't bind AF_UNIX socket to %S: %S",
-               mrb_str_new_cstr(mrb, sun0.sun_path),
-               mrb_fixnum_value(errno));
+    raisef(mrb, E_RUNTIME_ERROR, "can't bind AF_UNIX socket to %S: %S",
+               str_new_cstr(mrb, sun0.sun_path),
+               fixnum_value(errno));
   }
   close(fd3);
 #endif
 
-  return mrb_true_value();
+  return true_value();
 }
 
-static mrb_value
-mrb_io_test_io_cleanup(mrb_state *mrb, mrb_value self)
+static value
+io_test_io_cleanup(state *mrb, value self)
 {
-  mrb_value rfname = mrb_gv_get(mrb, mrb_intern_cstr(mrb, "$mrbtest_io_rfname"));
-  mrb_value wfname = mrb_gv_get(mrb, mrb_intern_cstr(mrb, "$mrbtest_io_wfname"));
-  mrb_value symlinkname = mrb_gv_get(mrb, mrb_intern_cstr(mrb, "$mrbtest_io_symlinkname"));
-  mrb_value socketname = mrb_gv_get(mrb, mrb_intern_cstr(mrb, "$mrbtest_io_socketname"));
+  value rfname = gv_get(mrb, intern_cstr(mrb, "$mrbtest_io_rfname"));
+  value wfname = gv_get(mrb, intern_cstr(mrb, "$mrbtest_io_wfname"));
+  value symlinkname = gv_get(mrb, intern_cstr(mrb, "$mrbtest_io_symlinkname"));
+  value socketname = gv_get(mrb, intern_cstr(mrb, "$mrbtest_io_socketname"));
 
-  if (mrb_type(rfname) == MRB_TT_STRING) {
+  if (type(rfname) == TT_STRING) {
     remove(RSTRING_PTR(rfname));
   }
-  if (mrb_type(wfname) == MRB_TT_STRING) {
+  if (type(wfname) == TT_STRING) {
     remove(RSTRING_PTR(wfname));
   }
-  if (mrb_type(symlinkname) == MRB_TT_STRING) {
+  if (type(symlinkname) == TT_STRING) {
     remove(RSTRING_PTR(symlinkname));
   }
-  if (mrb_type(socketname) == MRB_TT_STRING) {
+  if (type(socketname) == TT_STRING) {
     remove(RSTRING_PTR(socketname));
   }
 
-  mrb_gv_set(mrb, mrb_intern_cstr(mrb, "$mrbtest_io_rfname"), mrb_nil_value());
-  mrb_gv_set(mrb, mrb_intern_cstr(mrb, "$mrbtest_io_wfname"), mrb_nil_value());
-  mrb_gv_set(mrb, mrb_intern_cstr(mrb, "$mrbtest_io_symlinkname"), mrb_nil_value());
-  mrb_gv_set(mrb, mrb_intern_cstr(mrb, "$mrbtest_io_socketname"), mrb_nil_value());
-  mrb_gv_set(mrb, mrb_intern_cstr(mrb, "$mrbtest_io_msg"), mrb_nil_value());
+  gv_set(mrb, intern_cstr(mrb, "$mrbtest_io_rfname"), nil_value());
+  gv_set(mrb, intern_cstr(mrb, "$mrbtest_io_wfname"), nil_value());
+  gv_set(mrb, intern_cstr(mrb, "$mrbtest_io_symlinkname"), nil_value());
+  gv_set(mrb, intern_cstr(mrb, "$mrbtest_io_socketname"), nil_value());
+  gv_set(mrb, intern_cstr(mrb, "$mrbtest_io_msg"), nil_value());
 
-  return mrb_nil_value();
+  return nil_value();
 }
 
-static mrb_value
-mrb_io_test_file_setup(mrb_state *mrb, mrb_value self)
+static value
+io_test_file_setup(state *mrb, value self)
 {
-  mrb_value ary = mrb_io_test_io_setup(mrb, self);
+  value ary = io_test_io_setup(mrb, self);
 #if !defined(_WIN32) && !defined(_WIN64)
   if (symlink("/usr/bin", "test-bin") == -1) {
-    mrb_raise(mrb, E_RUNTIME_ERROR, "can't make a symbolic link");
+    raise(mrb, E_RUNTIME_ERROR, "can't make a symbolic link");
   }
 #endif
 
   return ary;
 }
 
-static mrb_value
-mrb_io_test_file_cleanup(mrb_state *mrb, mrb_value self)
+static value
+io_test_file_cleanup(state *mrb, value self)
 {
-  mrb_io_test_io_cleanup(mrb, self);
+  io_test_io_cleanup(mrb, self);
   remove("test-bin");
 
-  return mrb_nil_value();
+  return nil_value();
 }
 
-static mrb_value
-mrb_io_test_mkdtemp(mrb_state *mrb, mrb_value klass)
+static value
+io_test_mkdtemp(state *mrb, value klass)
 {
-  mrb_value str;
+  value str;
   char *cp;
 
-  mrb_get_args(mrb, "S", &str);
-  cp = mrb_str_to_cstr(mrb, str);
+  get_args(mrb, "S", &str);
+  cp = str_to_cstr(mrb, str);
   if (mkdtemp(cp) == NULL) {
-    mrb_sys_fail(mrb, "mkdtemp");
+    sys_fail(mrb, "mkdtemp");
   }
-  return mrb_str_new_cstr(mrb, cp);
+  return str_new_cstr(mrb, cp);
 }
 
-static mrb_value
-mrb_io_test_rmdir(mrb_state *mrb, mrb_value klass)
+static value
+io_test_rmdir(state *mrb, value klass)
 {
-  mrb_value str;
+  value str;
   char *cp;
 
-  mrb_get_args(mrb, "S", &str);
-  cp = mrb_str_to_cstr(mrb, str);
+  get_args(mrb, "S", &str);
+  cp = str_to_cstr(mrb, str);
   if (rmdir(cp) == -1) {
-    mrb_sys_fail(mrb, "rmdir");
+    sys_fail(mrb, "rmdir");
   }
-  return mrb_true_value();
+  return true_value();
 }
 
-mrb_value
-mrb_io_win_p(mrb_state *mrb, mrb_value klass)
+value
+io_win_p(state *mrb, value klass)
 {
 #if defined(_WIN32) || defined(_WIN64)
 # if defined(__CYGWIN__) || defined(__CYGWIN32__)
-  return mrb_false_value();
+  return false_value();
 # else
-  return mrb_true_value();
+  return true_value();
 # endif
 #else
-  return mrb_false_value();
+  return false_value();
 #endif
 }
 
 void
-mrb_mruby_io_gem_test(mrb_state* mrb)
+mruby_io_gem_test(state* mrb)
 {
-  struct RClass *io_test = mrb_define_module(mrb, "MRubyIOTestUtil");
-  mrb_define_class_method(mrb, io_test, "io_test_setup", mrb_io_test_io_setup, MRB_ARGS_NONE());
-  mrb_define_class_method(mrb, io_test, "io_test_cleanup", mrb_io_test_io_cleanup, MRB_ARGS_NONE());
+  struct RClass *io_test = define_module(mrb, "MRubyIOTestUtil");
+  define_class_method(mrb, io_test, "io_test_setup", io_test_io_setup, ARGS_NONE());
+  define_class_method(mrb, io_test, "io_test_cleanup", io_test_io_cleanup, ARGS_NONE());
 
-  mrb_define_class_method(mrb, io_test, "file_test_setup", mrb_io_test_file_setup, MRB_ARGS_NONE());
-  mrb_define_class_method(mrb, io_test, "file_test_cleanup", mrb_io_test_file_cleanup, MRB_ARGS_NONE());
+  define_class_method(mrb, io_test, "file_test_setup", io_test_file_setup, ARGS_NONE());
+  define_class_method(mrb, io_test, "file_test_cleanup", io_test_file_cleanup, ARGS_NONE());
 
-  mrb_define_class_method(mrb, io_test, "mkdtemp", mrb_io_test_mkdtemp, MRB_ARGS_REQ(1));
-  mrb_define_class_method(mrb, io_test, "rmdir", mrb_io_test_rmdir, MRB_ARGS_REQ(1));
-  mrb_define_class_method(mrb, io_test, "win?", mrb_io_win_p, MRB_ARGS_NONE());
+  define_class_method(mrb, io_test, "mkdtemp", io_test_mkdtemp, ARGS_REQ(1));
+  define_class_method(mrb, io_test, "rmdir", io_test_rmdir, ARGS_REQ(1));
+  define_class_method(mrb, io_test, "win?", io_win_p, ARGS_NONE());
 }

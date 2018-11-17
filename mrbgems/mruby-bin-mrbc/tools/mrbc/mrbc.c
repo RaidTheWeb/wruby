@@ -16,9 +16,9 @@ struct mrbc_args {
   const char *prog;
   const char *outfile;
   const char *initname;
-  mrb_bool check_syntax : 1;
-  mrb_bool verbose      : 1;
-  mrb_bool remove_lv    : 1;
+  bool check_syntax : 1;
+  bool verbose      : 1;
+  bool remove_lv    : 1;
   unsigned int flags    : 4;
 };
 
@@ -48,7 +48,7 @@ usage(const char *name)
 }
 
 static char *
-get_outfilename(mrb_state *mrb, char *infile, const char *ext)
+get_outfilename(state *mrb, char *infile, const char *ext)
 {
   size_t infilelen;
   size_t extlen;
@@ -57,7 +57,7 @@ get_outfilename(mrb_state *mrb, char *infile, const char *ext)
 
   infilelen = strlen(infile);
   extlen = strlen(ext);
-  outfile = (char*)mrb_malloc(mrb, infilelen + extlen + 1);
+  outfile = (char*)malloc(mrb, infilelen + extlen + 1);
   memcpy(outfile, infile, infilelen + 1);
   if (*ext) {
     if ((p = strrchr(outfile, '.')) == NULL)
@@ -69,7 +69,7 @@ get_outfilename(mrb_state *mrb, char *infile, const char *ext)
 }
 
 static int
-parse_args(mrb_state *mrb, int argc, char **argv, struct mrbc_args *args)
+parse_args(state *mrb, int argc, char **argv, struct mrbc_args *args)
 {
   char *outfile = NULL;
   static const struct mrbc_args args_zero = { 0 };
@@ -114,7 +114,7 @@ parse_args(mrb_state *mrb, int argc, char **argv, struct mrbc_args *args)
         args->check_syntax = TRUE;
         break;
       case 'v':
-        if (!args->verbose) mrb_show_version(mrb);
+        if (!args->verbose) show_version(mrb);
         args->verbose = TRUE;
         break;
       case 'g':
@@ -133,7 +133,7 @@ parse_args(mrb_state *mrb, int argc, char **argv, struct mrbc_args *args)
           return i;
         }
         if (strcmp(argv[i] + 2, "version") == 0) {
-          mrb_show_version(mrb);
+          show_version(mrb);
           exit(EXIT_SUCCESS);
         }
         else if (strcmp(argv[i] + 2, "verbose") == 0) {
@@ -141,7 +141,7 @@ parse_args(mrb_state *mrb, int argc, char **argv, struct mrbc_args *args)
           break;
         }
         else if (strcmp(argv[i] + 2, "copyright") == 0) {
-          mrb_show_copyright(mrb);
+          show_copyright(mrb);
           exit(EXIT_SUCCESS);
         }
         else if (strcmp(argv[i] + 2, "remove-lv") == 0) {
@@ -165,14 +165,14 @@ parse_args(mrb_state *mrb, int argc, char **argv, struct mrbc_args *args)
 }
 
 static void
-cleanup(mrb_state *mrb, struct mrbc_args *args)
+cleanup(state *mrb, struct mrbc_args *args)
 {
-  mrb_free(mrb, (void*)args->outfile);
-  mrb_close(mrb);
+  free(mrb, (void*)args->outfile);
+  close(mrb);
 }
 
 static int
-partial_hook(struct mrb_parser_state *p)
+partial_hook(struct parser_state *p)
 {
   mrbc_context *c = p->cxt;
   struct mrbc_args *args = (struct mrbc_args *)c->partial_data;
@@ -189,18 +189,18 @@ partial_hook(struct mrb_parser_state *p)
     fprintf(stderr, "%s: cannot open program file. (%s)\n", args->prog, fn);
     return -1;
   }
-  mrb_parser_set_filename(p, fn);
+  parser_set_filename(p, fn);
   return 0;
 }
 
-static mrb_value
-load_file(mrb_state *mrb, struct mrbc_args *args)
+static value
+load_file(state *mrb, struct mrbc_args *args)
 {
   mrbc_context *c;
-  mrb_value result;
+  value result;
   char *input = args->argv[args->idx];
   FILE *infile;
-  mrb_bool need_close = FALSE;
+  bool need_close = FALSE;
 
   c = mrbc_context_new(mrb);
   if (args->verbose)
@@ -213,7 +213,7 @@ load_file(mrb_state *mrb, struct mrbc_args *args)
     need_close = TRUE;
     if ((infile = fopen(input, "r")) == NULL) {
       fprintf(stderr, "%s: cannot open program file. (%s)\n", args->prog, input);
-      return mrb_nil_value();
+      return nil_value();
     }
   }
   mrbc_filename(mrb, c, input);
@@ -223,34 +223,34 @@ load_file(mrb_state *mrb, struct mrbc_args *args)
     mrbc_partial_hook(mrb, c, partial_hook, (void*)args);
   }
 
-  result = mrb_load_file_cxt(mrb, infile, c);
+  result = load_file_cxt(mrb, infile, c);
   if (need_close) fclose(infile);
   mrbc_context_free(mrb, c);
-  if (mrb_undef_p(result)) {
-    return mrb_nil_value();
+  if (undef_p(result)) {
+    return nil_value();
   }
   return result;
 }
 
 static int
-dump_file(mrb_state *mrb, FILE *wfp, const char *outfile, struct RProc *proc, struct mrbc_args *args)
+dump_file(state *mrb, FILE *wfp, const char *outfile, struct RProc *proc, struct mrbc_args *args)
 {
-  int n = MRB_DUMP_OK;
-  mrb_irep *irep = proc->body.irep;
+  int n = DUMP_OK;
+  irep *irep = proc->body.irep;
 
   if (args->remove_lv) {
-    mrb_irep_remove_lv(mrb, irep);
+    irep_remove_lv(mrb, irep);
   }
   if (args->initname) {
-    n = mrb_dump_irep_cfunc(mrb, irep, args->flags, wfp, args->initname);
-    if (n == MRB_DUMP_INVALID_ARGUMENT) {
+    n = dump_irep_cfunc(mrb, irep, args->flags, wfp, args->initname);
+    if (n == DUMP_INVALID_ARGUMENT) {
       fprintf(stderr, "%s: invalid C language symbol name\n", args->initname);
     }
   }
   else {
-    n = mrb_dump_irep_binary(mrb, irep, args->flags, wfp);
+    n = dump_irep_binary(mrb, irep, args->flags, wfp);
   }
-  if (n != MRB_DUMP_OK) {
+  if (n != DUMP_OK) {
     fprintf(stderr, "%s: error in mrb dump (%s) %d\n", args->prog, outfile, n);
   }
   return n;
@@ -259,14 +259,14 @@ dump_file(mrb_state *mrb, FILE *wfp, const char *outfile, struct RProc *proc, st
 int
 main(int argc, char **argv)
 {
-  mrb_state *mrb = mrb_open();
+  state *mrb = open();
   int n, result;
   struct mrbc_args args;
   FILE *wfp;
-  mrb_value load;
+  value load;
 
   if (mrb == NULL) {
-    fputs("Invalid mrb_state, exiting mrbc\n", stderr);
+    fputs("Invalid state, exiting mrbc\n", stderr);
     return EXIT_FAILURE;
   }
 
@@ -292,7 +292,7 @@ main(int argc, char **argv)
 
   args.idx = n;
   load = load_file(mrb, &args);
-  if (mrb_nil_p(load)) {
+  if (nil_p(load)) {
     cleanup(mrb, &args);
     return EXIT_FAILURE;
   }
@@ -318,28 +318,28 @@ main(int argc, char **argv)
     fprintf(stderr, "Output file is required\n");
     return EXIT_FAILURE;
   }
-  result = dump_file(mrb, wfp, args.outfile, mrb_proc_ptr(load), &args);
+  result = dump_file(mrb, wfp, args.outfile, proc_ptr(load), &args);
   fclose(wfp);
   cleanup(mrb, &args);
-  if (result != MRB_DUMP_OK) {
+  if (result != DUMP_OK) {
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;
 }
 
 void
-mrb_init_mrblib(mrb_state *mrb)
+init_mrblib(state *mrb)
 {
 }
 
 #ifndef DISABLE_GEMS
 void
-mrb_init_mrbgems(mrb_state *mrb)
+init_mrbgems(state *mrb)
 {
 }
 
 void
-mrb_final_mrbgems(mrb_state *mrb)
+final_mrbgems(state *mrb)
 {
 }
 #endif

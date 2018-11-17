@@ -72,9 +72,9 @@ assert('Kernel#proc') do
   end
 end
 
-assert('mrb_proc_new_cfunc_with_env') do
-  ProcExtTest.mrb_proc_new_cfunc_with_env(:test)
-  ProcExtTest.mrb_proc_new_cfunc_with_env(:mruby)
+assert('proc_new_cfunc_with_env') do
+  ProcExtTest.proc_new_cfunc_with_env(:test)
+  ProcExtTest.proc_new_cfunc_with_env(:mruby)
 
   t = ProcExtTest.new
 
@@ -82,8 +82,8 @@ assert('mrb_proc_new_cfunc_with_env') do
   assert_equal :mruby, t.mruby
 end
 
-assert('mrb_cfunc_env_get') do
-  ProcExtTest.mrb_cfunc_env_get :get_int, [0, 1, 2]
+assert('cfunc_env_get') do
+  ProcExtTest.cfunc_env_get :get_int, [0, 1, 2]
 
   t = ProcExtTest.new
 

@@ -12,18 +12,18 @@
 #include <mruby/string.h>
 #include <mruby/hash.h>
 #include <mruby/numeric.h>
-#ifndef MRB_WITHOUT_FLOAT
+#ifndef WITHOUT_FLOAT
 #include <math.h>
 #endif
 #include <ctype.h>
 
 #define BIT_DIGITS(N)   (((N)*146)/485 + 1)  /* log2(10) =~ 146/485 */
-#define BITSPERDIG MRB_INT_BIT
+#define BITSPERDIG INT_BIT
 #define EXTENDSIGN(n, l) (((~0U << (n)) >> (((n)*(l)) % BITSPERDIG)) & ~(~0U << (n)))
 
-mrb_value mrb_str_format(mrb_state *, mrb_int, const mrb_value *, mrb_value);
-#ifndef MRB_WITHOUT_FLOAT
-static void fmt_setup(char*,size_t,int,int,mrb_int,mrb_int);
+value str_format(state *, int, const value *, value);
+#ifndef WITHOUT_FLOAT
+static void fmt_setup(char*,size_t,int,int,int,int);
 #endif
 
 static char*
@@ -72,23 +72,23 @@ sign_bits(int base, const char *p)
   return c;
 }
 
-static mrb_value
-mrb_fix2binstr(mrb_state *mrb, mrb_value x, int base)
+static value
+fix2binstr(state *mrb, value x, int base)
 {
   char buf[66], *b = buf + sizeof buf;
-  mrb_int num = mrb_fixnum(x);
+  int num = fixnum(x);
   uint64_t val = (uint64_t)num;
   char d;
 
   if (base != 2) {
-    mrb_raisef(mrb, E_ARGUMENT_ERROR, "invalid radix %S", mrb_fixnum_value(base));
+    raisef(mrb, E_ARGUMENT_ERROR, "invalid radix %S", fixnum_value(base));
   }
   if (val == 0) {
-    return mrb_str_new_lit(mrb, "0");
+    return str_new_lit(mrb, "0");
   }
   *--b = '\0';
   do {
-    *--b = mrb_digitmap[(int)(val % base)];
+    *--b = digitmap[(int)(val % base)];
   } while (val /= base);
 
   if (num < 0) {
@@ -105,7 +105,7 @@ mrb_fix2binstr(mrb_state *mrb, mrb_value x, int base)
     }
   }
 
-  return mrb_str_new_cstr(mrb, b);
+  return str_new_cstr(mrb, b);
 }
 
 #define FNONE  0
@@ -120,17 +120,17 @@ mrb_fix2binstr(mrb_state *mrb, mrb_value x, int base)
 
 #define CHECK(l) do {\
   while ((l) >= bsiz - blen) {\
-    if (bsiz > MRB_INT_MAX/2) mrb_raise(mrb, E_ARGUMENT_ERROR, "too big specifier"); \
+    if (bsiz > INT_MAX/2) raise(mrb, E_ARGUMENT_ERROR, "too big specifier"); \
     bsiz*=2;\
   }\
-  mrb_str_resize(mrb, result, bsiz);\
+  str_resize(mrb, result, bsiz);\
   buf = RSTRING_PTR(result);\
 } while (0)
 
 #define PUSH(s, l) do { \
   CHECK(l);\
   memcpy(&buf[blen], s, l);\
-  blen += (mrb_int)(l);\
+  blen += (int)(l);\
 } while (0)
 
 #define FILL(c, l) do { \
@@ -140,14 +140,14 @@ mrb_fix2binstr(mrb_state *mrb, mrb_value x, int base)
 } while (0)
 
 static void
-check_next_arg(mrb_state *mrb, int posarg, int nextarg)
+check_next_arg(state *mrb, int posarg, int nextarg)
 {
   switch (posarg) {
   case -1:
-    mrb_raisef(mrb, E_ARGUMENT_ERROR, "unnumbered(%S) mixed with numbered", mrb_fixnum_value(nextarg));
+    raisef(mrb, E_ARGUMENT_ERROR, "unnumbered(%S) mixed with numbered", fixnum_value(nextarg));
     break;
   case -2:
-    mrb_raisef(mrb, E_ARGUMENT_ERROR, "unnumbered(%S) mixed with named", mrb_fixnum_value(nextarg));
+    raisef(mrb, E_ARGUMENT_ERROR, "unnumbered(%S) mixed with named", fixnum_value(nextarg));
     break;
   default:
     break;
@@ -155,29 +155,29 @@ check_next_arg(mrb_state *mrb, int posarg, int nextarg)
 }
 
 static void
-check_pos_arg(mrb_state *mrb, mrb_int posarg, mrb_int n)
+check_pos_arg(state *mrb, int posarg, int n)
 {
   if (posarg > 0) {
-    mrb_raisef(mrb, E_ARGUMENT_ERROR, "numbered(%S) after unnumbered(%S)",
-               mrb_fixnum_value(n), mrb_fixnum_value(posarg));
+    raisef(mrb, E_ARGUMENT_ERROR, "numbered(%S) after unnumbered(%S)",
+               fixnum_value(n), fixnum_value(posarg));
   }
   if (posarg == -2) {
-    mrb_raisef(mrb, E_ARGUMENT_ERROR, "numbered(%S) after named", mrb_fixnum_value(n));
+    raisef(mrb, E_ARGUMENT_ERROR, "numbered(%S) after named", fixnum_value(n));
   }
   if (n < 1) {
-    mrb_raisef(mrb, E_ARGUMENT_ERROR, "invalid index - %S$", mrb_fixnum_value(n));
+    raisef(mrb, E_ARGUMENT_ERROR, "invalid index - %S$", fixnum_value(n));
   }
 }
 
 static void
-check_name_arg(mrb_state *mrb, int posarg, const char *name, mrb_int len)
+check_name_arg(state *mrb, int posarg, const char *name, int len)
 {
   if (posarg > 0) {
-    mrb_raisef(mrb, E_ARGUMENT_ERROR, "named%S after unnumbered(%S)",
-               mrb_str_new(mrb, (name), (len)), mrb_fixnum_value(posarg));
+    raisef(mrb, E_ARGUMENT_ERROR, "named%S after unnumbered(%S)",
+               str_new(mrb, (name), (len)), fixnum_value(posarg));
   }
   if (posarg == -1) {
-    mrb_raisef(mrb, E_ARGUMENT_ERROR, "named%S after numbered", mrb_str_new(mrb, (name), (len)));
+    raisef(mrb, E_ARGUMENT_ERROR, "named%S after numbered", str_new(mrb, (name), (len)));
   }
 }
 
@@ -185,32 +185,32 @@ check_name_arg(mrb_state *mrb, int posarg, const char *name, mrb_int len)
   check_next_arg(mrb, posarg, nextarg),\
   (posarg = nextarg++, GETNTHARG(posarg)))
 
-#define GETARG() (!mrb_undef_p(nextvalue) ? nextvalue : GETNEXTARG())
+#define GETARG() (!undef_p(nextvalue) ? nextvalue : GETNEXTARG())
 
 #define GETPOSARG(n) (\
   check_pos_arg(mrb, posarg, n),\
   (posarg = -1, GETNTHARG(n)))
 
 #define GETNTHARG(nth) \
-  ((nth >= argc) ? (mrb_raise(mrb, E_ARGUMENT_ERROR, "too few arguments"), mrb_undef_value()) : argv[nth])
+  ((nth >= argc) ? (raise(mrb, E_ARGUMENT_ERROR, "too few arguments"), undef_value()) : argv[nth])
 
 #define GETNAMEARG(id, name, len) (\
   check_name_arg(mrb, posarg, name, len),\
-  (posarg = -2, mrb_hash_fetch(mrb, get_hash(mrb, &hash, argc, argv), id, mrb_undef_value())))
+  (posarg = -2, hash_fetch(mrb, get_hash(mrb, &hash, argc, argv), id, undef_value())))
 
 #define GETNUM(n, val) \
   for (; p < end && ISDIGIT(*p); p++) {\
-    if (n > (MRB_INT_MAX - (*p - '0'))/10) {\
-      mrb_raise(mrb, E_ARGUMENT_ERROR, #val " too big"); \
+    if (n > (INT_MAX - (*p - '0'))/10) {\
+      raise(mrb, E_ARGUMENT_ERROR, #val " too big"); \
     } \
     n = 10 * n + (*p - '0'); \
   } \
   if (p >= end) { \
-    mrb_raise(mrb, E_ARGUMENT_ERROR, "malformed format string - %*[0-9]"); \
+    raise(mrb, E_ARGUMENT_ERROR, "malformed format string - %*[0-9]"); \
   }
 
 #define GETASTER(num) do { \
-  mrb_value tmp_v; \
+  value tmp_v; \
   t = p++; \
   n = 0; \
   GETNUM(n, val); \
@@ -221,21 +221,21 @@ check_name_arg(mrb_state *mrb, int posarg, const char *name, mrb_int len)
     tmp_v = GETNEXTARG(); \
     p = t; \
   } \
-  num = mrb_int(mrb, tmp_v); \
+  num = int(mrb, tmp_v); \
 } while (0)
 
-static mrb_value
-get_hash(mrb_state *mrb, mrb_value *hash, mrb_int argc, const mrb_value *argv)
+static value
+get_hash(state *mrb, value *hash, int argc, const value *argv)
 {
-  mrb_value tmp;
+  value tmp;
 
-  if (!mrb_undef_p(*hash)) return *hash;
+  if (!undef_p(*hash)) return *hash;
   if (argc != 2) {
-    mrb_raise(mrb, E_ARGUMENT_ERROR, "one hash required");
+    raise(mrb, E_ARGUMENT_ERROR, "one hash required");
   }
-  tmp = mrb_check_convert_type(mrb, argv[1], MRB_TT_HASH, "Hash", "to_hash");
-  if (mrb_nil_p(tmp)) {
-    mrb_raise(mrb, E_ARGUMENT_ERROR, "one hash required");
+  tmp = check_convert_type(mrb, argv[1], TT_HASH, "Hash", "to_hash");
+  if (nil_p(tmp)) {
+    raise(mrb, E_ARGUMENT_ERROR, "one hash required");
   }
   return (*hash = tmp);
 }
@@ -501,69 +501,69 @@ get_hash(mrb_state *mrb, mrb_value *hash, mrb_int argc, const mrb_value *argv)
  *      # => "1f"
  */
 
-mrb_value
-mrb_f_sprintf(mrb_state *mrb, mrb_value obj)
+value
+f_sprintf(state *mrb, value obj)
 {
-  mrb_int argc;
-  mrb_value *argv;
+  int argc;
+  value *argv;
 
-  mrb_get_args(mrb, "*", &argv, &argc);
+  get_args(mrb, "*", &argv, &argc);
 
   if (argc <= 0) {
-    mrb_raise(mrb, E_ARGUMENT_ERROR, "too few arguments");
-    return mrb_nil_value();
+    raise(mrb, E_ARGUMENT_ERROR, "too few arguments");
+    return nil_value();
   }
   else {
-    return mrb_str_format(mrb, argc - 1, argv + 1, argv[0]);
+    return str_format(mrb, argc - 1, argv + 1, argv[0]);
   }
 }
 
-mrb_value
-mrb_str_format(mrb_state *mrb, mrb_int argc, const mrb_value *argv, mrb_value fmt)
+value
+str_format(state *mrb, int argc, const value *argv, value fmt)
 {
   const char *p, *end;
   char *buf;
-  mrb_int blen;
-  mrb_int bsiz;
-  mrb_value result;
-  mrb_int n;
-  mrb_int width;
-  mrb_int prec;
+  int blen;
+  int bsiz;
+  value result;
+  int n;
+  int width;
+  int prec;
   int nextarg = 1;
   int posarg = 0;
-  mrb_value nextvalue;
-  mrb_value str;
-  mrb_value hash = mrb_undef_value();
+  value nextvalue;
+  value str;
+  value hash = undef_value();
 
 #define CHECK_FOR_WIDTH(f)                                                  \
   if ((f) & FWIDTH) {                                                       \
-    mrb_raise(mrb, E_ARGUMENT_ERROR, "width given twice");         \
+    raise(mrb, E_ARGUMENT_ERROR, "width given twice");         \
   }                                                                         \
   if ((f) & FPREC0) {                                                       \
-    mrb_raise(mrb, E_ARGUMENT_ERROR, "width after precision");     \
+    raise(mrb, E_ARGUMENT_ERROR, "width after precision");     \
   }
 #define CHECK_FOR_FLAGS(f)                                                  \
   if ((f) & FWIDTH) {                                                       \
-    mrb_raise(mrb, E_ARGUMENT_ERROR, "flag after width");          \
+    raise(mrb, E_ARGUMENT_ERROR, "flag after width");          \
   }                                                                         \
   if ((f) & FPREC0) {                                                       \
-    mrb_raise(mrb, E_ARGUMENT_ERROR, "flag after precision");      \
+    raise(mrb, E_ARGUMENT_ERROR, "flag after precision");      \
   }
 
   ++argc;
   --argv;
-  fmt = mrb_str_to_str(mrb, fmt);
+  fmt = str_to_str(mrb, fmt);
   p = RSTRING_PTR(fmt);
   end = p + RSTRING_LEN(fmt);
   blen = 0;
   bsiz = 120;
-  result = mrb_str_new_capa(mrb, bsiz);
+  result = str_new_capa(mrb, bsiz);
   buf = RSTRING_PTR(result);
   memset(buf, 0, bsiz);
 
   for (; p < end; p++) {
     const char *t;
-    mrb_sym id = 0;
+    sym id = 0;
     int flags = FNONE;
 
     for (t = p; t < end && *t != '%'; t++) ;
@@ -575,12 +575,12 @@ mrb_str_format(mrb_state *mrb, mrb_int argc, const mrb_value *argv, mrb_value fm
     p = t + 1;    /* skip '%' */
 
     width = prec = -1;
-    nextvalue = mrb_undef_value();
+    nextvalue = undef_value();
 
 retry:
     switch (*p) {
       default:
-        mrb_raisef(mrb, E_ARGUMENT_ERROR, "malformed format string - \\%%S", mrb_str_new(mrb, p, 1));
+        raisef(mrb, E_ARGUMENT_ERROR, "malformed format string - \\%%S", str_new(mrb, p, 1));
         break;
 
       case ' ':
@@ -618,8 +618,8 @@ retry:
         n = 0;
         GETNUM(n, width);
         if (*p == '$') {
-          if (!mrb_undef_p(nextvalue)) {
-            mrb_raisef(mrb, E_ARGUMENT_ERROR, "value given twice - %S$", mrb_fixnum_value(n));
+          if (!undef_p(nextvalue)) {
+            raisef(mrb, E_ARGUMENT_ERROR, "value given twice - %S$", fixnum_value(n));
           }
           nextvalue = GETPOSARG(n);
           p++;
@@ -634,19 +634,19 @@ retry:
       case '{': {
         const char *start = p;
         char term = (*p == '<') ? '>' : '}';
-        mrb_value symname;
+        value symname;
 
         for (; p < end && *p != term; )
           p++;
         if (id) {
-          mrb_raisef(mrb, E_ARGUMENT_ERROR, "name%S after <%S>",
-                     mrb_str_new(mrb, start, p - start + 1), mrb_sym2str(mrb, id));
+          raisef(mrb, E_ARGUMENT_ERROR, "name%S after <%S>",
+                     str_new(mrb, start, p - start + 1), sym2str(mrb, id));
         }
-        symname = mrb_str_new(mrb, start + 1, p - start - 1);
-        id = mrb_intern_str(mrb, symname);
-        nextvalue = GETNAMEARG(mrb_symbol_value(id), start, (mrb_int)(p - start + 1));
-        if (mrb_undef_p(nextvalue)) {
-          mrb_raisef(mrb, E_KEY_ERROR, "key%S not found", mrb_str_new(mrb, start, p - start + 1));
+        symname = str_new(mrb, start + 1, p - start - 1);
+        id = intern_str(mrb, symname);
+        nextvalue = GETNAMEARG(symbol_value(id), start, (int)(p - start + 1));
+        if (undef_p(nextvalue)) {
+          raisef(mrb, E_KEY_ERROR, "key%S not found", str_new(mrb, start, p - start + 1));
         }
         if (term == '}') goto format_s;
         p++;
@@ -666,7 +666,7 @@ retry:
 
       case '.':
         if (flags & FPREC0) {
-          mrb_raise(mrb, E_ARGUMENT_ERROR, "precision given twice");
+          raise(mrb, E_ARGUMENT_ERROR, "precision given twice");
         }
         flags |= FPREC|FPREC0;
 
@@ -690,38 +690,38 @@ retry:
         /* fallthrough */
       case '%':
         if (flags != FNONE) {
-          mrb_raise(mrb, E_ARGUMENT_ERROR, "invalid format character - %");
+          raise(mrb, E_ARGUMENT_ERROR, "invalid format character - %");
         }
         PUSH("%", 1);
         break;
 
       case 'c': {
-        mrb_value val = GETARG();
-        mrb_value tmp;
+        value val = GETARG();
+        value tmp;
         char *c;
 
-        tmp = mrb_check_string_type(mrb, val);
-        if (!mrb_nil_p(tmp)) {
+        tmp = check_string_type(mrb, val);
+        if (!nil_p(tmp)) {
           if (RSTRING_LEN(tmp) != 1) {
-            mrb_raise(mrb, E_ARGUMENT_ERROR, "%c requires a character");
+            raise(mrb, E_ARGUMENT_ERROR, "%c requires a character");
           }
         }
-        else if (mrb_fixnum_p(val)) {
-          mrb_int n = mrb_fixnum(val);
+        else if (fixnum_p(val)) {
+          int n = fixnum(val);
 
           if (n < 0x80) {
             char buf[1];
 
             buf[0] = (char)n;
-            tmp = mrb_str_new(mrb, buf, 1);
+            tmp = str_new(mrb, buf, 1);
           }
           else {
-            tmp = mrb_funcall(mrb, val, "chr", 0);
-            mrb_check_type(mrb, tmp, MRB_TT_STRING);
+            tmp = funcall(mrb, val, "chr", 0);
+            check_type(mrb, tmp, TT_STRING);
           }
         }
         else {
-          mrb_raise(mrb, E_ARGUMENT_ERROR, "invalid character");
+          raise(mrb, E_ARGUMENT_ERROR, "invalid character");
         }
         c = RSTRING_PTR(tmp);
         n = RSTRING_LEN(tmp);
@@ -743,17 +743,17 @@ retry:
       case 'p':
   format_s:
       {
-        mrb_value arg = GETARG();
-        mrb_int len;
-        mrb_int slen;
+        value arg = GETARG();
+        int len;
+        int slen;
 
-        if (*p == 'p') arg = mrb_inspect(mrb, arg);
-        str = mrb_obj_as_string(mrb, arg);
+        if (*p == 'p') arg = inspect(mrb, arg);
+        str = obj_as_string(mrb, arg);
         len = RSTRING_LEN(str);
-        if (RSTRING(result)->flags & MRB_STR_EMBED) {
-          mrb_int tmp_n = len;
-          RSTRING(result)->flags &= ~MRB_STR_EMBED_LEN_MASK;
-          RSTRING(result)->flags |= tmp_n << MRB_STR_EMBED_LEN_SHIFT;
+        if (RSTRING(result)->flags & STR_EMBED) {
+          int tmp_n = len;
+          RSTRING(result)->flags &= ~STR_EMBED_LEN_MASK;
+          RSTRING(result)->flags |= tmp_n << STR_EMBED_LEN_SHIFT;
         }
         else {
           RSTRING(result)->as.heap.len = blen;
@@ -761,12 +761,12 @@ retry:
         if (flags&(FPREC|FWIDTH)) {
           slen = RSTRING_LEN(str);
           if (slen < 0) {
-            mrb_raise(mrb, E_ARGUMENT_ERROR, "invalid mbstring sequence");
+            raise(mrb, E_ARGUMENT_ERROR, "invalid mbstring sequence");
           }
           if ((flags&FPREC) && (prec < slen)) {
             char *p = RSTRING_PTR(str) + prec;
             slen = prec;
-            len = (mrb_int)(p - RSTRING_PTR(str));
+            len = (int)(p - RSTRING_PTR(str));
           }
           /* need to adjust multi-byte string pos */
           if ((flags&FWIDTH) && (width > slen)) {
@@ -793,14 +793,14 @@ retry:
       case 'b':
       case 'B':
       case 'u': {
-        mrb_value val = GETARG();
+        value val = GETARG();
         char nbuf[68], *s;
         const char *prefix = NULL;
         int sign = 0, dots = 0;
         char sc = 0;
-        mrb_int v = 0;
+        int v = 0;
         int base;
-        mrb_int len;
+        int len;
 
         if (flags & FSHARP) {
           switch (*p) {
@@ -814,21 +814,21 @@ retry:
         }
 
   bin_retry:
-        switch (mrb_type(val)) {
-#ifndef MRB_WITHOUT_FLOAT
-          case MRB_TT_FLOAT:
-            val = mrb_flo_to_fixnum(mrb, val);
-            if (mrb_fixnum_p(val)) goto bin_retry;
+        switch (type(val)) {
+#ifndef WITHOUT_FLOAT
+          case TT_FLOAT:
+            val = flo_to_fixnum(mrb, val);
+            if (fixnum_p(val)) goto bin_retry;
             break;
 #endif
-          case MRB_TT_STRING:
-            val = mrb_str_to_inum(mrb, val, 0, TRUE);
+          case TT_STRING:
+            val = str_to_inum(mrb, val, 0, TRUE);
             goto bin_retry;
-          case MRB_TT_FIXNUM:
-            v = mrb_fixnum(val);
+          case TT_FIXNUM:
+            v = fixnum(val);
             break;
           default:
-            val = mrb_Integer(mrb, val);
+            val = Integer(mrb, val);
             goto bin_retry;
         }
 
@@ -864,8 +864,8 @@ retry:
             sc = '-';
             width--;
           }
-          mrb_assert(base == 10);
-          snprintf(nbuf, sizeof(nbuf), "%" MRB_PRId, v);
+          assert(base == 10);
+          snprintf(nbuf, sizeof(nbuf), "%" PRId, v);
           s = nbuf;
           if (v < 0) s++;       /* skip minus sign */
         }
@@ -877,18 +877,18 @@ retry:
           switch (base) {
           case 2:
             if (v < 0) {
-              val = mrb_fix2binstr(mrb, mrb_fixnum_value(v), base);
+              val = fix2binstr(mrb, fixnum_value(v), base);
             }
             else {
-              val = mrb_fixnum_to_str(mrb, mrb_fixnum_value(v), base);
+              val = fixnum_to_str(mrb, fixnum_value(v), base);
             }
             strncpy(++s, RSTRING_PTR(val), sizeof(nbuf)-1);
             break;
           case 8:
-            snprintf(++s, sizeof(nbuf)-1, "%" MRB_PRIo, v);
+            snprintf(++s, sizeof(nbuf)-1, "%" PRIo, v);
             break;
           case 16:
-            snprintf(++s, sizeof(nbuf)-1, "%" MRB_PRIx, v);
+            snprintf(++s, sizeof(nbuf)-1, "%" PRIx, v);
             break;
           }
           if (v < 0) {
@@ -910,8 +910,8 @@ retry:
         {
           size_t size;
           size = strlen(s);
-          /* PARANOID: assert(size <= MRB_INT_MAX) */
-          len = (mrb_int)size;
+          /* PARANOID: assert(size <= INT_MAX) */
+          len = (int)size;
         }
 
         if (*p == 'X') {
@@ -942,9 +942,9 @@ retry:
         if (prefix) {
           size_t size;
           size = strlen(prefix);
-          /* PARANOID: assert(size <= MRB_INT_MAX).
+          /* PARANOID: assert(size <= INT_MAX).
            *  this check is absolutely paranoid. */
-          width -= (mrb_int)size;
+          width -= (int)size;
         }
 
         if ((flags & (FZERO|FMINUS|FPREC)) == FZERO) {
@@ -993,7 +993,7 @@ retry:
       }
       break;
 
-#ifndef MRB_WITHOUT_FLOAT
+#ifndef WITHOUT_FLOAT
       case 'f':
       case 'g':
       case 'G':
@@ -1001,17 +1001,17 @@ retry:
       case 'E':
       case 'a':
       case 'A': {
-        mrb_value val = GETARG();
+        value val = GETARG();
         double fval;
-        mrb_int i;
-        mrb_int need = 6;
+        int i;
+        int need = 6;
         char fbuf[32];
         int frexp_result;
 
-        fval = mrb_float(mrb_Float(mrb, val));
+        fval = float(Float(mrb, val));
         if (!isfinite(fval)) {
           const char *expr;
-          const mrb_int elen = 3;
+          const int elen = 3;
           char sign = '\0';
 
           if (isnan(fval)) {
@@ -1031,7 +1031,7 @@ retry:
             need = width;
 
           if (need < 0) {
-            mrb_raise(mrb, E_ARGUMENT_ERROR, "width too big");
+            raise(mrb, E_ARGUMENT_ERROR, "width too big");
           }
           FILL(' ', need);
           if (flags & FMINUS) {
@@ -1052,19 +1052,19 @@ retry:
         if (*p != 'e' && *p != 'E') {
           i = INT_MIN;
           frexp(fval, &frexp_result);
-          i = (mrb_int)frexp_result;
+          i = (int)frexp_result;
           if (i > 0)
             need = BIT_DIGITS(i);
         }
-        if (need > MRB_INT_MAX - ((flags&FPREC) ? prec : 6)) {
+        if (need > INT_MAX - ((flags&FPREC) ? prec : 6)) {
         too_big_width:
-          mrb_raise(mrb, E_ARGUMENT_ERROR,
+          raise(mrb, E_ARGUMENT_ERROR,
                     (width > prec ? "width too big" : "prec too big"));
         }
         need += (flags&FPREC) ? prec : 6;
         if ((flags&FWIDTH) && need < width)
           need = width;
-        if (need > MRB_INT_MAX - 20) {
+        if (need > INT_MAX - 20) {
           goto too_big_width;
         }
         need += 20;
@@ -1072,7 +1072,7 @@ retry:
         CHECK(need);
         n = snprintf(&buf[blen], need, fbuf, fval);
         if (n < 0 || n >= need) {
-          mrb_raise(mrb, E_RUNTIME_ERROR, "formatting error");
+          raise(mrb, E_RUNTIME_ERROR, "formatting error");
         }
         blen += n;
       }
@@ -1088,18 +1088,18 @@ retry:
    */
   if (posarg >= 0 && nextarg < argc) {
     const char *mesg = "too many arguments for format string";
-    if (mrb_test(ruby_debug)) mrb_raise(mrb, E_ARGUMENT_ERROR, mesg);
-    if (mrb_test(ruby_verbose)) mrb_warn(mrb, "%S", mrb_str_new_cstr(mrb, mesg));
+    if (test(ruby_debug)) raise(mrb, E_ARGUMENT_ERROR, mesg);
+    if (test(ruby_verbose)) warn(mrb, "%S", str_new_cstr(mrb, mesg));
   }
 #endif
-  mrb_str_resize(mrb, result, blen);
+  str_resize(mrb, result, blen);
 
   return result;
 }
 
-#ifndef MRB_WITHOUT_FLOAT
+#ifndef WITHOUT_FLOAT
 static void
-fmt_setup(char *buf, size_t size, int c, int flags, mrb_int width, mrb_int prec)
+fmt_setup(char *buf, size_t size, int c, int flags, int width, int prec)
 {
   char *end = buf + size;
   int n;

@@ -22,22 +22,22 @@ typedef struct source_file {
 } source_file;
 
 static void
-source_file_free(mrb_state *mrb, source_file *file)
+source_file_free(state *mrb, source_file *file)
 {
   if (file != NULL) {
     if (file->path != NULL) {
-      mrb_free(mrb, file->path);
+      free(mrb, file->path);
     }
     if (file->fp != NULL) {
       fclose(file->fp);
       file->fp = NULL;
     }
-    mrb_free(mrb, file);
+    free(mrb, file);
   }
 }
 
 static char*
-build_path(mrb_state *mrb, const char *dir, const char *base)
+build_path(state *mrb, const char *dir, const char *base)
 {
   int len;
   char *path = NULL;
@@ -48,7 +48,7 @@ build_path(mrb_state *mrb, const char *dir, const char *base)
     len += strlen(dir) + sizeof("/") - 1;
   }
 
-  path = (char*)mrb_malloc(mrb, len);
+  path = (char*)malloc(mrb, len);
   memset(path, 0, len);
 
   if (strcmp(dir, ".")) {
@@ -61,7 +61,7 @@ build_path(mrb_state *mrb, const char *dir, const char *base)
 }
 
 static char*
-dirname(mrb_state *mrb, const char *path)
+dirname(state *mrb, const char *path)
 {
   size_t len;
   const char *p;
@@ -74,7 +74,7 @@ dirname(mrb_state *mrb, const char *path)
   p = strrchr(path, '/');
   len = p != NULL ? (size_t)(p - path) : strlen(path);
 
-  dir = (char*)mrb_malloc(mrb, len + 1);
+  dir = (char*)malloc(mrb, len + 1);
   strncpy(dir, path, len);
   dir[len] = '\0';
 
@@ -82,11 +82,11 @@ dirname(mrb_state *mrb, const char *path)
 }
 
 static source_file*
-source_file_new(mrb_state *mrb, mrb_debug_context *dbg, char *filename)
+source_file_new(state *mrb, debug_context *dbg, char *filename)
 {
   source_file *file;
 
-  file = (source_file*)mrb_malloc(mrb, sizeof(source_file));
+  file = (source_file*)malloc(mrb, sizeof(source_file));
 
   memset(file, '\0', sizeof(source_file));
   file->fp = fopen(filename, "rb");
@@ -97,12 +97,12 @@ source_file_new(mrb_state *mrb, mrb_debug_context *dbg, char *filename)
   }
 
   file->lineno = 1;
-  file->path = (char*)mrb_malloc(mrb, strlen(filename) + 1);
+  file->path = (char*)malloc(mrb, strlen(filename) + 1);
   strcpy(file->path, filename);
   return file;
 }
 
-static mrb_bool
+static bool
 remove_newlines(char *s, FILE *fp)
 {
   int c;
@@ -169,7 +169,7 @@ show_lines(source_file *file, uint16_t line_min, uint16_t line_max)
 }
 
 char*
-mrb_debug_get_source(mrb_state *mrb, mrdb_state *mrdb, const char *srcpath, const char *filename)
+debug_get_source(state *mrb, mrdb_state *mrdb, const char *srcpath, const char *filename)
 {
   int i;
   FILE *fp;
@@ -181,7 +181,7 @@ mrb_debug_get_source(mrb_state *mrb, mrdb_state *mrdb, const char *srcpath, cons
   else srcname = filename;
 
   search_path[0] = srcpath;
-  search_path[1] = dirname(mrb, mrb_debug_get_filename(mrdb->dbg->irep, 0));
+  search_path[1] = dirname(mrb, debug_get_filename(mrdb->dbg->irep, 0));
   search_path[2] = ".";
 
   for (i = 0; i < 3; i++) {
@@ -194,7 +194,7 @@ mrb_debug_get_source(mrb_state *mrb, mrdb_state *mrdb, const char *srcpath, cons
     }
 
     if ((fp = fopen(path, "rb")) == NULL) {
-      mrb_free(mrb, path);
+      free(mrb, path);
       path = NULL;
       continue;
     }
@@ -202,39 +202,39 @@ mrb_debug_get_source(mrb_state *mrb, mrdb_state *mrdb, const char *srcpath, cons
     break;
   }
 
-  mrb_free(mrb, (void *)search_path[1]);
+  free(mrb, (void *)search_path[1]);
 
   return path;
 }
 
 int32_t
-mrb_debug_list(mrb_state *mrb, mrb_debug_context *dbg, char *filename, uint16_t line_min, uint16_t line_max)
+debug_list(state *mrb, debug_context *dbg, char *filename, uint16_t line_min, uint16_t line_max)
 {
   char *ext;
   source_file *file;
 
   if (mrb == NULL || dbg == NULL || filename == NULL) {
-    return MRB_DEBUG_INVALID_ARGUMENT;
+    return DEBUG_INVALID_ARGUMENT;
   }
 
   ext = strrchr(filename, '.');
 
   if (ext == NULL || strcmp(ext, ".rb")) {
     printf("List command only supports .rb file.\n");
-    return MRB_DEBUG_INVALID_ARGUMENT;
+    return DEBUG_INVALID_ARGUMENT;
   }
 
   if (line_min > line_max) {
-    return MRB_DEBUG_INVALID_ARGUMENT;
+    return DEBUG_INVALID_ARGUMENT;
   }
 
   if ((file = source_file_new(mrb, dbg, filename)) != NULL) {
     show_lines(file, line_min, line_max);
     source_file_free(mrb, file);
-    return MRB_DEBUG_OK;
+    return DEBUG_OK;
   }
   else {
     printf("Invalid source file named %s.\n", filename);
-    return MRB_DEBUG_INVALID_ARGUMENT;
+    return DEBUG_INVALID_ARGUMENT;
   }
 }

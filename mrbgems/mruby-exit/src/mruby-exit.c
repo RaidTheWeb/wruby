@@ -1,24 +1,24 @@
 #include <stdlib.h>
 #include <mruby.h>
 
-static mrb_value
-f_exit(mrb_state *mrb, mrb_value self)
+static value
+f_exit(state *mrb, value self)
 {
-  mrb_int i = EXIT_SUCCESS;
+  int i = EXIT_SUCCESS;
 
-  mrb_get_args(mrb, "|i", &i);
+  get_args(mrb, "|i", &i);
   exit((int)i);
   /* not reached */
-  return mrb_nil_value();
+  return nil_value();
 }
 
 void
-mrb_mruby_exit_gem_init(mrb_state* mrb)
+mruby_exit_gem_init(state* mrb)
 {
-  mrb_define_method(mrb, mrb->kernel_module, "exit", f_exit, MRB_ARGS_OPT(1));
+  define_method(mrb, mrb->kernel_module, "exit", f_exit, ARGS_OPT(1));
 }
 
 void
-mrb_mruby_exit_gem_final(mrb_state* mrb)
+mruby_exit_gem_final(state* mrb)
 {
 }

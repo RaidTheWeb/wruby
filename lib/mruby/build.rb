@@ -108,7 +108,7 @@ module MRuby
 
     def enable_debug
       compilers.each do |c|
-        c.defines += %w(MRB_DEBUG)
+        c.defines += %w(DEBUG)
         if toolchains.any? { |toolchain| toolchain == "gcc" }
           c.flags += %w(-g3 -O0)
         end
@@ -133,7 +133,7 @@ module MRuby
       end
       @cxx_exception_enabled = true
       compilers.each { |c|
-        c.defines += %w(MRB_ENABLE_CXX_EXCEPTION)
+        c.defines += %w(ENABLE_CXX_EXCEPTION)
         c.flags << c.cxx_exception_flag
       }
       linker.command = cxx.command if toolchains.find { |v| v == 'gcc' }
@@ -153,7 +153,7 @@ module MRuby
         raise "cxx_exception already enabled"
       end
       compilers.each { |c|
-        c.defines += %w(MRB_ENABLE_CXX_EXCEPTION MRB_ENABLE_CXX_ABI)
+        c.defines += %w(ENABLE_CXX_EXCEPTION ENABLE_CXX_ABI)
         c.flags << c.cxx_compile_flag
       }
       compilers.each { |c| c.flags << c.cxx_compile_flag }
@@ -172,11 +172,11 @@ module MRuby
 #define __STDC_CONSTANT_MACROS
 #define __STDC_LIMIT_MACROS
 
-#ifndef MRB_ENABLE_CXX_ABI
+#ifndef ENABLE_CXX_ABI
 extern "C" {
 #endif
 #include "#{src}"
-#ifndef MRB_ENABLE_CXX_ABI
+#ifndef ENABLE_CXX_ABI
 }
 #endif
 EOS
@@ -385,7 +385,7 @@ EOS
       @endian = :big
       @mrbc.compile_options += ' -E'
       compilers.each do |c|
-        c.defines += %w(MRB_ENDIAN_BIG)
+        c.defines += %w(ENDIAN_BIG)
       end
     end
 

@@ -4,26 +4,26 @@
 #include <mruby/class.h>
 
 struct os_count_struct {
-  mrb_int total;
-  mrb_int freed;
-  mrb_int counts[MRB_TT_MAXDEFINE+1];
+  int total;
+  int freed;
+  int counts[TT_MAXDEFINE+1];
 };
 
 static int
-os_count_object_type(mrb_state *mrb, struct RBasic *obj, void *data)
+os_count_object_type(state *mrb, struct RBasic *obj, void *data)
 {
   struct os_count_struct *obj_count;
   obj_count = (struct os_count_struct*)data;
 
   obj_count->total++;
 
-  if (mrb_object_dead_p(mrb, obj)) {
+  if (object_dead_p(mrb, obj)) {
     obj_count->freed++;
   }
   else {
     obj_count->counts[obj->tt]++;
   }
-  return MRB_EACH_OBJ_OK;
+  return EACH_OBJ_OK;
 }
 
 /*
@@ -46,30 +46,30 @@ os_count_object_type(mrb_state *mrb, struct RBasic *obj, void *data)
  *
  */
 
-static mrb_value
-os_count_objects(mrb_state *mrb, mrb_value self)
+static value
+os_count_objects(state *mrb, value self)
 {
   struct os_count_struct obj_count = { 0 };
-  mrb_int i;
-  mrb_value hash;
+  int i;
+  value hash;
 
-  if (mrb_get_args(mrb, "|H", &hash) == 0) {
-    hash = mrb_hash_new(mrb);
+  if (get_args(mrb, "|H", &hash) == 0) {
+    hash = hash_new(mrb);
   }
 
-  if (!mrb_hash_empty_p(mrb, hash)) {
-    mrb_hash_clear(mrb, hash);
+  if (!hash_empty_p(mrb, hash)) {
+    hash_clear(mrb, hash);
   }
 
-  mrb_objspace_each_objects(mrb, os_count_object_type, &obj_count);
+  objspace_each_objects(mrb, os_count_object_type, &obj_count);
 
-  mrb_hash_set(mrb, hash, mrb_symbol_value(mrb_intern_lit(mrb, "TOTAL")), mrb_fixnum_value(obj_count.total));
-  mrb_hash_set(mrb, hash, mrb_symbol_value(mrb_intern_lit(mrb, "FREE")), mrb_fixnum_value(obj_count.freed));
+  hash_set(mrb, hash, symbol_value(intern_lit(mrb, "TOTAL")), fixnum_value(obj_count.total));
+  hash_set(mrb, hash, symbol_value(intern_lit(mrb, "FREE")), fixnum_value(obj_count.freed));
 
-  for (i = MRB_TT_FALSE; i < MRB_TT_MAXDEFINE; i++) {
-    mrb_value type;
+  for (i = TT_FALSE; i < TT_MAXDEFINE; i++) {
+    value type;
     switch (i) {
-#define COUNT_TYPE(t) case (MRB_T ## t): type = mrb_symbol_value(mrb_intern_lit(mrb, #t)); break;
+#define COUNT_TYPE(t) case (T ## t): type = symbol_value(intern_lit(mrb, #t)); break;
       COUNT_TYPE(T_FALSE);
       COUNT_TYPE(T_FREE);
       COUNT_TYPE(T_TRUE);
@@ -95,51 +95,51 @@ os_count_objects(mrb_state *mrb, mrb_value self)
       COUNT_TYPE(T_FIBER);
 #undef COUNT_TYPE
     default:
-      type = mrb_fixnum_value(i); break;
+      type = fixnum_value(i); break;
     }
     if (obj_count.counts[i])
-      mrb_hash_set(mrb, hash, type, mrb_fixnum_value(obj_count.counts[i]));
+      hash_set(mrb, hash, type, fixnum_value(obj_count.counts[i]));
   }
 
   return hash;
 }
 
 struct os_each_object_data {
-  mrb_value block;
+  value block;
   struct RClass *target_module;
-  mrb_int count;
+  int count;
 };
 
 static int
-os_each_object_cb(mrb_state *mrb, struct RBasic *obj, void *ud)
+os_each_object_cb(state *mrb, struct RBasic *obj, void *ud)
 {
   struct os_each_object_data *d = (struct os_each_object_data*)ud;
 
   /* filter dead objects */
-  if (mrb_object_dead_p(mrb, obj)) {
-    return MRB_EACH_OBJ_OK;
+  if (object_dead_p(mrb, obj)) {
+    return EACH_OBJ_OK;
   }
 
   /* filter internal objects */
   switch (obj->tt) {
-  case MRB_TT_ENV:
-  case MRB_TT_ICLASS:
-    return MRB_EACH_OBJ_OK;
+  case TT_ENV:
+  case TT_ICLASS:
+    return EACH_OBJ_OK;
   default:
     break;
   }
 
   /* filter half baked (or internal) objects */
-  if (!obj->c) return MRB_EACH_OBJ_OK;
+  if (!obj->c) return EACH_OBJ_OK;
 
   /* filter class kind if target module defined */
-  if (d->target_module && !mrb_obj_is_kind_of(mrb, mrb_obj_value(obj), d->target_module)) {
-    return MRB_EACH_OBJ_OK;
+  if (d->target_module && !obj_is_kind_of(mrb, obj_value(obj), d->target_module)) {
+    return EACH_OBJ_OK;
   }
 
-  mrb_yield(mrb, d->block, mrb_obj_value(obj));
+  yield(mrb, d->block, obj_value(obj));
   ++d->count;
-  return MRB_EACH_OBJ_OK;
+  return EACH_OBJ_OK;
 }
 
 /*
@@ -156,32 +156,32 @@ os_each_object_cb(mrb_state *mrb, struct RBasic *obj, void *ud)
  *
  */
 
-static mrb_value
-os_each_object(mrb_state *mrb, mrb_value self)
+static value
+os_each_object(state *mrb, value self)
 {
-  mrb_value cls = mrb_nil_value();
+  value cls = nil_value();
   struct os_each_object_data d;
-  mrb_get_args(mrb, "&|C", &d.block, &cls);
+  get_args(mrb, "&|C", &d.block, &cls);
 
-  if (mrb_nil_p(d.block)) {
-    mrb_raise(mrb, E_ARGUMENT_ERROR, "Expected block in ObjectSpace.each_object.");
+  if (nil_p(d.block)) {
+    raise(mrb, E_ARGUMENT_ERROR, "Expected block in ObjectSpace.each_object.");
   }
 
-  d.target_module = mrb_nil_p(cls) ? NULL : mrb_class_ptr(cls);
+  d.target_module = nil_p(cls) ? NULL : class_ptr(cls);
   d.count = 0;
-  mrb_objspace_each_objects(mrb, os_each_object_cb, &d);
-  return mrb_fixnum_value(d.count);
+  objspace_each_objects(mrb, os_each_object_cb, &d);
+  return fixnum_value(d.count);
 }
 
 void
-mrb_mruby_objectspace_gem_init(mrb_state *mrb)
+mruby_objectspace_gem_init(state *mrb)
 {
-  struct RClass *os = mrb_define_module(mrb, "ObjectSpace");
-  mrb_define_class_method(mrb, os, "count_objects", os_count_objects, MRB_ARGS_OPT(1));
-  mrb_define_class_method(mrb, os, "each_object", os_each_object, MRB_ARGS_OPT(1));
+  struct RClass *os = define_module(mrb, "ObjectSpace");
+  define_class_method(mrb, os, "count_objects", os_count_objects, ARGS_OPT(1));
+  define_class_method(mrb, os, "each_object", os_each_object, ARGS_OPT(1));
 }
 
 void
-mrb_mruby_objectspace_gem_final(mrb_state *mrb)
+mruby_objectspace_gem_final(state *mrb)
 {
 }

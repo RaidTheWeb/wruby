@@ -13,7 +13,7 @@ MRuby::Build.new('word_boxing') do |conf|
 
   conf.gembox 'default'
   conf.compilers.each do |c|
-    c.defines += %w(MRB_WORD_BOXING)
+    c.defines += %w(WORD_BOXING)
   end
 end
 
@@ -22,7 +22,7 @@ MRuby::Build.new('nan_boxing') do |conf|
 
   conf.gembox 'default'
   conf.compilers.each do |c|
-    c.defines += %w(MRB_NAN_BOXING)
+    c.defines += %w(NAN_BOXING)
   end
 end
 

@@ -19,7 +19,7 @@
 #include <mruby/array.h>
 
 void
-mrb_init_mrbtest(mrb_state *);
+init_mrbtest(state *);
 
 /* Print a short remark for the user */
 static void
@@ -29,24 +29,24 @@ print_hint(void)
 }
 
 static int
-check_error(mrb_state *mrb)
+check_error(state *mrb)
 {
   /* Error check */
   /* $ko_test and $kill_test should be 0 */
-  mrb_value ko_test = mrb_gv_get(mrb, mrb_intern_lit(mrb, "$ko_test"));
-  mrb_value kill_test = mrb_gv_get(mrb, mrb_intern_lit(mrb, "$kill_test"));
+  value ko_test = gv_get(mrb, intern_lit(mrb, "$ko_test"));
+  value kill_test = gv_get(mrb, intern_lit(mrb, "$kill_test"));
 
-  return mrb_fixnum_p(ko_test) && mrb_fixnum(ko_test) == 0 && mrb_fixnum_p(kill_test) && mrb_fixnum(kill_test) == 0;
+  return fixnum_p(ko_test) && fixnum(ko_test) == 0 && fixnum_p(kill_test) && fixnum(kill_test) == 0;
 }
 
 static int
-eval_test(mrb_state *mrb)
+eval_test(state *mrb)
 {
   /* evaluate the test */
-  mrb_funcall(mrb, mrb_top_self(mrb), "report", 0);
+  funcall(mrb, top_self(mrb), "report", 0);
   /* did an exception occur? */
   if (mrb->exc) {
-    mrb_print_error(mrb);
+    print_error(mrb);
     mrb->exc = 0;
     return EXIT_FAILURE;
   }
@@ -57,12 +57,12 @@ eval_test(mrb_state *mrb)
 }
 
 static void
-t_printstr(mrb_state *mrb, mrb_value obj)
+t_printstr(state *mrb, value obj)
 {
   char *s;
-  mrb_int len;
+  int len;
 
-  if (mrb_string_p(obj)) {
+  if (string_p(obj)) {
     s = RSTRING_PTR(obj);
     len = RSTRING_LEN(obj);
     fwrite(s, len, 1, stdout);
@@ -70,60 +70,60 @@ t_printstr(mrb_state *mrb, mrb_value obj)
   }
 }
 
-mrb_value
-mrb_t_printstr(mrb_state *mrb, mrb_value self)
+value
+t_printstr(state *mrb, value self)
 {
-  mrb_value argv;
+  value argv;
 
-  mrb_get_args(mrb, "o", &argv);
+  get_args(mrb, "o", &argv);
   t_printstr(mrb, argv);
 
   return argv;
 }
 
 void
-mrb_init_test_driver(mrb_state *mrb, mrb_bool verbose)
+init_test_driver(state *mrb, bool verbose)
 {
   struct RClass *krn, *mrbtest;
 
   krn = mrb->kernel_module;
-  mrb_define_method(mrb, krn, "__t_printstr__", mrb_t_printstr, MRB_ARGS_REQ(1));
+  define_method(mrb, krn, "__t_printstr__", t_printstr, ARGS_REQ(1));
 
-  mrbtest = mrb_define_module(mrb, "Mrbtest");
+  mrbtest = define_module(mrb, "Mrbtest");
 
-  mrb_define_const(mrb, mrbtest, "FIXNUM_MAX", mrb_fixnum_value(MRB_INT_MAX));
-  mrb_define_const(mrb, mrbtest, "FIXNUM_MIN", mrb_fixnum_value(MRB_INT_MIN));
-  mrb_define_const(mrb, mrbtest, "FIXNUM_BIT", mrb_fixnum_value(MRB_INT_BIT));
+  define_const(mrb, mrbtest, "FIXNUM_MAX", fixnum_value(INT_MAX));
+  define_const(mrb, mrbtest, "FIXNUM_MIN", fixnum_value(INT_MIN));
+  define_const(mrb, mrbtest, "FIXNUM_BIT", fixnum_value(INT_BIT));
 
-#ifndef MRB_WITHOUT_FLOAT
-#ifdef MRB_USE_FLOAT
-  mrb_define_const(mrb, mrbtest, "FLOAT_TOLERANCE", mrb_float_value(mrb, 1e-6));
+#ifndef WITHOUT_FLOAT
+#ifdef USE_FLOAT
+  define_const(mrb, mrbtest, "FLOAT_TOLERANCE", float_value(mrb, 1e-6));
 #else
-  mrb_define_const(mrb, mrbtest, "FLOAT_TOLERANCE", mrb_float_value(mrb, 1e-12));
+  define_const(mrb, mrbtest, "FLOAT_TOLERANCE", float_value(mrb, 1e-12));
 #endif
 #endif
 
   if (verbose) {
-    mrb_gv_set(mrb, mrb_intern_lit(mrb, "$mrbtest_verbose"), mrb_true_value());
+    gv_set(mrb, intern_lit(mrb, "$mrbtest_verbose"), true_value());
   }
 }
 
 void
-mrb_t_pass_result(mrb_state *mrb_dst, mrb_state *mrb_src)
+t_pass_result(state *dst, state *src)
 {
-  mrb_value res_src;
+  value res_src;
 
-  if (mrb_src->exc) {
-    mrb_print_error(mrb_src);
+  if (src->exc) {
+    print_error(src);
     exit(EXIT_FAILURE);
   }
 
 #define TEST_COUNT_PASS(name)                                           \
   do {                                                                  \
-    res_src = mrb_gv_get(mrb_src, mrb_intern_lit(mrb_src, "$" #name));  \
-    if (mrb_fixnum_p(res_src)) {                                        \
-      mrb_value res_dst = mrb_gv_get(mrb_dst, mrb_intern_lit(mrb_dst, "$" #name)); \
-      mrb_gv_set(mrb_dst, mrb_intern_lit(mrb_dst, "$" #name), mrb_fixnum_value(mrb_fixnum(res_dst) + mrb_fixnum(res_src))); \
+    res_src = gv_get(src, intern_lit(src, "$" #name));  \
+    if (fixnum_p(res_src)) {                                        \
+      value res_dst = gv_get(dst, intern_lit(dst, "$" #name)); \
+      gv_set(dst, intern_lit(dst, "$" #name), fixnum_value(fixnum(res_dst) + fixnum(res_src))); \
     }                                                                   \
   } while (FALSE)                                                       \
 
@@ -133,14 +133,14 @@ mrb_t_pass_result(mrb_state *mrb_dst, mrb_state *mrb_src)
 
 #undef TEST_COUNT_PASS
 
-  res_src = mrb_gv_get(mrb_src, mrb_intern_lit(mrb_src, "$asserts"));
+  res_src = gv_get(src, intern_lit(src, "$asserts"));
 
-  if (mrb_array_p(res_src)) {
-    mrb_int i;
-    mrb_value res_dst = mrb_gv_get(mrb_dst, mrb_intern_lit(mrb_dst, "$asserts"));
+  if (array_p(res_src)) {
+    int i;
+    value res_dst = gv_get(dst, intern_lit(dst, "$asserts"));
     for (i = 0; i < RARRAY_LEN(res_src); ++i) {
-      mrb_value val_src = RARRAY_PTR(res_src)[i];
-      mrb_ary_push(mrb_dst, res_dst, mrb_str_new(mrb_dst, RSTRING_PTR(val_src), RSTRING_LEN(val_src)));
+      value val_src = RARRAY_PTR(res_src)[i];
+      ary_push(dst, res_dst, str_new(dst, RSTRING_PTR(val_src), RSTRING_LEN(val_src)));
     }
   }
 }
@@ -148,16 +148,16 @@ mrb_t_pass_result(mrb_state *mrb_dst, mrb_state *mrb_src)
 int
 main(int argc, char **argv)
 {
-  mrb_state *mrb;
+  state *mrb;
   int ret;
-  mrb_bool verbose = FALSE;
+  bool verbose = FALSE;
 
   print_hint();
 
   /* new interpreter instance */
-  mrb = mrb_open();
+  mrb = open();
   if (mrb == NULL) {
-    fprintf(stderr, "Invalid mrb_state, exiting test driver");
+    fprintf(stderr, "Invalid state, exiting test driver");
     return EXIT_FAILURE;
   }
 
@@ -166,10 +166,10 @@ main(int argc, char **argv)
     verbose = TRUE;
   }
 
-  mrb_init_test_driver(mrb, verbose);
-  mrb_init_mrbtest(mrb);
+  init_test_driver(mrb, verbose);
+  init_mrbtest(mrb);
   ret = eval_test(mrb);
-  mrb_close(mrb);
+  close(mrb);
 
   return ret;
 }

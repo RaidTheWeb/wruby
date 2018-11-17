@@ -12,17 +12,17 @@
 /**
  * mruby version definition macros
  */
-MRB_BEGIN_DECL
+BEGIN_DECL
 
 /*
  * A passed in expression.
  */
-#define MRB_STRINGIZE0(expr) #expr
+#define STRINGIZE0(expr) #expr
 
 /*
- * Passes in an expression to MRB_STRINGIZE0.
+ * Passes in an expression to STRINGIZE0.
  */
-#define MRB_STRINGIZE(expr) MRB_STRINGIZE0(expr)
+#define STRINGIZE(expr) STRINGIZE0(expr)
 
 /*
  * The version of Ruby used by mruby.
@@ -52,7 +52,7 @@ MRB_BEGIN_DECL
 /*
  * The mruby version.
  */
-#define MRUBY_VERSION MRB_STRINGIZE(MRUBY_RELEASE_MAJOR) "." MRB_STRINGIZE(MRUBY_RELEASE_MINOR) "." MRB_STRINGIZE(MRUBY_RELEASE_TEENY)
+#define MRUBY_VERSION STRINGIZE(MRUBY_RELEASE_MAJOR) "." STRINGIZE(MRUBY_RELEASE_MINOR) "." STRINGIZE(MRUBY_RELEASE_TEENY)
 
 /*
  * Release number.
@@ -77,7 +77,7 @@ MRB_BEGIN_DECL
 /*
  * Release date as a string.
  */
-#define MRUBY_RELEASE_DATE MRB_STRINGIZE(MRUBY_RELEASE_YEAR) "-" MRB_STRINGIZE(MRUBY_RELEASE_MONTH) "-" MRB_STRINGIZE(MRUBY_RELEASE_DAY)
+#define MRUBY_RELEASE_DATE STRINGIZE(MRUBY_RELEASE_YEAR) "-" STRINGIZE(MRUBY_RELEASE_MONTH) "-" STRINGIZE(MRUBY_RELEASE_DAY)
 
 /*
  * The year mruby was first created.
@@ -101,10 +101,10 @@ MRB_BEGIN_DECL
  */
 #define MRUBY_COPYRIGHT                \
   "mruby - Copyright (c) "             \
-  MRB_STRINGIZE(MRUBY_BIRTH_YEAR)"-"   \
-  MRB_STRINGIZE(MRUBY_RELEASE_YEAR)" " \
+  STRINGIZE(MRUBY_BIRTH_YEAR)"-"   \
+  STRINGIZE(MRUBY_RELEASE_YEAR)" " \
   MRUBY_AUTHOR                         \
 
-MRB_END_DECL
+END_DECL
 
 #endif  /* MRUBY_VERSION_H */

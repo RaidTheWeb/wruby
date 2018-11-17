@@ -14,7 +14,7 @@
 #include "apiprint.h"
 
 static void
-mrdb_check_syntax(mrb_state *mrb, mrb_debug_context *dbg, const char *expr, size_t len)
+mrdb_check_syntax(state *mrb, debug_context *dbg, const char *expr, size_t len)
 {
   mrbc_context *c;
 
@@ -25,19 +25,19 @@ mrdb_check_syntax(mrb_state *mrb, mrb_debug_context *dbg, const char *expr, size
   c->lineno = dbg->prvline;
 
   /* Load program */
-  mrb_load_nstring_cxt(mrb, expr, len, c);
+  load_nstring_cxt(mrb, expr, len, c);
 
   mrbc_context_free(mrb, c);
 }
 
-mrb_value
-mrb_debug_eval(mrb_state *mrb, mrb_debug_context *dbg, const char *expr, size_t len, mrb_bool *exc)
+value
+debug_eval(state *mrb, debug_context *dbg, const char *expr, size_t len, bool *exc)
 {
-  void (*tmp)(struct mrb_state *, struct mrb_irep *, mrb_code *, mrb_value *);
-  mrb_value ruby_code;
-  mrb_value s;
-  mrb_value v;
-  mrb_value recv;
+  void (*tmp)(struct state *, struct irep *, code *, value *);
+  value ruby_code;
+  value s;
+  value v;
+  value recv;
 
   /* disable code_fetch_hook */
   tmp = mrb->code_fetch_hook;
@@ -45,7 +45,7 @@ mrb_debug_eval(mrb_state *mrb, mrb_debug_context *dbg, const char *expr, size_t 
 
   mrdb_check_syntax(mrb, dbg, expr, len);
   if (mrb->exc) {
-    v = mrb_obj_value(mrb->exc);
+    v = obj_value(mrb->exc);
     mrb->exc = 0;
   }
   else {
@@ -56,20 +56,20 @@ mrb_debug_eval(mrb_state *mrb, mrb_debug_context *dbg, const char *expr, size_t 
      *   e
      * end
      */
-    ruby_code = mrb_str_new_lit(mrb, "begin\n");
-    ruby_code = mrb_str_cat(mrb, ruby_code, expr, len);
-    ruby_code = mrb_str_cat_lit(mrb, ruby_code, "\nrescue => e\ne\nend");
+    ruby_code = str_new_lit(mrb, "begin\n");
+    ruby_code = str_cat(mrb, ruby_code, expr, len);
+    ruby_code = str_cat_lit(mrb, ruby_code, "\nrescue => e\ne\nend");
 
     recv = dbg->regs[0];
 
-    v =  mrb_funcall(mrb, recv, "instance_eval", 1, ruby_code);
+    v =  funcall(mrb, recv, "instance_eval", 1, ruby_code);
   }
 
   if (exc) {
-    *exc = mrb_obj_is_kind_of(mrb, v, mrb->eException_class);
+    *exc = obj_is_kind_of(mrb, v, mrb->eException_class);
   }
 
-  s = mrb_funcall(mrb, v, "inspect", 0);
+  s = funcall(mrb, v, "inspect", 0);
 
   /* enable code_fetch_hook */
   mrb->code_fetch_hook = tmp;

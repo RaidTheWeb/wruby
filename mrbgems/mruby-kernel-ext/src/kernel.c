@@ -4,15 +4,15 @@
 #include <mruby/hash.h>
 #include <mruby/range.h>
 
-static mrb_value
-mrb_f_caller(mrb_state *mrb, mrb_value self)
+static value
+f_caller(state *mrb, value self)
 {
-  mrb_value bt, v, length;
-  mrb_int bt_len, argc, lev, n;
+  value bt, v, length;
+  int bt_len, argc, lev, n;
 
-  bt = mrb_get_backtrace(mrb);
+  bt = get_backtrace(mrb);
   bt_len = RARRAY_LEN(bt);
-  argc = mrb_get_args(mrb, "|oo", &v, &length);
+  argc = get_args(mrb, "|oo", &v, &length);
 
   switch (argc) {
     case 0:
@@ -20,33 +20,33 @@ mrb_f_caller(mrb_state *mrb, mrb_value self)
       n = bt_len - lev;
       break;
     case 1:
-      if (mrb_type(v) == MRB_TT_RANGE) {
-        mrb_int beg, len;
-        if (mrb_range_beg_len(mrb, v, &beg, &len, bt_len, TRUE) == 1) {
+      if (type(v) == TT_RANGE) {
+        int beg, len;
+        if (range_beg_len(mrb, v, &beg, &len, bt_len, TRUE) == 1) {
           lev = beg;
           n = len;
         }
         else {
-          return mrb_nil_value();
+          return nil_value();
         }
       }
       else {
-        v = mrb_to_int(mrb, v);
-        lev = mrb_fixnum(v);
+        v = to_int(mrb, v);
+        lev = fixnum(v);
         if (lev < 0) {
-          mrb_raisef(mrb, E_ARGUMENT_ERROR, "negative level (%S)", v);
+          raisef(mrb, E_ARGUMENT_ERROR, "negative level (%S)", v);
         }
         n = bt_len - lev;
       }
       break;
     case 2:
-      lev = mrb_fixnum(mrb_to_int(mrb, v));
-      n = mrb_fixnum(mrb_to_int(mrb, length));
+      lev = fixnum(to_int(mrb, v));
+      n = fixnum(to_int(mrb, length));
       if (lev < 0) {
-        mrb_raisef(mrb, E_ARGUMENT_ERROR, "negative level (%S)", v);
+        raisef(mrb, E_ARGUMENT_ERROR, "negative level (%S)", v);
       }
       if (n < 0) {
-        mrb_raisef(mrb, E_ARGUMENT_ERROR, "negative size (%S)", length);
+        raisef(mrb, E_ARGUMENT_ERROR, "negative size (%S)", length);
       }
       break;
     default:
@@ -55,10 +55,10 @@ mrb_f_caller(mrb_state *mrb, mrb_value self)
   }
 
   if (n == 0) {
-    return mrb_ary_new(mrb);
+    return ary_new(mrb);
   }
 
-  return mrb_funcall(mrb, bt, "[]", 2, mrb_fixnum_value(lev), mrb_fixnum_value(n));
+  return funcall(mrb, bt, "[]", 2, fixnum_value(lev), fixnum_value(n));
 }
 
 /*
@@ -70,15 +70,15 @@ mrb_f_caller(mrb_state *mrb, mrb_value self)
  *  If called outside of a method, it returns <code>nil</code>.
  *
  */
-static mrb_value
-mrb_f_method(mrb_state *mrb, mrb_value self)
+static value
+f_method(state *mrb, value self)
 {
-  mrb_callinfo *ci = mrb->c->ci;
+  callinfo *ci = mrb->c->ci;
   ci--;
   if (ci->mid)
-    return mrb_symbol_value(ci->mid);
+    return symbol_value(ci->mid);
   else
-    return mrb_nil_value();
+    return nil_value();
 }
 
 /*
@@ -104,17 +104,17 @@ mrb_f_method(mrb_state *mrb, mrb_value self)
  *     Integer("111", 2)   #=> 7
  *     Integer(nil)        #=> TypeError
  */
-static mrb_value
-mrb_f_integer(mrb_state *mrb, mrb_value self)
+static value
+f_integer(state *mrb, value self)
 {
-  mrb_value arg;
-  mrb_int base = 0;
+  value arg;
+  int base = 0;
 
-  mrb_get_args(mrb, "o|i", &arg, &base);
-  return mrb_convert_to_integer(mrb, arg, base);
+  get_args(mrb, "o|i", &arg, &base);
+  return convert_to_integer(mrb, arg, base);
 }
 
-#ifndef MRB_WITHOUT_FLOAT
+#ifndef WITHOUT_FLOAT
 /*
  *  call-seq:
  *     Float(arg)    -> float
@@ -127,13 +127,13 @@ mrb_f_integer(mrb_state *mrb, mrb_value self)
  *     Float("123.456")   #=> 123.456
  *     Float(nil)         #=> TypeError
  */
-static mrb_value
-mrb_f_float(mrb_state *mrb, mrb_value self)
+static value
+f_float(state *mrb, value self)
 {
-  mrb_value arg;
+  value arg;
 
-  mrb_get_args(mrb, "o", &arg);
-  return mrb_Float(mrb, arg);
+  get_args(mrb, "o", &arg);
+  return Float(mrb, arg);
 }
 #endif
 
@@ -149,15 +149,15 @@ mrb_f_float(mrb_state *mrb, mrb_value self)
  *     String(self.class)  #=> "Object"
  *     String(123456)      #=> "123456"
  */
-static mrb_value
-mrb_f_string(mrb_state *mrb, mrb_value self)
+static value
+f_string(state *mrb, value self)
 {
-  mrb_value arg, tmp;
+  value arg, tmp;
 
-  mrb_get_args(mrb, "o", &arg);
-  tmp = mrb_check_convert_type(mrb, arg, MRB_TT_STRING, "String", "to_str");
-  if (mrb_nil_p(tmp)) {
-    tmp = mrb_check_convert_type(mrb, arg, MRB_TT_STRING, "String", "to_s");
+  get_args(mrb, "o", &arg);
+  tmp = check_convert_type(mrb, arg, TT_STRING, "String", "to_str");
+  if (nil_p(tmp)) {
+    tmp = check_convert_type(mrb, arg, TT_STRING, "String", "to_s");
   }
   return tmp;
 }
@@ -173,18 +173,18 @@ mrb_f_string(mrb_state *mrb, mrb_value self)
  *     Array(1..5)   #=> [1, 2, 3, 4, 5]
  *
  */
-static mrb_value
-mrb_f_array(mrb_state *mrb, mrb_value self)
+static value
+f_array(state *mrb, value self)
 {
-  mrb_value arg, tmp;
+  value arg, tmp;
 
-  mrb_get_args(mrb, "o", &arg);
-  tmp = mrb_check_convert_type(mrb, arg, MRB_TT_ARRAY, "Array", "to_ary");
-  if (mrb_nil_p(tmp)) {
-    tmp = mrb_check_convert_type(mrb, arg, MRB_TT_ARRAY, "Array", "to_a");
+  get_args(mrb, "o", &arg);
+  tmp = check_convert_type(mrb, arg, TT_ARRAY, "Array", "to_ary");
+  if (nil_p(tmp)) {
+    tmp = check_convert_type(mrb, arg, TT_ARRAY, "Array", "to_a");
   }
-  if (mrb_nil_p(tmp)) {
-    return mrb_ary_new_from_values(mrb, 1, &arg);
+  if (nil_p(tmp)) {
+    return ary_new_from_values(mrb, 1, &arg);
   }
 
   return tmp;
@@ -204,22 +204,22 @@ mrb_f_array(mrb_state *mrb, mrb_value self)
  *      Hash([1, 2, 3])   #=> TypeError
  *
  */
-static mrb_value
-mrb_f_hash(mrb_state *mrb, mrb_value self)
+static value
+f_hash(state *mrb, value self)
 {
-  mrb_value arg, tmp;
+  value arg, tmp;
 
-  mrb_get_args(mrb, "o", &arg);
-  if (mrb_nil_p(arg)) {
-    return mrb_hash_new(mrb);
+  get_args(mrb, "o", &arg);
+  if (nil_p(arg)) {
+    return hash_new(mrb);
   }
-  tmp = mrb_check_convert_type(mrb, arg, MRB_TT_HASH, "Hash", "to_hash");
-  if (mrb_nil_p(tmp)) {
-    if (mrb_array_p(arg) && RARRAY_LEN(arg) == 0) {
-      return mrb_hash_new(mrb);
+  tmp = check_convert_type(mrb, arg, TT_HASH, "Hash", "to_hash");
+  if (nil_p(tmp)) {
+    if (array_p(arg) && RARRAY_LEN(arg) == 0) {
+      return hash_new(mrb);
     }
-    mrb_raisef(mrb, E_TYPE_ERROR, "can't convert %S into Hash",
-      mrb_str_new_cstr(mrb, mrb_obj_classname(mrb, arg)));
+    raisef(mrb, E_TYPE_ERROR, "can't convert %S into Hash",
+      str_new_cstr(mrb, obj_classname(mrb, arg)));
   }
   return tmp;
 }
@@ -234,31 +234,31 @@ mrb_f_hash(mrb_state *mrb, mrb_value self)
  *      string.itself.object_id == string.object_id #=> true
  *
  */
-static mrb_value
-mrb_f_itself(mrb_state *mrb, mrb_value self)
+static value
+f_itself(state *mrb, value self)
 {
   return self;
 }
 
 void
-mrb_mruby_kernel_ext_gem_init(mrb_state *mrb)
+mruby_kernel_ext_gem_init(state *mrb)
 {
   struct RClass *krn = mrb->kernel_module;
 
-  mrb_define_module_function(mrb, krn, "fail", mrb_f_raise, MRB_ARGS_OPT(2));
-  mrb_define_module_function(mrb, krn, "caller", mrb_f_caller, MRB_ARGS_OPT(2));
-  mrb_define_method(mrb, krn, "__method__", mrb_f_method, MRB_ARGS_NONE());
-  mrb_define_module_function(mrb, krn, "Integer", mrb_f_integer, MRB_ARGS_ANY());
-#ifndef MRB_WITHOUT_FLOAT
-  mrb_define_module_function(mrb, krn, "Float", mrb_f_float, MRB_ARGS_REQ(1));
+  define_module_function(mrb, krn, "fail", f_raise, ARGS_OPT(2));
+  define_module_function(mrb, krn, "caller", f_caller, ARGS_OPT(2));
+  define_method(mrb, krn, "__method__", f_method, ARGS_NONE());
+  define_module_function(mrb, krn, "Integer", f_integer, ARGS_ANY());
+#ifndef WITHOUT_FLOAT
+  define_module_function(mrb, krn, "Float", f_float, ARGS_REQ(1));
 #endif
-  mrb_define_module_function(mrb, krn, "String", mrb_f_string, MRB_ARGS_REQ(1));
-  mrb_define_module_function(mrb, krn, "Array", mrb_f_array, MRB_ARGS_REQ(1));
-  mrb_define_module_function(mrb, krn, "Hash", mrb_f_hash, MRB_ARGS_REQ(1));
-  mrb_define_module_function(mrb, krn, "itself", mrb_f_itself, MRB_ARGS_NONE());
+  define_module_function(mrb, krn, "String", f_string, ARGS_REQ(1));
+  define_module_function(mrb, krn, "Array", f_array, ARGS_REQ(1));
+  define_module_function(mrb, krn, "Hash", f_hash, ARGS_REQ(1));
+  define_module_function(mrb, krn, "itself", f_itself, ARGS_NONE());
 }
 
 void
-mrb_mruby_kernel_ext_gem_final(mrb_state *mrb)
+mruby_kernel_ext_gem_final(state *mrb)
 {
 }
