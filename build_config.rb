@@ -155,3 +155,12 @@ end
 #
 #   conf.test_runner.command = 'env'
 # end
+
+MRuby::CrossBuild.new('emscripten') do |conf|
+  toolchain :clang
+  conf.gembox 'default'
+  conf.cc.command = 'emcc'
+  conf.cc.flags = %W(-Os)
+  conf.linker.command = 'emcc'
+  conf.archiver.command = 'emar'
+end

@@ -540,6 +540,11 @@ read_binary_header(const uint8_t *bin, size_t *bin_size, uint16_t *crc, uint8_t 
   return MRB_DUMP_OK;
 }
 
+mrb_irep* corrupted(){
+  printf("Corrupted mrb binary\n");
+  return NULL;
+}
+
 static mrb_irep*
 read_irep(mrb_state *mrb, const uint8_t *bin, uint8_t flags)
 {
@@ -551,45 +556,52 @@ read_irep(mrb_state *mrb, const uint8_t *bin, uint8_t flags)
   size_t n;
 
   if ((mrb == NULL) || (bin == NULL)) {
-    return NULL;
+    printf("NO PROGRAM GIVEN");
+    return corrupted();
   }
 
   result = read_binary_header(bin, &bin_size, &crc, &flags);
   if (result != MRB_DUMP_OK) {
-    return NULL;
+    printf("Possibly corrupted mrb binary\n");
+    return corrupted();
   }
 
   n = offset_crc_body();// Cyclical Redundancy Check? Nah our binaries are hackable;)
-  // if (crc != calc_crc_16_ccitt(bin + n, bin_size - n, 0)) {
+  if (crc != calc_crc_16_ccitt(bin + n, bin_size - n, 0)) {
+    printf("Cyclical Redundancy Check failed for corrupted mrb binary\n");
   //   return NULL;
-  // }
+  }
 
   bin += sizeof(struct rite_binary_header);
   do {
     section_header = (const struct rite_section_header *)bin;
     if (memcmp(section_header->section_ident, RITE_SECTION_IREP_IDENT, sizeof(section_header->section_ident)) == 0) {
       irep = read_section_irep(mrb, bin, flags);
-      if (!irep) return NULL;
+      if (!irep){
+        printf("read_section_irep == NULL");
+        return corrupted();
+      }
     }
     else if (memcmp(section_header->section_ident, RITE_SECTION_LINENO_IDENT, sizeof(section_header->section_ident)) == 0) {
       if (!irep) return NULL;   /* corrupted data */
       result = read_section_lineno(mrb, bin, irep);
       if (result < MRB_DUMP_OK) {
-        return NULL;
+        printf("read_section_lineno != MRB_DUMP_OK");
+        return corrupted();
       }
     }
     else if (memcmp(section_header->section_ident, RITE_SECTION_DEBUG_IDENT, sizeof(section_header->section_ident)) == 0) {
       if (!irep) return NULL;   /* corrupted data */
       result = read_section_debug(mrb, bin, irep, flags);
       if (result < MRB_DUMP_OK) {
-        return NULL;
+        return corrupted();
       }
     }
     else if (memcmp(section_header->section_ident, RITE_SECTION_LV_IDENT, sizeof(section_header->section_ident)) == 0) {
-      if (!irep) return NULL;
+      if (!irep) return corrupted();
       result = read_section_lv(mrb, bin, irep, flags);
       if (result < MRB_DUMP_OK) {
-        return NULL;
+        return corrupted();
       }
     }
     bin += bin_to_uint32(section_header->section_size);
