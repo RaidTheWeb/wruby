@@ -300,7 +300,9 @@ API struct RClass *define_class(state *mrb, const char *name, struct RClass *sup
  * @param [const char *] char* The name of the module.
  * @return [struct RClass *] Reference to the newly defined module.
  */
-API struct RClass *define_module(state *, const char*);
+
+API struct RClass* define_module(state *mrb, sym name, struct RClass *outer);
+API struct RClass* define_module_(state *, const char*);
 API value singleton_class(state*, value);
 
 /**
@@ -976,7 +978,7 @@ API const char *sym2name(state*,sym);
 API const char *sym2name_len(state*,sym,int*);
 API value sym2str(state*,sym);
 
-API void *malloc(state*, size_t);         /* raise RuntimeError if no mem */
+API void *malloc_(state*, size_t);         /* raise RuntimeError if no mem */
 API void *calloc(state*, size_t, size_t); /* ditto */
 API void *realloc(state*, void*, size_t); /* ditto */
 API void *realloc_simple(state*, void*, size_t); /* return NULL if no memory available */
@@ -1142,7 +1144,9 @@ API noreturn void raisef(state *mrb, struct RClass *c, const char *fmt, ...);
 API noreturn void name_error(state *mrb, sym id, const char *fmt, ...);
 API void warn(state *mrb, const char *fmt, ...);
 API noreturn void bug(state *mrb, const char *fmt, ...);
-API void print_backtrace(state *mrb);
+API void print_backtrace(state *mrb, value backtrace);
+//API void print_backtrace(state *mrb, ...);
+API void print_backtrace_(state *mrb);
 API void print_error(state *mrb);
 
 /* macros to get typical exception objects

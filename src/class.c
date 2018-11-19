@@ -77,7 +77,7 @@ class_name_class(state *mrb, struct RClass *outer, struct RClass *c, sym id)
   obj_iv_set(mrb, (struct RObject*)c, nsym, name);
 }
 
-static void
+API void
 setup_class(state *mrb, struct RClass *outer, struct RClass *c, sym id)
 {
   class_name_class(mrb, outer, c, id);
@@ -86,7 +86,7 @@ setup_class(state *mrb, struct RClass *outer, struct RClass *c, sym id)
 
 #define make_metaclass(mrb, c) prepare_singleton_class((mrb), (struct RBasic*)(c))
 
-static void
+API void
 prepare_singleton_class(state *mrb, struct RBasic *o)
 {
   struct RClass *sc, *c;
@@ -122,7 +122,7 @@ prepare_singleton_class(state *mrb, struct RBasic *o)
   obj_iv_set(mrb, (struct RObject*)sc, intern_lit(mrb, "__attached__"), obj_value(o));
 }
 
-static struct RClass*
+API struct RClass*
 class_from_sym(state *mrb, struct RClass *klass, sym id)
 {
   value c = const_get(mrb, obj_value(klass), id);
@@ -131,7 +131,7 @@ class_from_sym(state *mrb, struct RClass *klass, sym id)
   return class_ptr(c);
 }
 
-static struct RClass*
+API struct RClass*
 module_from_sym(state *mrb, struct RClass *klass, sym id)
 {
   value c = const_get(mrb, obj_value(klass), id);
@@ -140,7 +140,7 @@ module_from_sym(state *mrb, struct RClass *klass, sym id)
   return class_ptr(c);
 }
 
-static bool
+API bool
 class_ptr_p(value obj)
 {
   switch (type(obj)) {
@@ -153,7 +153,7 @@ class_ptr_p(value obj)
   }
 }
 
-static void
+API void
 check_if_class_or_module(state *mrb, value obj)
 {
   if (!class_ptr_p(obj)) {
@@ -161,7 +161,7 @@ check_if_class_or_module(state *mrb, value obj)
   }
 }
 
-static struct RClass*
+API struct RClass*
 define_module(state *mrb, sym name, struct RClass *outer)
 {
   struct RClass *m;
@@ -182,7 +182,7 @@ define_module_id(state *mrb, sym name)
 }
 
 API struct RClass*
-define_module(state *mrb, const char *name)
+define_module_(state *mrb, const char *name)
 {
   return define_module(mrb, intern_cstr(mrb, name), mrb->object_class);
 }
@@ -212,15 +212,15 @@ define_module_under(state *mrb, struct RClass *outer, const char *name)
   return c;
 }
 
-static struct RClass*
+API struct RClass*
 find_origin(struct RClass *c)
 {
   CLASS_ORIGIN(c);
   return c;
 }
 
-static struct RClass*
-define_class(state *mrb, sym name, struct RClass *super, struct RClass *outer)
+API struct RClass*
+define_class_(state *mrb, sym name, struct RClass *super, struct RClass *outer)
 {
   struct RClass * c;
 
@@ -256,18 +256,18 @@ define_class(state *mrb, const char *name, struct RClass *super)
   return define_class_id(mrb, intern_cstr(mrb, name), super);
 }
 
-static value bob_init(state *mrb, value);
+API value bob_init(state *mrb, value);
 #ifdef METHOD_CACHE
-static void mc_clear_all(state *mrb);
-static void mc_clear_by_class(state *mrb, struct RClass*);
-static void mc_clear_by_id(state *mrb, struct RClass*, sym);
+API void mc_clear_all(state *mrb);
+API void mc_clear_by_class(state *mrb, struct RClass*);
+API void mc_clear_by_id(state *mrb, struct RClass*, sym);
 #else
 #define mc_clear_all(mrb)
 #define mc_clear_by_class(mrb,c)
 #define mc_clear_by_id(mrb,c,s)
 #endif
 
-static void
+API void
 class_inherited(state *mrb, struct RClass *super, struct RClass *klass)
 {
   value s;
@@ -492,7 +492,7 @@ notimplement_m(state *mrb, value self)
   return nil_value();
 }
 
-static value
+API value
 check_type(state *mrb, value val, enum vtype t, const char *c, const char *m)
 {
   value tmp;
@@ -504,19 +504,19 @@ check_type(state *mrb, value val, enum vtype t, const char *c, const char *m)
   return tmp;
 }
 
-static value
+API value
 to_str(state *mrb, value val)
 {
   return check_type(mrb, val, TT_STRING, "String", "to_str");
 }
 
-static value
+API value
 to_ary(state *mrb, value val)
 {
   return check_type(mrb, val, TT_ARRAY, "Array", "to_ary");
 }
 
-static value
+API value
 to_hash(state *mrb, value val)
 {
   return check_type(mrb, val, TT_HASH, "Hash", "to_hash");
@@ -963,7 +963,7 @@ get_args(state *mrb, const char *format, ...)
               *var = ARGV+arg_i;
             }
             else {
-              value args = ary_new_from_values(mrb, *pl, ARGV+arg_i);
+              value args = a_ary_new_from_values(mrb, *pl, ARGV + arg_i);
               RARRAY(args)->c = NULL;
               *var = RARRAY_PTR(args);
             }
@@ -992,7 +992,7 @@ get_args(state *mrb, const char *format, ...)
   return i;
 }
 
-static struct RClass*
+API struct RClass*
 boot_defclass(state *mrb, struct RClass *super)
 {
   struct RClass *c;
@@ -1009,7 +1009,7 @@ boot_defclass(state *mrb, struct RClass *super)
   return c;
 }
 
-static void
+API void
 boot_initmod(state *mrb, struct RClass *mod)
 {
   if (!mod->mt) {
@@ -1017,7 +1017,7 @@ boot_initmod(state *mrb, struct RClass *mod)
   }
 }
 
-static struct RClass*
+API struct RClass*
 include_class_new(state *mrb, struct RClass *m, struct RClass *super)
 {
   struct RClass *ic = (struct RClass*)obj_alloc(mrb, TT_ICLASS, mrb->class_class);
@@ -1037,7 +1037,7 @@ include_class_new(state *mrb, struct RClass *m, struct RClass *super)
   return ic;
 }
 
-static int
+API int
 include_module_at(state *mrb, struct RClass *c, struct RClass *ins_pos, struct RClass *m, int search_super)
 {
   struct RClass *p, *ic;
@@ -1112,7 +1112,7 @@ prepend_module(state *mrb, struct RClass *c, struct RClass *m)
   }
 }
 
-static value
+API value
 mod_prepend_features(state *mrb, value mod)
 {
   value klass;
@@ -1123,7 +1123,7 @@ mod_prepend_features(state *mrb, value mod)
   return mod;
 }
 
-static value
+API value
 mod_append_features(state *mrb, value mod)
 {
   value klass;
@@ -1153,7 +1153,7 @@ mod_append_features(state *mrb, value mod)
  *     C.include?(A)   #=> true
  *     A.include?(A)   #=> false
  */
-static value
+API value
 mod_include_p(state *mrb, value mod)
 {
   value mod2;
@@ -1171,7 +1171,7 @@ mod_include_p(state *mrb, value mod)
   return false_value();
 }
 
-static value
+API value
 mod_ancestors(state *mrb, value self)
 {
   value result;
@@ -1190,7 +1190,7 @@ mod_ancestors(state *mrb, value self)
   return result;
 }
 
-static value
+API value
 mod_extend_object(state *mrb, value mod)
 {
   value obj;
@@ -1201,7 +1201,7 @@ mod_extend_object(state *mrb, value mod)
   return mod;
 }
 
-static value
+API value
 mod_initialize(state *mrb, value mod)
 {
   value b;
@@ -1217,7 +1217,7 @@ mod_initialize(state *mrb, value mod)
 /* implementation of module_eval/class_eval */
 value mod_module_eval(state*, value);
 
-static value
+API value
 mod_dummy_visibility(state *mrb, value mod)
 {
   return mod;
@@ -1273,7 +1273,7 @@ define_module_function(state *mrb, struct RClass *c, const char *name, func_t fu
 }
 
 #ifdef METHOD_CACHE
-static void
+API void
 mc_clear_all(state *mrb)
 {
   struct cache_entry *mc = mrb->cache;
@@ -1284,7 +1284,7 @@ mc_clear_all(state *mrb)
   }
 }
 
-static void
+API void
 mc_clear_by_class(state *mrb, struct RClass *c)
 {
   struct cache_entry *mc = mrb->cache;
@@ -1300,7 +1300,7 @@ mc_clear_by_class(state *mrb, struct RClass *c)
   }
 }
 
-static void
+API void
 mc_clear_by_id(state *mrb, struct RClass *c, sym mid)
 {
   struct cache_entry *mc = mrb->cache;
@@ -1376,14 +1376,14 @@ method_search(state *mrb, struct RClass* c, sym mid)
   return m;
 }
 
-static value
+API value
 attr_reader(state *mrb, value obj)
 {
   value name = proc_cfunc_env_get(mrb, 0);
   return iv_get(mrb, obj, to_sym(mrb, name));
 }
 
-static value
+API value
 mod_attr_reader(state *mrb, value mod)
 {
   struct RClass *c = class_ptr(mod);
@@ -1415,7 +1415,7 @@ mod_attr_reader(state *mrb, value mod)
   return nil_value();
 }
 
-static value
+API value
 attr_writer(state *mrb, value obj)
 {
   value name = proc_cfunc_env_get(mrb, 0);
@@ -1426,7 +1426,7 @@ attr_writer(state *mrb, value obj)
   return val;
 }
 
-static value
+API value
 mod_attr_writer(state *mrb, value mod)
 {
   struct RClass *c = class_ptr(mod);
@@ -1467,7 +1467,7 @@ mod_attr_writer(state *mrb, value mod)
   return nil_value();
 }
 
-static value
+API value
 instance_alloc(state *mrb, value cv)
 {
   struct RClass *c = class_ptr(cv);
@@ -1537,7 +1537,7 @@ obj_new(state *mrb, struct RClass *c, int argc, const value *argv)
   return obj;
 }
 
-static value
+API value
 class_initialize(state *mrb, value c)
 {
   value a, b;
@@ -1549,7 +1549,7 @@ class_initialize(state *mrb, value c)
   return c;
 }
 
-static value
+API value
 class_new_class(state *mrb, value cv)
 {
   int n;
@@ -1570,7 +1570,7 @@ class_new_class(state *mrb, value cv)
   return new_class;
 }
 
-static value
+API value
 class_superclass(state *mrb, value klass)
 {
   struct RClass *c;
@@ -1584,13 +1584,13 @@ class_superclass(state *mrb, value klass)
   return obj_value(c);
 }
 
-static value
+API value
 bob_init(state *mrb, value cv)
 {
   return nil_value();
 }
 
-static value
+API value
 bob_not(state *mrb, value cv)
 {
   return bool_value(!test(cv));
@@ -1636,7 +1636,7 @@ obj_equal_m(state *mrb, value self)
   return bool_value(obj_equal(mrb, self, arg));
 }
 
-static value
+API value
 obj_not_equal_m(state *mrb, value self)
 {
   value arg;
@@ -1721,7 +1721,7 @@ obj_classname(state *mrb, value obj)
  * \param super a reference to an object.
  * \exception TypeError if \a super is not a Class or \a super is a singleton class.
  */
-static void
+API void
 check_inheritable(state *mrb, struct RClass *super)
 {
   if (super->tt != TT_CLASS) {
@@ -1818,7 +1818,7 @@ define_alias(state *mrb, struct RClass *klass, const char *name1, const char *na
  * show information on the thing we're attached to as well.
  */
 
-static value
+API value
 mod_to_s(state *mrb, value klass)
 {
   value str;
@@ -1868,7 +1868,7 @@ mod_to_s(state *mrb, value klass)
   }
 }
 
-static value
+API value
 mod_alias(state *mrb, value mod)
 {
   struct RClass *c = class_ptr(mod);
@@ -1905,7 +1905,7 @@ undef_class_method(state *mrb, struct RClass *c, const char *name)
   undef_method(mrb,  class_ptr(singleton_class(mrb, obj_value(c))), name);
 }
 
-static value
+API value
 mod_undef(state *mrb, value mod)
 {
   struct RClass *c = class_ptr(mod);
@@ -1920,7 +1920,7 @@ mod_undef(state *mrb, value mod)
   return nil_value();
 }
 
-static void
+API void
 check_const_name_str(state *mrb, value str)
 {
   if (RSTRING_LEN(str) < 1 || !ISUPPER(*RSTRING_PTR(str))) {
@@ -1928,13 +1928,13 @@ check_const_name_str(state *mrb, value str)
   }
 }
 
-static void
+API void
 check_const_name_sym(state *mrb, sym id)
 {
   check_const_name_str(mrb, sym2str(mrb, id));
 }
 
-static value
+API value
 mod_const_defined(state *mrb, value mod)
 {
   sym id;
@@ -1948,14 +1948,14 @@ mod_const_defined(state *mrb, value mod)
   return bool_value(const_defined_at(mrb, mod, id));
 }
 
-static value
+API value
 const_get_sym(state *mrb, value mod, sym id)
 {
   check_const_name_sym(mrb, id);
   return const_get(mrb, mod, id);
 }
 
-static value
+API value
 mod_const_get(state *mrb, value mod)
 {
   value path;
@@ -1995,7 +1995,7 @@ mod_const_get(state *mrb, value mod)
   return mod;
 }
 
-static value
+API value
 mod_const_set(state *mrb, value mod)
 {
   sym id;
@@ -2007,7 +2007,7 @@ mod_const_set(state *mrb, value mod)
   return value;
 }
 
-static value
+API value
 mod_remove_const(state *mrb, value mod)
 {
   sym id;
@@ -2022,7 +2022,7 @@ mod_remove_const(state *mrb, value mod)
   return val;
 }
 
-static value
+API value
 mod_const_missing(state *mrb, value mod)
 {
   sym sym;
@@ -2069,7 +2069,7 @@ mod_const_missing(state *mrb, value mod)
  *     C.method_defined? "method4"   #=> false
  */
 
-static value
+API value
 mod_method_defined(state *mrb, value mod)
 {
   sym id;
@@ -2078,7 +2078,7 @@ mod_method_defined(state *mrb, value mod)
   return bool_value(obj_respond_to(mrb, class_ptr(mod), id));
 }
 
-static value
+API value
 mod_define_method(state *mrb, value self)
 {
   struct RClass *c = class_ptr(self);
@@ -2111,13 +2111,13 @@ mod_define_method(state *mrb, value self)
   return symbol_value(mid);
 }
 
-static value
+API value
 top_define_method(state *mrb, value self)
 {
   return mod_define_method(mrb, obj_value(mrb->object_class));
 }
 
-static value
+API value
 mod_eqq(state *mrb, value mod)
 {
   value obj;
@@ -2171,7 +2171,7 @@ value obj_id_m(state *mrb, value self);
 /* implementation of instance_eval */
 value obj_instance_eval(state*, value);
 
-static value
+API value
 inspect_main(state *mrb, value mod)
 {
   return str_new_lit(mrb, "main");

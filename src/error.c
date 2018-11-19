@@ -267,7 +267,7 @@ vformat(state *mrb, const char *format, va_list ap)
   const char *b = p;
   ptrdiff_t size;
   int ai0 = gc_arena_save(mrb);
-  value ary = ary_new_capa(mrb, 4);
+  value ary = a_ary_new_capa(mrb, 4);
   int ai = gc_arena_save(mrb);
 
   while (*p) {

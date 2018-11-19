@@ -1216,7 +1216,7 @@ hash_keys(state *mrb, value hash)
 
   if (!sg || (size = sg_size(mrb, sg)) == 0)
     return ary_new(mrb);
-  ary = ary_new_capa(mrb, size);
+  ary = a_ary_new_capa(mrb, size);
   sg_foreach(mrb, sg, hash_keys_i, (void*)&ary);
   return ary;
 }
@@ -1250,7 +1250,7 @@ hash_values(state *mrb, value hash)
 
   if (!sg || (size = sg_size(mrb, sg)) == 0)
     return ary_new(mrb);
-  ary = ary_new_capa(mrb, size);
+  ary = a_ary_new_capa(mrb, size);
   sg_foreach(mrb, sg, hash_vals_i, (void*)&ary);
   return ary;
 }

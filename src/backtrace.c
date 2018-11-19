@@ -23,9 +23,9 @@ struct backtrace_location {
 
 typedef void (*each_backtrace_func)(state*, struct backtrace_location*, void*);
 
-static const data_type bt_type = { "Backtrace", free };
+API const data_type bt_type = { "Backtrace", free };
 
-static void
+API void
 each_backtrace(state *mrb, ptrdiff_t ciidx, code *pc0, each_backtrace_func func, void *data)
 {
   ptrdiff_t i, j;
@@ -73,8 +73,7 @@ each_backtrace(state *mrb, ptrdiff_t ciidx, code *pc0, each_backtrace_func func,
 
 #ifndef DISABLE_STDIO
 
-static void
-print_backtrace(state *mrb, value backtrace)
+API void print_backtrace(state *mrb, value backtrace)
 {
   int i;
   int n;
@@ -95,7 +94,7 @@ print_backtrace(state *mrb, value backtrace)
   }
 }
 
-static int
+API int
 packed_bt_len(struct backtrace_location *bt, int n)
 {
   int len = 0;
@@ -109,7 +108,7 @@ packed_bt_len(struct backtrace_location *bt, int n)
   return len;
 }
 
-static void
+API void
 print_packed_backtrace(state *mrb, value packed)
 {
   FILE *stream = stderr;
@@ -144,7 +143,7 @@ print_packed_backtrace(state *mrb, value packed)
 */
 
 API void
-print_backtrace(state *mrb)
+print_backtrace_(state *mrb)
 {
   value backtrace;
 
@@ -170,7 +169,7 @@ print_backtrace(state *mrb)
 
 #endif
 
-static void
+API void
 count_backtrace_i(state *mrb,
                  struct backtrace_location *loc,
                  void *data)
@@ -181,7 +180,7 @@ count_backtrace_i(state *mrb,
   (*lenp)++;
 }
 
-static void
+API void
 pack_backtrace_i(state *mrb,
                  struct backtrace_location *loc,
                  void *data)
@@ -194,7 +193,7 @@ pack_backtrace_i(state *mrb,
   *pptr = ptr+1;
 }
 
-static value
+API value
 packed_backtrace(state *mrb)
 {
   struct RData *backtrace;

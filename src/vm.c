@@ -462,7 +462,7 @@ funcall_with_block(state *mrb, value self, sym mid, int argc, const value *argv,
     m = method_search_vm(mrb, &c, mid);
     if (METHOD_UNDEF_P(m)) {
       sym missing = intern_lit(mrb, "method_missing");
-      value args = ary_new_from_values(mrb, argc, argv);
+      value args = a_ary_new_from_values(mrb, argc, argv);
       m = method_search_vm(mrb, &c, missing);
       if (METHOD_UNDEF_P(m)) {
         method_missing(mrb, mid, self, args);
@@ -488,7 +488,7 @@ funcall_with_block(state *mrb, value self, sym mid, int argc, const value *argv,
       stack_extend(mrb, argc + 2);
     }
     else if (argc >= CALL_MAXARGS) {
-      value args = ary_new_from_values(mrb, argc, argv);
+      value args = a_ary_new_from_values(mrb, argc, argv);
 
       stack_extend(mrb, 3);
       mrb->c->stack[1] = args;
@@ -822,7 +822,7 @@ yield_cont(state *mrb, value b, value self, int argc, const value *argv)
   ci = mrb->c->ci;
 
   stack_extend(mrb, 3);
-  mrb->c->stack[1] = ary_new_from_values(mrb, argc, argv);
+  mrb->c->stack[1] = a_ary_new_from_values(mrb, argc, argv);
   mrb->c->stack[2] = nil_value();
   ci->argc = -1;
   return exec_irep(mrb, self, p);
@@ -1423,7 +1423,7 @@ RETRY_TRY_BLOCK:
         sym missing = intern_lit(mrb, "method_missing");
         m = method_search_vm(mrb, &cls, missing);
         if (METHOD_UNDEF_P(m) || (missing == mrb->c->ci->mid && obj_eq(mrb, regs[0], recv))) {
-          value args = (argc < 0) ? regs[a+1] : ary_new_from_values(mrb, c, regs+a+1);
+          value args = (argc < 0) ? regs[a+1] : a_ary_new_from_values(mrb, c, regs + a + 1);
           ERR_PC_SET(mrb, pc);
           method_missing(mrb, mid, recv, args);
         }
@@ -1431,7 +1431,7 @@ RETRY_TRY_BLOCK:
           if (a+2 >= irep->nregs) {
             stack_extend(mrb, a+3);
           }
-          regs[a+1] = ary_new_from_values(mrb, c, regs+a+1);
+          regs[a+1] = a_ary_new_from_values(mrb, c, regs + a + 1);
           regs[a+2] = blk;
           argc = -1;
         }
@@ -1620,7 +1620,7 @@ RETRY_TRY_BLOCK:
         }
         m = method_search_vm(mrb, &cls, missing);
         if (METHOD_UNDEF_P(m)) {
-          value args = (argc < 0) ? regs[a+1] : ary_new_from_values(mrb, b, regs+a+1);
+          value args = (argc < 0) ? regs[a+1] : a_ary_new_from_values(mrb, b, regs + a + 1);
           ERR_PC_SET(mrb, pc);
           method_missing(mrb, mid, recv, args);
         }
@@ -1629,7 +1629,7 @@ RETRY_TRY_BLOCK:
           if (a+2 >= irep->nregs) {
             stack_extend(mrb, a+3);
           }
-          regs[a+1] = ary_new_from_values(mrb, b, regs+a+1);
+          regs[a+1] = a_ary_new_from_values(mrb, b, regs + a + 1);
           regs[a+2] = blk;
           argc = -1;
         }
@@ -1718,7 +1718,7 @@ RETRY_TRY_BLOCK:
         stack = e->stack + 1;
       }
       if (r == 0) {
-        regs[a] = ary_new_from_values(mrb, m1+m2+kd, stack);
+        regs[a] = a_ary_new_from_values(mrb, m1 + m2 + kd, stack);
       }
       else {
         value *pp = NULL;
@@ -1731,7 +1731,7 @@ RETRY_TRY_BLOCK:
           pp = ARY_PTR(ary);
           len = (int)ARY_LEN(ary);
         }
-        regs[a] = ary_new_capa(mrb, m1+len+m2+kd);
+        regs[a] = a_ary_new_capa(mrb, m1 + len + m2 + kd);
         rest = ary_ptr(regs[a]);
         if (m1 > 0) {
           stack_copy(ARY_PTR(rest), stack, m1);
@@ -1842,7 +1842,7 @@ RETRY_TRY_BLOCK:
         }
         /* initalize rest arguments with empty Array */
         if (r) {
-          regs[m1+o+1] = ary_new_capa(mrb, 0);
+          regs[m1+o+1] = a_ary_new_capa(mrb, 0);
         }
         /* skip initailizer of passed arguments */
         if (o > 0 && argc-kargs > m1+m2)
@@ -1859,7 +1859,7 @@ RETRY_TRY_BLOCK:
           value ary;
 
           rnum = argc-m1-o-m2-kargs;
-          ary = ary_new_from_values(mrb, rnum, argv+m1+o);
+          ary = a_ary_new_from_values(mrb, rnum, argv + m1 + o);
           regs[m1+o+1] = ary;
         }
         if (m2) {
@@ -2602,13 +2602,13 @@ RETRY_TRY_BLOCK:
     }
 
     CASE(OP_ARRAY, BB) {
-      value v = ary_new_from_values(mrb, b, &regs[a]);
+      value v = a_ary_new_from_values(mrb, b, &regs[a]);
       regs[a] = v;
       gc_arena_restore(mrb, ai);
       NEXT;
     }
     CASE(OP_ARRAY2, BBB) {
-      value v = ary_new_from_values(mrb, c, &regs[b]);
+      value v = a_ary_new_from_values(mrb, c, &regs[b]);
       regs[a] = v;
       gc_arena_restore(mrb, ai);
       NEXT;
@@ -2629,10 +2629,10 @@ RETRY_TRY_BLOCK:
     CASE(OP_ARYDUP, B) {
       value ary = regs[a];
       if (array_p(ary)) {
-        ary = ary_new_from_values(mrb, RARRAY_LEN(ary), RARRAY_PTR(ary));
+        ary = a_ary_new_from_values(mrb, RARRAY_LEN(ary), RARRAY_PTR(ary));
       }
       else {
-        ary = ary_new_from_values(mrb, 1, &ary);
+        ary = a_ary_new_from_values(mrb, 1, &ary);
       }
       regs[a] = ary;
       NEXT;
@@ -2669,19 +2669,19 @@ RETRY_TRY_BLOCK:
       int len, idx;
 
       if (!array_p(v)) {
-        v = ary_new_from_values(mrb, 1, &regs[a]);
+        v = a_ary_new_from_values(mrb, 1, &regs[a]);
       }
       ary = ary_ptr(v);
       len = (int)ARY_LEN(ary);
       if (len > pre + post) {
-        v = ary_new_from_values(mrb, len - pre - post, ARY_PTR(ary)+pre);
+        v = a_ary_new_from_values(mrb, len - pre - post, ARY_PTR(ary) + pre);
         regs[a++] = v;
         while (post--) {
           regs[a++] = ARY_PTR(ary)[len-post-1];
         }
       }
       else {
-        v = ary_new_capa(mrb, 0);
+        v = a_ary_new_capa(mrb, 0);
         regs[a++] = v;
         for (idx=0; idx+pre<len; idx++) {
           regs[a+idx] = ARY_PTR(ary)[pre+idx];

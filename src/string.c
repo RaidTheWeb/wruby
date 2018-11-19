@@ -1935,8 +1935,8 @@ str_split_m(state *mrb, value str)
   if (argc == 2) {
     if (lim == 1) {
       if (RSTRING_LEN(str) == 0)
-        return ary_new_capa(mrb, 0);
-      return ary_new_from_values(mrb, 1, &str);
+        return a_ary_new_capa(mrb, 0);
+      return a_ary_new_from_values(mrb, 1, &str);
     }
     i = 1;
   }
@@ -2724,7 +2724,7 @@ static value
 str_bytes(state *mrb, value str)
 {
   struct RString *s = str_ptr(str);
-  value a = ary_new_capa(mrb, RSTR_LEN(s));
+  value a = a_ary_new_capa(mrb, RSTR_LEN(s));
   unsigned char *p = (unsigned char *)(RSTR_PTR(s)), *pend = p + RSTR_LEN(s);
 
   while (p < pend) {

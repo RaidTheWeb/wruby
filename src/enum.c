@@ -39,6 +39,6 @@ void
 init_enumerable(state *mrb)
 {
   struct RClass *enumerable;
-  enumerable = define_module(mrb, "Enumerable");  /* 15.3.2 */
+  enumerable = define_module_(mrb, "Enumerable");  /* 15.3.2 */
   define_module_function(mrb, enumerable, "__update_hash", enum_update_hash, ARGS_REQ(1));
 }
