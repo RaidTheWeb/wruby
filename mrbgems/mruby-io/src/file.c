@@ -85,88 +85,88 @@ flock(int fd, int operation) {
 }
 #endif
 
-mrb_value
-mrb_file_s_umask(mrb_state *mrb, mrb_value klass)
+$value
+$file_s_umask($state *mrb, $value klass)
 {
 #if defined(_WIN32) || defined(_WIN64)
   /* nothing to do on windows */
-  return mrb_fixnum_value(0);
+  return $fixnum_value(0);
 
 #else
-  mrb_int mask, omask;
-  if (mrb_get_args(mrb, "|i", &mask) == 0) {
+  $int mask, omask;
+  if ($get_args(mrb, "|i", &mask) == 0) {
     omask = umask(0);
     umask(omask);
   } else {
     omask = umask(mask);
   }
-  return mrb_fixnum_value(omask);
+  return $fixnum_value(omask);
 #endif
 }
 
-static mrb_value
-mrb_file_s_unlink(mrb_state *mrb, mrb_value obj)
+static $value
+$file_s_unlink($state *mrb, $value obj)
 {
-  mrb_value *argv;
-  mrb_value pathv;
-  mrb_int argc, i;
+  $value *argv;
+  $value pathv;
+  $int argc, i;
   char *path;
 
-  mrb_get_args(mrb, "*", &argv, &argc);
+  $get_args(mrb, "*", &argv, &argc);
   for (i = 0; i < argc; i++) {
     const char *utf8_path;
-    pathv = mrb_convert_type(mrb, argv[i], MRB_TT_STRING, "String", "to_str");
-    utf8_path = mrb_string_value_cstr(mrb, &pathv);
-    path = mrb_locale_from_utf8(utf8_path, -1);
+    pathv = $convert_type(mrb, argv[i], $TT_STRING, "String", "to_str");
+    utf8_path = $string_value_cstr(mrb, &pathv);
+    path = $locale_from_utf8(utf8_path, -1);
     if (UNLINK(path) < 0) {
-      mrb_locale_free(path);
-      mrb_sys_fail(mrb, utf8_path);
+      $locale_free(path);
+      $sys_fail(mrb, utf8_path);
     }
-    mrb_locale_free(path);
+    $locale_free(path);
   }
-  return mrb_fixnum_value(argc);
+  return $fixnum_value(argc);
 }
 
-static mrb_value
-mrb_file_s_rename(mrb_state *mrb, mrb_value obj)
+static $value
+$file_s_rename($state *mrb, $value obj)
 {
-  mrb_value from, to;
+  $value from, to;
   char *src, *dst;
 
-  mrb_get_args(mrb, "SS", &from, &to);
-  src = mrb_locale_from_utf8(mrb_string_value_cstr(mrb, &from), -1);
-  dst = mrb_locale_from_utf8(mrb_string_value_cstr(mrb, &to), -1);
+  $get_args(mrb, "SS", &from, &to);
+  src = $locale_from_utf8($string_value_cstr(mrb, &from), -1);
+  dst = $locale_from_utf8($string_value_cstr(mrb, &to), -1);
   if (rename(src, dst) < 0) {
 #if defined(_WIN32) || defined(_WIN64)
     if (CHMOD(dst, 0666) == 0 && UNLINK(dst) == 0 && rename(src, dst) == 0) {
-      mrb_locale_free(src);
-      mrb_locale_free(dst);
-      return mrb_fixnum_value(0);
+      $locale_free(src);
+      $locale_free(dst);
+      return $fixnum_value(0);
     }
 #endif
-    mrb_locale_free(src);
-    mrb_locale_free(dst);
-    mrb_sys_fail(mrb, mrb_str_to_cstr(mrb, mrb_format(mrb, "(%S, %S)", from, to)));
+    $locale_free(src);
+    $locale_free(dst);
+    $sys_fail(mrb, $str_to_cstr(mrb, $format(mrb, "(%S, %S)", from, to)));
   }
-  mrb_locale_free(src);
-  mrb_locale_free(dst);
-  return mrb_fixnum_value(0);
+  $locale_free(src);
+  $locale_free(dst);
+  return $fixnum_value(0);
 }
 
-static mrb_value
-mrb_file_dirname(mrb_state *mrb, mrb_value klass)
+static $value
+$file_dirname($state *mrb, $value klass)
 {
 #if defined(_WIN32) || defined(_WIN64)
   char dname[_MAX_DIR], vname[_MAX_DRIVE];
   char buffer[_MAX_DRIVE + _MAX_DIR];
   char *path;
   size_t ridx;
-  mrb_value s;
-  mrb_get_args(mrb, "S", &s);
-  path = mrb_locale_from_utf8(mrb_str_to_cstr(mrb, s), -1);
+  $value s;
+  $get_args(mrb, "S", &s);
+  path = $locale_from_utf8($str_to_cstr(mrb, s), -1);
   _splitpath((const char*)path, vname, dname, NULL, NULL);
   snprintf(buffer, _MAX_DRIVE + _MAX_DIR, "%s%s", vname, dname);
-  mrb_locale_free(path);
+  $locale_free(path);
   ridx = strlen(buffer);
   if (ridx == 0) {
     strncpy(buffer, ".", 2);  /* null terminated */
@@ -177,36 +177,36 @@ mrb_file_dirname(mrb_state *mrb, mrb_value klass)
       ridx--;
     }
   }
-  return mrb_str_new_cstr(mrb, buffer);
+  return $str_new_cstr(mrb, buffer);
 #else
   char *dname, *path;
-  mrb_value s;
-  mrb_get_args(mrb, "S", &s);
-  path = mrb_locale_from_utf8(mrb_str_to_cstr(mrb, s), -1);
+  $value s;
+  $get_args(mrb, "S", &s);
+  path = $locale_from_utf8($str_to_cstr(mrb, s), -1);
 
   if ((dname = dirname(path)) == NULL) {
-    mrb_locale_free(path);
-    mrb_sys_fail(mrb, "dirname");
+    $locale_free(path);
+    $sys_fail(mrb, "dirname");
   }
-  mrb_locale_free(path);
-  return mrb_str_new_cstr(mrb, dname);
+  $locale_free(path);
+  return $str_new_cstr(mrb, dname);
 #endif
 }
 
-static mrb_value
-mrb_file_basename(mrb_state *mrb, mrb_value klass)
+static $value
+$file_basename($state *mrb, $value klass)
 {
-  // NOTE: Do not use mrb_locale_from_utf8 here
+  // NOTE: Do not use $locale_from_utf8 here
 #if defined(_WIN32) || defined(_WIN64)
   char bname[_MAX_DIR];
   char extname[_MAX_EXT];
   char *path;
   size_t ridx;
   char buffer[_MAX_DIR + _MAX_EXT];
-  mrb_value s;
+  $value s;
 
-  mrb_get_args(mrb, "S", &s);
-  path = mrb_str_to_cstr(mrb, s);
+  $get_args(mrb, "S", &s);
+  path = $str_to_cstr(mrb, s);
   ridx = strlen(path);
   if (ridx > 0) {
     ridx--;
@@ -215,150 +215,150 @@ mrb_file_basename(mrb_state *mrb, mrb_value klass)
       ridx--;
     }
     if (strncmp(path, "/", 2) == 0) {
-      return mrb_str_new_cstr(mrb, path);
+      return $str_new_cstr(mrb, path);
     }
   }
   _splitpath((const char*)path, NULL, NULL, bname, extname);
   snprintf(buffer, _MAX_DIR + _MAX_EXT, "%s%s", bname, extname);
-  return mrb_str_new_cstr(mrb, buffer);
+  return $str_new_cstr(mrb, buffer);
 #else
   char *bname, *path;
-  mrb_value s;
-  mrb_get_args(mrb, "S", &s);
-  path = mrb_str_to_cstr(mrb, s);
+  $value s;
+  $get_args(mrb, "S", &s);
+  path = $str_to_cstr(mrb, s);
   if ((bname = basename(path)) == NULL) {
-    mrb_sys_fail(mrb, "basename");
+    $sys_fail(mrb, "basename");
   }
   if (strncmp(bname, "//", 3) == 0) bname[1] = '\0';  /* patch for Cygwin */
-  return mrb_str_new_cstr(mrb, bname);
+  return $str_new_cstr(mrb, bname);
 #endif
 }
 
-static mrb_value
-mrb_file_realpath(mrb_state *mrb, mrb_value klass)
+static $value
+$file_realpath($state *mrb, $value klass)
 {
-  mrb_value pathname, dir_string, s, result;
-  mrb_int argc;
+  $value pathname, dir_string, s, result;
+  $int argc;
   char *cpath;
 
-  argc = mrb_get_args(mrb, "S|S", &pathname, &dir_string);
+  argc = $get_args(mrb, "S|S", &pathname, &dir_string);
   if (argc == 2) {
-    s = mrb_str_dup(mrb, dir_string);
-    s = mrb_str_append(mrb, s, mrb_str_new_cstr(mrb, FILE_SEPARATOR));
-    s = mrb_str_append(mrb, s, pathname);
+    s = $str_dup(mrb, dir_string);
+    s = $str_append(mrb, s, $str_new_cstr(mrb, FILE_SEPARATOR));
+    s = $str_append(mrb, s, pathname);
     pathname = s;
   }
-  cpath = mrb_locale_from_utf8(mrb_str_to_cstr(mrb, pathname), -1);
-  result = mrb_str_buf_new(mrb, PATH_MAX);
+  cpath = $locale_from_utf8($str_to_cstr(mrb, pathname), -1);
+  result = $str_buf_new(mrb, PATH_MAX);
   if (realpath(cpath, RSTRING_PTR(result)) == NULL) {
-    mrb_locale_free(cpath);
-    mrb_sys_fail(mrb, cpath);
+    $locale_free(cpath);
+    $sys_fail(mrb, cpath);
   }
-  mrb_locale_free(cpath);
-  mrb_str_resize(mrb, result, strlen(RSTRING_PTR(result)));
+  $locale_free(cpath);
+  $str_resize(mrb, result, strlen(RSTRING_PTR(result)));
   return result;
 }
 
-mrb_value
-mrb_file__getwd(mrb_state *mrb, mrb_value klass)
+$value
+$file__getwd($state *mrb, $value klass)
 {
-  mrb_value path;
+  $value path;
   char buf[MAXPATHLEN], *utf8;
 
   if (GETCWD(buf, MAXPATHLEN) == NULL) {
-    mrb_sys_fail(mrb, "getcwd(2)");
+    $sys_fail(mrb, "getcwd(2)");
   }
-  utf8 = mrb_utf8_from_locale(buf, -1);
-  path = mrb_str_new_cstr(mrb, utf8);
-  mrb_utf8_free(utf8);
+  utf8 = $utf8_from_locale(buf, -1);
+  path = $str_new_cstr(mrb, utf8);
+  $utf8_free(utf8);
   return path;
 }
 
 static int
-mrb_file_is_absolute_path(const char *path)
+$file_is_absolute_path(const char *path)
 {
   return (path[0] == '/');
 }
 
-static mrb_value
-mrb_file__gethome(mrb_state *mrb, mrb_value klass)
+static $value
+$file__gethome($state *mrb, $value klass)
 {
-  mrb_int argc;
+  $int argc;
   char *home;
-  mrb_value path;
+  $value path;
 
 #ifndef _WIN32
-  mrb_value username;
+  $value username;
 
-  argc = mrb_get_args(mrb, "|S", &username);
+  argc = $get_args(mrb, "|S", &username);
   if (argc == 0) {
     home = getenv("HOME");
     if (home == NULL) {
-      return mrb_nil_value();
+      return $nil_value();
     }
-    if (!mrb_file_is_absolute_path(home)) {
-      mrb_raise(mrb, E_ARGUMENT_ERROR, "non-absolute home");
+    if (!$file_is_absolute_path(home)) {
+      $raise(mrb, E_ARGUMENT_ERROR, "non-absolute home");
     }
   } else {
-    const char *cuser = mrb_str_to_cstr(mrb, username);
+    const char *cuser = $str_to_cstr(mrb, username);
     struct passwd *pwd = getpwnam(cuser);
     if (pwd == NULL) {
-      return mrb_nil_value();
+      return $nil_value();
     }
     home = pwd->pw_dir;
-    if (!mrb_file_is_absolute_path(home)) {
-      mrb_raisef(mrb, E_ARGUMENT_ERROR, "non-absolute home of ~%S", username);
+    if (!$file_is_absolute_path(home)) {
+      $raisef(mrb, E_ARGUMENT_ERROR, "non-absolute home of ~%S", username);
     }
   }
-  home = mrb_locale_from_utf8(home, -1);
-  path = mrb_str_new_cstr(mrb, home);
-  mrb_locale_free(home);
+  home = $locale_from_utf8(home, -1);
+  path = $str_new_cstr(mrb, home);
+  $locale_free(home);
   return path;
 #else
-  argc = mrb_get_argc(mrb);
+  argc = $get_argc(mrb);
   if (argc == 0) {
     home = getenv("USERPROFILE");
     if (home == NULL) {
-      return mrb_nil_value();
+      return $nil_value();
     }
-    if (!mrb_file_is_absolute_path(home)) {
-      mrb_raise(mrb, E_ARGUMENT_ERROR, "non-absolute home");
+    if (!$file_is_absolute_path(home)) {
+      $raise(mrb, E_ARGUMENT_ERROR, "non-absolute home");
     }
   } else {
-    return mrb_nil_value();
+    return $nil_value();
   }
-  home = mrb_locale_from_utf8(home, -1);
-  path = mrb_str_new_cstr(mrb, home);
-  mrb_locale_free(home);
+  home = $locale_from_utf8(home, -1);
+  path = $str_new_cstr(mrb, home);
+  $locale_free(home);
   return path;
 #endif
 }
 
-static mrb_value
-mrb_file_mtime(mrb_state *mrb, mrb_value self)
+static $value
+$file_mtime($state *mrb, $value self)
 {
-  mrb_value obj;
+  $value obj;
   struct stat st;
   int fd;
 
-  obj = mrb_obj_value(mrb_class_get(mrb, "Time"));
-  fd = (int)mrb_fixnum(mrb_io_fileno(mrb, self));
+  obj = $obj_value($class_get(mrb, "Time"));
+  fd = (int)$fixnum($io_fileno(mrb, self));
   if (fstat(fd, &st) == -1)
-    return mrb_false_value();
-  return mrb_funcall(mrb, obj, "at", 1, mrb_fixnum_value(st.st_mtime));
+    return $false_value();
+  return $funcall(mrb, obj, "at", 1, $fixnum_value(st.st_mtime));
 }
 
-mrb_value
-mrb_file_flock(mrb_state *mrb, mrb_value self)
+$value
+$file_flock($state *mrb, $value self)
 {
 #if defined(sun)
-  mrb_raise(mrb, E_NOTIMP_ERROR, "flock is not supported on Illumos/Solaris/Windows");
+  $raise(mrb, E_NOTIMP_ERROR, "flock is not supported on Illumos/Solaris/Windows");
 #else
-  mrb_int operation;
+  $int operation;
   int fd;
 
-  mrb_get_args(mrb, "i", &operation);
-  fd = (int)mrb_fixnum(mrb_io_fileno(mrb, self));
+  $get_args(mrb, "i", &operation);
+  fd = (int)$fixnum($io_fileno(mrb, self));
 
   while (flock(fd, (int)operation) == -1) {
     switch (errno) {
@@ -370,138 +370,138 @@ mrb_file_flock(mrb_state *mrb, mrb_value self)
       case EWOULDBLOCK: /* FreeBSD OpenBSD Linux */
 #endif
         if (operation & LOCK_NB) {
-          return mrb_false_value();
+          return $false_value();
         }
         /* FALLTHRU - should not happen */
       default:
-        mrb_sys_fail(mrb, "flock failed");
+        $sys_fail(mrb, "flock failed");
         break;
     }
   }
 #endif
-  return mrb_fixnum_value(0);
+  return $fixnum_value(0);
 }
 
-static mrb_value
-mrb_file_s_symlink(mrb_state *mrb, mrb_value klass)
+static $value
+$file_s_symlink($state *mrb, $value klass)
 {
 #if defined(_WIN32) || defined(_WIN64)
-  mrb_raise(mrb, E_NOTIMP_ERROR, "symlink is not supported on this platform");
+  $raise(mrb, E_NOTIMP_ERROR, "symlink is not supported on this platform");
 #else
-  mrb_value from, to;
+  $value from, to;
   const char *src, *dst;
-  int ai = mrb_gc_arena_save(mrb);
+  int ai = $gc_arena_save(mrb);
 
-  mrb_get_args(mrb, "SS", &from, &to);
-  src = mrb_locale_from_utf8(mrb_str_to_cstr(mrb, from), -1);
-  dst = mrb_locale_from_utf8(mrb_str_to_cstr(mrb, to), -1);
+  $get_args(mrb, "SS", &from, &to);
+  src = $locale_from_utf8($str_to_cstr(mrb, from), -1);
+  dst = $locale_from_utf8($str_to_cstr(mrb, to), -1);
 
   if (symlink(src, dst) == -1) {
-    mrb_locale_free(src);
-    mrb_locale_free(dst);
-    mrb_sys_fail(mrb, mrb_str_to_cstr(mrb, mrb_format(mrb, "(%S, %S)", from, to)));
+    $locale_free(src);
+    $locale_free(dst);
+    $sys_fail(mrb, $str_to_cstr(mrb, $format(mrb, "(%S, %S)", from, to)));
   }
-  mrb_locale_free(src);
-  mrb_locale_free(dst);
-  mrb_gc_arena_restore(mrb, ai);
+  $locale_free(src);
+  $locale_free(dst);
+  $gc_arena_restore(mrb, ai);
 #endif
-  return mrb_fixnum_value(0);
+  return $fixnum_value(0);
 }
 
-static mrb_value
-mrb_file_s_chmod(mrb_state *mrb, mrb_value klass) {
-  mrb_int mode;
-  mrb_int argc, i;
-  mrb_value *filenames;
-  int ai = mrb_gc_arena_save(mrb);
+static $value
+$file_s_chmod($state *mrb, $value klass) {
+  $int mode;
+  $int argc, i;
+  $value *filenames;
+  int ai = $gc_arena_save(mrb);
 
-  mrb_get_args(mrb, "i*", &mode, &filenames, &argc);
+  $get_args(mrb, "i*", &mode, &filenames, &argc);
   for (i = 0; i < argc; i++) {
-    const char *utf8_path = mrb_str_to_cstr(mrb, filenames[i]);
-    char *path = mrb_locale_from_utf8(utf8_path, -1);
+    const char *utf8_path = $str_to_cstr(mrb, filenames[i]);
+    char *path = $locale_from_utf8(utf8_path, -1);
     if (CHMOD(path, mode) == -1) {
-      mrb_locale_free(path);
-      mrb_sys_fail(mrb, utf8_path);
+      $locale_free(path);
+      $sys_fail(mrb, utf8_path);
     }
-    mrb_locale_free(path);
+    $locale_free(path);
   }
 
-  mrb_gc_arena_restore(mrb, ai);
-  return mrb_fixnum_value(argc);
+  $gc_arena_restore(mrb, ai);
+  return $fixnum_value(argc);
 }
 
-static mrb_value
-mrb_file_s_readlink(mrb_state *mrb, mrb_value klass) {
+static $value
+$file_s_readlink($state *mrb, $value klass) {
 #if defined(_WIN32) || defined(_WIN64)
-  mrb_raise(mrb, E_NOTIMP_ERROR, "readlink is not supported on this platform");
-  return mrb_nil_value(); // unreachable
+  $raise(mrb, E_NOTIMP_ERROR, "readlink is not supported on this platform");
+  return $nil_value(); // unreachable
 #else
   char *path, *buf, *tmp;
   size_t bufsize = 100;
   ssize_t rc;
-  mrb_value ret;
-  int ai = mrb_gc_arena_save(mrb);
+  $value ret;
+  int ai = $gc_arena_save(mrb);
 
-  mrb_get_args(mrb, "z", &path);
-  tmp = mrb_locale_from_utf8(path, -1);
+  $get_args(mrb, "z", &path);
+  tmp = $locale_from_utf8(path, -1);
 
-  buf = (char *)mrb_malloc(mrb, bufsize);
+  buf = (char *)$malloc(mrb, bufsize);
   while ((rc = readlink(tmp, buf, bufsize)) == (ssize_t)bufsize && rc != -1) {
     bufsize *= 2;
-    buf = (char *)mrb_realloc(mrb, buf, bufsize);
+    buf = (char *)$realloc(mrb, buf, bufsize);
   }
-  mrb_locale_free(tmp);
+  $locale_free(tmp);
   if (rc == -1) {
-    mrb_free(mrb, buf);
-    mrb_sys_fail(mrb, path);
+    $free(mrb, buf);
+    $sys_fail(mrb, path);
   }
-  tmp = mrb_utf8_from_locale(buf, -1);
-  ret = mrb_str_new(mrb, tmp, rc);
-  mrb_locale_free(tmp);
-  mrb_free(mrb, buf);
+  tmp = $utf8_from_locale(buf, -1);
+  ret = $str_new(mrb, tmp, rc);
+  $locale_free(tmp);
+  $free(mrb, buf);
 
-  mrb_gc_arena_restore(mrb, ai);
+  $gc_arena_restore(mrb, ai);
   return ret;
 #endif
 }
 
 void
-mrb_init_file(mrb_state *mrb)
+$init_file($state *mrb)
 {
   struct RClass *io, *file, *cnst;
 
-  io   = mrb_class_get(mrb, "IO");
-  file = mrb_define_class(mrb, "File", io);
-  MRB_SET_INSTANCE_TT(file, MRB_TT_DATA);
-  mrb_define_class_method(mrb, file, "umask",  mrb_file_s_umask, MRB_ARGS_REQ(1));
-  mrb_define_class_method(mrb, file, "delete", mrb_file_s_unlink, MRB_ARGS_ANY());
-  mrb_define_class_method(mrb, file, "unlink", mrb_file_s_unlink, MRB_ARGS_ANY());
-  mrb_define_class_method(mrb, file, "rename", mrb_file_s_rename, MRB_ARGS_REQ(2));
-  mrb_define_class_method(mrb, file, "symlink", mrb_file_s_symlink, MRB_ARGS_REQ(2));
-  mrb_define_class_method(mrb, file, "chmod", mrb_file_s_chmod, MRB_ARGS_REQ(1) | MRB_ARGS_REST());
-  mrb_define_class_method(mrb, file, "readlink", mrb_file_s_readlink, MRB_ARGS_REQ(1));
+  io   = $class_get(mrb, "IO");
+  file = $define_class(mrb, "File", io);
+  $SET_INSTANCE_TT(file, $TT_DATA);
+  $define_class_method(mrb, file, "umask",  $file_s_umask, $ARGS_REQ(1));
+  $define_class_method(mrb, file, "delete", $file_s_unlink, $ARGS_ANY());
+  $define_class_method(mrb, file, "unlink", $file_s_unlink, $ARGS_ANY());
+  $define_class_method(mrb, file, "rename", $file_s_rename, $ARGS_REQ(2));
+  $define_class_method(mrb, file, "symlink", $file_s_symlink, $ARGS_REQ(2));
+  $define_class_method(mrb, file, "chmod", $file_s_chmod, $ARGS_REQ(1) | $ARGS_REST());
+  $define_class_method(mrb, file, "readlink", $file_s_readlink, $ARGS_REQ(1));
 
-  mrb_define_class_method(mrb, file, "dirname",   mrb_file_dirname,    MRB_ARGS_REQ(1));
-  mrb_define_class_method(mrb, file, "basename",  mrb_file_basename,   MRB_ARGS_REQ(1));
-  mrb_define_class_method(mrb, file, "realpath",  mrb_file_realpath,   MRB_ARGS_REQ(1)|MRB_ARGS_OPT(1));
-  mrb_define_class_method(mrb, file, "_getwd",    mrb_file__getwd,     MRB_ARGS_NONE());
-  mrb_define_class_method(mrb, file, "_gethome",  mrb_file__gethome,   MRB_ARGS_OPT(1));
+  $define_class_method(mrb, file, "dirname",   $file_dirname,    $ARGS_REQ(1));
+  $define_class_method(mrb, file, "basename",  $file_basename,   $ARGS_REQ(1));
+  $define_class_method(mrb, file, "realpath",  $file_realpath,   $ARGS_REQ(1)|$ARGS_OPT(1));
+  $define_class_method(mrb, file, "_getwd",    $file__getwd,     $ARGS_NONE());
+  $define_class_method(mrb, file, "_gethome",  $file__gethome,   $ARGS_OPT(1));
 
-  mrb_define_method(mrb, file, "flock", mrb_file_flock, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, file, "mtime", mrb_file_mtime, MRB_ARGS_NONE());
+  $define_method(mrb, file, "flock", $file_flock, $ARGS_REQ(1));
+  $define_method(mrb, file, "mtime", $file_mtime, $ARGS_NONE());
 
-  cnst = mrb_define_module_under(mrb, file, "Constants");
-  mrb_define_const(mrb, cnst, "LOCK_SH", mrb_fixnum_value(LOCK_SH));
-  mrb_define_const(mrb, cnst, "LOCK_EX", mrb_fixnum_value(LOCK_EX));
-  mrb_define_const(mrb, cnst, "LOCK_UN", mrb_fixnum_value(LOCK_UN));
-  mrb_define_const(mrb, cnst, "LOCK_NB", mrb_fixnum_value(LOCK_NB));
-  mrb_define_const(mrb, cnst, "SEPARATOR", mrb_str_new_cstr(mrb, FILE_SEPARATOR));
-  mrb_define_const(mrb, cnst, "PATH_SEPARATOR", mrb_str_new_cstr(mrb, PATH_SEPARATOR));
+  cnst = $define_module_under(mrb, file, "Constants");
+  $define_const(mrb, cnst, "LOCK_SH", $fixnum_value(LOCK_SH));
+  $define_const(mrb, cnst, "LOCK_EX", $fixnum_value(LOCK_EX));
+  $define_const(mrb, cnst, "LOCK_UN", $fixnum_value(LOCK_UN));
+  $define_const(mrb, cnst, "LOCK_NB", $fixnum_value(LOCK_NB));
+  $define_const(mrb, cnst, "SEPARATOR", $str_new_cstr(mrb, FILE_SEPARATOR));
+  $define_const(mrb, cnst, "PATH_SEPARATOR", $str_new_cstr(mrb, PATH_SEPARATOR));
 #if defined(_WIN32) || defined(_WIN64)
-  mrb_define_const(mrb, cnst, "ALT_SEPARATOR", mrb_str_new_cstr(mrb, FILE_ALT_SEPARATOR));
+  $define_const(mrb, cnst, "ALT_SEPARATOR", $str_new_cstr(mrb, FILE_ALT_SEPARATOR));
 #else
-  mrb_define_const(mrb, cnst, "ALT_SEPARATOR", mrb_nil_value());
+  $define_const(mrb, cnst, "ALT_SEPARATOR", $nil_value());
 #endif
-  mrb_define_const(mrb, cnst, "NULL", mrb_str_new_cstr(mrb, NULL_FILE));
+  $define_const(mrb, cnst, "NULL", $str_new_cstr(mrb, NULL_FILE));
 
 }

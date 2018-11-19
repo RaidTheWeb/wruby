@@ -14,7 +14,7 @@
 /**
  * Dumping compiled mruby script.
  */
-MRB_BEGIN_DECL
+$BEGIN_DECL
 
 #define DUMP_DEBUG_INFO 1
 #define DUMP_ENDIAN_BIG 2
@@ -22,32 +22,32 @@ MRB_BEGIN_DECL
 #define DUMP_ENDIAN_NAT 6
 #define DUMP_ENDIAN_MASK 6
 
-int mrb_dump_irep(mrb_state *mrb, mrb_irep *irep, uint8_t flags, uint8_t **bin, size_t *bin_size);
-#ifndef MRB_DISABLE_STDIO
-int mrb_dump_irep_binary(mrb_state*, mrb_irep*, uint8_t, FILE*);
-int mrb_dump_irep_cfunc(mrb_state *mrb, mrb_irep*, uint8_t flags, FILE *f, const char *initname);
-mrb_irep *mrb_read_irep_file(mrb_state*, FILE*);
-MRB_API mrb_value mrb_load_irep_file(mrb_state*,FILE*);
-MRB_API mrb_value mrb_load_irep_file_cxt(mrb_state*, FILE*, mrbc_context*);
+int $dump_irep($state *mrb, $irep *irep, uint8_t flags, uint8_t **bin, size_t *bin_size);
+#ifndef $DISABLE_STDIO
+int $dump_irep_binary($state*, $irep*, uint8_t, FILE*);
+int $dump_irep_cfunc($state *mrb, $irep*, uint8_t flags, FILE *f, const char *initname);
+$irep *$read_irep_file($state*, FILE*);
+$API $value $load_irep_file($state*,FILE*);
+$API $value $load_irep_file_cxt($state*, FILE*, mrbc_context*);
 #endif
-MRB_API mrb_irep *mrb_read_irep(mrb_state*, const uint8_t*);
+$API $irep *$read_irep($state*, const uint8_t*);
 
 /* dump/load error code
  *
- * NOTE: MRB_DUMP_GENERAL_FAILURE is caused by
+ * NOTE: $DUMP_GENERAL_FAILURE is caused by
  * unspecified issues like malloc failed.
  */
-#define MRB_DUMP_OK                     0
-#define MRB_DUMP_GENERAL_FAILURE      (-1)
-#define MRB_DUMP_WRITE_FAULT          (-2)
-#define MRB_DUMP_READ_FAULT           (-3)
-#define MRB_DUMP_CRC_ERROR            (-4)
-#define MRB_DUMP_INVALID_FILE_HEADER  (-5)
-#define MRB_DUMP_INVALID_IREP         (-6)
-#define MRB_DUMP_INVALID_ARGUMENT     (-7)
+#define $DUMP_OK                     0
+#define $DUMP_GENERAL_FAILURE      (-1)
+#define $DUMP_WRITE_FAULT          (-2)
+#define $DUMP_READ_FAULT           (-3)
+#define $DUMP_CRC_ERROR            (-4)
+#define $DUMP_INVALID_FILE_HEADER  (-5)
+#define $DUMP_INVALID_IREP         (-6)
+#define $DUMP_INVALID_ARGUMENT     (-7)
 
 /* null symbol length */
-#define MRB_DUMP_NULL_SYM_LEN         0xFFFF
+#define $DUMP_NULL_SYM_LEN         0xFFFF
 
 /* Rite Binary File header */
 #define RITE_BINARY_IDENT              "RITE"
@@ -64,8 +64,8 @@ MRB_API mrb_irep *mrb_read_irep(mrb_state*, const uint8_t*);
 #define RITE_SECTION_DEBUG_IDENT       "DBG\0"
 #define RITE_SECTION_LV_IDENT          "LVAR"
 
-#define MRB_DUMP_DEFAULT_STR_LEN      128
-#define MRB_DUMP_ALIGNMENT            sizeof(uint32_t)
+#define $DUMP_DEFAULT_STR_LEN      128
+#define $DUMP_ALIGNMENT            sizeof(uint32_t)
 
 /* binary header */
 struct rite_binary_header {
@@ -187,7 +187,7 @@ bin_to_uint8(const uint8_t *bin)
   return (uint8_t)bin[0];
 }
 
-MRB_END_DECL
+$END_DECL
 
 /** @internal crc.c */
 uint16_t

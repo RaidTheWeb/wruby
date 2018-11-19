@@ -7,10 +7,10 @@
 #ifndef MRUBY_RE_H
 #define MRUBY_RE_H
 
-MRB_BEGIN_DECL
+$BEGIN_DECL
 
 #define REGEXP_CLASS          "Regexp"
 
-MRB_END_DECL
+$END_DECL
 
 #endif  /* RE_H */

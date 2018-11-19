@@ -1,5 +1,5 @@
 /*
-** mrb_sleep - sleep methods for mruby
+** $sleep - sleep methods for mruby
 **
 ** Copyright (c) mod_mruby developers 2012-
 **
@@ -38,41 +38,41 @@
 #include "mruby.h"
 
 /* not implemented forever sleep (called without an argument)*/
-static mrb_value
-mrb_f_sleep(mrb_state *mrb, mrb_value self)
+static $value
+$f_sleep($state *mrb, $value self)
 {
     time_t beg = time(0);
     time_t end;
-#ifndef MRB_WITHOUT_FLOAT
-    mrb_float sec;
+#ifndef $WITHOUT_FLOAT
+    $float sec;
 
-    mrb_get_args(mrb, "f", &sec);
+    $get_args(mrb, "f", &sec);
     if (sec >= 0) {
         usleep(sec * 1000000);
     }
     else {
-        mrb_raise(mrb, E_ARGUMENT_ERROR, "time interval must be positive integer");
+        $raise(mrb, E_ARGUMENT_ERROR, "time interval must be positive integer");
     }
 #else
-    mrb_int sec;
+    $int sec;
 
-    mrb_get_args(mrb, "i", &sec);
+    $get_args(mrb, "i", &sec);
     if (sec >= 0) {
         sleep(sec);
     } else {
-        mrb_raise(mrb, E_ARGUMENT_ERROR, "time interval must be positive integer");
+        $raise(mrb, E_ARGUMENT_ERROR, "time interval must be positive integer");
     }
 #endif
     end = time(0) - beg;
 
-    return mrb_fixnum_value(end);
+    return $fixnum_value(end);
 }
 
 /* mruby special; needed for mruby without float numbers */
-static mrb_value
-mrb_f_usleep(mrb_state *mrb, mrb_value self)
+static $value
+$f_usleep($state *mrb, $value self)
 {
-    mrb_int usec;
+    $int usec;
 #ifdef _WIN32
     FILETIME st_ft,ed_ft;
     unsigned __int64 st_time = 0;
@@ -89,12 +89,12 @@ mrb_f_usleep(mrb_state *mrb, mrb_value self)
 #endif
 
     /* not implemented forever sleep (called without an argument)*/
-    mrb_get_args(mrb, "i", &usec);
+    $get_args(mrb, "i", &usec);
 
     if (usec >= 0) {
         usleep(usec);
     } else {
-        mrb_raise(mrb, E_ARGUMENT_ERROR, "time interval must be positive integer");
+        $raise(mrb, E_ARGUMENT_ERROR, "time interval must be positive integer");
     }
 
 #ifdef _WIN32
@@ -119,17 +119,17 @@ mrb_f_usleep(mrb_state *mrb, mrb_value self)
     }
 #endif
 
-    return mrb_fixnum_value(slp_tm);
+    return $fixnum_value(slp_tm);
 }
 
 void
-mrb_mruby_sleep_gem_init(mrb_state *mrb)
+$mruby_sleep_gem_init($state *mrb)
 {
-    mrb_define_method(mrb, mrb->kernel_module, "sleep",   mrb_f_sleep,   MRB_ARGS_REQ(1));
-    mrb_define_method(mrb, mrb->kernel_module, "usleep",  mrb_f_usleep,  MRB_ARGS_REQ(1));
+    $define_method(mrb, mrb->kernel_module, "sleep",   $f_sleep,   $ARGS_REQ(1));
+    $define_method(mrb, mrb->kernel_module, "usleep",  $f_usleep,  $ARGS_REQ(1));
 }
 
 void
-mrb_mruby_sleep_gem_final(mrb_state *mrb)
+$mruby_sleep_gem_final($state *mrb)
 {
 }

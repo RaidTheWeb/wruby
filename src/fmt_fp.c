@@ -1,5 +1,5 @@
-#ifndef MRB_WITHOUT_FLOAT
-#ifdef MRB_DISABLE_STDIO
+#ifndef $WITHOUT_FLOAT
+#ifdef $DISABLE_STDIO
 /*
 
 Most code in this file originates from musl (src/stdio/vfprintf.c)
@@ -39,8 +39,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <mruby/string.h>
 
 struct fmt_args {
-  mrb_state *mrb;
-  mrb_value str;
+  $state *mrb;
+  $value str;
 };
 
 #define MAX(a,b) ((a)>(b) ? (a) : (b))
@@ -58,7 +58,7 @@ struct fmt_args {
 static void
 out(struct fmt_args *f, const char *s, size_t l)
 {
-  mrb_str_cat(f->mrb, f->str, s, l);
+  $str_cat(f->mrb, f->str, s, l);
 }
 
 #define PAD_SIZE 256
@@ -332,7 +332,7 @@ fmt_fp(struct fmt_args *f, long double y, ptrdiff_t p, uint8_t fl, int t)
 }
 
 static int
-fmt_core(struct fmt_args *f, const char *fmt, mrb_float flo)
+fmt_core(struct fmt_args *f, const char *fmt, $float flo)
 {
   ptrdiff_t p;
 
@@ -360,29 +360,29 @@ fmt_core(struct fmt_args *f, const char *fmt, mrb_float flo)
   }
 }
 
-mrb_value
-mrb_float_to_str(mrb_state *mrb, mrb_value flo, const char *fmt)
+$value
+$float_to_str($state *mrb, $value flo, const char *fmt)
 {
   struct fmt_args f;
 
   f.mrb = mrb;
-  f.str = mrb_str_new_capa(mrb, 24);
-  if (fmt_core(&f, fmt, mrb_float(flo)) < 0) {
-    mrb_raise(mrb, E_ARGUMENT_ERROR, "invalid format string");
+  f.str = $str_new_capa(mrb, 24);
+  if (fmt_core(&f, fmt, $float(flo)) < 0) {
+    $raise(mrb, E_ARGUMENT_ERROR, "invalid format string");
   }
   return f.str;
 }
-#else   /* MRB_DISABLE_STDIO */
+#else   /* $DISABLE_STDIO */
 #include <mruby.h>
 #include <stdio.h>
 
-mrb_value
-mrb_float_to_str(mrb_state *mrb, mrb_value flo, const char *fmt)
+$value
+$float_to_str($state *mrb, $value flo, const char *fmt)
 {
   char buf[25];
 
-  snprintf(buf, sizeof(buf), fmt, mrb_float(flo));
-  return mrb_str_new_cstr(mrb, buf);
+  snprintf(buf, sizeof(buf), fmt, $float(flo));
+  return $str_new_cstr(mrb, buf);
 }
-#endif  /* MRB_DISABLE_STDIO */
+#endif  /* $DISABLE_STDIO */
 #endif

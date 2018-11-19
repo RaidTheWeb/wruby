@@ -19,19 +19,19 @@
  *   h.values_at("cow", "cat")  #=> ["bovine", "feline"]
  */
 
-static mrb_value
-hash_values_at(mrb_state *mrb, mrb_value hash)
+static $value
+hash_values_at($state *mrb, $value hash)
 {
-  mrb_value *argv, result;
-  mrb_int argc, i;
+  $value *argv, result;
+  $int argc, i;
   int ai;
 
-  mrb_get_args(mrb, "*", &argv, &argc);
-  result = mrb_ary_new_capa(mrb, argc);
-  ai = mrb_gc_arena_save(mrb);
+  $get_args(mrb, "*", &argv, &argc);
+  result = $ary_new_capa(mrb, argc);
+  ai = $gc_arena_save(mrb);
   for (i = 0; i < argc; i++) {
-    mrb_ary_push(mrb, result, mrb_hash_get(mrb, hash, argv[i]));
-    mrb_gc_arena_restore(mrb, ai);
+    $ary_push(mrb, result, $hash_get(mrb, hash, argv[i]));
+    $gc_arena_restore(mrb, ai);
   }
   return result;
 }
@@ -46,40 +46,40 @@ hash_values_at(mrb_state *mrb, mrb_value hash)
  *     h.slice(:a)           #=> {:a=>100}
  *     h.slice(:b, :c, :d)   #=> {:b=>200, :c=>300}
  */
-static mrb_value
-hash_slice(mrb_state *mrb, mrb_value hash)
+static $value
+hash_slice($state *mrb, $value hash)
 {
-  mrb_value *argv, result;
-  mrb_int argc, i;
+  $value *argv, result;
+  $int argc, i;
 
-  mrb_get_args(mrb, "*", &argv, &argc);
+  $get_args(mrb, "*", &argv, &argc);
   if (argc == 0) {
-    return mrb_hash_new_capa(mrb, argc);
+    return $hash_new_capa(mrb, argc);
   }
-  result = mrb_hash_new_capa(mrb, argc);
+  result = $hash_new_capa(mrb, argc);
   for (i = 0; i < argc; i++) {
-    mrb_value key = argv[i];
-    mrb_value val;
+    $value key = argv[i];
+    $value val;
 
-    val = mrb_hash_fetch(mrb, hash, key, mrb_undef_value());
-    if (!mrb_undef_p(val)) {
-      mrb_hash_set(mrb, result, key, val);
+    val = $hash_fetch(mrb, hash, key, $undef_value());
+    if (!$undef_p(val)) {
+      $hash_set(mrb, result, key, val);
     }
   }
   return result;
 }
 
 void
-mrb_mruby_hash_ext_gem_init(mrb_state *mrb)
+$mruby_hash_ext_gem_init($state *mrb)
 {
   struct RClass *h;
 
   h = mrb->hash_class;
-  mrb_define_method(mrb, h, "values_at", hash_values_at, MRB_ARGS_ANY());
-  mrb_define_method(mrb, h, "slice",     hash_slice, MRB_ARGS_ANY());
+  $define_method(mrb, h, "values_at", hash_values_at, $ARGS_ANY());
+  $define_method(mrb, h, "slice",     hash_slice, $ARGS_ANY());
 }
 
 void
-mrb_mruby_hash_ext_gem_final(mrb_state *mrb)
+$mruby_hash_ext_gem_final($state *mrb)
 {
 }

@@ -281,7 +281,7 @@ assert 'Method#unbind' do
 
   # TODO:
   #  Block passed method not handled correctly with workaround.
-  #  See comment near `mrb_funcall_with_block` for detail.
+  #  See comment near `$funcall_with_block` for detail.
   # assert_equal(:derived, um.bind(Derived.new).call{})
 end
 

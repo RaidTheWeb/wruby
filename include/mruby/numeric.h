@@ -14,32 +14,32 @@
  *
  * Integer, Float and Fixnum
  */
-MRB_BEGIN_DECL
+$BEGIN_DECL
 
-#define TYPED_POSFIXABLE(f,t) ((f) <= (t)MRB_INT_MAX)
-#define TYPED_NEGFIXABLE(f,t) ((f) >= (t)MRB_INT_MIN)
+#define TYPED_POSFIXABLE(f,t) ((f) <= (t)$INT_MAX)
+#define TYPED_NEGFIXABLE(f,t) ((f) >= (t)$INT_MIN)
 #define TYPED_FIXABLE(f,t) (TYPED_POSFIXABLE(f,t) && TYPED_NEGFIXABLE(f,t))
-#define POSFIXABLE(f) TYPED_POSFIXABLE(f,mrb_int)
-#define NEGFIXABLE(f) TYPED_NEGFIXABLE(f,mrb_int)
-#define FIXABLE(f) TYPED_FIXABLE(f,mrb_int)
-#ifndef MRB_WITHOUT_FLOAT
+#define POSFIXABLE(f) TYPED_POSFIXABLE(f,$int)
+#define NEGFIXABLE(f) TYPED_NEGFIXABLE(f,$int)
+#define FIXABLE(f) TYPED_FIXABLE(f,$int)
+#ifndef $WITHOUT_FLOAT
 #define FIXABLE_FLOAT(f) TYPED_FIXABLE(f,double)
 #endif
 
-#ifndef MRB_WITHOUT_FLOAT
-MRB_API mrb_value mrb_flo_to_fixnum(mrb_state *mrb, mrb_value val);
+#ifndef $WITHOUT_FLOAT
+$API $value $flo_to_fixnum($state *mrb, $value val);
 #endif
-MRB_API mrb_value mrb_fixnum_to_str(mrb_state *mrb, mrb_value x, mrb_int base);
+$API $value $fixnum_to_str($state *mrb, $value x, $int base);
 /* ArgumentError if format string doesn't match /%(\.[0-9]+)?[aAeEfFgG]/ */
-#ifndef MRB_WITHOUT_FLOAT
-MRB_API mrb_value mrb_float_to_str(mrb_state *mrb, mrb_value x, const char *fmt);
-MRB_API mrb_float mrb_to_flo(mrb_state *mrb, mrb_value x);
+#ifndef $WITHOUT_FLOAT
+$API $value $float_to_str($state *mrb, $value x, const char *fmt);
+$API $float $to_flo($state *mrb, $value x);
 #endif
 
-mrb_value mrb_fixnum_plus(mrb_state *mrb, mrb_value x, mrb_value y);
-mrb_value mrb_fixnum_minus(mrb_state *mrb, mrb_value x, mrb_value y);
-mrb_value mrb_fixnum_mul(mrb_state *mrb, mrb_value x, mrb_value y);
-mrb_value mrb_num_div(mrb_state *mrb, mrb_value x, mrb_value y);
+$value $fixnum_plus($state *mrb, $value x, $value y);
+$value $fixnum_minus($state *mrb, $value x, $value y);
+$value $fixnum_mul($state *mrb, $value x, $value y);
+$value $num_div($state *mrb, $value x, $value y);
 
 #ifndef __has_builtin
   #define __has_builtin(x) 0
@@ -49,43 +49,43 @@ mrb_value mrb_num_div(mrb_state *mrb, mrb_value x, mrb_value y);
     (__has_builtin(__builtin_add_overflow) && \
      __has_builtin(__builtin_sub_overflow) && \
      __has_builtin(__builtin_mul_overflow))
-# define MRB_HAVE_TYPE_GENERIC_CHECKED_ARITHMETIC_BUILTINS
+# define $HAVE_TYPE_GENERIC_CHECKED_ARITHMETIC_BUILTINS
 #endif
 
 /*
-// Clang 3.8 and 3.9 have problem compiling mruby in 32-bit mode, when MRB_INT64 is set
+// Clang 3.8 and 3.9 have problem compiling mruby in 32-bit mode, when $INT64 is set
 // because of missing __mulodi4 and similar functions in its runtime. We need to use custom
 // implementation for them.
 */
-#ifdef MRB_HAVE_TYPE_GENERIC_CHECKED_ARITHMETIC_BUILTINS
+#ifdef $HAVE_TYPE_GENERIC_CHECKED_ARITHMETIC_BUILTINS
 #if defined(__clang__) && (__clang_major__ == 3) && (__clang_minor__ >= 8) && \
-    defined(MRB_32BIT) && defined(MRB_INT64)
-#undef MRB_HAVE_TYPE_GENERIC_CHECKED_ARITHMETIC_BUILTINS
+    defined($32BIT) && defined($INT64)
+#undef $HAVE_TYPE_GENERIC_CHECKED_ARITHMETIC_BUILTINS
 #endif
 #endif
 
-#ifdef MRB_HAVE_TYPE_GENERIC_CHECKED_ARITHMETIC_BUILTINS
+#ifdef $HAVE_TYPE_GENERIC_CHECKED_ARITHMETIC_BUILTINS
 
-#ifndef MRB_WORD_BOXING
+#ifndef $WORD_BOXING
 # define WBCHK(x) 0
 #else
 # define WBCHK(x) !FIXABLE(x)
 #endif
 
-static inline mrb_bool
-mrb_int_add_overflow(mrb_int augend, mrb_int addend, mrb_int *sum)
+static inline $bool
+$int_add_overflow($int augend, $int addend, $int *sum)
 {
   return __builtin_add_overflow(augend, addend, sum) || WBCHK(*sum);
 }
 
-static inline mrb_bool
-mrb_int_sub_overflow(mrb_int minuend, mrb_int subtrahend, mrb_int *difference)
+static inline $bool
+$int_sub_overflow($int minuend, $int subtrahend, $int *difference)
 {
   return __builtin_sub_overflow(minuend, subtrahend, difference) || WBCHK(*difference);
 }
 
-static inline mrb_bool
-mrb_int_mul_overflow(mrb_int multiplier, mrb_int multiplicand, mrb_int *product)
+static inline $bool
+$int_mul_overflow($int multiplier, $int multiplicand, $int *product)
 {
   return __builtin_mul_overflow(multiplier, multiplicand, product) || WBCHK(*product);
 }
@@ -94,54 +94,54 @@ mrb_int_mul_overflow(mrb_int multiplier, mrb_int multiplicand, mrb_int *product)
 
 #else
 
-#define MRB_UINT_MAKE2(n) uint ## n ## _t
-#define MRB_UINT_MAKE(n) MRB_UINT_MAKE2(n)
-#define mrb_uint MRB_UINT_MAKE(MRB_INT_BIT)
+#define $UINT_MAKE2(n) uint ## n ## _t
+#define $UINT_MAKE(n) $UINT_MAKE2(n)
+#define $uint $UINT_MAKE($INT_BIT)
 
-#define MRB_INT_OVERFLOW_MASK ((mrb_uint)1 << (MRB_INT_BIT - 1 - MRB_FIXNUM_SHIFT))
+#define $INT_OVERFLOW_MASK (($uint)1 << ($INT_BIT - 1 - $FIXNUM_SHIFT))
 
-static inline mrb_bool
-mrb_int_add_overflow(mrb_int augend, mrb_int addend, mrb_int *sum)
+static inline $bool
+$int_add_overflow($int augend, $int addend, $int *sum)
 {
-  mrb_uint x = (mrb_uint)augend;
-  mrb_uint y = (mrb_uint)addend;
-  mrb_uint z = (mrb_uint)(x + y);
-  *sum = (mrb_int)z;
-  return !!(((x ^ z) & (y ^ z)) & MRB_INT_OVERFLOW_MASK);
+  $uint x = ($uint)augend;
+  $uint y = ($uint)addend;
+  $uint z = ($uint)(x + y);
+  *sum = ($int)z;
+  return !!(((x ^ z) & (y ^ z)) & $INT_OVERFLOW_MASK);
 }
 
-static inline mrb_bool
-mrb_int_sub_overflow(mrb_int minuend, mrb_int subtrahend, mrb_int *difference)
+static inline $bool
+$int_sub_overflow($int minuend, $int subtrahend, $int *difference)
 {
-  mrb_uint x = (mrb_uint)minuend;
-  mrb_uint y = (mrb_uint)subtrahend;
-  mrb_uint z = (mrb_uint)(x - y);
-  *difference = (mrb_int)z;
-  return !!(((x ^ z) & (~y ^ z)) & MRB_INT_OVERFLOW_MASK);
+  $uint x = ($uint)minuend;
+  $uint y = ($uint)subtrahend;
+  $uint z = ($uint)(x - y);
+  *difference = ($int)z;
+  return !!(((x ^ z) & (~y ^ z)) & $INT_OVERFLOW_MASK);
 }
 
-static inline mrb_bool
-mrb_int_mul_overflow(mrb_int multiplier, mrb_int multiplicand, mrb_int *product)
+static inline $bool
+$int_mul_overflow($int multiplier, $int multiplicand, $int *product)
 {
-#if MRB_INT_BIT == 32
+#if $INT_BIT == 32
   int64_t n = (int64_t)multiplier * multiplicand;
-  *product = (mrb_int)n;
+  *product = ($int)n;
   return !FIXABLE(n);
 #else
   if (multiplier > 0) {
     if (multiplicand > 0) {
-      if (multiplier > MRB_INT_MAX / multiplicand) return TRUE;
+      if (multiplier > $INT_MAX / multiplicand) return TRUE;
     }
     else {
-      if (multiplicand < MRB_INT_MAX / multiplier) return TRUE;
+      if (multiplicand < $INT_MAX / multiplier) return TRUE;
     }
   }
   else {
     if (multiplicand > 0) {
-      if (multiplier < MRB_INT_MAX / multiplicand) return TRUE;
+      if (multiplier < $INT_MAX / multiplicand) return TRUE;
     }
     else {
-      if (multiplier != 0 && multiplicand < MRB_INT_MAX / multiplier) return TRUE;
+      if (multiplier != 0 && multiplicand < $INT_MAX / multiplier) return TRUE;
     }
   }
   *product = multiplier * multiplicand;
@@ -149,13 +149,13 @@ mrb_int_mul_overflow(mrb_int multiplier, mrb_int multiplicand, mrb_int *product)
 #endif
 }
 
-#undef MRB_INT_OVERFLOW_MASK
-#undef mrb_uint
-#undef MRB_UINT_MAKE
-#undef MRB_UINT_MAKE2
+#undef $INT_OVERFLOW_MASK
+#undef $uint
+#undef $UINT_MAKE
+#undef $UINT_MAKE2
 
 #endif
 
-MRB_END_DECL
+$END_DECL
 
 #endif  /* MRUBY_NUMERIC_H */

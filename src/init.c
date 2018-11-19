@@ -6,46 +6,46 @@
 
 #include <mruby.h>
 
-void mrb_init_symtbl(mrb_state*);
-void mrb_init_class(mrb_state*);
-void mrb_init_object(mrb_state*);
-void mrb_init_kernel(mrb_state*);
-void mrb_init_comparable(mrb_state*);
-void mrb_init_enumerable(mrb_state*);
-void mrb_init_symbol(mrb_state*);
-void mrb_init_string(mrb_state*);
-void mrb_init_exception(mrb_state*);
-void mrb_init_proc(mrb_state*);
-void mrb_init_array(mrb_state*);
-void mrb_init_hash(mrb_state*);
-void mrb_init_numeric(mrb_state*);
-void mrb_init_range(mrb_state*);
-void mrb_init_gc(mrb_state*);
-void mrb_init_math(mrb_state*);
-void mrb_init_version(mrb_state*);
-void mrb_init_mrblib(mrb_state*);
+void $init_symtbl($state*);
+void $init_class($state*);
+void $init_object($state*);
+void $init_kernel($state*);
+void $init_comparable($state*);
+void $init_enumerable($state*);
+void $init_symbol($state*);
+void $init_string($state*);
+void $init_exception($state*);
+void $init_proc($state*);
+void $init_array($state*);
+void $init_hash($state*);
+void $init_numeric($state*);
+void $init_range($state*);
+void $init_gc($state*);
+void $init_math($state*);
+void $init_version($state*);
+void $init_mrblib($state*);
 
-#define DONE mrb_gc_arena_restore(mrb, 0);
+#define DONE $gc_arena_restore(mrb, 0);
 void
-mrb_init_core(mrb_state *mrb)
+$init_core($state *mrb)
 {
-  mrb_init_symtbl(mrb); DONE;
+  $init_symtbl(mrb); DONE;
 
-  mrb_init_class(mrb); DONE;
-  mrb_init_object(mrb); DONE;
-  mrb_init_kernel(mrb); DONE;
-  mrb_init_comparable(mrb); DONE;
-  mrb_init_enumerable(mrb); DONE;
+  $init_class(mrb); DONE;
+  $init_object(mrb); DONE;
+  $init_kernel(mrb); DONE;
+  $init_comparable(mrb); DONE;
+  $init_enumerable(mrb); DONE;
 
-  mrb_init_symbol(mrb); DONE;
-  mrb_init_string(mrb); DONE;
-  mrb_init_exception(mrb); DONE;
-  mrb_init_proc(mrb); DONE;
-  mrb_init_array(mrb); DONE;
-  mrb_init_hash(mrb); DONE;
-  mrb_init_numeric(mrb); DONE;
-  mrb_init_range(mrb); DONE;
-  mrb_init_gc(mrb); DONE;
-  mrb_init_version(mrb); DONE;
-  mrb_init_mrblib(mrb); DONE;
+  $init_symbol(mrb); DONE;
+  $init_string(mrb); DONE;
+  $init_exception(mrb); DONE;
+  $init_proc(mrb); DONE;
+  $init_array(mrb); DONE;
+  $init_hash(mrb); DONE;
+  $init_numeric(mrb); DONE;
+  $init_range(mrb); DONE;
+  $init_gc(mrb); DONE;
+  $init_version(mrb); DONE;
+  $init_mrblib(mrb); DONE;
 }

@@ -42,14 +42,14 @@
 #define LINENO_MAX_DIGIT 6
 #define BPNO_LETTER_NUM 9
 
-typedef int32_t (*all_command_func)(mrb_state *, mrb_debug_context *);
-typedef int32_t (*select_command_func)(mrb_state *, mrb_debug_context *, uint32_t);
+typedef int32_t (*all_command_func)($state *, $debug_context *);
+typedef int32_t (*select_command_func)($state *, $debug_context *, uint32_t);
 
 static void
 print_api_common_error(int32_t error)
 {
   switch(error) {
-    case MRB_DEBUG_INVALID_ARGUMENT:
+    case $DEBUG_INVALID_ARGUMENT:
       puts(BREAK_ERR_MSG_INVALIDARG);
       break;
     default:
@@ -85,10 +85,10 @@ parse_breakpoint_no(char* args)
   return l;
 }
 
-static mrb_bool
-exe_set_command_all(mrb_state *mrb, mrdb_state *mrdb, all_command_func func)
+static $bool
+exe_set_command_all($state *mrb, mrdb_state *mrdb, all_command_func func)
 {
-  int32_t ret = MRB_DEBUG_OK;
+  int32_t ret = $DEBUG_OK;
 
   if (mrdb->wcnt == 1) {
     ret = func(mrb, mrdb->dbg);
@@ -99,10 +99,10 @@ exe_set_command_all(mrb_state *mrb, mrdb_state *mrdb, all_command_func func)
 }
 
 static void
-exe_set_command_select(mrb_state *mrb, mrdb_state *mrdb, select_command_func func)
+exe_set_command_select($state *mrb, mrdb_state *mrdb, select_command_func func)
 {
   char* ps;
-  int32_t ret = MRB_DEBUG_OK;
+  int32_t ret = $DEBUG_OK;
   int32_t bpno = 0;
   int32_t i;
 
@@ -114,51 +114,51 @@ exe_set_command_select(mrb_state *mrb, mrdb_state *mrdb, select_command_func fun
       break;
     }
     ret = func(mrb, mrdb->dbg, (uint32_t)bpno);
-    if (ret == MRB_DEBUG_BREAK_INVALID_NO) {
+    if (ret == $DEBUG_BREAK_INVALID_NO) {
       printf(BREAK_ERR_MSG_NOBPNO, bpno);
     }
-    else if (ret != MRB_DEBUG_OK) {
+    else if (ret != $DEBUG_OK) {
       print_api_common_error(ret);
     }
   }
 }
 
-mrb_debug_bptype
+$debug_bptype
 check_bptype(char* args)
 {
   char* ps = args;
 
   if (ISBLANK(*ps)||ISCNTRL(*ps)) {
     puts(BREAK_ERR_MSG_BLANK);
-    return MRB_DEBUG_BPTYPE_NONE;
+    return $DEBUG_BPTYPE_NONE;
   }
 
   if (!ISDIGIT(*ps)) {
-    return MRB_DEBUG_BPTYPE_METHOD;
+    return $DEBUG_BPTYPE_METHOD;
   }
 
   while (!(ISBLANK(*ps)||ISCNTRL(*ps))) {
     if (!ISDIGIT(*ps)) {
       printf(BREAK_ERR_MSG_INVALIDSTR, args);
-      return MRB_DEBUG_BPTYPE_NONE;
+      return $DEBUG_BPTYPE_NONE;
     }
     ps++;
   }
 
   if ((*args == '0')||(strlen(args) >= LINENO_MAX_DIGIT)) {
     puts(BREAK_ERR_MSG_RANGEOVER);
-    return MRB_DEBUG_BPTYPE_NONE;
+    return $DEBUG_BPTYPE_NONE;
   }
 
-  return MRB_DEBUG_BPTYPE_LINE;
+  return $DEBUG_BPTYPE_LINE;
 }
 
 static void
-print_breakpoint(mrb_debug_breakpoint *bp)
+print_breakpoint($debug_breakpoint *bp)
 {
   const char* enable_letter[] = {BREAK_INFO_MSG_DISABLE, BREAK_INFO_MSG_ENABLE};
 
-  if (bp->type == MRB_DEBUG_BPTYPE_LINE) {
+  if (bp->type == $DEBUG_BPTYPE_LINE) {
     printf(BREAK_INFO_MSG_LINEBREAK,
       bp->bpno, enable_letter[bp->enable], bp->point.linepoint.file, bp->point.linepoint.lineno);
   }
@@ -175,14 +175,14 @@ print_breakpoint(mrb_debug_breakpoint *bp)
 }
 
 static void
-info_break_all(mrb_state *mrb, mrdb_state *mrdb)
+info_break_all($state *mrb, mrdb_state *mrdb)
 {
   int32_t bpnum = 0;
   int32_t i = 0;
-  int32_t ret = MRB_DEBUG_OK;
-  mrb_debug_breakpoint *bp_list;
+  int32_t ret = $DEBUG_OK;
+  $debug_breakpoint *bp_list;
 
-  bpnum = mrb_debug_get_breaknum(mrb, mrdb->dbg);
+  bpnum = $debug_get_breaknum(mrb, mrdb->dbg);
   if (bpnum < 0) {
     print_api_common_error(bpnum);
     return;
@@ -191,9 +191,9 @@ info_break_all(mrb_state *mrb, mrdb_state *mrdb)
     puts(BREAK_ERR_MSG_NOBPNO_INFOALL);
     return;
   }
-  bp_list = (mrb_debug_breakpoint*)mrb_malloc(mrb, bpnum * sizeof(mrb_debug_breakpoint));
+  bp_list = ($debug_breakpoint*)$malloc(mrb, bpnum * sizeof($debug_breakpoint));
 
-  ret = mrb_debug_get_break_all(mrb, mrdb->dbg, (uint32_t)bpnum, bp_list);
+  ret = $debug_get_break_all(mrb, mrdb->dbg, (uint32_t)bpnum, bp_list);
   if (ret < 0) {
     print_api_common_error(ret);
     return;
@@ -203,17 +203,17 @@ info_break_all(mrb_state *mrb, mrdb_state *mrdb)
     print_breakpoint(&bp_list[i]);
   }
 
-  mrb_free(mrb, bp_list);
+  $free(mrb, bp_list);
 }
 
 static void
-info_break_select(mrb_state *mrb, mrdb_state *mrdb)
+info_break_select($state *mrb, mrdb_state *mrdb)
 {
-  int32_t ret = MRB_DEBUG_OK;
+  int32_t ret = $DEBUG_OK;
   int32_t bpno = 0;
   char* ps = mrdb->command;
-  mrb_debug_breakpoint bp;
-  mrb_bool isFirst = TRUE;
+  $debug_breakpoint bp;
+  $bool isFirst = TRUE;
   int32_t i;
 
   for(i=2; i<mrdb->wcnt; i++) {
@@ -224,12 +224,12 @@ info_break_select(mrb_state *mrb, mrdb_state *mrdb)
       break;
     }
 
-    ret = mrb_debug_get_break(mrb, mrdb->dbg, bpno, &bp);
-    if (ret == MRB_DEBUG_BREAK_INVALID_NO) {
+    ret = $debug_get_break(mrb, mrdb->dbg, bpno, &bp);
+    if (ret == $DEBUG_BREAK_INVALID_NO) {
       printf(BREAK_ERR_MSG_NOBPNO_INFO, bpno);
       break;
     }
-    else if (ret != MRB_DEBUG_OK) {
+    else if (ret != $DEBUG_OK) {
       print_api_common_error(ret);
       break;
     }
@@ -241,18 +241,18 @@ info_break_select(mrb_state *mrb, mrdb_state *mrdb)
   }
 }
 
-mrb_debug_bptype
+$debug_bptype
 parse_breakcommand(mrdb_state *mrdb, const char **file, uint32_t *line, char **cname, char **method)
 {
-  mrb_debug_context *dbg = mrdb->dbg;
+  $debug_context *dbg = mrdb->dbg;
   char *args;
   char *body;
-  mrb_debug_bptype type;
+  $debug_bptype type;
   uint32_t l;
 
   if (mrdb->wcnt <= 1) {
     puts(BREAK_ERR_MSG_BLANK);
-    return MRB_DEBUG_BPTYPE_NONE;
+    return $DEBUG_BPTYPE_NONE;
   }
 
   args = mrdb->words[1];
@@ -263,25 +263,25 @@ parse_breakcommand(mrdb_state *mrdb, const char **file, uint32_t *line, char **c
   else {
     if (body == args) {
       printf(BREAK_ERR_MSG_INVALIDSTR, args);
-      return MRB_DEBUG_BPTYPE_NONE;
+      return $DEBUG_BPTYPE_NONE;
     }
     *body = '\0';
     type = check_bptype(++body);
   }
 
   switch(type) {
-    case MRB_DEBUG_BPTYPE_LINE:
+    case $DEBUG_BPTYPE_LINE:
       STRTOUL(l, body);
       if (l <= 65535) {
         *line = l;
-        *file = (body == args)? mrb_debug_get_filename(dbg->irep, dbg->pc - dbg->irep->iseq): args;
+        *file = (body == args)? $debug_get_filename(dbg->irep, dbg->pc - dbg->irep->iseq): args;
       }
       else {
         puts(BREAK_ERR_MSG_RANGEOVER);
-        type = MRB_DEBUG_BPTYPE_NONE;
+        type = $DEBUG_BPTYPE_NONE;
       }
       break;
-    case MRB_DEBUG_BPTYPE_METHOD:
+    case $DEBUG_BPTYPE_METHOD:
       if (body == args) {
         /* method only */
         if (ISUPPER(*body)||ISLOWER(*body)||(*body == '_')) {
@@ -290,7 +290,7 @@ parse_breakcommand(mrdb_state *mrdb, const char **file, uint32_t *line, char **c
         }
         else {
           printf(BREAK_ERR_MSG_INVALIDMETHOD, args);
-          type = MRB_DEBUG_BPTYPE_NONE;
+          type = $DEBUG_BPTYPE_NONE;
         }
       }
       else {
@@ -299,7 +299,7 @@ parse_breakcommand(mrdb_state *mrdb, const char **file, uint32_t *line, char **c
             case '@': case '$': case '?': case '.': case ',': case ':':
             case ';': case '#': case '\\': case '\'': case '\"':
             printf(BREAK_ERR_MSG_INVALIDMETHOD, body);
-            type = MRB_DEBUG_BPTYPE_NONE;
+            type = $DEBUG_BPTYPE_NONE;
             break;
           default:
             *method = body;
@@ -309,11 +309,11 @@ parse_breakcommand(mrdb_state *mrdb, const char **file, uint32_t *line, char **c
         }
         else {
           printf(BREAK_ERR_MSG_INVALIDCLASS, args);
-          type = MRB_DEBUG_BPTYPE_NONE;
+          type = $DEBUG_BPTYPE_NONE;
         }
       }
       break;
-    case MRB_DEBUG_BPTYPE_NONE:
+    case $DEBUG_BPTYPE_NONE:
     default:
       break;
   }
@@ -322,10 +322,10 @@ parse_breakcommand(mrdb_state *mrdb, const char **file, uint32_t *line, char **c
 }
 
 dbgcmd_state
-dbgcmd_break(mrb_state *mrb, mrdb_state *mrdb)
+dbgcmd_break($state *mrb, mrdb_state *mrdb)
 {
-  mrb_debug_bptype type;
-  mrb_debug_context *dbg = mrdb->dbg;
+  $debug_bptype type;
+  $debug_context *dbg = mrdb->dbg;
   const char *file = NULL;
   uint32_t line = 0;
   char *cname = NULL;
@@ -334,22 +334,22 @@ dbgcmd_break(mrb_state *mrb, mrdb_state *mrdb)
 
   type = parse_breakcommand(mrdb, &file, &line, &cname, &method);
   switch (type) {
-    case MRB_DEBUG_BPTYPE_LINE:
-      ret = mrb_debug_set_break_line(mrb, dbg, file, line);
+    case $DEBUG_BPTYPE_LINE:
+      ret = $debug_set_break_line(mrb, dbg, file, line);
       break;
-    case MRB_DEBUG_BPTYPE_METHOD:
-      ret = mrb_debug_set_break_method(mrb, dbg, cname, method);
+    case $DEBUG_BPTYPE_METHOD:
+      ret = $debug_set_break_method(mrb, dbg, cname, method);
       break;
-    case MRB_DEBUG_BPTYPE_NONE:
+    case $DEBUG_BPTYPE_NONE:
     default:
       return DBGST_PROMPT;
   }
 
   if (ret >= 0) {
-    if (type == MRB_DEBUG_BPTYPE_LINE) {
+    if (type == $DEBUG_BPTYPE_LINE) {
       printf(BREAK_SET_MSG_LINE, ret, file, line);
     }
-    else if ((type == MRB_DEBUG_BPTYPE_METHOD)&&(cname == NULL)) {
+    else if ((type == $DEBUG_BPTYPE_METHOD)&&(cname == NULL)) {
       printf(BREAK_SET_MSG_METHOD, ret, method);
     }
     else {
@@ -358,22 +358,22 @@ dbgcmd_break(mrb_state *mrb, mrdb_state *mrdb)
   }
   else {
     switch (ret) {
-      case MRB_DEBUG_BREAK_INVALID_LINENO:
+      case $DEBUG_BREAK_INVALID_LINENO:
         printf(BREAK_ERR_MSG_INVALIDLINENO, line, file);
         break;
-      case MRB_DEBUG_BREAK_INVALID_FILE:
+      case $DEBUG_BREAK_INVALID_FILE:
         printf(BREAK_ERR_MSG_INVALIDFILE, file);
         break;
-      case MRB_DEBUG_BREAK_NUM_OVER:
+      case $DEBUG_BREAK_NUM_OVER:
         puts(BREAK_ERR_MSG_NUMOVER);
         break;
-      case MRB_DEBUG_BREAK_NO_OVER:
+      case $DEBUG_BREAK_NO_OVER:
         puts(BREAK_ERR_MSG_NOOVER);
         break;
-      case MRB_DEBUG_INVALID_ARGUMENT:
+      case $DEBUG_INVALID_ARGUMENT:
         puts(BREAK_ERR_MSG_INVALIDARG);
         break;
-      case MRB_DEBUG_NOBUF:
+      case $DEBUG_NOBUF:
         puts("T.B.D.");
         break;
       default:
@@ -385,7 +385,7 @@ dbgcmd_break(mrb_state *mrb, mrdb_state *mrdb)
 }
 
 dbgcmd_state
-dbgcmd_info_break(mrb_state *mrb, mrdb_state *mrdb)
+dbgcmd_info_break($state *mrb, mrdb_state *mrdb)
 {
   if (mrdb->wcnt == 2) {
     info_break_all(mrb, mrdb);
@@ -398,39 +398,39 @@ dbgcmd_info_break(mrb_state *mrb, mrdb_state *mrdb)
 }
 
 dbgcmd_state
-dbgcmd_delete(mrb_state *mrb, mrdb_state *mrdb)
+dbgcmd_delete($state *mrb, mrdb_state *mrdb)
 {
-  mrb_bool ret = FALSE;
+  $bool ret = FALSE;
 
-  ret = exe_set_command_all(mrb, mrdb, mrb_debug_delete_break_all);
+  ret = exe_set_command_all(mrb, mrdb, $debug_delete_break_all);
   if (ret != TRUE) {
-    exe_set_command_select(mrb, mrdb, mrb_debug_delete_break);
+    exe_set_command_select(mrb, mrdb, $debug_delete_break);
   }
 
   return DBGST_PROMPT;
 }
 
 dbgcmd_state
-dbgcmd_enable(mrb_state *mrb, mrdb_state *mrdb)
+dbgcmd_enable($state *mrb, mrdb_state *mrdb)
 {
-  mrb_bool ret = FALSE;
+  $bool ret = FALSE;
 
-  ret = exe_set_command_all(mrb, mrdb, mrb_debug_enable_break_all);
+  ret = exe_set_command_all(mrb, mrdb, $debug_enable_break_all);
   if (ret != TRUE) {
-    exe_set_command_select(mrb, mrdb, mrb_debug_enable_break);
+    exe_set_command_select(mrb, mrdb, $debug_enable_break);
   }
 
   return DBGST_PROMPT;
 }
 
 dbgcmd_state
-dbgcmd_disable(mrb_state *mrb, mrdb_state *mrdb)
+dbgcmd_disable($state *mrb, mrdb_state *mrdb)
 {
-  mrb_bool ret = FALSE;
+  $bool ret = FALSE;
 
-  ret = exe_set_command_all(mrb, mrdb, mrb_debug_disable_break_all);
+  ret = exe_set_command_all(mrb, mrdb, $debug_disable_break_all);
   if (ret != TRUE) {
-    exe_set_command_select(mrb, mrdb, mrb_debug_disable_break);
+    exe_set_command_select(mrb, mrdb, $debug_disable_break);
   }
   return DBGST_PROMPT;
 }

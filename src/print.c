@@ -8,11 +8,11 @@
 #include <mruby/string.h>
 #include <mruby/variable.h>
 
-#ifndef MRB_DISABLE_STDIO
+#ifndef $DISABLE_STDIO
 static void
-printstr(mrb_value obj, FILE *stream)
+printstr($value obj, FILE *stream)
 {
-  if (mrb_string_p(obj)) {
+  if ($string_p(obj)) {
     fwrite(RSTRING_PTR(obj), RSTRING_LEN(obj), 1, stream);
     putc('\n', stream);
   }
@@ -21,27 +21,27 @@ printstr(mrb_value obj, FILE *stream)
 # define printstr(obj, stream) (void)0
 #endif
 
-MRB_API void
-mrb_p(mrb_state *mrb, mrb_value obj)
+$API void
+$p($state *mrb, $value obj)
 {
-  printstr(mrb_inspect(mrb, obj), stdout);
+  printstr($inspect(mrb, obj), stdout);
 }
 
-MRB_API void
-mrb_print_error(mrb_state *mrb)
+$API void
+$print_error($state *mrb)
 {
-  mrb_print_backtrace(mrb);
-  printstr(mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0), stderr);
+  $print_backtrace(mrb);
+  printstr($funcall(mrb, $obj_value(mrb->exc), "inspect", 0), stderr);
 }
 
-MRB_API void
-mrb_show_version(mrb_state *mrb)
+$API void
+$show_version($state *mrb)
 {
-  printstr(mrb_const_get(mrb, mrb_obj_value(mrb->object_class), mrb_intern_lit(mrb, "MRUBY_DESCRIPTION")), stdout);
+  printstr($const_get(mrb, $obj_value(mrb->object_class), $intern_lit(mrb, "MRUBY_DESCRIPTION")), stdout);
 }
 
-MRB_API void
-mrb_show_copyright(mrb_state *mrb)
+$API void
+$show_copyright($state *mrb)
 {
-  printstr(mrb_const_get(mrb, mrb_obj_value(mrb->object_class), mrb_intern_lit(mrb, "MRUBY_COPYRIGHT")), stdout);
+  printstr($const_get(mrb, $obj_value(mrb->object_class), $intern_lit(mrb, "MRUBY_COPYRIGHT")), stdout);
 }

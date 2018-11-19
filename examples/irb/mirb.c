@@ -62,7 +62,7 @@
 static const char history_file_name[] = ".mirb_history";
 
 static char *
-get_history_path(mrb_state *mrb)
+get_history_path($state *mrb)
 {
   char *path = NULL;
   const char *home = getenv("HOME");
@@ -77,11 +77,11 @@ get_history_path(mrb_state *mrb)
     int len = snprintf(NULL, 0, "%s/%s", home, history_file_name);
     if (len >= 0) {
       size_t size = len + 1;
-      path = (char *)mrb_malloc_simple(mrb, size);
+      path = (char *)$malloc_simple(mrb, size);
       if (path != NULL) {
         int n = snprintf(path, size, "%s/%s", home, history_file_name);
         if (n != len) {
-          mrb_free(mrb, path);
+          $free(mrb, path);
           path = NULL;
         }
       }
@@ -94,35 +94,35 @@ get_history_path(mrb_state *mrb)
 #endif
 
 static void
-p(mrb_state *mrb, mrb_value obj, int prompt)
+p($state *mrb, $value obj, int prompt)
 {
-  mrb_value val;
+  $value val;
   char* msg;
 
-  val = mrb_funcall(mrb, obj, "inspect", 0);
+  val = $funcall(mrb, obj, "inspect", 0);
   if (prompt) {
     if (!mrb->exc) {
       fputs(" => ", stdout);
     }
     else {
-      val = mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0);
+      val = $funcall(mrb, $obj_value(mrb->exc), "inspect", 0);
     }
   }
-  if (!mrb_string_p(val)) {
-    val = mrb_obj_as_string(mrb, obj);
+  if (!$string_p(val)) {
+    val = $obj_as_string(mrb, obj);
   }
-  msg = mrb_locale_from_utf8(RSTRING_PTR(val), (int)RSTRING_LEN(val));
+  msg = $locale_from_utf8(RSTRING_PTR(val), (int)RSTRING_LEN(val));
   fwrite(msg, strlen(msg), 1, stdout);
-  mrb_locale_free(msg);
+  $locale_free(msg);
   putc('\n', stdout);
 }
 
 /* Guess if the user might want to enter more
  * or if he wants an evaluation of his code now */
-static mrb_bool
-is_code_block_open(struct mrb_parser_state *parser)
+static $bool
+is_code_block_open(struct $parser_state *parser)
 {
-  mrb_bool code_block_open = FALSE;
+  $bool code_block_open = FALSE;
 
   /* check for heredoc */
   if (parser->parsing_heredoc != NULL) return TRUE;
@@ -220,8 +220,8 @@ is_code_block_open(struct mrb_parser_state *parser)
 
 struct _args {
   FILE *rfp;
-  mrb_bool verbose      : 1;
-  mrb_bool debug        : 1;
+  $bool verbose      : 1;
+  $bool debug        : 1;
   int argc;
   char** argv;
   int libc;
@@ -249,16 +249,16 @@ usage(const char *name)
 }
 
 static char *
-dup_arg_item(mrb_state *mrb, const char *item)
+dup_arg_item($state *mrb, const char *item)
 {
   size_t buflen = strlen(item) + 1;
-  char *buf = (char*)mrb_malloc(mrb, buflen);
+  char *buf = (char*)$malloc(mrb, buflen);
   memcpy(buf, item, buflen);
   return buf;
 }
 
 static int
-parse_args(mrb_state *mrb, int argc, char **argv, struct _args *args)
+parse_args($state *mrb, int argc, char **argv, struct _args *args)
 {
   char **origargv = argv;
   static const struct _args args_zero = { 0 };
@@ -284,20 +284,20 @@ parse_args(mrb_state *mrb, int argc, char **argv, struct _args *args)
         item = argv[0];
       }
       if (args->libc == 0) {
-        args->libv = (char**)mrb_malloc(mrb, sizeof(char*));
+        args->libv = (char**)$malloc(mrb, sizeof(char*));
       }
       else {
-        args->libv = (char**)mrb_realloc(mrb, args->libv, sizeof(char*) * (args->libc + 1));
+        args->libv = (char**)$realloc(mrb, args->libv, sizeof(char*) * (args->libc + 1));
       }
       args->libv[args->libc++] = dup_arg_item(mrb, item);
       break;
     case 'v':
-      if (!args->verbose) mrb_show_version(mrb);
+      if (!args->verbose) $show_version(mrb);
       args->verbose = TRUE;
       break;
     case '-':
       if (strcmp((*argv) + 2, "version") == 0) {
-        mrb_show_version(mrb);
+        $show_version(mrb);
         exit(EXIT_SUCCESS);
       }
       else if (strcmp((*argv) + 2, "verbose") == 0) {
@@ -305,7 +305,7 @@ parse_args(mrb_state *mrb, int argc, char **argv, struct _args *args)
         break;
       }
       else if (strcmp((*argv) + 2, "copyright") == 0) {
-        mrb_show_copyright(mrb);
+        $show_copyright(mrb);
         exit(EXIT_SUCCESS);
       }
     default:
@@ -323,7 +323,7 @@ parse_args(mrb_state *mrb, int argc, char **argv, struct _args *args)
       argc--; argv++;
     }
   }
-  args->argv = (char **)mrb_realloc(mrb, args->argv, sizeof(char*) * (argc + 1));
+  args->argv = (char **)$realloc(mrb, args->argv, sizeof(char*) * (argc + 1));
   memcpy(args->argv, argv, (argc+1) * sizeof(char*));
   args->argc = argc;
 
@@ -331,18 +331,18 @@ parse_args(mrb_state *mrb, int argc, char **argv, struct _args *args)
 }
 
 static void
-cleanup(mrb_state *mrb, struct _args *args)
+cleanup($state *mrb, struct _args *args)
 {
   if (args->rfp)
     fclose(args->rfp);
-  mrb_free(mrb, args->argv);
+  $free(mrb, args->argv);
   if (args->libc) {
     while (args->libc--) {
-      mrb_free(mrb, args->libv[args->libc]);
+      $free(mrb, args->libv[args->libc]);
     }
-    mrb_free(mrb, args->libv);
+    $free(mrb, args->libv);
   }
-  mrb_close(mrb);
+  $close(mrb);
 }
 
 /* Print a short remark for the user */
@@ -367,7 +367,7 @@ print_cmdline(int code_block_open)
 }
 #endif
 
-void mrb_codedump_all(mrb_state*, struct RProc*);
+void $codedump_all($state*, struct RProc*);
 
 static int
 check_keyword(const char *buf, const char *word)
@@ -422,19 +422,19 @@ main(int argc, char **argv)
   char* line;
 #endif
   mrbc_context *cxt;
-  struct mrb_parser_state *parser;
-  mrb_state *mrb;
-  mrb_value result;
+  struct $parser_state *parser;
+  $state *mrb;
+  $value result;
   struct _args args;
-  mrb_value ARGV;
+  $value ARGV;
   int n;
   int i;
-  mrb_bool code_block_open = FALSE;
+  $bool code_block_open = FALSE;
   int ai;
   unsigned int stack_keep = 0;
 
   /* new interpreter instance */
-  mrb = mrb_open();
+  mrb = $open();
   if (mrb == NULL) {
     fputs("Invalid mrb interpreter, exiting mirb\n", stderr);
     return EXIT_FAILURE;
@@ -447,22 +447,22 @@ main(int argc, char **argv)
     return n;
   }
 
-  ARGV = mrb_ary_new_capa(mrb, args.argc);
+  ARGV = $ary_new_capa(mrb, args.argc);
   for (i = 0; i < args.argc; i++) {
-    char* utf8 = mrb_utf8_from_locale(args.argv[i], -1);
+    char* utf8 = $utf8_from_locale(args.argv[i], -1);
     if (utf8) {
-      mrb_ary_push(mrb, ARGV, mrb_str_new_cstr(mrb, utf8));
-      mrb_utf8_free(utf8);
+      $ary_push(mrb, ARGV, $str_new_cstr(mrb, utf8));
+      $utf8_free(utf8);
     }
   }
-  mrb_define_global_const(mrb, "ARGV", ARGV);
-  mrb_gv_set(mrb, mrb_intern_lit(mrb, "$DEBUG"), mrb_bool_value(args.debug));
+  $define_global_const(mrb, "ARGV", ARGV);
+  $gv_set(mrb, $intern_lit(mrb, "$DEBUG"), $bool_value(args.debug));
 
 #ifdef ENABLE_READLINE
   history_path = get_history_path(mrb);
   if (history_path == NULL) {
     fputs("failed to get history path\n", stderr);
-    mrb_close(mrb);
+    $close(mrb);
     return EXIT_FAILURE;
   }
 
@@ -482,7 +482,7 @@ main(int argc, char **argv)
       cleanup(mrb, &args);
       return EXIT_FAILURE;
     }
-    mrb_load_file_cxt(mrb, lfp, cxt);
+    $load_file_cxt(mrb, lfp, cxt);
     fclose(lfp);
   }
 
@@ -491,7 +491,7 @@ main(int argc, char **argv)
   mrbc_filename(mrb, cxt, "(mirb)");
   if (args.verbose) cxt->dump_result = TRUE;
 
-  ai = mrb_gc_arena_save(mrb);
+  ai = $gc_arena_save(mrb);
 
   while (TRUE) {
     char *utf8;
@@ -575,11 +575,11 @@ done:
       strcpy(ruby_code, last_code_line);
     }
 
-    utf8 = mrb_utf8_from_locale(ruby_code, -1);
+    utf8 = $utf8_from_locale(ruby_code, -1);
     if (!utf8) abort();
 
     /* parse code */
-    parser = mrb_parser_new(mrb);
+    parser = $parser_new(mrb);
     if (parser == NULL) {
       fputs("create parser state error\n", stderr);
       break;
@@ -587,9 +587,9 @@ done:
     parser->s = utf8;
     parser->send = utf8 + strlen(utf8);
     parser->lineno = cxt->lineno;
-    mrb_parser_parse(parser, cxt);
+    $parser_parse(parser, cxt);
     code_block_open = is_code_block_open(parser);
-    mrb_utf8_free(utf8);
+    $utf8_free(utf8);
 
     if (code_block_open) {
       /* no evaluation of code */
@@ -597,78 +597,78 @@ done:
     else {
       if (0 < parser->nwarn) {
         /* warning */
-        char* msg = mrb_locale_from_utf8(parser->warn_buffer[0].message, -1);
+        char* msg = $locale_from_utf8(parser->warn_buffer[0].message, -1);
         printf("line %d: %s\n", parser->warn_buffer[0].lineno, msg);
-        mrb_locale_free(msg);
+        $locale_free(msg);
       }
       if (0 < parser->nerr) {
         /* syntax error */
-        char* msg = mrb_locale_from_utf8(parser->error_buffer[0].message, -1);
+        char* msg = $locale_from_utf8(parser->error_buffer[0].message, -1);
         printf("line %d: %s\n", parser->error_buffer[0].lineno, msg);
-        mrb_locale_free(msg);
+        $locale_free(msg);
       }
       else {
         /* generate bytecode */
-        struct RProc *proc = mrb_generate_code(mrb, parser);
+        struct RProc *proc = $generate_code(mrb, parser);
         if (proc == NULL) {
           fputs("codegen error\n", stderr);
-          mrb_parser_free(parser);
+          $parser_free(parser);
           break;
         }
 
         if (args.verbose) {
-          mrb_codedump_all(mrb, proc);
+          $codedump_all(mrb, proc);
         }
         /* adjust stack length of toplevel environment */
         if (mrb->c->cibase->env) {
           struct REnv *e = mrb->c->cibase->env;
-          if (e && MRB_ENV_STACK_LEN(e) < proc->body.irep->nlocals) {
-            MRB_ENV_SET_STACK_LEN(e, proc->body.irep->nlocals);
+          if (e && $ENV_STACK_LEN(e) < proc->body.irep->nlocals) {
+            $ENV_SET_STACK_LEN(e, proc->body.irep->nlocals);
           }
         }
         /* pass a proc for evaluation */
         /* evaluate the bytecode */
-        result = mrb_vm_run(mrb,
+        result = $vm_run(mrb,
             proc,
-            mrb_top_self(mrb),
+            $top_self(mrb),
             stack_keep);
         stack_keep = proc->body.irep->nlocals;
         /* did an exception occur? */
         if (mrb->exc) {
-          p(mrb, mrb_obj_value(mrb->exc), 0);
+          p(mrb, $obj_value(mrb->exc), 0);
           mrb->exc = 0;
         }
         else {
           /* no */
-          if (!mrb_respond_to(mrb, result, mrb_intern_lit(mrb, "inspect"))){
-            result = mrb_any_to_s(mrb, result);
+          if (!$respond_to(mrb, result, $intern_lit(mrb, "inspect"))){
+            result = $any_to_s(mrb, result);
           }
           p(mrb, result, 1);
         }
       }
       ruby_code[0] = '\0';
       last_code_line[0] = '\0';
-      mrb_gc_arena_restore(mrb, ai);
+      $gc_arena_restore(mrb, ai);
     }
-    mrb_parser_free(parser);
+    $parser_free(parser);
     cxt->lineno++;
   }
 
 #ifdef ENABLE_READLINE
   MIRB_WRITE_HISTORY(history_path);
-  mrb_free(mrb, history_path);
+  $free(mrb, history_path);
 #endif
 
   if (args.rfp) fclose(args.rfp);
-  mrb_free(mrb, args.argv);
+  $free(mrb, args.argv);
   if (args.libv) {
     for (i = 0; i < args.libc; ++i) {
-      mrb_free(mrb, args.libv[i]);
+      $free(mrb, args.libv[i]);
     }
-    mrb_free(mrb, args.libv);
+    $free(mrb, args.libv);
   }
   mrbc_context_free(mrb, cxt);
-  mrb_close(mrb);
+  $close(mrb);
 
   return 0;
 }

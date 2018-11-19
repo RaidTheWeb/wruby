@@ -2,99 +2,99 @@
 #include <mruby/throw.h>
 #include <mruby/error.h>
 
-MRB_API mrb_value
-mrb_protect(mrb_state *mrb, mrb_func_t body, mrb_value data, mrb_bool *state)
+$API $value
+$protect($state *mrb, $func_t body, $value data, $bool *state)
 {
-  struct mrb_jmpbuf *prev_jmp = mrb->jmp;
-  struct mrb_jmpbuf c_jmp;
-  mrb_value result = mrb_nil_value();
+  struct $jmpbuf *prev_jmp = mrb->jmp;
+  struct $jmpbuf c_jmp;
+  $value result = $nil_value();
 
   if (state) { *state = FALSE; }
 
-  MRB_TRY(&c_jmp) {
+  $TRY(&c_jmp) {
     mrb->jmp = &c_jmp;
     result = body(mrb, data);
     mrb->jmp = prev_jmp;
-  } MRB_CATCH(&c_jmp) {
+  } $CATCH(&c_jmp) {
     mrb->jmp = prev_jmp;
-    result = mrb_obj_value(mrb->exc);
+    result = $obj_value(mrb->exc);
     mrb->exc = NULL;
     if (state) { *state = TRUE; }
-  } MRB_END_EXC(&c_jmp);
+  } $END_EXC(&c_jmp);
 
-  mrb_gc_protect(mrb, result);
+  $gc_protect(mrb, result);
   return result;
 }
 
-MRB_API mrb_value
-mrb_ensure(mrb_state *mrb, mrb_func_t body, mrb_value b_data, mrb_func_t ensure, mrb_value e_data)
+$API $value
+$ensure($state *mrb, $func_t body, $value b_data, $func_t ensure, $value e_data)
 {
-  struct mrb_jmpbuf *prev_jmp = mrb->jmp;
-  struct mrb_jmpbuf c_jmp;
-  mrb_value result;
+  struct $jmpbuf *prev_jmp = mrb->jmp;
+  struct $jmpbuf c_jmp;
+  $value result;
 
-  MRB_TRY(&c_jmp) {
+  $TRY(&c_jmp) {
     mrb->jmp = &c_jmp;
     result = body(mrb, b_data);
     mrb->jmp = prev_jmp;
-  } MRB_CATCH(&c_jmp) {
+  } $CATCH(&c_jmp) {
     mrb->jmp = prev_jmp;
     ensure(mrb, e_data);
-    MRB_THROW(mrb->jmp); /* rethrow catched exceptions */
-  } MRB_END_EXC(&c_jmp);
+    $THROW(mrb->jmp); /* rethrow catched exceptions */
+  } $END_EXC(&c_jmp);
 
   ensure(mrb, e_data);
-  mrb_gc_protect(mrb, result);
+  $gc_protect(mrb, result);
   return result;
 }
 
-MRB_API mrb_value
-mrb_rescue(mrb_state *mrb, mrb_func_t body, mrb_value b_data,
-           mrb_func_t rescue, mrb_value r_data)
+$API $value
+$rescue($state *mrb, $func_t body, $value b_data,
+           $func_t rescue, $value r_data)
 {
-  return mrb_rescue_exceptions(mrb, body, b_data, rescue, r_data, 1, &mrb->eStandardError_class);
+  return $rescue_exceptions(mrb, body, b_data, rescue, r_data, 1, &mrb->eStandardError_class);
 }
 
-MRB_API mrb_value
-mrb_rescue_exceptions(mrb_state *mrb, mrb_func_t body, mrb_value b_data, mrb_func_t rescue, mrb_value r_data,
-                      mrb_int len, struct RClass **classes)
+$API $value
+$rescue_exceptions($state *mrb, $func_t body, $value b_data, $func_t rescue, $value r_data,
+                      $int len, struct RClass **classes)
 {
-  struct mrb_jmpbuf *prev_jmp = mrb->jmp;
-  struct mrb_jmpbuf c_jmp;
-  mrb_value result;
-  mrb_bool error_matched = FALSE;
-  mrb_int i;
+  struct $jmpbuf *prev_jmp = mrb->jmp;
+  struct $jmpbuf c_jmp;
+  $value result;
+  $bool error_matched = FALSE;
+  $int i;
 
-  MRB_TRY(&c_jmp) {
+  $TRY(&c_jmp) {
     mrb->jmp = &c_jmp;
     result = body(mrb, b_data);
     mrb->jmp = prev_jmp;
-  } MRB_CATCH(&c_jmp) {
+  } $CATCH(&c_jmp) {
     mrb->jmp = prev_jmp;
 
     for (i = 0; i < len; ++i) {
-      if (mrb_obj_is_kind_of(mrb, mrb_obj_value(mrb->exc), classes[i])) {
+      if ($obj_is_kind_of(mrb, $obj_value(mrb->exc), classes[i])) {
         error_matched = TRUE;
         break;
       }
     }
 
-    if (!error_matched) { MRB_THROW(mrb->jmp); }
+    if (!error_matched) { $THROW(mrb->jmp); }
 
     mrb->exc = NULL;
     result = rescue(mrb, r_data);
-  } MRB_END_EXC(&c_jmp);
+  } $END_EXC(&c_jmp);
 
-  mrb_gc_protect(mrb, result);
+  $gc_protect(mrb, result);
   return result;
 }
 
 void
-mrb_mruby_error_gem_init(mrb_state *mrb)
+$mruby_error_gem_init($state *mrb)
 {
 }
 
 void
-mrb_mruby_error_gem_final(mrb_state *mrb)
+$mruby_error_gem_final($state *mrb)
 {
 }

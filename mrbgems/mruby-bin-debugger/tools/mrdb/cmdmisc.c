@@ -122,34 +122,34 @@ static help_msg help_msg_list[] = {
 };
 
 typedef struct listcmd_parser_state {
-  mrb_bool parse_error;
-  mrb_bool has_line_min;
-  mrb_bool has_line_max;
+  $bool parse_error;
+  $bool has_line_min;
+  $bool has_line_max;
   char *filename;
   uint16_t line_min;
   uint16_t line_max;
 } listcmd_parser_state;
 
 static listcmd_parser_state*
-listcmd_parser_state_new(mrb_state *mrb)
+listcmd_parser_state_new($state *mrb)
 {
-  listcmd_parser_state *st = (listcmd_parser_state*)mrb_malloc(mrb, sizeof(listcmd_parser_state));
+  listcmd_parser_state *st = (listcmd_parser_state*)$malloc(mrb, sizeof(listcmd_parser_state));
   memset(st, 0, sizeof(listcmd_parser_state));
   return st;
 }
 
 static void
-listcmd_parser_state_free(mrb_state *mrb, listcmd_parser_state *st)
+listcmd_parser_state_free($state *mrb, listcmd_parser_state *st)
 {
   if (st != NULL) {
     if (st->filename != NULL) {
-      mrb_free(mrb, st->filename);
+      $free(mrb, st->filename);
     }
-    mrb_free(mrb, st);
+    $free(mrb, st);
   }
 }
 
-static mrb_bool
+static $bool
 parse_uint(char **sp, uint16_t *n)
 {
   char *p;
@@ -169,7 +169,7 @@ parse_uint(char **sp, uint16_t *n)
   return FALSE;
 }
 
-static mrb_bool
+static $bool
 skip_char(char **sp, char c)
 {
   if (*sp != NULL && **sp == c) {
@@ -179,8 +179,8 @@ skip_char(char **sp, char c)
   return FALSE;
 }
 
-static mrb_bool
-parse_lineno(mrb_state *mrb, char **sp, listcmd_parser_state *st)
+static $bool
+parse_lineno($state *mrb, char **sp, listcmd_parser_state *st)
 {
   if (*sp == NULL || **sp == '\0') {
     return FALSE;
@@ -208,14 +208,14 @@ parse_lineno(mrb_state *mrb, char **sp, listcmd_parser_state *st)
   return TRUE;
 }
 
-static mrb_bool
-parse_filename(mrb_state *mrb, char **sp, listcmd_parser_state *st)
+static $bool
+parse_filename($state *mrb, char **sp, listcmd_parser_state *st)
 {
   char *p;
   int len;
 
   if (st->filename != NULL) {
-    mrb_free(mrb, st->filename);
+    $free(mrb, st->filename);
     st->filename = NULL;
   }
 
@@ -227,7 +227,7 @@ parse_filename(mrb_state *mrb, char **sp, listcmd_parser_state *st)
   }
 
   if (len > 0) {
-    st->filename = (char*)mrb_malloc(mrb, len + 1);
+    st->filename = (char*)$malloc(mrb, len + 1);
     strncpy(st->filename, *sp, len);
     st->filename[len] = '\0';
     *sp += len;
@@ -239,7 +239,7 @@ parse_filename(mrb_state *mrb, char **sp, listcmd_parser_state *st)
 }
 
 char*
-replace_ext(mrb_state *mrb, const char *filename, const char *ext)
+replace_ext($state *mrb, const char *filename, const char *ext)
 {
   size_t len;
   const char *p;
@@ -256,7 +256,7 @@ replace_ext(mrb_state *mrb, const char *filename, const char *ext)
     len = strlen(filename);
   }
 
-  s = (char*)mrb_malloc(mrb, len + strlen(ext) + 1);
+  s = (char*)$malloc(mrb, len + strlen(ext) + 1);
   memset(s, '\0', len + strlen(ext) + 1);
   strncpy(s, filename, len);
   strcat(s, ext);
@@ -264,8 +264,8 @@ replace_ext(mrb_state *mrb, const char *filename, const char *ext)
   return s;
 }
 
-static mrb_bool
-parse_listcmd_args(mrb_state *mrb, mrdb_state *mrdb, listcmd_parser_state *st)
+static $bool
+parse_listcmd_args($state *mrb, mrdb_state *mrdb, listcmd_parser_state *st)
 {
   char *p;
 
@@ -323,7 +323,7 @@ parse_listcmd_args(mrb_state *mrb, mrdb_state *mrdb, listcmd_parser_state *st)
   return TRUE;
 }
 
-static mrb_bool
+static $bool
 check_cmd_pattern(const char *pattern, const char *cmd)
 {
   const char *lbracket, *rbracket, *p, *q;
@@ -371,7 +371,7 @@ get_help_msg(char *cmd1, char *cmd2)
   return NULL;
 }
 
-static mrb_bool
+static $bool
 show_short_help(void)
 {
   help_msg *p;
@@ -389,7 +389,7 @@ show_short_help(void)
   return TRUE;
 }
 
-static mrb_bool
+static $bool
 show_long_help(char *cmd1, char *cmd2)
 {
   help_msg *help;
@@ -402,19 +402,19 @@ show_long_help(char *cmd1, char *cmd2)
 }
 
 dbgcmd_state
-dbgcmd_list(mrb_state *mrb, mrdb_state *mrdb)
+dbgcmd_list($state *mrb, mrdb_state *mrdb)
 {
   char *filename;
   listcmd_parser_state *st = listcmd_parser_state_new(mrb);
 
   if (parse_listcmd_args(mrb, mrdb, st)) {
-    if ((filename = mrb_debug_get_source(mrb, mrdb, mrdb->srcpath, st->filename)) == NULL) {
+    if ((filename = $debug_get_source(mrb, mrdb, mrdb->srcpath, st->filename)) == NULL) {
       filename = st->filename;
     }
-    mrb_debug_list(mrb, mrdb->dbg, filename, st->line_min, st->line_max);
+    $debug_list(mrb, mrdb->dbg, filename, st->line_min, st->line_max);
 
     if (filename != NULL && filename != st->filename) {
-      mrb_free(mrb, filename);
+      $free(mrb, filename);
     }
     listcmd_parser_state_free(mrb, st);
   }
@@ -423,9 +423,9 @@ dbgcmd_list(mrb_state *mrb, mrdb_state *mrdb)
 }
 
 dbgcmd_state
-dbgcmd_help(mrb_state *mrb, mrdb_state *mrdb)
+dbgcmd_help($state *mrb, mrdb_state *mrdb)
 {
-  mrb_bool is_valid;
+  $bool is_valid;
   int i;
 
   switch (mrdb->wcnt) {
@@ -456,7 +456,7 @@ dbgcmd_help(mrb_state *mrb, mrdb_state *mrdb)
 }
 
 dbgcmd_state
-dbgcmd_quit(mrb_state *mrb, mrdb_state *mrdb)
+dbgcmd_quit($state *mrb, mrdb_state *mrdb)
 {
   switch (mrdb->dbg->xm) {
   case DBG_RUN:
@@ -495,8 +495,8 @@ dbgcmd_quit(mrb_state *mrb, mrdb_state *mrdb)
 
   if (mrdb->dbg->xm == DBG_QUIT) {
     struct RClass *exc;
-    exc = mrb_define_class(mrb, "DebuggerExit", mrb_class_get(mrb, "Exception"));
-    mrb_raise(mrb, exc, "Exit mrdb.");
+    exc = $define_class(mrb, "DebuggerExit", $class_get(mrb, "Exception"));
+    $raise(mrb, exc, "Exit mrdb.");
   }
   return DBGST_PROMPT;
 }

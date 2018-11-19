@@ -7,27 +7,27 @@
 #include <mruby/dump.h>
 #include <mruby/variable.h>
 
-#ifdef MRB_DISABLE_STDIO
+#ifdef $DISABLE_STDIO
 static void
-p(mrb_state *mrb, mrb_value obj)
+p($state *mrb, $value obj)
 {
-  mrb_value val = mrb_inspect(mrb, obj);
+  $value val = $inspect(mrb, obj);
 
   fwrite(RSTRING_PTR(val), RSTRING_LEN(val), 1, stdout);
   putc('\n', stdout);
 }
 #else
-#define p(mrb,obj) mrb_p(mrb,obj)
+#define p(mrb,obj) $p(mrb,obj)
 #endif
 
 struct _args {
   FILE *rfp;
   char* cmdline;
-  mrb_bool fname        : 1;
-  mrb_bool mrbfile      : 1;
-  mrb_bool check_syntax : 1;
-  mrb_bool verbose      : 1;
-  mrb_bool debug        : 1;
+  $bool fname        : 1;
+  $bool mrbfile      : 1;
+  $bool check_syntax : 1;
+  $bool verbose      : 1;
+  $bool debug        : 1;
   int argc;
   char** argv;
   int libc;
@@ -58,16 +58,16 @@ usage(const char *name)
 }
 
 static char *
-dup_arg_item(mrb_state *mrb, const char *item)
+dup_arg_item($state *mrb, const char *item)
 {
   size_t buflen = strlen(item) + 1;
-  char *buf = (char*)mrb_malloc(mrb, buflen);
+  char *buf = (char*)$malloc(mrb, buflen);
   memcpy(buf, item, buflen);
   return buf;
 }
 
 static int
-parse_args(mrb_state *mrb, int argc, char **argv, struct _args *args)
+parse_args($state *mrb, int argc, char **argv, struct _args *args)
 {
   char **origargv = argv;
   static const struct _args args_zero = { 0 };
@@ -113,7 +113,7 @@ append_cmdline:
           cmdlinelen = strlen(args->cmdline);
           itemlen = strlen(item);
           args->cmdline =
-            (char *)mrb_realloc(mrb, args->cmdline, cmdlinelen + itemlen + 2);
+            (char *)$realloc(mrb, args->cmdline, cmdlinelen + itemlen + 2);
           args->cmdline[cmdlinelen] = '\n';
           memcpy(args->cmdline + cmdlinelen + 1, item, itemlen + 1);
         }
@@ -133,20 +133,20 @@ append_cmdline:
         item = argv[0];
       }
       if (args->libc == 0) {
-        args->libv = (char**)mrb_malloc(mrb, sizeof(char*));
+        args->libv = (char**)$malloc(mrb, sizeof(char*));
       }
       else {
-        args->libv = (char**)mrb_realloc(mrb, args->libv, sizeof(char*) * (args->libc + 1));
+        args->libv = (char**)$realloc(mrb, args->libv, sizeof(char*) * (args->libc + 1));
       }
       args->libv[args->libc++] = dup_arg_item(mrb, item);
       break;
     case 'v':
-      if (!args->verbose) mrb_show_version(mrb);
+      if (!args->verbose) $show_version(mrb);
       args->verbose = TRUE;
       break;
     case '-':
       if (strcmp((*argv) + 2, "version") == 0) {
-        mrb_show_version(mrb);
+        $show_version(mrb);
         exit(EXIT_SUCCESS);
       }
       else if (strcmp((*argv) + 2, "verbose") == 0) {
@@ -154,7 +154,7 @@ append_cmdline:
         break;
       }
       else if (strcmp((*argv) + 2, "copyright") == 0) {
-        mrb_show_copyright(mrb);
+        $show_copyright(mrb);
         exit(EXIT_SUCCESS);
       }
     default:
@@ -175,7 +175,7 @@ append_cmdline:
       argc--; argv++;
     }
   }
-  args->argv = (char **)mrb_realloc(mrb, args->argv, sizeof(char*) * (argc + 1));
+  args->argv = (char **)$realloc(mrb, args->argv, sizeof(char*) * (argc + 1));
   memcpy(args->argv, argv, (argc+1) * sizeof(char*));
   args->argc = argc;
 
@@ -183,36 +183,36 @@ append_cmdline:
 }
 
 static void
-cleanup(mrb_state *mrb, struct _args *args)
+cleanup($state *mrb, struct _args *args)
 {
   if (args->rfp && args->rfp != stdin)
     fclose(args->rfp);
   if (!args->fname)
-    mrb_free(mrb, args->cmdline);
-  mrb_free(mrb, args->argv);
+    $free(mrb, args->cmdline);
+  $free(mrb, args->argv);
   if (args->libc) {
     while (args->libc--) {
-      mrb_free(mrb, args->libv[args->libc]);
+      $free(mrb, args->libv[args->libc]);
     }
-    mrb_free(mrb, args->libv);
+    $free(mrb, args->libv);
   }
-  mrb_close(mrb);
+  $close(mrb);
 }
 
 int
 main(int argc, char **argv)
 {
-  mrb_state *mrb = mrb_open();
+  $state *mrb = $open();
   int n = -1;
   int i;
   struct _args args;
-  mrb_value ARGV;
+  $value ARGV;
   mrbc_context *c;
-  mrb_value v;
-  mrb_sym zero_sym;
+  $value v;
+  $sym zero_sym;
 
   if (mrb == NULL) {
-    fputs("Invalid mrb_state, exiting mruby\n", stderr);
+    fputs("Invalid $state, exiting mruby\n", stderr);
     return EXIT_FAILURE;
   }
 
@@ -223,17 +223,17 @@ main(int argc, char **argv)
     return n;
   }
   else {
-    int ai = mrb_gc_arena_save(mrb);
-    ARGV = mrb_ary_new_capa(mrb, args.argc);
+    int ai = $gc_arena_save(mrb);
+    ARGV = $ary_new_capa(mrb, args.argc);
     for (i = 0; i < args.argc; i++) {
-      char* utf8 = mrb_utf8_from_locale(args.argv[i], -1);
+      char* utf8 = $utf8_from_locale(args.argv[i], -1);
       if (utf8) {
-        mrb_ary_push(mrb, ARGV, mrb_str_new_cstr(mrb, utf8));
-        mrb_utf8_free(utf8);
+        $ary_push(mrb, ARGV, $str_new_cstr(mrb, utf8));
+        $utf8_free(utf8);
       }
     }
-    mrb_define_global_const(mrb, "ARGV", ARGV);
-    mrb_gv_set(mrb, mrb_intern_lit(mrb, "$DEBUG"), mrb_bool_value(args.debug));
+    $define_global_const(mrb, "ARGV", ARGV);
+    $gv_set(mrb, $intern_lit(mrb, "$DEBUG"), $bool_value(args.debug));
 
     c = mrbc_context_new(mrb);
     if (args.verbose)
@@ -242,16 +242,16 @@ main(int argc, char **argv)
       c->no_exec = TRUE;
 
     /* Set $0 */
-    zero_sym = mrb_intern_lit(mrb, "$0");
+    zero_sym = $intern_lit(mrb, "$0");
     if (args.rfp) {
       const char *cmdline;
       cmdline = args.cmdline ? args.cmdline : "-";
       mrbc_filename(mrb, c, cmdline);
-      mrb_gv_set(mrb, zero_sym, mrb_str_new_cstr(mrb, cmdline));
+      $gv_set(mrb, zero_sym, $str_new_cstr(mrb, cmdline));
     }
     else {
       mrbc_filename(mrb, c, "-e");
-      mrb_gv_set(mrb, zero_sym, mrb_str_new_lit(mrb, "-e"));
+      $gv_set(mrb, zero_sym, $str_new_lit(mrb, "-e"));
     }
 
     /* Load libraries */
@@ -264,36 +264,36 @@ main(int argc, char **argv)
         return EXIT_FAILURE;
       }
       if (args.mrbfile) {
-        v = mrb_load_irep_file_cxt(mrb, lfp, c);
+        v = $load_irep_file_cxt(mrb, lfp, c);
       }
       else {
-        v = mrb_load_file_cxt(mrb, lfp, c);
+        v = $load_file_cxt(mrb, lfp, c);
       }
       fclose(lfp);
     }
 
     /* Load program */
     if (args.mrbfile) {
-      v = mrb_load_irep_file_cxt(mrb, args.rfp, c);
+      v = $load_irep_file_cxt(mrb, args.rfp, c);
     }
     else if (args.rfp) {
-      v = mrb_load_file_cxt(mrb, args.rfp, c);
+      v = $load_file_cxt(mrb, args.rfp, c);
     }
     else {
-      char* utf8 = mrb_utf8_from_locale(args.cmdline, -1);
+      char* utf8 = $utf8_from_locale(args.cmdline, -1);
       if (!utf8) abort();
-      v = mrb_load_string_cxt(mrb, utf8, c);
-      mrb_utf8_free(utf8);
+      v = $load_string_cxt(mrb, utf8, c);
+      $utf8_free(utf8);
     }
 
-    mrb_gc_arena_restore(mrb, ai);
+    $gc_arena_restore(mrb, ai);
     mrbc_context_free(mrb, c);
     if (mrb->exc) {
-      if (mrb_undef_p(v)) {
-        mrb_p(mrb, mrb_obj_value(mrb->exc));
+      if ($undef_p(v)) {
+        $p(mrb, $obj_value(mrb->exc));
       }
       else {
-        mrb_print_error(mrb);
+        $print_error(mrb);
       }
       n = -1;
     }

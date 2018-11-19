@@ -62,14 +62,14 @@ task :gitlab_config do
 
   configs = []
   [true, false].each do |mode_32|
-    ['', 'MRB_USE_FLOAT'].each do |float_conf|
-      ['', 'MRB_INT16', 'MRB_INT64'].each do |int_conf|
-        ['', 'MRB_NAN_BOXING', 'MRB_WORD_BOXING'].each do |boxing_conf|
-          ['', 'MRB_UTF8_STRING'].each do |utf8_conf|
-            next if (float_conf == 'MRB_USE_FLOAT') && (boxing_conf == 'MRB_NAN_BOXING')
-            next if (int_conf == 'MRB_INT64') && (boxing_conf == 'MRB_NAN_BOXING')
-            next if (int_conf == 'MRB_INT16') && (boxing_conf == 'MRB_WORD_BOXING')
-            next if (int_conf == 'MRB_INT64') && (boxing_conf == 'MRB_WORD_BOXING') && mode_32
+    ['', '$USE_FLOAT'].each do |float_conf|
+      ['', '$INT16', '$INT64'].each do |int_conf|
+        ['', '$NAN_BOXING', '$WORD_BOXING'].each do |boxing_conf|
+          ['', '$UTF8_STRING'].each do |utf8_conf|
+            next if (float_conf == '$USE_FLOAT') && (boxing_conf == '$NAN_BOXING')
+            next if (int_conf == '$INT64') && (boxing_conf == '$NAN_BOXING')
+            next if (int_conf == '$INT16') && (boxing_conf == '$WORD_BOXING')
+            next if (int_conf == '$INT64') && (boxing_conf == '$WORD_BOXING') && mode_32
             env = [float_conf, int_conf, boxing_conf, utf8_conf].map do |conf|
               conf == '' ? nil : "-D#{conf}=1"
             end.compact.join(' ')

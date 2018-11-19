@@ -691,7 +691,7 @@ end
 
 # Not ISO specified
 
-assert('String interpolation (mrb_str_concat for shared strings)') do
+assert('String interpolation ($str_concat for shared strings)') do
   a = "A" * 32
   assert_equal "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA:", "#{a}:"
 end

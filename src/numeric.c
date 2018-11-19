@@ -4,7 +4,7 @@
 ** See Copyright Notice in mruby.h
 */
 
-#ifndef MRB_WITHOUT_FLOAT
+#ifndef $WITHOUT_FLOAT
 #include <float.h>
 #include <math.h>
 #endif
@@ -17,31 +17,31 @@
 #include <mruby/string.h>
 #include <mruby/class.h>
 
-#ifndef MRB_WITHOUT_FLOAT
-#ifdef MRB_USE_FLOAT
+#ifndef $WITHOUT_FLOAT
+#ifdef $USE_FLOAT
 #define trunc(f) truncf(f)
 #define floor(f) floorf(f)
 #define ceil(f) ceilf(f)
 #define fmod(x,y) fmodf(x,y)
-#define MRB_FLO_TO_STR_FMT "%.8g"
+#define $FLO_TO_STR_FMT "%.8g"
 #else
-#define MRB_FLO_TO_STR_FMT "%.16g"
+#define $FLO_TO_STR_FMT "%.16g"
 #endif
 #endif
 
-#ifndef MRB_WITHOUT_FLOAT
-MRB_API mrb_float
-mrb_to_flo(mrb_state *mrb, mrb_value val)
+#ifndef $WITHOUT_FLOAT
+$API $float
+$to_flo($state *mrb, $value val)
 {
-  switch (mrb_type(val)) {
-  case MRB_TT_FIXNUM:
-    return (mrb_float)mrb_fixnum(val);
-  case MRB_TT_FLOAT:
+  switch ($type(val)) {
+  case $TT_FIXNUM:
+    return ($float)$fixnum(val);
+  case $TT_FLOAT:
     break;
   default:
-    mrb_raise(mrb, E_TYPE_ERROR, "non float value");
+    $raise(mrb, E_TYPE_ERROR, "non float value");
   }
-  return mrb_float(val);
+  return $float(val);
 }
 #endif
 
@@ -54,51 +54,51 @@ mrb_to_flo(mrb_state *mrb, mrb_value val)
  *
  *    2.0**3      #=> 8.0
  */
-static mrb_value
-num_pow(mrb_state *mrb, mrb_value x)
+static $value
+num_pow($state *mrb, $value x)
 {
-  mrb_value y;
-#ifndef MRB_WITHOUT_FLOAT
-  mrb_float d;
+  $value y;
+#ifndef $WITHOUT_FLOAT
+  $float d;
 #endif
 
-  mrb_get_args(mrb, "o", &y);
-  if (mrb_fixnum_p(x) && mrb_fixnum_p(y)) {
+  $get_args(mrb, "o", &y);
+  if ($fixnum_p(x) && $fixnum_p(y)) {
     /* try ipow() */
-    mrb_int base = mrb_fixnum(x);
-    mrb_int exp = mrb_fixnum(y);
-    mrb_int result = 1;
+    $int base = $fixnum(x);
+    $int exp = $fixnum(y);
+    $int result = 1;
 
     if (exp < 0)
-#ifdef MRB_WITHOUT_FLOAT
-      return mrb_fixnum_value(0);
+#ifdef $WITHOUT_FLOAT
+      return $fixnum_value(0);
 #else
       goto float_pow;
 #endif
     for (;;) {
       if (exp & 1) {
-        if (mrb_int_mul_overflow(result, base, &result)) {
-#ifndef MRB_WITHOUT_FLOAT
+        if ($int_mul_overflow(result, base, &result)) {
+#ifndef $WITHOUT_FLOAT
           goto float_pow;
 #endif
         }
       }
       exp >>= 1;
       if (exp == 0) break;
-      if (mrb_int_mul_overflow(base, base, &base)) {
-#ifndef MRB_WITHOUT_FLOAT
+      if ($int_mul_overflow(base, base, &base)) {
+#ifndef $WITHOUT_FLOAT
         goto float_pow;
 #endif
       }
     }
-    return mrb_fixnum_value(result);
+    return $fixnum_value(result);
   }
-#ifdef MRB_WITHOUT_FLOAT
-  mrb_raise(mrb, E_TYPE_ERROR, "non fixnum value");
+#ifdef $WITHOUT_FLOAT
+  $raise(mrb, E_TYPE_ERROR, "non fixnum value");
 #else
  float_pow:
-  d = pow(mrb_to_flo(mrb, x), mrb_to_flo(mrb, y));
-  return mrb_float_value(mrb, d);
+  d = pow($to_flo(mrb, x), $to_flo(mrb, y));
+  return $float_value(mrb, d);
 #endif
 }
 
@@ -113,16 +113,16 @@ num_pow(mrb_state *mrb, mrb_value x)
  * result.
  */
 
-mrb_value
-mrb_num_div(mrb_state *mrb, mrb_value x, mrb_value y)
+$value
+$num_div($state *mrb, $value x, $value y)
 {
-#ifdef MRB_WITHOUT_FLOAT
-  if (!mrb_fixnum_p(y)) {
-    mrb_raise(mrb, E_TYPE_ERROR, "non fixnum value");
+#ifdef $WITHOUT_FLOAT
+  if (!$fixnum_p(y)) {
+    $raise(mrb, E_TYPE_ERROR, "non fixnum value");
   }
-  return mrb_fixnum_value(mrb_fixnum(x) / mrb_fixnum(y));
+  return $fixnum_value($fixnum(x) / $fixnum(y));
 #else
-  return mrb_float_value(mrb, mrb_to_flo(mrb, x) / mrb_to_flo(mrb, y));
+  return $float_value(mrb, $to_flo(mrb, x) / $to_flo(mrb, y));
 #endif
 }
 
@@ -134,26 +134,26 @@ mrb_num_div(mrb_state *mrb, mrb_value x, mrb_value y)
  *  Returns most exact division.
  */
 
-static mrb_value
-num_div(mrb_state *mrb, mrb_value x)
+static $value
+num_div($state *mrb, $value x)
 {
-#ifdef MRB_WITHOUT_FLOAT
-  mrb_value y;
+#ifdef $WITHOUT_FLOAT
+  $value y;
 
-  mrb_get_args(mrb, "o", &y);
-  if (!mrb_fixnum_p(y)) {
-    mrb_raise(mrb, E_TYPE_ERROR, "non fixnum value");
+  $get_args(mrb, "o", &y);
+  if (!$fixnum_p(y)) {
+    $raise(mrb, E_TYPE_ERROR, "non fixnum value");
   }
-  return mrb_fixnum_value(mrb_fixnum(x) / mrb_fixnum(y));
+  return $fixnum_value($fixnum(x) / $fixnum(y));
 #else
-  mrb_float y;
+  $float y;
 
-  mrb_get_args(mrb, "f", &y);
-  return mrb_float_value(mrb, mrb_to_flo(mrb, x) / y);
+  $get_args(mrb, "f", &y);
+  return $float_value(mrb, $to_flo(mrb, x) / y);
 #endif
 }
 
-#ifndef MRB_WITHOUT_FLOAT
+#ifndef $WITHOUT_FLOAT
 /********************************************************************
  *
  * Document-class: Float
@@ -174,13 +174,13 @@ num_div(mrb_state *mrb, mrb_value x)
  *  "<code>-Infinity</code>".
  */
 
-static mrb_value
-flo_to_s(mrb_state *mrb, mrb_value flt)
+static $value
+flo_to_s($state *mrb, $value flt)
 {
-  if (isnan(mrb_float(flt))) {
-    return mrb_str_new_lit(mrb, "NaN");
+  if (isnan($float(flt))) {
+    return $str_new_lit(mrb, "NaN");
   }
-  return mrb_float_to_str(mrb, flt, MRB_FLO_TO_STR_FMT);
+  return $float_to_str(mrb, flt, $FLO_TO_STR_FMT);
 }
 
 /* 15.2.9.3.2  */
@@ -192,13 +192,13 @@ flo_to_s(mrb_state *mrb, mrb_value flt)
  * and <code>other</code>.
  */
 
-static mrb_value
-flo_minus(mrb_state *mrb, mrb_value x)
+static $value
+flo_minus($state *mrb, $value x)
 {
-  mrb_value y;
+  $value y;
 
-  mrb_get_args(mrb, "o", &y);
-  return mrb_float_value(mrb, mrb_float(x) - mrb_to_flo(mrb, y));
+  $get_args(mrb, "o", &y);
+  return $float_value(mrb, $float(x) - $to_flo(mrb, y));
 }
 
 /* 15.2.9.3.3  */
@@ -210,17 +210,17 @@ flo_minus(mrb_state *mrb, mrb_value x)
  * and <code>other</code>.
  */
 
-static mrb_value
-flo_mul(mrb_state *mrb, mrb_value x)
+static $value
+flo_mul($state *mrb, $value x)
 {
-  mrb_value y;
+  $value y;
 
-  mrb_get_args(mrb, "o", &y);
-  return mrb_float_value(mrb, mrb_float(x) * mrb_to_flo(mrb, y));
+  $get_args(mrb, "o", &y);
+  return $float_value(mrb, $float(x) * $to_flo(mrb, y));
 }
 
 static void
-flodivmod(mrb_state *mrb, double x, double y, mrb_float *divp, mrb_float *modp)
+flodivmod($state *mrb, double x, double y, $float *divp, $float *modp)
 {
   double div, mod;
 
@@ -270,16 +270,16 @@ flodivmod(mrb_state *mrb, double x, double y, mrb_float *divp, mrb_float *modp)
  *     6543.21.modulo(137.24)   #=> 92.9299999999996
  */
 
-static mrb_value
-flo_mod(mrb_state *mrb, mrb_value x)
+static $value
+flo_mod($state *mrb, $value x)
 {
-  mrb_value y;
-  mrb_float mod;
+  $value y;
+  $float mod;
 
-  mrb_get_args(mrb, "o", &y);
+  $get_args(mrb, "o", &y);
 
-  flodivmod(mrb, mrb_float(x), mrb_to_flo(mrb, y), 0, &mod);
-  return mrb_float_value(mrb, mod);
+  flodivmod(mrb, $float(x), $to_flo(mrb, y), 0, &mod);
+  return $float_value(mrb, mod);
 }
 #endif
 
@@ -295,25 +295,25 @@ flo_mod(mrb_state *mrb, mrb_value x)
  *     1.eql?(1.0)       #=> false
  *     (1.0).eql?(1.0)   #=> true
  */
-static mrb_value
-fix_eql(mrb_state *mrb, mrb_value x)
+static $value
+fix_eql($state *mrb, $value x)
 {
-  mrb_value y;
+  $value y;
 
-  mrb_get_args(mrb, "o", &y);
-  if (!mrb_fixnum_p(y)) return mrb_false_value();
-  return mrb_bool_value(mrb_fixnum(x) == mrb_fixnum(y));
+  $get_args(mrb, "o", &y);
+  if (!$fixnum_p(y)) return $false_value();
+  return $bool_value($fixnum(x) == $fixnum(y));
 }
 
-#ifndef MRB_WITHOUT_FLOAT
-static mrb_value
-flo_eql(mrb_state *mrb, mrb_value x)
+#ifndef $WITHOUT_FLOAT
+static $value
+flo_eql($state *mrb, $value x)
 {
-  mrb_value y;
+  $value y;
 
-  mrb_get_args(mrb, "o", &y);
-  if (!mrb_float_p(y)) return mrb_false_value();
-  return mrb_bool_value(mrb_float(x) == (mrb_float)mrb_fixnum(y));
+  $get_args(mrb, "o", &y);
+  if (!$float_p(y)) return $false_value();
+  return $bool_value($float(x) == ($float)$fixnum(y));
 }
 
 /* 15.2.9.3.7  */
@@ -329,102 +329,102 @@ flo_eql(mrb_state *mrb, mrb_value x)
  *
  */
 
-static mrb_value
-flo_eq(mrb_state *mrb, mrb_value x)
+static $value
+flo_eq($state *mrb, $value x)
 {
-  mrb_value y;
-  mrb_get_args(mrb, "o", &y);
+  $value y;
+  $get_args(mrb, "o", &y);
 
-  switch (mrb_type(y)) {
-  case MRB_TT_FIXNUM:
-    return mrb_bool_value(mrb_float(x) == (mrb_float)mrb_fixnum(y));
-  case MRB_TT_FLOAT:
-    return mrb_bool_value(mrb_float(x) == mrb_float(y));
+  switch ($type(y)) {
+  case $TT_FIXNUM:
+    return $bool_value($float(x) == ($float)$fixnum(y));
+  case $TT_FLOAT:
+    return $bool_value($float(x) == $float(y));
   default:
-    return mrb_false_value();
+    return $false_value();
   }
 }
 
 static int64_t
-value_int64(mrb_state *mrb, mrb_value x)
+value_int64($state *mrb, $value x)
 {
-  switch (mrb_type(x)) {
-  case MRB_TT_FIXNUM:
-    return (int64_t)mrb_fixnum(x);
+  switch ($type(x)) {
+  case $TT_FIXNUM:
+    return (int64_t)$fixnum(x);
     break;
-  case MRB_TT_FLOAT:
-    return (int64_t)mrb_float(x);
+  case $TT_FLOAT:
+    return (int64_t)$float(x);
   default:
-    mrb_raise(mrb, E_TYPE_ERROR, "cannot convert to Integer");
+    $raise(mrb, E_TYPE_ERROR, "cannot convert to Integer");
     break;
   }
   /* not reached */
   return 0;
 }
 
-static mrb_value
-int64_value(mrb_state *mrb, int64_t v)
+static $value
+int64_value($state *mrb, int64_t v)
 {
   if (FIXABLE(v)) {
-    return mrb_fixnum_value((mrb_int)v);
+    return $fixnum_value(($int)v);
   }
-  return mrb_float_value(mrb, (mrb_float)v);
+  return $float_value(mrb, ($float)v);
 }
 
-static mrb_value
-flo_rev(mrb_state *mrb, mrb_value x)
+static $value
+flo_rev($state *mrb, $value x)
 {
   int64_t v1;
-  mrb_get_args(mrb, "");
-  v1 = (int64_t)mrb_float(x);
+  $get_args(mrb, "");
+  v1 = (int64_t)$float(x);
   return int64_value(mrb, ~v1);
 }
 
-static mrb_value
-flo_and(mrb_state *mrb, mrb_value x)
+static $value
+flo_and($state *mrb, $value x)
 {
-  mrb_value y;
+  $value y;
   int64_t v1, v2;
-  mrb_get_args(mrb, "o", &y);
+  $get_args(mrb, "o", &y);
 
-  v1 = (int64_t)mrb_float(x);
+  v1 = (int64_t)$float(x);
   v2 = value_int64(mrb, y);
   return int64_value(mrb, v1 & v2);
 }
 
-static mrb_value
-flo_or(mrb_state *mrb, mrb_value x)
+static $value
+flo_or($state *mrb, $value x)
 {
-  mrb_value y;
+  $value y;
   int64_t v1, v2;
-  mrb_get_args(mrb, "o", &y);
+  $get_args(mrb, "o", &y);
 
-  v1 = (int64_t)mrb_float(x);
+  v1 = (int64_t)$float(x);
   v2 = value_int64(mrb, y);
   return int64_value(mrb, v1 | v2);
 }
 
-static mrb_value
-flo_xor(mrb_state *mrb, mrb_value x)
+static $value
+flo_xor($state *mrb, $value x)
 {
-  mrb_value y;
+  $value y;
   int64_t v1, v2;
-  mrb_get_args(mrb, "o", &y);
+  $get_args(mrb, "o", &y);
 
-  v1 = (int64_t)mrb_float(x);
+  v1 = (int64_t)$float(x);
   v2 = value_int64(mrb, y);
   return int64_value(mrb, v1 ^ v2);
 }
 
-static mrb_value
-flo_shift(mrb_state *mrb, mrb_value x, mrb_int width)
+static $value
+flo_shift($state *mrb, $value x, $int width)
 {
-  mrb_float val;
+  $float val;
 
   if (width == 0) {
     return x;
   }
-  val = mrb_float(x);
+  val = $float(x);
   if (width < 0) {
     while (width++) {
       val /= 2;
@@ -438,8 +438,8 @@ flo_shift(mrb_state *mrb, mrb_value x, mrb_int width)
         val = ceil(val);
     }
 #endif
-    if (val == 0 && mrb_float(x) < 0) {
-      return mrb_fixnum_value(-1);
+    if (val == 0 && $float(x) < 0) {
+      return $fixnum_value(-1);
     }
   }
   else {
@@ -448,26 +448,26 @@ flo_shift(mrb_state *mrb, mrb_value x, mrb_int width)
     }
   }
   if (FIXABLE_FLOAT(val)) {
-    return mrb_fixnum_value((mrb_int)val);
+    return $fixnum_value(($int)val);
   }
-  return mrb_float_value(mrb, val);
+  return $float_value(mrb, val);
 }
 
-static mrb_value
-flo_lshift(mrb_state *mrb, mrb_value x)
+static $value
+flo_lshift($state *mrb, $value x)
 {
-  mrb_int width;
+  $int width;
 
-  mrb_get_args(mrb, "i", &width);
+  $get_args(mrb, "i", &width);
   return flo_shift(mrb, x, -width);
 }
 
-static mrb_value
-flo_rshift(mrb_state *mrb, mrb_value x)
+static $value
+flo_rshift($state *mrb, $value x)
 {
-  mrb_int width;
+  $int width;
 
-  mrb_get_args(mrb, "i", &width);
+  $get_args(mrb, "i", &width);
   return flo_shift(mrb, x, width);
 }
 
@@ -479,8 +479,8 @@ flo_rshift(mrb_state *mrb, mrb_value x)
  * As <code>flt</code> is already a float, returns +self+.
  */
 
-static mrb_value
-flo_to_f(mrb_state *mrb, mrb_value num)
+static $value
+flo_to_f($state *mrb, $value num)
 {
   return num;
 }
@@ -498,15 +498,15 @@ flo_to_f(mrb_state *mrb, mrb_value num)
  *     (+1.0/0.0).infinite?   #=> 1
  */
 
-static mrb_value
-flo_infinite_p(mrb_state *mrb, mrb_value num)
+static $value
+flo_infinite_p($state *mrb, $value num)
 {
-  mrb_float value = mrb_float(num);
+  $float value = $float(num);
 
   if (isinf(value)) {
-    return mrb_fixnum_value(value < 0 ? -1 : 1);
+    return $fixnum_value(value < 0 ? -1 : 1);
   }
-  return mrb_nil_value();
+  return $nil_value();
 }
 
 /* 15.2.9.3.9  */
@@ -520,20 +520,20 @@ flo_infinite_p(mrb_state *mrb, mrb_value num)
  *
  */
 
-static mrb_value
-flo_finite_p(mrb_state *mrb, mrb_value num)
+static $value
+flo_finite_p($state *mrb, $value num)
 {
-  return mrb_bool_value(isfinite(mrb_float(num)));
+  return $bool_value(isfinite($float(num)));
 }
 
 void
-mrb_check_num_exact(mrb_state *mrb, mrb_float num)
+$check_num_exact($state *mrb, $float num)
 {
   if (isinf(num)) {
-    mrb_raise(mrb, E_FLOATDOMAIN_ERROR, num < 0 ? "-Infinity" : "Infinity");
+    $raise(mrb, E_FLOATDOMAIN_ERROR, num < 0 ? "-Infinity" : "Infinity");
   }
   if (isnan(num)) {
-    mrb_raise(mrb, E_FLOATDOMAIN_ERROR, "NaN");
+    $raise(mrb, E_FLOATDOMAIN_ERROR, "NaN");
   }
 }
 
@@ -550,16 +550,16 @@ mrb_check_num_exact(mrb_state *mrb, mrb_float num)
  *     (-2.0).floor   #=> -2
  */
 
-static mrb_value
-flo_floor(mrb_state *mrb, mrb_value num)
+static $value
+flo_floor($state *mrb, $value num)
 {
-  mrb_float f = floor(mrb_float(num));
+  $float f = floor($float(num));
 
-  mrb_check_num_exact(mrb, f);
+  $check_num_exact(mrb, f);
   if (!FIXABLE_FLOAT(f)) {
-    return mrb_float_value(mrb, f);
+    return $float_value(mrb, f);
   }
-  return mrb_fixnum_value((mrb_int)f);
+  return $fixnum_value(($int)f);
 }
 
 /* 15.2.9.3.8  */
@@ -576,16 +576,16 @@ flo_floor(mrb_state *mrb, mrb_value num)
  *     (-2.0).ceil   #=> -2
  */
 
-static mrb_value
-flo_ceil(mrb_state *mrb, mrb_value num)
+static $value
+flo_ceil($state *mrb, $value num)
 {
-  mrb_float f = ceil(mrb_float(num));
+  $float f = ceil($float(num));
 
-  mrb_check_num_exact(mrb, f);
+  $check_num_exact(mrb, f);
   if (!FIXABLE_FLOAT(f)) {
-    return mrb_float_value(mrb, f);
+    return $float_value(mrb, f);
   }
-  return mrb_fixnum_value((mrb_int)f);
+  return $fixnum_value(($int)f);
 }
 
 /* 15.2.9.3.12 */
@@ -619,20 +619,20 @@ flo_ceil(mrb_state *mrb, mrb_value num)
  *
  */
 
-static mrb_value
-flo_round(mrb_state *mrb, mrb_value num)
+static $value
+flo_round($state *mrb, $value num)
 {
   double number, f;
-  mrb_int ndigits = 0;
-  mrb_int i;
+  $int ndigits = 0;
+  $int i;
 
-  mrb_get_args(mrb, "|i", &ndigits);
-  number = mrb_float(num);
+  $get_args(mrb, "|i", &ndigits);
+  number = $float(num);
 
   if (0 < ndigits && (isinf(number) || isnan(number))) {
     return num;
   }
-  mrb_check_num_exact(mrb, number);
+  $check_num_exact(mrb, number);
 
   f = 1.0;
   i = ndigits >= 0 ? ndigits : -ndigits;
@@ -664,9 +664,9 @@ flo_round(mrb_state *mrb, mrb_value num)
 
   if (ndigits > 0) {
     if (!isfinite(number)) return num;
-    return mrb_float_value(mrb, number);
+    return $float_value(mrb, number);
   }
-  return mrb_fixnum_value((mrb_int)number);
+  return $fixnum_value(($int)number);
 }
 
 /* 15.2.9.3.14 */
@@ -680,25 +680,25 @@ flo_round(mrb_state *mrb, mrb_value num)
  *  Returns <i>flt</i> truncated to an <code>Integer</code>.
  */
 
-static mrb_value
-flo_truncate(mrb_state *mrb, mrb_value num)
+static $value
+flo_truncate($state *mrb, $value num)
 {
-  mrb_float f = mrb_float(num);
+  $float f = $float(num);
 
   if (f > 0.0) f = floor(f);
   if (f < 0.0) f = ceil(f);
 
-  mrb_check_num_exact(mrb, f);
+  $check_num_exact(mrb, f);
   if (!FIXABLE_FLOAT(f)) {
-    return mrb_float_value(mrb, f);
+    return $float_value(mrb, f);
   }
-  return mrb_fixnum_value((mrb_int)f);
+  return $fixnum_value(($int)f);
 }
 
-static mrb_value
-flo_nan_p(mrb_state *mrb, mrb_value num)
+static $value
+flo_nan_p($state *mrb, $value num)
 {
-  return mrb_bool_value(isnan(mrb_float(num)));
+  return $bool_value(isnan($float(num)));
 }
 #endif
 
@@ -720,34 +720,34 @@ flo_nan_p(mrb_state *mrb, mrb_value num)
  *  methods simply return the receiver.
  */
 
-static mrb_value
-int_to_i(mrb_state *mrb, mrb_value num)
+static $value
+int_to_i($state *mrb, $value num)
 {
   return num;
 }
 
-mrb_value
-mrb_fixnum_mul(mrb_state *mrb, mrb_value x, mrb_value y)
+$value
+$fixnum_mul($state *mrb, $value x, $value y)
 {
-  mrb_int a;
+  $int a;
 
-  a = mrb_fixnum(x);
-  if (mrb_fixnum_p(y)) {
-    mrb_int b, c;
+  a = $fixnum(x);
+  if ($fixnum_p(y)) {
+    $int b, c;
 
     if (a == 0) return x;
-    b = mrb_fixnum(y);
-    if (mrb_int_mul_overflow(a, b, &c)) {
-#ifndef MRB_WITHOUT_FLOAT
-      return mrb_float_value(mrb, (mrb_float)a * (mrb_float)b);
+    b = $fixnum(y);
+    if ($int_mul_overflow(a, b, &c)) {
+#ifndef $WITHOUT_FLOAT
+      return $float_value(mrb, ($float)a * ($float)b);
 #endif
     }
-    return mrb_fixnum_value(c);
+    return $fixnum_value(c);
   }
-#ifdef MRB_WITHOUT_FLOAT
-  mrb_raise(mrb, E_TYPE_ERROR, "non fixnum value");
+#ifdef $WITHOUT_FLOAT
+  $raise(mrb, E_TYPE_ERROR, "non fixnum value");
 #else
-  return mrb_float_value(mrb, (mrb_float)a * mrb_to_flo(mrb, y));
+  return $float_value(mrb, ($float)a * $to_flo(mrb, y));
 #endif
 }
 
@@ -761,21 +761,21 @@ mrb_fixnum_mul(mrb_state *mrb, mrb_value x, mrb_value y)
  * result.
  */
 
-static mrb_value
-fix_mul(mrb_state *mrb, mrb_value x)
+static $value
+fix_mul($state *mrb, $value x)
 {
-  mrb_value y;
+  $value y;
 
-  mrb_get_args(mrb, "o", &y);
-  return mrb_fixnum_mul(mrb, x, y);
+  $get_args(mrb, "o", &y);
+  return $fixnum_mul(mrb, x, y);
 }
 
 static void
-fixdivmod(mrb_state *mrb, mrb_int x, mrb_int y, mrb_int *divp, mrb_int *modp)
+fixdivmod($state *mrb, $int x, $int y, $int *divp, $int *modp)
 {
-  mrb_int div, mod;
+  $int div, mod;
 
-  /* TODO: add mrb_assert(y != 0) to make sure */
+  /* TODO: add $assert(y != 0) to make sure */
 
   if (y < 0) {
     if (x < 0)
@@ -808,36 +808,36 @@ fixdivmod(mrb_state *mrb, mrb_int x, mrb_int y, mrb_int *divp, mrb_int *modp)
  *  See <code>numeric.divmod</code> for more information.
  */
 
-static mrb_value
-fix_mod(mrb_state *mrb, mrb_value x)
+static $value
+fix_mod($state *mrb, $value x)
 {
-  mrb_value y;
-  mrb_int a;
+  $value y;
+  $int a;
 
-  mrb_get_args(mrb, "o", &y);
-  a = mrb_fixnum(x);
-  if (mrb_fixnum_p(y)) {
-    mrb_int b, mod;
+  $get_args(mrb, "o", &y);
+  a = $fixnum(x);
+  if ($fixnum_p(y)) {
+    $int b, mod;
 
-    if ((b=mrb_fixnum(y)) == 0) {
-#ifdef MRB_WITHOUT_FLOAT
+    if ((b=$fixnum(y)) == 0) {
+#ifdef $WITHOUT_FLOAT
       /* ZeroDivisionError */
-      return mrb_fixnum_value(0);
+      return $fixnum_value(0);
 #else
-      return mrb_float_value(mrb, NAN);
+      return $float_value(mrb, NAN);
 #endif
     }
     fixdivmod(mrb, a, b, 0, &mod);
-    return mrb_fixnum_value(mod);
+    return $fixnum_value(mod);
   }
-#ifdef MRB_WITHOUT_FLOAT
-  mrb_raise(mrb, E_TYPE_ERROR, "non fixnum value");
+#ifdef $WITHOUT_FLOAT
+  $raise(mrb, E_TYPE_ERROR, "non fixnum value");
 #else
   else {
-    mrb_float mod;
+    $float mod;
 
-    flodivmod(mrb, (mrb_float)a, mrb_to_flo(mrb, y), 0, &mod);
-    return mrb_float_value(mrb, mod);
+    flodivmod(mrb, ($float)a, $to_flo(mrb, y), 0, &mod);
+    return $float_value(mrb, mod);
   }
 #endif
 }
@@ -848,58 +848,58 @@ fix_mod(mrb_state *mrb, mrb_value x)
  *
  *  See <code>Numeric#divmod</code>.
  */
-static mrb_value
-fix_divmod(mrb_state *mrb, mrb_value x)
+static $value
+fix_divmod($state *mrb, $value x)
 {
-  mrb_value y;
+  $value y;
 
-  mrb_get_args(mrb, "o", &y);
+  $get_args(mrb, "o", &y);
 
-  if (mrb_fixnum_p(y)) {
-    mrb_int div, mod;
+  if ($fixnum_p(y)) {
+    $int div, mod;
 
-    if (mrb_fixnum(y) == 0) {
-#ifdef MRB_WITHOUT_FLOAT
-      return mrb_assoc_new(mrb, mrb_fixnum_value(0), mrb_fixnum_value(0));
+    if ($fixnum(y) == 0) {
+#ifdef $WITHOUT_FLOAT
+      return $assoc_new(mrb, $fixnum_value(0), $fixnum_value(0));
 #else
-      return mrb_assoc_new(mrb, ((mrb_fixnum(x) == 0) ?
-                                 mrb_float_value(mrb, NAN):
-                                 mrb_float_value(mrb, INFINITY)),
-                           mrb_float_value(mrb, NAN));
+      return $assoc_new(mrb, (($fixnum(x) == 0) ?
+                                 $float_value(mrb, NAN):
+                                 $float_value(mrb, INFINITY)),
+                           $float_value(mrb, NAN));
 #endif
     }
-    fixdivmod(mrb, mrb_fixnum(x), mrb_fixnum(y), &div, &mod);
-    return mrb_assoc_new(mrb, mrb_fixnum_value(div), mrb_fixnum_value(mod));
+    fixdivmod(mrb, $fixnum(x), $fixnum(y), &div, &mod);
+    return $assoc_new(mrb, $fixnum_value(div), $fixnum_value(mod));
   }
-#ifdef MRB_WITHOUT_FLOAT
-  mrb_raise(mrb, E_TYPE_ERROR, "non fixnum value");
+#ifdef $WITHOUT_FLOAT
+  $raise(mrb, E_TYPE_ERROR, "non fixnum value");
 #else
   else {
-    mrb_float div, mod;
-    mrb_value a, b;
+    $float div, mod;
+    $value a, b;
 
-    flodivmod(mrb, (mrb_float)mrb_fixnum(x), mrb_to_flo(mrb, y), &div, &mod);
-    a = mrb_float_value(mrb, div);
-    b = mrb_float_value(mrb, mod);
-    return mrb_assoc_new(mrb, a, b);
+    flodivmod(mrb, ($float)$fixnum(x), $to_flo(mrb, y), &div, &mod);
+    a = $float_value(mrb, div);
+    b = $float_value(mrb, mod);
+    return $assoc_new(mrb, a, b);
   }
 #endif
 }
 
-#ifndef MRB_WITHOUT_FLOAT
-static mrb_value
-flo_divmod(mrb_state *mrb, mrb_value x)
+#ifndef $WITHOUT_FLOAT
+static $value
+flo_divmod($state *mrb, $value x)
 {
-  mrb_value y;
-  mrb_float div, mod;
-  mrb_value a, b;
+  $value y;
+  $float div, mod;
+  $value a, b;
 
-  mrb_get_args(mrb, "o", &y);
+  $get_args(mrb, "o", &y);
 
-  flodivmod(mrb, mrb_float(x), mrb_to_flo(mrb, y), &div, &mod);
-  a = mrb_float_value(mrb, div);
-  b = mrb_float_value(mrb, mod);
-  return mrb_assoc_new(mrb, a, b);
+  flodivmod(mrb, $float(x), $to_flo(mrb, y), &div, &mod);
+  a = $float_value(mrb, div);
+  b = $float_value(mrb, mod);
+  return $assoc_new(mrb, a, b);
 }
 #endif
 
@@ -915,21 +915,21 @@ flo_divmod(mrb_state *mrb, mrb_value x)
  *   1 == 1.0    #=> true
  */
 
-static mrb_value
-fix_equal(mrb_state *mrb, mrb_value x)
+static $value
+fix_equal($state *mrb, $value x)
 {
-  mrb_value y;
+  $value y;
 
-  mrb_get_args(mrb, "o", &y);
-  switch (mrb_type(y)) {
-  case MRB_TT_FIXNUM:
-    return mrb_bool_value(mrb_fixnum(x) == mrb_fixnum(y));
-#ifndef MRB_WITHOUT_FLOAT
-  case MRB_TT_FLOAT:
-    return mrb_bool_value((mrb_float)mrb_fixnum(x) == mrb_float(y));
+  $get_args(mrb, "o", &y);
+  switch ($type(y)) {
+  case $TT_FIXNUM:
+    return $bool_value($fixnum(x) == $fixnum(y));
+#ifndef $WITHOUT_FLOAT
+  case $TT_FLOAT:
+    return $bool_value(($float)$fixnum(x) == $float(y));
 #endif
   default:
-    return mrb_false_value();
+    return $false_value();
   }
 }
 
@@ -944,25 +944,25 @@ fix_equal(mrb_state *mrb, mrb_value x)
  *   ex.0---00100 (4)-> 1---11011 (-5)
  */
 
-static mrb_value
-fix_rev(mrb_state *mrb, mrb_value num)
+static $value
+fix_rev($state *mrb, $value num)
 {
-  mrb_int val = mrb_fixnum(num);
+  $int val = $fixnum(num);
 
-  return mrb_fixnum_value(~val);
+  return $fixnum_value(~val);
 }
 
-#ifdef MRB_WITHOUT_FLOAT
+#ifdef $WITHOUT_FLOAT
 #define bit_op(x,y,op1,op2) do {\
-  return mrb_fixnum_value(mrb_fixnum(x) op2 mrb_fixnum(y));\
+  return $fixnum_value($fixnum(x) op2 $fixnum(y));\
 } while(0)
 #else
-static mrb_value flo_and(mrb_state *mrb, mrb_value x);
-static mrb_value flo_or(mrb_state *mrb, mrb_value x);
-static mrb_value flo_xor(mrb_state *mrb, mrb_value x);
+static $value flo_and($state *mrb, $value x);
+static $value flo_or($state *mrb, $value x);
+static $value flo_xor($state *mrb, $value x);
 #define bit_op(x,y,op1,op2) do {\
-  if (mrb_fixnum_p(y)) return mrb_fixnum_value(mrb_fixnum(x) op2 mrb_fixnum(y));\
-  return flo_ ## op1(mrb, mrb_float_value(mrb, (mrb_float)mrb_fixnum(x)));\
+  if ($fixnum_p(y)) return $fixnum_value($fixnum(x) op2 $fixnum(y));\
+  return flo_ ## op1(mrb, $float_value(mrb, ($float)$fixnum(x)));\
 } while(0)
 #endif
 
@@ -974,12 +974,12 @@ static mrb_value flo_xor(mrb_state *mrb, mrb_value x);
  * Bitwise AND.
  */
 
-static mrb_value
-fix_and(mrb_state *mrb, mrb_value x)
+static $value
+fix_and($state *mrb, $value x)
 {
-  mrb_value y;
+  $value y;
 
-  mrb_get_args(mrb, "o", &y);
+  $get_args(mrb, "o", &y);
   bit_op(x, y, and, &);
 }
 
@@ -991,12 +991,12 @@ fix_and(mrb_state *mrb, mrb_value x)
  * Bitwise OR.
  */
 
-static mrb_value
-fix_or(mrb_state *mrb, mrb_value x)
+static $value
+fix_or($state *mrb, $value x)
 {
-  mrb_value y;
+  $value y;
 
-  mrb_get_args(mrb, "o", &y);
+  $get_args(mrb, "o", &y);
   bit_op(x, y, or, |);
 }
 
@@ -1008,75 +1008,75 @@ fix_or(mrb_state *mrb, mrb_value x)
  * Bitwise EXCLUSIVE OR.
  */
 
-static mrb_value
-fix_xor(mrb_state *mrb, mrb_value x)
+static $value
+fix_xor($state *mrb, $value x)
 {
-  mrb_value y;
+  $value y;
 
-  mrb_get_args(mrb, "o", &y);
+  $get_args(mrb, "o", &y);
   bit_op(x, y, or, ^);
 }
 
-#define NUMERIC_SHIFT_WIDTH_MAX (MRB_INT_BIT-1)
+#define NUMERIC_SHIFT_WIDTH_MAX ($INT_BIT-1)
 
-static mrb_value
-lshift(mrb_state *mrb, mrb_int val, mrb_int width)
+static $value
+lshift($state *mrb, $int val, $int width)
 {
-  if (width < 0) {              /* mrb_int overflow */
-#ifdef MRB_WITHOUT_FLOAT
-    return mrb_fixnum_value(0);
+  if (width < 0) {              /* $int overflow */
+#ifdef $WITHOUT_FLOAT
+    return $fixnum_value(0);
 #else
-    return mrb_float_value(mrb, INFINITY);
+    return $float_value(mrb, INFINITY);
 #endif
   }
   if (val > 0) {
     if ((width > NUMERIC_SHIFT_WIDTH_MAX) ||
-        (val   > (MRB_INT_MAX >> width))) {
-#ifdef MRB_WITHOUT_FLOAT
-      return mrb_fixnum_value(-1);
+        (val   > ($INT_MAX >> width))) {
+#ifdef $WITHOUT_FLOAT
+      return $fixnum_value(-1);
 #else
       goto bit_overflow;
 #endif
     }
-    return mrb_fixnum_value(val << width);
+    return $fixnum_value(val << width);
   }
   else {
     if ((width > NUMERIC_SHIFT_WIDTH_MAX) ||
-        (val   < (MRB_INT_MIN >> width))) {
-#ifdef MRB_WITHOUT_FLOAT
-      return mrb_fixnum_value(0);
+        (val   < ($INT_MIN >> width))) {
+#ifdef $WITHOUT_FLOAT
+      return $fixnum_value(0);
 #else
       goto bit_overflow;
 #endif
     }
-    return mrb_fixnum_value(val * ((mrb_int)1 << width));
+    return $fixnum_value(val * (($int)1 << width));
   }
 
-#ifndef MRB_WITHOUT_FLOAT
+#ifndef $WITHOUT_FLOAT
 bit_overflow:
   {
-    mrb_float f = (mrb_float)val;
+    $float f = ($float)val;
     while (width--) {
       f *= 2;
     }
-    return mrb_float_value(mrb, f);
+    return $float_value(mrb, f);
   }
 #endif
 }
 
-static mrb_value
-rshift(mrb_int val, mrb_int width)
+static $value
+rshift($int val, $int width)
 {
-  if (width < 0) {              /* mrb_int overflow */
-    return mrb_fixnum_value(0);
+  if (width < 0) {              /* $int overflow */
+    return $fixnum_value(0);
   }
   if (width >= NUMERIC_SHIFT_WIDTH_MAX) {
     if (val < 0) {
-      return mrb_fixnum_value(-1);
+      return $fixnum_value(-1);
     }
-    return mrb_fixnum_value(0);
+    return $fixnum_value(0);
   }
-  return mrb_fixnum_value(val >> width);
+  return $fixnum_value(val >> width);
 }
 
 /* 15.2.8.3.12 */
@@ -1087,16 +1087,16 @@ rshift(mrb_int val, mrb_int width)
  * Shifts _fix_ left _count_ positions (right if _count_ is negative).
  */
 
-static mrb_value
-fix_lshift(mrb_state *mrb, mrb_value x)
+static $value
+fix_lshift($state *mrb, $value x)
 {
-  mrb_int width, val;
+  $int width, val;
 
-  mrb_get_args(mrb, "i", &width);
+  $get_args(mrb, "i", &width);
   if (width == 0) {
     return x;
   }
-  val = mrb_fixnum(x);
+  val = $fixnum(x);
   if (val == 0) return x;
   if (width < 0) {
     return rshift(val, -width);
@@ -1112,16 +1112,16 @@ fix_lshift(mrb_state *mrb, mrb_value x)
  * Shifts _fix_ right _count_ positions (left if _count_ is negative).
  */
 
-static mrb_value
-fix_rshift(mrb_state *mrb, mrb_value x)
+static $value
+fix_rshift($state *mrb, $value x)
 {
-  mrb_int width, val;
+  $int width, val;
 
-  mrb_get_args(mrb, "i", &width);
+  $get_args(mrb, "i", &width);
   if (width == 0) {
     return x;
   }
-  val = mrb_fixnum(x);
+  val = $fixnum(x);
   if (val == 0) return x;
   if (width < 0) {
     return lshift(mrb, val, -width);
@@ -1138,11 +1138,11 @@ fix_rshift(mrb_state *mrb, mrb_value x)
  *
  */
 
-#ifndef MRB_WITHOUT_FLOAT
-static mrb_value
-fix_to_f(mrb_state *mrb, mrb_value num)
+#ifndef $WITHOUT_FLOAT
+static $value
+fix_to_f($state *mrb, $value num)
 {
-  return mrb_float_value(mrb, (mrb_float)mrb_fixnum(num));
+  return $float_value(mrb, ($float)$fixnum(num));
 }
 
 /*
@@ -1159,57 +1159,57 @@ fix_to_f(mrb_state *mrb, mrb_value num)
  *     FloatDomainError: Infinity
  */
 /* ------------------------------------------------------------------------*/
-MRB_API mrb_value
-mrb_flo_to_fixnum(mrb_state *mrb, mrb_value x)
+$API $value
+$flo_to_fixnum($state *mrb, $value x)
 {
-  mrb_int z = 0;
+  $int z = 0;
 
-  if (!mrb_float_p(x)) {
-    mrb_raise(mrb, E_TYPE_ERROR, "non float value");
+  if (!$float_p(x)) {
+    $raise(mrb, E_TYPE_ERROR, "non float value");
     z = 0; /* not reached. just suppress warnings. */
   }
   else {
-    mrb_float d = mrb_float(x);
+    $float d = $float(x);
 
     if (isinf(d)) {
-      mrb_raise(mrb, E_FLOATDOMAIN_ERROR, d < 0 ? "-Infinity" : "Infinity");
+      $raise(mrb, E_FLOATDOMAIN_ERROR, d < 0 ? "-Infinity" : "Infinity");
     }
     if (isnan(d)) {
-      mrb_raise(mrb, E_FLOATDOMAIN_ERROR, "NaN");
+      $raise(mrb, E_FLOATDOMAIN_ERROR, "NaN");
     }
     if (FIXABLE_FLOAT(d)) {
-      z = (mrb_int)d;
+      z = ($int)d;
     }
     else {
-      mrb_raisef(mrb, E_ARGUMENT_ERROR, "number (%S) too big for integer", x);
+      $raisef(mrb, E_ARGUMENT_ERROR, "number (%S) too big for integer", x);
     }
   }
-  return mrb_fixnum_value(z);
+  return $fixnum_value(z);
 }
 #endif
 
-mrb_value
-mrb_fixnum_plus(mrb_state *mrb, mrb_value x, mrb_value y)
+$value
+$fixnum_plus($state *mrb, $value x, $value y)
 {
-  mrb_int a;
+  $int a;
 
-  a = mrb_fixnum(x);
-  if (mrb_fixnum_p(y)) {
-    mrb_int b, c;
+  a = $fixnum(x);
+  if ($fixnum_p(y)) {
+    $int b, c;
 
     if (a == 0) return y;
-    b = mrb_fixnum(y);
-    if (mrb_int_add_overflow(a, b, &c)) {
-#ifndef MRB_WITHOUT_FLOAT
-      return mrb_float_value(mrb, (mrb_float)a + (mrb_float)b);
+    b = $fixnum(y);
+    if ($int_add_overflow(a, b, &c)) {
+#ifndef $WITHOUT_FLOAT
+      return $float_value(mrb, ($float)a + ($float)b);
 #endif
     }
-    return mrb_fixnum_value(c);
+    return $fixnum_value(c);
   }
-#ifdef MRB_WITHOUT_FLOAT
-  mrb_raise(mrb, E_TYPE_ERROR, "non fixnum value");
+#ifdef $WITHOUT_FLOAT
+  $raise(mrb, E_TYPE_ERROR, "non fixnum value");
 #else
-  return mrb_float_value(mrb, (mrb_float)a + mrb_to_flo(mrb, y));
+  return $float_value(mrb, ($float)a + $to_flo(mrb, y));
 #endif
 }
 
@@ -1222,36 +1222,36 @@ mrb_fixnum_plus(mrb_state *mrb, mrb_value x, mrb_value y)
  * the class of <code>numeric</code> and on the magnitude of the
  * result.
  */
-static mrb_value
-fix_plus(mrb_state *mrb, mrb_value self)
+static $value
+fix_plus($state *mrb, $value self)
 {
-  mrb_value other;
+  $value other;
 
-  mrb_get_args(mrb, "o", &other);
-  return mrb_fixnum_plus(mrb, self, other);
+  $get_args(mrb, "o", &other);
+  return $fixnum_plus(mrb, self, other);
 }
 
-mrb_value
-mrb_fixnum_minus(mrb_state *mrb, mrb_value x, mrb_value y)
+$value
+$fixnum_minus($state *mrb, $value x, $value y)
 {
-  mrb_int a;
+  $int a;
 
-  a = mrb_fixnum(x);
-  if (mrb_fixnum_p(y)) {
-    mrb_int b, c;
+  a = $fixnum(x);
+  if ($fixnum_p(y)) {
+    $int b, c;
 
-    b = mrb_fixnum(y);
-    if (mrb_int_sub_overflow(a, b, &c)) {
-#ifndef MRB_WITHOUT_FLOAT
-      return mrb_float_value(mrb, (mrb_float)a - (mrb_float)b);
+    b = $fixnum(y);
+    if ($int_sub_overflow(a, b, &c)) {
+#ifndef $WITHOUT_FLOAT
+      return $float_value(mrb, ($float)a - ($float)b);
 #endif
     }
-    return mrb_fixnum_value(c);
+    return $fixnum_value(c);
   }
-#ifdef MRB_WITHOUT_FLOAT
-  mrb_raise(mrb, E_TYPE_ERROR, "non fixnum value");
+#ifdef $WITHOUT_FLOAT
+  $raise(mrb, E_TYPE_ERROR, "non fixnum value");
 #else
-  return mrb_float_value(mrb, (mrb_float)a - mrb_to_flo(mrb, y));
+  return $float_value(mrb, ($float)a - $to_flo(mrb, y));
 #endif
 }
 
@@ -1265,25 +1265,25 @@ mrb_fixnum_minus(mrb_state *mrb, mrb_value x, mrb_value y)
  * the class of <code>numeric</code> and on the magnitude of the
  * result.
  */
-static mrb_value
-fix_minus(mrb_state *mrb, mrb_value self)
+static $value
+fix_minus($state *mrb, $value self)
 {
-  mrb_value other;
+  $value other;
 
-  mrb_get_args(mrb, "o", &other);
-  return mrb_fixnum_minus(mrb, self, other);
+  $get_args(mrb, "o", &other);
+  return $fixnum_minus(mrb, self, other);
 }
 
 
-MRB_API mrb_value
-mrb_fixnum_to_str(mrb_state *mrb, mrb_value x, mrb_int base)
+$API $value
+$fixnum_to_str($state *mrb, $value x, $int base)
 {
-  char buf[MRB_INT_BIT+1];
+  char buf[$INT_BIT+1];
   char *b = buf + sizeof buf;
-  mrb_int val = mrb_fixnum(x);
+  $int val = $fixnum(x);
 
   if (base < 2 || 36 < base) {
-    mrb_raisef(mrb, E_ARGUMENT_ERROR, "invalid radix %S", mrb_fixnum_value(base));
+    $raisef(mrb, E_ARGUMENT_ERROR, "invalid radix %S", $fixnum_value(base));
   }
 
   if (val == 0) {
@@ -1291,17 +1291,17 @@ mrb_fixnum_to_str(mrb_state *mrb, mrb_value x, mrb_int base)
   }
   else if (val < 0) {
     do {
-      *--b = mrb_digitmap[-(val % base)];
+      *--b = $digitmap[-(val % base)];
     } while (val /= base);
     *--b = '-';
   }
   else {
     do {
-      *--b = mrb_digitmap[(int)(val % base)];
+      *--b = $digitmap[(int)(val % base)];
     } while (val /= base);
   }
 
-  return mrb_str_new(mrb, b, buf + sizeof(buf) - b);
+  return $str_new(mrb, b, buf + sizeof(buf) - b);
 }
 
 /* 15.2.8.3.25 */
@@ -1320,41 +1320,41 @@ mrb_fixnum_to_str(mrb_state *mrb, mrb_value x, mrb_int base)
  *     12345.to_s(36)   #=> "9ix"
  *
  */
-static mrb_value
-fix_to_s(mrb_state *mrb, mrb_value self)
+static $value
+fix_to_s($state *mrb, $value self)
 {
-  mrb_int base = 10;
+  $int base = 10;
 
-  mrb_get_args(mrb, "|i", &base);
-  return mrb_fixnum_to_str(mrb, self, base);
+  $get_args(mrb, "|i", &base);
+  return $fixnum_to_str(mrb, self, base);
 }
 
 /* compare two numbers: (1:0:-1; -2 for error) */
-static mrb_int
-cmpnum(mrb_state *mrb, mrb_value v1, mrb_value v2)
+static $int
+cmpnum($state *mrb, $value v1, $value v2)
 {
-#ifdef MRB_WITHOUT_FLOAT
-  mrb_int x, y;
+#ifdef $WITHOUT_FLOAT
+  $int x, y;
 #else
-  mrb_float x, y;
+  $float x, y;
 #endif
 
-#ifdef MRB_WITHOUT_FLOAT
-  x = mrb_fixnum(v1);
+#ifdef $WITHOUT_FLOAT
+  x = $fixnum(v1);
 #else
-  x = mrb_to_flo(mrb, v1);
+  x = $to_flo(mrb, v1);
 #endif
-  switch (mrb_type(v2)) {
-  case MRB_TT_FIXNUM:
-#ifdef MRB_WITHOUT_FLOAT
-    y = mrb_fixnum(v2);
+  switch ($type(v2)) {
+  case $TT_FIXNUM:
+#ifdef $WITHOUT_FLOAT
+    y = $fixnum(v2);
 #else
-    y = (mrb_float)mrb_fixnum(v2);
+    y = ($float)$fixnum(v2);
 #endif
     break;
-#ifndef MRB_WITHOUT_FLOAT
-  case MRB_TT_FLOAT:
-    y = mrb_float(v2);
+#ifndef $WITHOUT_FLOAT
+  case $TT_FLOAT:
+    y = $float(v2);
     break;
 #endif
   default:
@@ -1380,90 +1380,90 @@ cmpnum(mrb_state *mrb, mrb_value v1, mrb_value v2)
  *  less than, equal to, or greater than <i>numeric</i>. This is the
  *  basis for the tests in <code>Comparable</code>.
  */
-static mrb_value
-num_cmp(mrb_state *mrb, mrb_value self)
+static $value
+num_cmp($state *mrb, $value self)
 {
-  mrb_value other;
-  mrb_int n;
+  $value other;
+  $int n;
 
-  mrb_get_args(mrb, "o", &other);
+  $get_args(mrb, "o", &other);
   n = cmpnum(mrb, self, other);
-  if (n == -2) return mrb_nil_value();
-  return mrb_fixnum_value(n);
+  if (n == -2) return $nil_value();
+  return $fixnum_value(n);
 }
 
 static void
-cmperr(mrb_state *mrb, mrb_value v1, mrb_value v2)
+cmperr($state *mrb, $value v1, $value v2)
 {
-  mrb_raisef(mrb, E_ARGUMENT_ERROR, "comparison of %S with %S failed",
-             mrb_obj_value(mrb_class(mrb, v1)),
-             mrb_obj_value(mrb_class(mrb, v2)));
+  $raisef(mrb, E_ARGUMENT_ERROR, "comparison of %S with %S failed",
+             $obj_value($class(mrb, v1)),
+             $obj_value($class(mrb, v2)));
 }
 
-static mrb_value
-num_lt(mrb_state *mrb, mrb_value self)
+static $value
+num_lt($state *mrb, $value self)
 {
-  mrb_value other;
-  mrb_int n;
+  $value other;
+  $int n;
 
-  mrb_get_args(mrb, "o", &other);
+  $get_args(mrb, "o", &other);
   n = cmpnum(mrb, self, other);
   if (n == -2) cmperr(mrb, self, other);
-  if (n < 0) return mrb_true_value();
-  return mrb_false_value();
+  if (n < 0) return $true_value();
+  return $false_value();
 }
 
-static mrb_value
-num_le(mrb_state *mrb, mrb_value self)
+static $value
+num_le($state *mrb, $value self)
 {
-  mrb_value other;
-  mrb_int n;
+  $value other;
+  $int n;
 
-  mrb_get_args(mrb, "o", &other);
+  $get_args(mrb, "o", &other);
   n = cmpnum(mrb, self, other);
   if (n == -2) cmperr(mrb, self, other);
-  if (n <= 0) return mrb_true_value();
-  return mrb_false_value();
+  if (n <= 0) return $true_value();
+  return $false_value();
 }
 
-static mrb_value
-num_gt(mrb_state *mrb, mrb_value self)
+static $value
+num_gt($state *mrb, $value self)
 {
-  mrb_value other;
-  mrb_int n;
+  $value other;
+  $int n;
 
-  mrb_get_args(mrb, "o", &other);
+  $get_args(mrb, "o", &other);
   n = cmpnum(mrb, self, other);
   if (n == -2) cmperr(mrb, self, other);
-  if (n > 0) return mrb_true_value();
-  return mrb_false_value();
+  if (n > 0) return $true_value();
+  return $false_value();
 }
 
-static mrb_value
-num_ge(mrb_state *mrb, mrb_value self)
+static $value
+num_ge($state *mrb, $value self)
 {
-  mrb_value other;
-  mrb_int n;
+  $value other;
+  $int n;
 
-  mrb_get_args(mrb, "o", &other);
+  $get_args(mrb, "o", &other);
   n = cmpnum(mrb, self, other);
   if (n == -2) cmperr(mrb, self, other);
-  if (n >= 0) return mrb_true_value();
-  return mrb_false_value();
+  if (n >= 0) return $true_value();
+  return $false_value();
 }
 
-static mrb_value
-num_finite_p(mrb_state *mrb, mrb_value self)
+static $value
+num_finite_p($state *mrb, $value self)
 {
-  mrb_get_args(mrb, "");
-  return mrb_true_value();
+  $get_args(mrb, "");
+  return $true_value();
 }
 
-static mrb_value
-num_infinite_p(mrb_state *mrb, mrb_value self)
+static $value
+num_infinite_p($state *mrb, $value self)
 {
-  mrb_get_args(mrb, "");
-  return mrb_false_value();
+  $get_args(mrb, "");
+  return $false_value();
 }
 
 /* 15.2.9.3.1  */
@@ -1474,112 +1474,112 @@ num_infinite_p(mrb_state *mrb, mrb_value self)
  * Returns a new float which is the sum of <code>float</code>
  * and <code>other</code>.
  */
-#ifndef MRB_WITHOUT_FLOAT
-static mrb_value
-flo_plus(mrb_state *mrb, mrb_value x)
+#ifndef $WITHOUT_FLOAT
+static $value
+flo_plus($state *mrb, $value x)
 {
-  mrb_value y;
+  $value y;
 
-  mrb_get_args(mrb, "o", &y);
-  return mrb_float_value(mrb, mrb_float(x) + mrb_to_flo(mrb, y));
+  $get_args(mrb, "o", &y);
+  return $float_value(mrb, $float(x) + $to_flo(mrb, y));
 }
 #endif
 
 /* ------------------------------------------------------------------------*/
 void
-mrb_init_numeric(mrb_state *mrb)
+$init_numeric($state *mrb)
 {
   struct RClass *numeric, *integer, *fixnum;
-#ifndef MRB_WITHOUT_FLOAT
+#ifndef $WITHOUT_FLOAT
   struct RClass *fl;
 #endif
 
   /* Numeric Class */
-  numeric = mrb_define_class(mrb, "Numeric",  mrb->object_class);                /* 15.2.7 */
+  numeric = $define_class(mrb, "Numeric",  mrb->object_class);                /* 15.2.7 */
 
-  mrb_define_method(mrb, numeric, "**",       num_pow,         MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, numeric, "/",        num_div,         MRB_ARGS_REQ(1)); /* 15.2.8.3.4  */
-  mrb_define_method(mrb, numeric, "quo",      num_div,         MRB_ARGS_REQ(1)); /* 15.2.7.4.5 (x) */
-  mrb_define_method(mrb, numeric, "<=>",      num_cmp,         MRB_ARGS_REQ(1)); /* 15.2.9.3.6  */
-  mrb_define_method(mrb, numeric, "<",        num_lt,          MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, numeric, "<=",       num_le,          MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, numeric, ">",        num_gt,          MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, numeric, ">=",       num_ge,          MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, numeric, "finite?",  num_finite_p,    MRB_ARGS_NONE());
-  mrb_define_method(mrb, numeric, "infinite?",num_infinite_p,  MRB_ARGS_NONE());
+  $define_method(mrb, numeric, "**",       num_pow,         $ARGS_REQ(1));
+  $define_method(mrb, numeric, "/",        num_div,         $ARGS_REQ(1)); /* 15.2.8.3.4  */
+  $define_method(mrb, numeric, "quo",      num_div,         $ARGS_REQ(1)); /* 15.2.7.4.5 (x) */
+  $define_method(mrb, numeric, "<=>",      num_cmp,         $ARGS_REQ(1)); /* 15.2.9.3.6  */
+  $define_method(mrb, numeric, "<",        num_lt,          $ARGS_REQ(1));
+  $define_method(mrb, numeric, "<=",       num_le,          $ARGS_REQ(1));
+  $define_method(mrb, numeric, ">",        num_gt,          $ARGS_REQ(1));
+  $define_method(mrb, numeric, ">=",       num_ge,          $ARGS_REQ(1));
+  $define_method(mrb, numeric, "finite?",  num_finite_p,    $ARGS_NONE());
+  $define_method(mrb, numeric, "infinite?",num_infinite_p,  $ARGS_NONE());
 
   /* Integer Class */
-  integer = mrb_define_class(mrb, "Integer",  numeric);                          /* 15.2.8 */
-  MRB_SET_INSTANCE_TT(integer, MRB_TT_FIXNUM);
-  mrb_undef_class_method(mrb, integer, "new");
-  mrb_define_method(mrb, integer, "to_i",     int_to_i,        MRB_ARGS_NONE()); /* 15.2.8.3.24 */
-  mrb_define_method(mrb, integer, "to_int",   int_to_i,        MRB_ARGS_NONE());
-#ifndef MRB_WITHOUT_FLOAT
-  mrb_define_method(mrb, integer, "ceil",     int_to_i,        MRB_ARGS_REQ(1)); /* 15.2.8.3.8 (x) */
-  mrb_define_method(mrb, integer, "floor",    int_to_i,        MRB_ARGS_REQ(1)); /* 15.2.8.3.10 (x) */
-  mrb_define_method(mrb, integer, "round",    int_to_i,        MRB_ARGS_REQ(1)); /* 15.2.8.3.12 (x) */
-  mrb_define_method(mrb, integer, "truncate", int_to_i,        MRB_ARGS_REQ(1)); /* 15.2.8.3.15 (x) */
+  integer = $define_class(mrb, "Integer",  numeric);                          /* 15.2.8 */
+  $SET_INSTANCE_TT(integer, $TT_FIXNUM);
+  $undef_class_method(mrb, integer, "new");
+  $define_method(mrb, integer, "to_i",     int_to_i,        $ARGS_NONE()); /* 15.2.8.3.24 */
+  $define_method(mrb, integer, "to_int",   int_to_i,        $ARGS_NONE());
+#ifndef $WITHOUT_FLOAT
+  $define_method(mrb, integer, "ceil",     int_to_i,        $ARGS_REQ(1)); /* 15.2.8.3.8 (x) */
+  $define_method(mrb, integer, "floor",    int_to_i,        $ARGS_REQ(1)); /* 15.2.8.3.10 (x) */
+  $define_method(mrb, integer, "round",    int_to_i,        $ARGS_REQ(1)); /* 15.2.8.3.12 (x) */
+  $define_method(mrb, integer, "truncate", int_to_i,        $ARGS_REQ(1)); /* 15.2.8.3.15 (x) */
 #endif
 
   /* Fixnum Class */
-  mrb->fixnum_class = fixnum = mrb_define_class(mrb, "Fixnum", integer);
-  mrb_define_method(mrb, fixnum,  "+",        fix_plus,        MRB_ARGS_REQ(1)); /* 15.2.8.3.1  */
-  mrb_define_method(mrb, fixnum,  "-",        fix_minus,       MRB_ARGS_REQ(1)); /* 15.2.8.3.2  */
-  mrb_define_method(mrb, fixnum,  "*",        fix_mul,         MRB_ARGS_REQ(1)); /* 15.2.8.3.3  */
-  mrb_define_method(mrb, fixnum,  "%",        fix_mod,         MRB_ARGS_REQ(1)); /* 15.2.8.3.5  */
-  mrb_define_method(mrb, fixnum,  "==",       fix_equal,       MRB_ARGS_REQ(1)); /* 15.2.8.3.7  */
-  mrb_define_method(mrb, fixnum,  "~",        fix_rev,         MRB_ARGS_NONE()); /* 15.2.8.3.8  */
-  mrb_define_method(mrb, fixnum,  "&",        fix_and,         MRB_ARGS_REQ(1)); /* 15.2.8.3.9  */
-  mrb_define_method(mrb, fixnum,  "|",        fix_or,          MRB_ARGS_REQ(1)); /* 15.2.8.3.10 */
-  mrb_define_method(mrb, fixnum,  "^",        fix_xor,         MRB_ARGS_REQ(1)); /* 15.2.8.3.11 */
-  mrb_define_method(mrb, fixnum,  "<<",       fix_lshift,      MRB_ARGS_REQ(1)); /* 15.2.8.3.12 */
-  mrb_define_method(mrb, fixnum,  ">>",       fix_rshift,      MRB_ARGS_REQ(1)); /* 15.2.8.3.13 */
-  mrb_define_method(mrb, fixnum,  "eql?",     fix_eql,         MRB_ARGS_REQ(1)); /* 15.2.8.3.16 */
-#ifndef MRB_WITHOUT_FLOAT
-  mrb_define_method(mrb, fixnum,  "to_f",     fix_to_f,        MRB_ARGS_NONE()); /* 15.2.8.3.23 */
+  mrb->fixnum_class = fixnum = $define_class(mrb, "Fixnum", integer);
+  $define_method(mrb, fixnum,  "+",        fix_plus,        $ARGS_REQ(1)); /* 15.2.8.3.1  */
+  $define_method(mrb, fixnum,  "-",        fix_minus,       $ARGS_REQ(1)); /* 15.2.8.3.2  */
+  $define_method(mrb, fixnum,  "*",        fix_mul,         $ARGS_REQ(1)); /* 15.2.8.3.3  */
+  $define_method(mrb, fixnum,  "%",        fix_mod,         $ARGS_REQ(1)); /* 15.2.8.3.5  */
+  $define_method(mrb, fixnum,  "==",       fix_equal,       $ARGS_REQ(1)); /* 15.2.8.3.7  */
+  $define_method(mrb, fixnum,  "~",        fix_rev,         $ARGS_NONE()); /* 15.2.8.3.8  */
+  $define_method(mrb, fixnum,  "&",        fix_and,         $ARGS_REQ(1)); /* 15.2.8.3.9  */
+  $define_method(mrb, fixnum,  "|",        fix_or,          $ARGS_REQ(1)); /* 15.2.8.3.10 */
+  $define_method(mrb, fixnum,  "^",        fix_xor,         $ARGS_REQ(1)); /* 15.2.8.3.11 */
+  $define_method(mrb, fixnum,  "<<",       fix_lshift,      $ARGS_REQ(1)); /* 15.2.8.3.12 */
+  $define_method(mrb, fixnum,  ">>",       fix_rshift,      $ARGS_REQ(1)); /* 15.2.8.3.13 */
+  $define_method(mrb, fixnum,  "eql?",     fix_eql,         $ARGS_REQ(1)); /* 15.2.8.3.16 */
+#ifndef $WITHOUT_FLOAT
+  $define_method(mrb, fixnum,  "to_f",     fix_to_f,        $ARGS_NONE()); /* 15.2.8.3.23 */
 #endif
-  mrb_define_method(mrb, fixnum,  "to_s",     fix_to_s,        MRB_ARGS_NONE()); /* 15.2.8.3.25 */
-  mrb_define_method(mrb, fixnum,  "inspect",  fix_to_s,        MRB_ARGS_NONE());
-  mrb_define_method(mrb, fixnum,  "divmod",   fix_divmod,      MRB_ARGS_REQ(1)); /* 15.2.8.3.30 (x) */
+  $define_method(mrb, fixnum,  "to_s",     fix_to_s,        $ARGS_NONE()); /* 15.2.8.3.25 */
+  $define_method(mrb, fixnum,  "inspect",  fix_to_s,        $ARGS_NONE());
+  $define_method(mrb, fixnum,  "divmod",   fix_divmod,      $ARGS_REQ(1)); /* 15.2.8.3.30 (x) */
 
-#ifndef MRB_WITHOUT_FLOAT
+#ifndef $WITHOUT_FLOAT
   /* Float Class */
-  mrb->float_class = fl = mrb_define_class(mrb, "Float", numeric);                 /* 15.2.9 */
-  MRB_SET_INSTANCE_TT(fl, MRB_TT_FLOAT);
-  mrb_undef_class_method(mrb,  fl, "new");
-  mrb_define_method(mrb, fl,      "+",         flo_plus,       MRB_ARGS_REQ(1)); /* 15.2.9.3.1  */
-  mrb_define_method(mrb, fl,      "-",         flo_minus,      MRB_ARGS_REQ(1)); /* 15.2.9.3.2  */
-  mrb_define_method(mrb, fl,      "*",         flo_mul,        MRB_ARGS_REQ(1)); /* 15.2.9.3.3  */
-  mrb_define_method(mrb, fl,      "%",         flo_mod,        MRB_ARGS_REQ(1)); /* 15.2.9.3.5  */
-  mrb_define_method(mrb, fl,      "==",        flo_eq,         MRB_ARGS_REQ(1)); /* 15.2.9.3.7  */
-  mrb_define_method(mrb, fl,      "~",         flo_rev,        MRB_ARGS_NONE());
-  mrb_define_method(mrb, fl,      "&",         flo_and,        MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, fl,      "|",         flo_or,         MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, fl,      "^",         flo_xor,        MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, fl,      ">>",        flo_lshift,     MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, fl,      "<<",        flo_rshift,     MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, fl,      "ceil",      flo_ceil,       MRB_ARGS_NONE()); /* 15.2.9.3.8  */
-  mrb_define_method(mrb, fl,      "finite?",   flo_finite_p,   MRB_ARGS_NONE()); /* 15.2.9.3.9  */
-  mrb_define_method(mrb, fl,      "floor",     flo_floor,      MRB_ARGS_NONE()); /* 15.2.9.3.10 */
-  mrb_define_method(mrb, fl,      "infinite?", flo_infinite_p, MRB_ARGS_NONE()); /* 15.2.9.3.11 */
-  mrb_define_method(mrb, fl,      "round",     flo_round,      MRB_ARGS_OPT(1)); /* 15.2.9.3.12 */
-  mrb_define_method(mrb, fl,      "to_f",      flo_to_f,       MRB_ARGS_NONE()); /* 15.2.9.3.13 */
-  mrb_define_method(mrb, fl,      "to_i",      flo_truncate,   MRB_ARGS_NONE()); /* 15.2.9.3.14 */
-  mrb_define_method(mrb, fl,      "to_int",    flo_truncate,   MRB_ARGS_NONE());
-  mrb_define_method(mrb, fl,      "truncate",  flo_truncate,   MRB_ARGS_NONE()); /* 15.2.9.3.15 */
-  mrb_define_method(mrb, fl,      "divmod",    flo_divmod,     MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, fl,      "eql?",      flo_eql,        MRB_ARGS_REQ(1)); /* 15.2.8.3.16 */
+  mrb->float_class = fl = $define_class(mrb, "Float", numeric);                 /* 15.2.9 */
+  $SET_INSTANCE_TT(fl, $TT_FLOAT);
+  $undef_class_method(mrb,  fl, "new");
+  $define_method(mrb, fl,      "+",         flo_plus,       $ARGS_REQ(1)); /* 15.2.9.3.1  */
+  $define_method(mrb, fl,      "-",         flo_minus,      $ARGS_REQ(1)); /* 15.2.9.3.2  */
+  $define_method(mrb, fl,      "*",         flo_mul,        $ARGS_REQ(1)); /* 15.2.9.3.3  */
+  $define_method(mrb, fl,      "%",         flo_mod,        $ARGS_REQ(1)); /* 15.2.9.3.5  */
+  $define_method(mrb, fl,      "==",        flo_eq,         $ARGS_REQ(1)); /* 15.2.9.3.7  */
+  $define_method(mrb, fl,      "~",         flo_rev,        $ARGS_NONE());
+  $define_method(mrb, fl,      "&",         flo_and,        $ARGS_REQ(1));
+  $define_method(mrb, fl,      "|",         flo_or,         $ARGS_REQ(1));
+  $define_method(mrb, fl,      "^",         flo_xor,        $ARGS_REQ(1));
+  $define_method(mrb, fl,      ">>",        flo_lshift,     $ARGS_REQ(1));
+  $define_method(mrb, fl,      "<<",        flo_rshift,     $ARGS_REQ(1));
+  $define_method(mrb, fl,      "ceil",      flo_ceil,       $ARGS_NONE()); /* 15.2.9.3.8  */
+  $define_method(mrb, fl,      "finite?",   flo_finite_p,   $ARGS_NONE()); /* 15.2.9.3.9  */
+  $define_method(mrb, fl,      "floor",     flo_floor,      $ARGS_NONE()); /* 15.2.9.3.10 */
+  $define_method(mrb, fl,      "infinite?", flo_infinite_p, $ARGS_NONE()); /* 15.2.9.3.11 */
+  $define_method(mrb, fl,      "round",     flo_round,      $ARGS_OPT(1)); /* 15.2.9.3.12 */
+  $define_method(mrb, fl,      "to_f",      flo_to_f,       $ARGS_NONE()); /* 15.2.9.3.13 */
+  $define_method(mrb, fl,      "to_i",      flo_truncate,   $ARGS_NONE()); /* 15.2.9.3.14 */
+  $define_method(mrb, fl,      "to_int",    flo_truncate,   $ARGS_NONE());
+  $define_method(mrb, fl,      "truncate",  flo_truncate,   $ARGS_NONE()); /* 15.2.9.3.15 */
+  $define_method(mrb, fl,      "divmod",    flo_divmod,     $ARGS_REQ(1));
+  $define_method(mrb, fl,      "eql?",      flo_eql,        $ARGS_REQ(1)); /* 15.2.8.3.16 */
 
-  mrb_define_method(mrb, fl,      "to_s",      flo_to_s,       MRB_ARGS_NONE()); /* 15.2.9.3.16(x) */
-  mrb_define_method(mrb, fl,      "inspect",   flo_to_s,       MRB_ARGS_NONE());
-  mrb_define_method(mrb, fl,      "nan?",      flo_nan_p,      MRB_ARGS_NONE());
+  $define_method(mrb, fl,      "to_s",      flo_to_s,       $ARGS_NONE()); /* 15.2.9.3.16(x) */
+  $define_method(mrb, fl,      "inspect",   flo_to_s,       $ARGS_NONE());
+  $define_method(mrb, fl,      "nan?",      flo_nan_p,      $ARGS_NONE());
 
 #ifdef INFINITY
-  mrb_define_const(mrb, fl, "INFINITY", mrb_float_value(mrb, INFINITY));
+  $define_const(mrb, fl, "INFINITY", $float_value(mrb, INFINITY));
 #endif
 #ifdef NAN
-  mrb_define_const(mrb, fl, "NAN", mrb_float_value(mrb, NAN));
+  $define_const(mrb, fl, "NAN", $float_value(mrb, NAN));
 #endif
 #endif
-  mrb_define_module(mrb, "Integral");
+  $define_module(mrb, "Integral");
 }

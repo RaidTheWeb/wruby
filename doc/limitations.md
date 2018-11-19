@@ -69,7 +69,7 @@ No exception is raised.
 
 mruby's ```Fiber``` is implemented in a similar way to Lua's co-routine. This
 results in the consequence that you can't switch context within C functions.
-Only exception is ```mrb_fiber_yield``` at return.
+Only exception is ```$fiber_yield``` at return.
 
 ## ```Array``` does not support instance variables
 

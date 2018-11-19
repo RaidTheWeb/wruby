@@ -11,26 +11,26 @@
 #include <mruby/string.h>
 #include <mruby/variable.h>
 
-#ifndef MRB_WITHOUT_FLOAT
+#ifndef $WITHOUT_FLOAT
 /* a function to get hash value of a float number */
-mrb_int mrb_float_id(mrb_float f);
+$int $float_id($float f);
 #endif
 
 /* return non zero to break the loop */
-typedef int (sg_foreach_func)(mrb_state *mrb,mrb_value key, mrb_value val, void *data);
+typedef int (sg_foreach_func)($state *mrb,$value key, $value val, void *data);
 
-#ifndef MRB_SG_SEGMENT_SIZE
-#define MRB_SG_SEGMENT_SIZE 5
+#ifndef $SG_SEGMENT_SIZE
+#define $SG_SEGMENT_SIZE 5
 #endif
 
 struct segkv {
-  mrb_value key;
-  mrb_value val;
+  $value key;
+  $value val;
 };
 
 typedef struct segment {
   struct segment *next;
-  struct segkv e[MRB_SG_SEGMENT_SIZE];
+  struct segkv e[$SG_SEGMENT_SIZE];
 } segment;
 
 typedef struct segindex {
@@ -43,78 +43,78 @@ typedef struct segindex {
 typedef struct seglist {
   segment *rootseg;
   segment *lastseg;
-  mrb_int size;
-  mrb_int last_len;
+  $int size;
+  $int last_len;
   segindex *index;
 } seglist;
 
 static /* inline */ size_t
-sg_hash_func(mrb_state *mrb, seglist *t, mrb_value key)
+sg_hash_func($state *mrb, seglist *t, $value key)
 {
-  enum mrb_vtype tt = mrb_type(key);
-  mrb_value hv;
+  enum $vtype tt = $type(key);
+  $value hv;
   size_t h;
   segindex *index = t->index;
   size_t capa = index ? index->capa : 0;
 
   switch (tt) {
-  case MRB_TT_STRING:
-    h = mrb_str_hash(mrb, key);
+  case $TT_STRING:
+    h = $str_hash(mrb, key);
     break;
 
-  case MRB_TT_TRUE:
-  case MRB_TT_FALSE:
-  case MRB_TT_SYMBOL:
-  case MRB_TT_FIXNUM:
-#ifndef MRB_WITHOUT_FLOAT
-  case MRB_TT_FLOAT:
+  case $TT_TRUE:
+  case $TT_FALSE:
+  case $TT_SYMBOL:
+  case $TT_FIXNUM:
+#ifndef $WITHOUT_FLOAT
+  case $TT_FLOAT:
 #endif
-    h = (size_t)mrb_obj_id(key);
+    h = (size_t)$obj_id(key);
     break;
 
   default:
-    hv = mrb_funcall(mrb, key, "hash", 0);
-    h = (size_t)t ^ (size_t)mrb_fixnum(hv);
+    hv = $funcall(mrb, key, "hash", 0);
+    h = (size_t)t ^ (size_t)$fixnum(hv);
     break;
   }
   if (index && (index != t->index || capa != index->capa)) {
-    mrb_raise(mrb, E_RUNTIME_ERROR, "hash modified");
+    $raise(mrb, E_RUNTIME_ERROR, "hash modified");
   }
   return ((h)^((h)<<2)^((h)>>2));
 }
 
-static inline mrb_bool
-sg_hash_equal(mrb_state *mrb, seglist *t, mrb_value a, mrb_value b)
+static inline $bool
+sg_hash_equal($state *mrb, seglist *t, $value a, $value b)
 {
-  enum mrb_vtype tt = mrb_type(a);
+  enum $vtype tt = $type(a);
 
   switch (tt) {
-  case MRB_TT_STRING:
-    return mrb_str_equal(mrb, a, b);
+  case $TT_STRING:
+    return $str_equal(mrb, a, b);
 
-  case MRB_TT_SYMBOL:
-    if (mrb_type(b) != MRB_TT_SYMBOL) return FALSE;
-    return mrb_symbol(a) == mrb_symbol(b);
+  case $TT_SYMBOL:
+    if ($type(b) != $TT_SYMBOL) return FALSE;
+    return $symbol(a) == $symbol(b);
 
-  case MRB_TT_FIXNUM:
-    switch (mrb_type(b)) {
-    case MRB_TT_FIXNUM:
-      return mrb_fixnum(a) == mrb_fixnum(b);
-#ifndef MRB_WITHOUT_FLOAT
-    case MRB_TT_FLOAT:
-      return (mrb_float)mrb_fixnum(a) == mrb_float(b);
+  case $TT_FIXNUM:
+    switch ($type(b)) {
+    case $TT_FIXNUM:
+      return $fixnum(a) == $fixnum(b);
+#ifndef $WITHOUT_FLOAT
+    case $TT_FLOAT:
+      return ($float)$fixnum(a) == $float(b);
 #endif
     default:
       return FALSE;
     }
 
-#ifndef MRB_WITHOUT_FLOAT
-  case MRB_TT_FLOAT:
-    switch (mrb_type(b)) {
-    case MRB_TT_FIXNUM:
-      return mrb_float(a) == (mrb_float)mrb_fixnum(b);
-    case MRB_TT_FLOAT:
-      return mrb_float(a) == mrb_float(b);
+#ifndef $WITHOUT_FLOAT
+  case $TT_FLOAT:
+    switch ($type(b)) {
+    case $TT_FIXNUM:
+      return $float(a) == ($float)$fixnum(b);
+    case $TT_FLOAT:
+      return $float(a) == $float(b);
     default:
       return FALSE;
     }
@@ -124,9 +124,9 @@ sg_hash_equal(mrb_state *mrb, seglist *t, mrb_value a, mrb_value b)
     {
       segindex *index = t->index;
       size_t capa = index ? index->capa : 0;
-      mrb_bool eql = mrb_eql(mrb, a, b);
+      $bool eql = $eql(mrb, a, b);
       if (index && (index != t->index || capa != index->capa)) {
-        mrb_raise(mrb, E_RUNTIME_ERROR, "hash modified");
+        $raise(mrb, E_RUNTIME_ERROR, "hash modified");
       }
       return eql;
     }
@@ -135,11 +135,11 @@ sg_hash_equal(mrb_state *mrb, seglist *t, mrb_value a, mrb_value b)
 
 /* Creates the instance variable table. */
 static seglist*
-sg_new(mrb_state *mrb)
+sg_new($state *mrb)
 {
   seglist *t;
 
-  t = (seglist*)mrb_malloc(mrb, sizeof(seglist));
+  t = (seglist*)$malloc(mrb, sizeof(seglist));
   t->size = 0;
   t->rootseg =  NULL;
   t->lastseg =  NULL;
@@ -167,7 +167,7 @@ sg_new(mrb_state *mrb)
 
 /* Build index for the segment list */
 static void
-sg_index(mrb_state *mrb, seglist *t)
+sg_index($state *mrb, seglist *t)
 {
   size_t size = (size_t)t->size;
   size_t mask;
@@ -175,10 +175,10 @@ sg_index(mrb_state *mrb, seglist *t)
   segment *seg;
   size_t i;
 
-  if (size < MRB_SG_SEGMENT_SIZE) {
+  if (size < $SG_SEGMENT_SIZE) {
     if (index) {
     failed:
-      mrb_free(mrb, index);
+      $free(mrb, index);
       t->index = NULL;
     }
     return;
@@ -189,7 +189,7 @@ sg_index(mrb_state *mrb, seglist *t)
   }
   power2(size);
   if (!index || index->capa < size) {
-    index = (segindex*)mrb_realloc_simple(mrb, index, sizeof(segindex)+sizeof(struct segkv*)*size);
+    index = (segindex*)$realloc_simple(mrb, index, sizeof(segindex)+sizeof(struct segkv*)*size);
     if (index == NULL) goto failed;
     t->index = index;
   }
@@ -203,15 +203,15 @@ sg_index(mrb_state *mrb, seglist *t)
   mask = SG_MASK(index);
   seg = t->rootseg;
   while (seg) {
-    for (i=0; i<MRB_SG_SEGMENT_SIZE; i++) {
-      mrb_value key;
+    for (i=0; i<$SG_SEGMENT_SIZE; i++) {
+      $value key;
       size_t k, step = 0;
 
       if (!seg->next && i >= (size_t)t->last_len) {
         return;
       }
       key = seg->e[i].key;
-      if (mrb_undef_p(key)) continue;
+      if ($undef_p(key)) continue;
       k = sg_hash_func(mrb, t, key) & mask;
       while (index->table[k]) {
         k = (k+(++step)) & mask;
@@ -224,13 +224,13 @@ sg_index(mrb_state *mrb, seglist *t)
 
 /* Compacts the segment list removing deleted entries. */
 static void
-sg_compact(mrb_state *mrb, seglist *t)
+sg_compact($state *mrb, seglist *t)
 {
   segment *seg;
-  mrb_int i;
+  $int i;
   segment *seg2 = NULL;
-  mrb_int i2;
-  mrb_int size = 0;
+  $int i2;
+  $int size = 0;
 
   if (t == NULL) return;
   seg = t->rootseg;
@@ -239,13 +239,13 @@ sg_compact(mrb_state *mrb, seglist *t)
     return;
   }
   while (seg) {
-    for (i=0; i<MRB_SG_SEGMENT_SIZE; i++) {
-      mrb_value k = seg->e[i].key;
+    for (i=0; i<$SG_SEGMENT_SIZE; i++) {
+      $value k = seg->e[i].key;
 
       if (!seg->next && i >= t->last_len) {
         goto exit;
       }
-      if (mrb_undef_p(k)) {     /* found delete key */
+      if ($undef_p(k)) {     /* found delete key */
         if (seg2 == NULL) {
           seg2 = seg;
           i2 = i;
@@ -255,7 +255,7 @@ sg_compact(mrb_state *mrb, seglist *t)
         size++;
         if (seg2 != NULL) {
           seg2->e[i2++] = seg->e[i];
-          if (i2 >= MRB_SG_SEGMENT_SIZE) {
+          if (i2 >= $SG_SEGMENT_SIZE) {
             seg2 = seg2->next;
             i2 = 0;
           }
@@ -274,7 +274,7 @@ sg_compact(mrb_state *mrb, seglist *t)
     t->lastseg = seg2;
     while (seg) {
       seg2 = seg->next;
-      mrb_free(mrb, seg);
+      $free(mrb, seg);
       seg = seg2;
     }
   }
@@ -285,7 +285,7 @@ sg_compact(mrb_state *mrb, seglist *t)
 
 /* Set the value for the key in the indexed segment list. */
 static void
-sg_index_put(mrb_state *mrb, seglist *t, mrb_value key, mrb_value val)
+sg_index_put($state *mrb, seglist *t, $value key, $value val)
 {
   segindex *index = t->index;
   size_t k, sp, step = 0, mask;
@@ -300,8 +300,8 @@ sg_index_put(mrb_state *mrb, seglist *t, mrb_value key, mrb_value val)
   sp = index->capa;
   k = sg_hash_func(mrb, t, key) & mask;
   while (index->table[k]) {
-    mrb_value key2 = index->table[k]->key;
-    if (mrb_undef_p(key2)) {
+    $value key2 = index->table[k]->key;
+    if ($undef_p(key2)) {
       if (sp == index->capa) sp = k;
     }
     else if (sg_hash_equal(mrb, t, key, key2)) {
@@ -316,11 +316,11 @@ sg_index_put(mrb_state *mrb, seglist *t, mrb_value key, mrb_value val)
 
   /* put the value at the last */
   seg = t->lastseg;
-  if (t->last_len < MRB_SG_SEGMENT_SIZE) {
+  if (t->last_len < $SG_SEGMENT_SIZE) {
     index->table[k] = &seg->e[t->last_len++];
   }
   else {                        /* append a new segment */
-    seg->next = (segment*)mrb_malloc(mrb, sizeof(segment));
+    seg->next = (segment*)$malloc(mrb, sizeof(segment));
     seg = seg->next;
     seg->next = NULL;
     t->lastseg = seg;
@@ -335,10 +335,10 @@ sg_index_put(mrb_state *mrb, seglist *t, mrb_value key, mrb_value val)
 
 /* Set the value for the key in the segment list. */
 static void
-sg_put(mrb_state *mrb, seglist *t, mrb_value key, mrb_value val)
+sg_put($state *mrb, seglist *t, $value key, $value val)
 {
   segment *seg;
-  mrb_int i, deleted = 0;
+  $int i, deleted = 0;
 
   if (t == NULL) return;
   if (t->index) {
@@ -347,8 +347,8 @@ sg_put(mrb_state *mrb, seglist *t, mrb_value key, mrb_value val)
   }
   seg = t->rootseg;
   while (seg) {
-    for (i=0; i<MRB_SG_SEGMENT_SIZE; i++) {
-      mrb_value k = seg->e[i].key;
+    for (i=0; i<$SG_SEGMENT_SIZE; i++) {
+      $value k = seg->e[i].key;
       /* Found room in last segment after last_len */
       if (!seg->next && i >= t->last_len) {
         seg->e[i].key = key;
@@ -357,7 +357,7 @@ sg_put(mrb_state *mrb, seglist *t, mrb_value key, mrb_value val)
         t->size++;
         return;
       }
-      if (mrb_undef_p(k)) {
+      if ($undef_p(k)) {
         deleted++;
         continue;
       }
@@ -370,12 +370,12 @@ sg_put(mrb_state *mrb, seglist *t, mrb_value key, mrb_value val)
   }
 
   /* Not found */
-  if (deleted > MRB_SG_SEGMENT_SIZE) {
+  if (deleted > $SG_SEGMENT_SIZE) {
     sg_compact(mrb, t);
   }
   t->size++;
 
-  seg = (segment*)mrb_malloc(mrb, sizeof(segment));
+  seg = (segment*)$malloc(mrb, sizeof(segment));
   seg->next = NULL;
   seg->e[0].key = key;
   seg->e[0].val = val;
@@ -387,14 +387,14 @@ sg_put(mrb_state *mrb, seglist *t, mrb_value key, mrb_value val)
     t->lastseg->next = seg;
   }
   t->lastseg = seg;
-  if (t->index == NULL && t->size > MRB_SG_SEGMENT_SIZE*4) {
+  if (t->index == NULL && t->size > $SG_SEGMENT_SIZE*4) {
     sg_index(mrb, t);
   }
 }
 
 /* Get a value for a key from the indexed segment list. */
-static mrb_bool
-sg_index_get(mrb_state *mrb, seglist *t, mrb_value key, mrb_value *vp)
+static $bool
+sg_index_get($state *mrb, seglist *t, $value key, $value *vp)
 {
   segindex *index = t->index;
   size_t mask = SG_MASK(index);
@@ -402,8 +402,8 @@ sg_index_get(mrb_state *mrb, seglist *t, mrb_value key, mrb_value *vp)
   size_t step = 0;
 
   while (index->table[k]) {
-    mrb_value key2 = index->table[k]->key;
-    if (!mrb_undef_p(key2) && sg_hash_equal(mrb, t, key, key2)) {
+    $value key2 = index->table[k]->key;
+    if (!$undef_p(key2) && sg_hash_equal(mrb, t, key, key2)) {
       if (vp) *vp = index->table[k]->val;
       return TRUE;
     }
@@ -413,11 +413,11 @@ sg_index_get(mrb_state *mrb, seglist *t, mrb_value key, mrb_value *vp)
 }
 
 /* Get a value for a key from the segment list. */
-static mrb_bool
-sg_get(mrb_state *mrb, seglist *t, mrb_value key, mrb_value *vp)
+static $bool
+sg_get($state *mrb, seglist *t, $value key, $value *vp)
 {
   segment *seg;
-  mrb_int i;
+  $int i;
 
   if (t == NULL) return FALSE;
   if (t->index) {
@@ -426,13 +426,13 @@ sg_get(mrb_state *mrb, seglist *t, mrb_value key, mrb_value *vp)
 
   seg = t->rootseg;
   while (seg) {
-    for (i=0; i<MRB_SG_SEGMENT_SIZE; i++) {
-      mrb_value k = seg->e[i].key;
+    for (i=0; i<$SG_SEGMENT_SIZE; i++) {
+      $value k = seg->e[i].key;
 
       if (!seg->next && i >= t->last_len) {
         return FALSE;
       }
-      if (mrb_undef_p(k)) continue;
+      if ($undef_p(k)) continue;
       if (sg_hash_equal(mrb, t, k, key)) {
         if (vp) *vp = seg->e[i].val;
         return TRUE;
@@ -445,26 +445,26 @@ sg_get(mrb_state *mrb, seglist *t, mrb_value key, mrb_value *vp)
 
 /* Deletes the value for the symbol from the instance variable table. */
 /* Deletion is done by overwriting keys by `undef`. */
-static mrb_bool
-sg_del(mrb_state *mrb, seglist *t, mrb_value key, mrb_value *vp)
+static $bool
+sg_del($state *mrb, seglist *t, $value key, $value *vp)
 {
   segment *seg;
-  mrb_int i;
+  $int i;
 
   if (t == NULL) return FALSE;
   seg = t->rootseg;
   while (seg) {
-    for (i=0; i<MRB_SG_SEGMENT_SIZE; i++) {
-      mrb_value key2;
+    for (i=0; i<$SG_SEGMENT_SIZE; i++) {
+      $value key2;
 
       if (!seg->next && i >= t->last_len) {
         /* not found */
         return FALSE;
       }
       key2 = seg->e[i].key;
-      if (!mrb_undef_p(key2) && sg_hash_equal(mrb, t, key, key2)) {
+      if (!$undef_p(key2) && sg_hash_equal(mrb, t, key, key2)) {
         if (vp) *vp = seg->e[i].val;
-        seg->e[i].key = mrb_undef_value();
+        seg->e[i].key = $undef_value();
         t->size--;
         return TRUE;
       }
@@ -476,23 +476,23 @@ sg_del(mrb_state *mrb, seglist *t, mrb_value key, mrb_value *vp)
 
 /* Iterates over the instance variable table. */
 static void
-sg_foreach(mrb_state *mrb, seglist *t, sg_foreach_func *func, void *p)
+sg_foreach($state *mrb, seglist *t, sg_foreach_func *func, void *p)
 {
   segment *seg;
-  mrb_int i;
+  $int i;
 
   if (t == NULL) return;
-  if (t->index && t->index->size-(size_t)t->size > MRB_SG_SEGMENT_SIZE) {
+  if (t->index && t->index->size-(size_t)t->size > $SG_SEGMENT_SIZE) {
     sg_compact(mrb, t);
   }
   seg = t->rootseg;
   while (seg) {
-    for (i=0; i<MRB_SG_SEGMENT_SIZE; i++) {
+    for (i=0; i<$SG_SEGMENT_SIZE; i++) {
       /* no value in last segment after last_len */
       if (!seg->next && i >= t->last_len) {
         return;
       }
-      if (mrb_undef_p(seg->e[i].key)) continue;
+      if ($undef_p(seg->e[i].key)) continue;
       if ((*func)(mrb, seg->e[i].key, seg->e[i].val, p) != 0)
         return;
     }
@@ -501,8 +501,8 @@ sg_foreach(mrb_state *mrb, seglist *t, sg_foreach_func *func, void *p)
 }
 
 /* Get the size of the instance variable table. */
-static mrb_int
-sg_size(mrb_state *mrb, seglist *t)
+static $int
+sg_size($state *mrb, seglist *t)
 {
   if (t == NULL) return 0;
   return t->size;
@@ -510,19 +510,19 @@ sg_size(mrb_state *mrb, seglist *t)
 
 /* Copy the instance variable table. */
 static seglist*
-sg_copy(mrb_state *mrb, seglist *t)
+sg_copy($state *mrb, seglist *t)
 {
   segment *seg;
   seglist *t2;
-  mrb_int i;
+  $int i;
 
   seg = t->rootseg;
   t2 = sg_new(mrb);
 
   while (seg != NULL) {
-    for (i=0; i<MRB_SG_SEGMENT_SIZE; i++) {
-      mrb_value key = seg->e[i].key;
-      mrb_value val = seg->e[i].val;
+    for (i=0; i<$SG_SEGMENT_SIZE; i++) {
+      $value key = seg->e[i].key;
+      $value val = seg->e[i].val;
 
       if ((seg->next == NULL) && (i >= t->last_len)) {
         return t2;
@@ -536,7 +536,7 @@ sg_copy(mrb_state *mrb, seglist *t)
 
 /* Free memory of the instance variable table. */
 static void
-sg_free(mrb_state *mrb, seglist *t)
+sg_free($state *mrb, seglist *t)
 {
   segment *seg;
 
@@ -545,20 +545,20 @@ sg_free(mrb_state *mrb, seglist *t)
   while (seg) {
     segment *p = seg;
     seg = seg->next;
-    mrb_free(mrb, p);
+    $free(mrb, p);
   }
-  if (t->index) mrb_free(mrb, t->index);
-  mrb_free(mrb, t);
+  if (t->index) $free(mrb, t->index);
+  $free(mrb, t);
 }
 
-static void mrb_hash_modify(mrb_state *mrb, mrb_value hash);
+static void $hash_modify($state *mrb, $value hash);
 
-static inline mrb_value
-ht_key(mrb_state *mrb, mrb_value key)
+static inline $value
+ht_key($state *mrb, $value key)
 {
-  if (mrb_string_p(key) && !MRB_FROZEN_P(mrb_str_ptr(key))) {
-    key = mrb_str_dup(mrb, key);
-    MRB_SET_FROZEN_FLAG(mrb_str_ptr(key));
+  if ($string_p(key) && !$FROZEN_P($str_ptr(key))) {
+    key = $str_dup(mrb, key);
+    $SET_FROZEN_FLAG($str_ptr(key));
   }
   return key;
 }
@@ -566,102 +566,102 @@ ht_key(mrb_state *mrb, mrb_value key)
 #define KEY(key) ht_key(mrb, key)
 
 static int
-hash_mark_i(mrb_state *mrb, mrb_value key, mrb_value val, void *p)
+hash_mark_i($state *mrb, $value key, $value val, void *p)
 {
-  mrb_gc_mark_value(mrb, key);
-  mrb_gc_mark_value(mrb, val);
+  $gc_mark_value(mrb, key);
+  $gc_mark_value(mrb, val);
   return 0;
 }
 
 void
-mrb_gc_mark_hash(mrb_state *mrb, struct RHash *hash)
+$gc_mark_hash($state *mrb, struct RHash *hash)
 {
   sg_foreach(mrb, hash->ht, hash_mark_i, NULL);
 }
 
 size_t
-mrb_gc_mark_hash_size(mrb_state *mrb, struct RHash *hash)
+$gc_mark_hash_size($state *mrb, struct RHash *hash)
 {
   if (!hash->ht) return 0;
   return sg_size(mrb, hash->ht)*2;
 }
 
 void
-mrb_gc_free_hash(mrb_state *mrb, struct RHash *hash)
+$gc_free_hash($state *mrb, struct RHash *hash)
 {
   sg_free(mrb, hash->ht);
 }
 
-MRB_API mrb_value
-mrb_hash_new(mrb_state *mrb)
+$API $value
+$hash_new($state *mrb)
 {
   struct RHash *h;
 
-  h = (struct RHash*)mrb_obj_alloc(mrb, MRB_TT_HASH, mrb->hash_class);
+  h = (struct RHash*)$obj_alloc(mrb, $TT_HASH, mrb->hash_class);
   h->ht = 0;
   h->iv = 0;
-  return mrb_obj_value(h);
+  return $obj_value(h);
 }
 
-MRB_API mrb_value
-mrb_hash_new_capa(mrb_state *mrb, mrb_int capa)
+$API $value
+$hash_new_capa($state *mrb, $int capa)
 {
   struct RHash *h;
 
-  h = (struct RHash*)mrb_obj_alloc(mrb, MRB_TT_HASH, mrb->hash_class);
+  h = (struct RHash*)$obj_alloc(mrb, $TT_HASH, mrb->hash_class);
   /* preallocate segment list */
   h->ht = sg_new(mrb);
   /* capacity ignored */
   h->iv = 0;
-  return mrb_obj_value(h);
+  return $obj_value(h);
 }
 
-static mrb_value mrb_hash_default(mrb_state *mrb, mrb_value hash);
-static mrb_value hash_default(mrb_state *mrb, mrb_value hash, mrb_value key);
+static $value $hash_default($state *mrb, $value hash);
+static $value hash_default($state *mrb, $value hash, $value key);
 
-static mrb_value
-mrb_hash_init_copy(mrb_state *mrb, mrb_value self)
+static $value
+$hash_init_copy($state *mrb, $value self)
 {
-  mrb_value orig;
+  $value orig;
   struct RHash* copy;
   seglist *orig_h;
-  mrb_value ifnone, vret;
+  $value ifnone, vret;
 
-  mrb_get_args(mrb, "o", &orig);
-  if (mrb_obj_equal(mrb, self, orig)) return self;
-  if ((mrb_type(self) != mrb_type(orig)) || (mrb_obj_class(mrb, self) != mrb_obj_class(mrb, orig))) {
-      mrb_raise(mrb, E_TYPE_ERROR, "initialize_copy should take same class object");
+  $get_args(mrb, "o", &orig);
+  if ($obj_equal(mrb, self, orig)) return self;
+  if (($type(self) != $type(orig)) || ($obj_class(mrb, self) != $obj_class(mrb, orig))) {
+      $raise(mrb, E_TYPE_ERROR, "initialize_copy should take same class object");
   }
 
   orig_h = RHASH_TBL(self);
-  copy = (struct RHash*)mrb_obj_alloc(mrb, MRB_TT_HASH, mrb->hash_class);
+  copy = (struct RHash*)$obj_alloc(mrb, $TT_HASH, mrb->hash_class);
   copy->ht = sg_copy(mrb, orig_h);
 
-  if (MRB_RHASH_DEFAULT_P(self)) {
-    copy->flags |= MRB_HASH_DEFAULT;
+  if ($RHASH_DEFAULT_P(self)) {
+    copy->flags |= $HASH_DEFAULT;
   }
-  if (MRB_RHASH_PROCDEFAULT_P(self)) {
-    copy->flags |= MRB_HASH_PROC_DEFAULT;
+  if ($RHASH_PROCDEFAULT_P(self)) {
+    copy->flags |= $HASH_PROC_DEFAULT;
   }
-  vret = mrb_obj_value(copy);
+  vret = $obj_value(copy);
   ifnone = RHASH_IFNONE(self);
-  if (!mrb_nil_p(ifnone)) {
-      mrb_iv_set(mrb, vret, mrb_intern_lit(mrb, "ifnone"), ifnone);
+  if (!$nil_p(ifnone)) {
+      $iv_set(mrb, vret, $intern_lit(mrb, "ifnone"), ifnone);
   }
   return vret;
 }
 
 static int
-check_kdict_i(mrb_state *mrb, mrb_value key, mrb_value val, void *data)
+check_kdict_i($state *mrb, $value key, $value val, void *data)
 {
-  if (!mrb_symbol_p(key)) {
-    mrb_raise(mrb, E_ARGUMENT_ERROR, "keyword argument hash with non symbol keys");
+  if (!$symbol_p(key)) {
+    $raise(mrb, E_ARGUMENT_ERROR, "keyword argument hash with non symbol keys");
   }
   return 0;
 }
 
 void
-mrb_hash_check_kdict(mrb_state *mrb, mrb_value self)
+$hash_check_kdict($state *mrb, $value self)
 {
   seglist *sg;
 
@@ -670,40 +670,40 @@ mrb_hash_check_kdict(mrb_state *mrb, mrb_value self)
   sg_foreach(mrb, sg, check_kdict_i, NULL);
 }
 
-MRB_API mrb_value
-mrb_hash_dup(mrb_state *mrb, mrb_value self)
+$API $value
+$hash_dup($state *mrb, $value self)
 {
   struct RHash* copy;
   seglist *orig_h;
 
   orig_h = RHASH_TBL(self);
-  copy = (struct RHash*)mrb_obj_alloc(mrb, MRB_TT_HASH, mrb->hash_class);
+  copy = (struct RHash*)$obj_alloc(mrb, $TT_HASH, mrb->hash_class);
   copy->ht = orig_h ? sg_copy(mrb, orig_h) : NULL;
-  return mrb_obj_value(copy);
+  return $obj_value(copy);
 }
 
-MRB_API mrb_value
-mrb_hash_get(mrb_state *mrb, mrb_value hash, mrb_value key)
+$API $value
+$hash_get($state *mrb, $value hash, $value key)
 {
-  mrb_value val;
-  mrb_sym mid;
+  $value val;
+  $sym mid;
 
   if (sg_get(mrb, RHASH_TBL(hash), key, &val)) {
     return val;
   }
 
-  mid = mrb_intern_lit(mrb, "default");
-  if (mrb_func_basic_p(mrb, hash, mid, mrb_hash_default)) {
+  mid = $intern_lit(mrb, "default");
+  if ($func_basic_p(mrb, hash, mid, $hash_default)) {
     return hash_default(mrb, hash, key);
   }
-  /* xxx mrb_funcall_tailcall(mrb, hash, "default", 1, key); */
-  return mrb_funcall_argv(mrb, hash, mid, 1, &key);
+  /* xxx $funcall_tailcall(mrb, hash, "default", 1, key); */
+  return $funcall_argv(mrb, hash, mid, 1, &key);
 }
 
-MRB_API mrb_value
-mrb_hash_fetch(mrb_state *mrb, mrb_value hash, mrb_value key, mrb_value def)
+$API $value
+$hash_fetch($state *mrb, $value hash, $value key, $value def)
 {
-  mrb_value val;
+  $value val;
 
   if (sg_get(mrb, RHASH_TBL(hash), key, &val)) {
     return val;
@@ -712,35 +712,35 @@ mrb_hash_fetch(mrb_state *mrb, mrb_value hash, mrb_value key, mrb_value def)
   return def;
 }
 
-MRB_API void
-mrb_hash_set(mrb_state *mrb, mrb_value hash, mrb_value key, mrb_value val)
+$API void
+$hash_set($state *mrb, $value hash, $value key, $value val)
 {
-  mrb_hash_modify(mrb, hash);
+  $hash_modify(mrb, hash);
 
   key = KEY(key);
   sg_put(mrb, RHASH_TBL(hash), key, val);
-  mrb_field_write_barrier_value(mrb, (struct RBasic*)RHASH(hash), key);
-  mrb_field_write_barrier_value(mrb, (struct RBasic*)RHASH(hash), val);
+  $field_write_barrier_value(mrb, (struct RBasic*)RHASH(hash), key);
+  $field_write_barrier_value(mrb, (struct RBasic*)RHASH(hash), val);
   return;
 }
 
-MRB_API mrb_value
-mrb_ensure_hash_type(mrb_state *mrb, mrb_value hash)
+$API $value
+$ensure_hash_type($state *mrb, $value hash)
 {
-  return mrb_convert_type(mrb, hash, MRB_TT_HASH, "Hash", "to_hash");
+  return $convert_type(mrb, hash, $TT_HASH, "Hash", "to_hash");
 }
 
-MRB_API mrb_value
-mrb_check_hash_type(mrb_state *mrb, mrb_value hash)
+$API $value
+$check_hash_type($state *mrb, $value hash)
 {
-  return mrb_check_convert_type(mrb, hash, MRB_TT_HASH, "Hash", "to_hash");
+  return $check_convert_type(mrb, hash, $TT_HASH, "Hash", "to_hash");
 }
 
 static void
-mrb_hash_modify(mrb_state *mrb, mrb_value hash)
+$hash_modify($state *mrb, $value hash)
 {
-  if (MRB_FROZEN_P(mrb_hash_ptr(hash))) {
-    mrb_raise(mrb, E_FROZEN_ERROR, "can't modify frozen hash");
+  if ($FROZEN_P($hash_ptr(hash))) {
+    $raise(mrb, E_FROZEN_ERROR, "can't modify frozen hash");
   }
 
   if (!RHASH_TBL(hash)) {
@@ -784,25 +784,25 @@ mrb_hash_modify(mrb_state *mrb, mrb_value hash)
  *
  */
 
-static mrb_value
-mrb_hash_init(mrb_state *mrb, mrb_value hash)
+static $value
+$hash_init($state *mrb, $value hash)
 {
-  mrb_value block, ifnone;
-  mrb_bool ifnone_p;
+  $value block, ifnone;
+  $bool ifnone_p;
 
-  ifnone = mrb_nil_value();
-  mrb_get_args(mrb, "&|o?", &block, &ifnone, &ifnone_p);
-  mrb_hash_modify(mrb, hash);
-  if (!mrb_nil_p(block)) {
+  ifnone = $nil_value();
+  $get_args(mrb, "&|o?", &block, &ifnone, &ifnone_p);
+  $hash_modify(mrb, hash);
+  if (!$nil_p(block)) {
     if (ifnone_p) {
-      mrb_raise(mrb, E_ARGUMENT_ERROR, "wrong number of arguments");
+      $raise(mrb, E_ARGUMENT_ERROR, "wrong number of arguments");
     }
-    RHASH(hash)->flags |= MRB_HASH_PROC_DEFAULT;
+    RHASH(hash)->flags |= $HASH_PROC_DEFAULT;
     ifnone = block;
   }
-  if (!mrb_nil_p(ifnone)) {
-    RHASH(hash)->flags |= MRB_HASH_DEFAULT;
-    mrb_iv_set(mrb, hash, mrb_intern_lit(mrb, "ifnone"), ifnone);
+  if (!$nil_p(ifnone)) {
+    RHASH(hash)->flags |= $HASH_DEFAULT;
+    $iv_set(mrb, hash, $intern_lit(mrb, "ifnone"), ifnone);
   }
   return hash;
 }
@@ -821,27 +821,27 @@ mrb_hash_init(mrb_state *mrb, mrb_value hash)
  *     h["c"]   #=> nil
  *
  */
-static mrb_value
-mrb_hash_aget(mrb_state *mrb, mrb_value self)
+static $value
+$hash_aget($state *mrb, $value self)
 {
-  mrb_value key;
+  $value key;
 
-  mrb_get_args(mrb, "o", &key);
-  return mrb_hash_get(mrb, self, key);
+  $get_args(mrb, "o", &key);
+  return $hash_get(mrb, self, key);
 }
 
-static mrb_value
-hash_default(mrb_state *mrb, mrb_value hash, mrb_value key)
+static $value
+hash_default($state *mrb, $value hash, $value key)
 {
-  if (MRB_RHASH_DEFAULT_P(hash)) {
-    if (MRB_RHASH_PROCDEFAULT_P(hash)) {
-      return mrb_funcall(mrb, RHASH_PROCDEFAULT(hash), "call", 2, hash, key);
+  if ($RHASH_DEFAULT_P(hash)) {
+    if ($RHASH_PROCDEFAULT_P(hash)) {
+      return $funcall(mrb, RHASH_PROCDEFAULT(hash), "call", 2, hash, key);
     }
     else {
       return RHASH_IFNONE(hash);
     }
   }
-  return mrb_nil_value();
+  return $nil_value();
 }
 
 /* 15.2.13.4.5  */
@@ -866,23 +866,23 @@ hash_default(mrb_state *mrb, mrb_value hash, mrb_value key)
  *     h.default(2)                            #=> 20
  */
 
-static mrb_value
-mrb_hash_default(mrb_state *mrb, mrb_value hash)
+static $value
+$hash_default($state *mrb, $value hash)
 {
-  mrb_value key;
-  mrb_bool given;
+  $value key;
+  $bool given;
 
-  mrb_get_args(mrb, "|o?", &key, &given);
-  if (MRB_RHASH_DEFAULT_P(hash)) {
-    if (MRB_RHASH_PROCDEFAULT_P(hash)) {
-      if (!given) return mrb_nil_value();
-      return mrb_funcall(mrb, RHASH_PROCDEFAULT(hash), "call", 2, hash, key);
+  $get_args(mrb, "|o?", &key, &given);
+  if ($RHASH_DEFAULT_P(hash)) {
+    if ($RHASH_PROCDEFAULT_P(hash)) {
+      if (!given) return $nil_value();
+      return $funcall(mrb, RHASH_PROCDEFAULT(hash), "call", 2, hash, key);
     }
     else {
       return RHASH_IFNONE(hash);
     }
   }
-  return mrb_nil_value();
+  return $nil_value();
 }
 
 /* 15.2.13.4.6  */
@@ -906,20 +906,20 @@ mrb_hash_default(mrb_state *mrb, mrb_value hash)
  *     h["cat"]   #=> #<Proc:0x401b3948@-:6>
  */
 
-static mrb_value
-mrb_hash_set_default(mrb_state *mrb, mrb_value hash)
+static $value
+$hash_set_default($state *mrb, $value hash)
 {
-  mrb_value ifnone;
+  $value ifnone;
 
-  mrb_get_args(mrb, "o", &ifnone);
-  mrb_hash_modify(mrb, hash);
-  mrb_iv_set(mrb, hash, mrb_intern_lit(mrb, "ifnone"), ifnone);
-  RHASH(hash)->flags &= ~MRB_HASH_PROC_DEFAULT;
-  if (!mrb_nil_p(ifnone)) {
-    RHASH(hash)->flags |= MRB_HASH_DEFAULT;
+  $get_args(mrb, "o", &ifnone);
+  $hash_modify(mrb, hash);
+  $iv_set(mrb, hash, $intern_lit(mrb, "ifnone"), ifnone);
+  RHASH(hash)->flags &= ~$HASH_PROC_DEFAULT;
+  if (!$nil_p(ifnone)) {
+    RHASH(hash)->flags |= $HASH_DEFAULT;
   }
   else {
-    RHASH(hash)->flags &= ~MRB_HASH_DEFAULT;
+    RHASH(hash)->flags &= ~$HASH_DEFAULT;
   }
   return ifnone;
 }
@@ -940,13 +940,13 @@ mrb_hash_set_default(mrb_state *mrb, mrb_value hash)
  */
 
 
-static mrb_value
-mrb_hash_default_proc(mrb_state *mrb, mrb_value hash)
+static $value
+$hash_default_proc($state *mrb, $value hash)
 {
-  if (MRB_RHASH_PROCDEFAULT_P(hash)) {
+  if ($RHASH_PROCDEFAULT_P(hash)) {
     return RHASH_PROCDEFAULT(hash);
   }
-  return mrb_nil_value();
+  return $nil_value();
 }
 
 /*
@@ -962,70 +962,70 @@ mrb_hash_default_proc(mrb_state *mrb, mrb_value hash)
  *     h["cat"]   #=> "catcat"
  */
 
-static mrb_value
-mrb_hash_set_default_proc(mrb_state *mrb, mrb_value hash)
+static $value
+$hash_set_default_proc($state *mrb, $value hash)
 {
-  mrb_value ifnone;
+  $value ifnone;
 
-  mrb_get_args(mrb, "o", &ifnone);
-  mrb_hash_modify(mrb, hash);
-  mrb_iv_set(mrb, hash, mrb_intern_lit(mrb, "ifnone"), ifnone);
-  if (!mrb_nil_p(ifnone)) {
-    RHASH(hash)->flags |= MRB_HASH_PROC_DEFAULT;
-    RHASH(hash)->flags |= MRB_HASH_DEFAULT;
+  $get_args(mrb, "o", &ifnone);
+  $hash_modify(mrb, hash);
+  $iv_set(mrb, hash, $intern_lit(mrb, "ifnone"), ifnone);
+  if (!$nil_p(ifnone)) {
+    RHASH(hash)->flags |= $HASH_PROC_DEFAULT;
+    RHASH(hash)->flags |= $HASH_DEFAULT;
   }
   else {
-    RHASH(hash)->flags &= ~MRB_HASH_DEFAULT;
-    RHASH(hash)->flags &= ~MRB_HASH_PROC_DEFAULT;
+    RHASH(hash)->flags &= ~$HASH_DEFAULT;
+    RHASH(hash)->flags &= ~$HASH_PROC_DEFAULT;
   }
 
   return ifnone;
 }
 
-MRB_API mrb_value
-mrb_hash_delete_key(mrb_state *mrb, mrb_value hash, mrb_value key)
+$API $value
+$hash_delete_key($state *mrb, $value hash, $value key)
 {
   seglist *sg = RHASH_TBL(hash);
-  mrb_value del_val;
+  $value del_val;
 
   if (sg_del(mrb, sg, key, &del_val)) {
     return del_val;
   }
 
   /* not found */
-  return mrb_nil_value();
+  return $nil_value();
 }
 
-static mrb_value
-mrb_hash_delete(mrb_state *mrb, mrb_value self)
+static $value
+$hash_delete($state *mrb, $value self)
 {
-  mrb_value key;
+  $value key;
 
-  mrb_get_args(mrb, "o", &key);
-  mrb_hash_modify(mrb, self);
-  return mrb_hash_delete_key(mrb, self, key);
+  $get_args(mrb, "o", &key);
+  $hash_modify(mrb, self);
+  return $hash_delete_key(mrb, self, key);
 }
 
 /* find first element in segment list, and remove it. */
 static void
-sg_shift(mrb_state *mrb, seglist *t, mrb_value *kp, mrb_value *vp)
+sg_shift($state *mrb, seglist *t, $value *kp, $value *vp)
 {
   segment *seg = t->rootseg;
-  mrb_int i;
+  $int i;
 
   while (seg) {
-    for (i=0; i<MRB_SG_SEGMENT_SIZE; i++) {
-      mrb_value key;
+    for (i=0; i<$SG_SEGMENT_SIZE; i++) {
+      $value key;
 
       if (!seg->next && i >= t->last_len) {
         return;
       }
       key = seg->e[i].key;
-      if (mrb_undef_p(key)) continue;
+      if ($undef_p(key)) continue;
       *kp = key;
       *vp = seg->e[i].val;
       /* delete element */
-      seg->e[i].key = mrb_undef_value();
+      seg->e[i].key = $undef_value();
       t->size--;
       return;
     }
@@ -1047,28 +1047,28 @@ sg_shift(mrb_state *mrb, seglist *t, mrb_value *kp, mrb_value *vp)
  *      h         #=> {2=>"b", 3=>"c"}
  */
 
-static mrb_value
-mrb_hash_shift(mrb_state *mrb, mrb_value hash)
+static $value
+$hash_shift($state *mrb, $value hash)
 {
   seglist *sg = RHASH_TBL(hash);
 
-  mrb_hash_modify(mrb, hash);
+  $hash_modify(mrb, hash);
   if (sg && sg_size(mrb, sg) > 0) {
-    mrb_value del_key, del_val;
+    $value del_key, del_val;
 
     sg_shift(mrb, sg, &del_key, &del_val);
-    return mrb_assoc_new(mrb, del_key, del_val);
+    return $assoc_new(mrb, del_key, del_val);
   }
 
-  if (MRB_RHASH_DEFAULT_P(hash)) {
-    if (MRB_RHASH_PROCDEFAULT_P(hash)) {
-      return mrb_funcall(mrb, RHASH_PROCDEFAULT(hash), "call", 2, hash, mrb_nil_value());
+  if ($RHASH_DEFAULT_P(hash)) {
+    if ($RHASH_PROCDEFAULT_P(hash)) {
+      return $funcall(mrb, RHASH_PROCDEFAULT(hash), "call", 2, hash, $nil_value());
     }
     else {
       return RHASH_IFNONE(hash);
     }
   }
-  return mrb_nil_value();
+  return $nil_value();
 }
 
 /* 15.2.13.4.4  */
@@ -1083,12 +1083,12 @@ mrb_hash_shift(mrb_state *mrb, mrb_value hash)
  *
  */
 
-MRB_API mrb_value
-mrb_hash_clear(mrb_state *mrb, mrb_value hash)
+$API $value
+$hash_clear($state *mrb, $value hash)
 {
   seglist *sg = RHASH_TBL(hash);
 
-  mrb_hash_modify(mrb, hash);
+  $hash_modify(mrb, hash);
   if (sg) {
     sg_free(mrb, sg);
     RHASH_TBL(hash) = NULL;
@@ -1115,13 +1115,13 @@ mrb_hash_clear(mrb_state *mrb, mrb_value hash)
  *      h   #=> {"a"=>9, "b"=>200, "c"=>4}
  *
  */
-static mrb_value
-mrb_hash_aset(mrb_state *mrb, mrb_value self)
+static $value
+$hash_aset($state *mrb, $value self)
 {
-  mrb_value key, val;
+  $value key, val;
 
-  mrb_get_args(mrb, "oo", &key, &val);
-  mrb_hash_set(mrb, self, key, val);
+  $get_args(mrb, "oo", &key, &val);
+  $hash_set(mrb, self, key, val);
   return val;
 }
 
@@ -1139,17 +1139,17 @@ mrb_hash_aset(mrb_state *mrb, mrb_value self)
  *     h.delete("a")   #=> 200
  *     h.length        #=> 3
  */
-static mrb_value
-mrb_hash_size_m(mrb_state *mrb, mrb_value self)
+static $value
+$hash_size_m($state *mrb, $value self)
 {
   seglist *sg = RHASH_TBL(self);
 
-  if (!sg) return mrb_fixnum_value(0);
-  return mrb_fixnum_value(sg_size(mrb, sg));
+  if (!sg) return $fixnum_value(0);
+  return $fixnum_value(sg_size(mrb, sg));
 }
 
-MRB_API mrb_bool
-mrb_hash_empty_p(mrb_state *mrb, mrb_value self)
+$API $bool
+$hash_empty_p($state *mrb, $value self)
 {
   seglist *sg = RHASH_TBL(self);
 
@@ -1167,10 +1167,10 @@ mrb_hash_empty_p(mrb_state *mrb, mrb_value self)
  *     {}.empty?   #=> true
  *
  */
-static mrb_value
-mrb_hash_empty_m(mrb_state *mrb, mrb_value self)
+static $value
+$hash_empty_m($state *mrb, $value self)
 {
-  return mrb_bool_value(mrb_hash_empty_p(mrb, self));
+  return $bool_value($hash_empty_p(mrb, self));
 }
 
 /* 15.2.13.4.29 (x)*/
@@ -1181,16 +1181,16 @@ mrb_hash_empty_m(mrb_state *mrb, mrb_value self)
  * Returns +self+.
  */
 
-static mrb_value
-mrb_hash_to_hash(mrb_state *mrb, mrb_value hash)
+static $value
+$hash_to_hash($state *mrb, $value hash)
 {
   return hash;
 }
 
 static int
-hash_keys_i(mrb_state *mrb, mrb_value key, mrb_value val, void *p)
+hash_keys_i($state *mrb, $value key, $value val, void *p)
 {
-  mrb_ary_push(mrb, *(mrb_value*)p, key);
+  $ary_push(mrb, *($value*)p, key);
   return 0;
 }
 
@@ -1207,24 +1207,24 @@ hash_keys_i(mrb_state *mrb, mrb_value key, mrb_value val, void *p)
  *
  */
 
-MRB_API mrb_value
-mrb_hash_keys(mrb_state *mrb, mrb_value hash)
+$API $value
+$hash_keys($state *mrb, $value hash)
 {
   seglist *sg = RHASH_TBL(hash);
   size_t size;
-  mrb_value ary;
+  $value ary;
 
   if (!sg || (size = sg_size(mrb, sg)) == 0)
-    return mrb_ary_new(mrb);
-  ary = mrb_ary_new_capa(mrb, size);
+    return $ary_new(mrb);
+  ary = $ary_new_capa(mrb, size);
   sg_foreach(mrb, sg, hash_keys_i, (void*)&ary);
   return ary;
 }
 
 static int
-hash_vals_i(mrb_state *mrb, mrb_value key, mrb_value val, void *p)
+hash_vals_i($state *mrb, $value key, $value val, void *p)
 {
-  mrb_ary_push(mrb, *(mrb_value*)p, val);
+  $ary_push(mrb, *($value*)p, val);
   return 0;
 }
 
@@ -1241,16 +1241,16 @@ hash_vals_i(mrb_state *mrb, mrb_value key, mrb_value val, void *p)
  *
  */
 
-MRB_API mrb_value
-mrb_hash_values(mrb_state *mrb, mrb_value hash)
+$API $value
+$hash_values($state *mrb, $value hash)
 {
   seglist *sg = RHASH_TBL(hash);
   size_t size;
-  mrb_value ary;
+  $value ary;
 
   if (!sg || (size = sg_size(mrb, sg)) == 0)
-    return mrb_ary_new(mrb);
-  ary = mrb_ary_new_capa(mrb, size);
+    return $ary_new(mrb);
+  ary = $ary_new_capa(mrb, size);
   sg_foreach(mrb, sg, hash_vals_i, (void*)&ary);
   return ary;
 }
@@ -1274,8 +1274,8 @@ mrb_hash_values(mrb_state *mrb, mrb_value hash)
  *
  */
 
-MRB_API mrb_bool
-mrb_hash_key_p(mrb_state *mrb, mrb_value hash, mrb_value key)
+$API $bool
+$hash_key_p($state *mrb, $value hash, $value key)
 {
   seglist *sg;
 
@@ -1286,28 +1286,28 @@ mrb_hash_key_p(mrb_state *mrb, mrb_value hash, mrb_value key)
   return FALSE;
 }
 
-static mrb_value
-mrb_hash_has_key(mrb_state *mrb, mrb_value hash)
+static $value
+$hash_has_key($state *mrb, $value hash)
 {
-  mrb_value key;
-  mrb_bool key_p;
+  $value key;
+  $bool key_p;
 
-  mrb_get_args(mrb, "o", &key);
-  key_p = mrb_hash_key_p(mrb, hash, key);
-  return mrb_bool_value(key_p);
+  $get_args(mrb, "o", &key);
+  key_p = $hash_key_p(mrb, hash, key);
+  return $bool_value(key_p);
 }
 
 struct has_v_arg {
-  mrb_bool found;
-  mrb_value val;
+  $bool found;
+  $value val;
 };
 
 static int
-hash_has_value_i(mrb_state *mrb, mrb_value key, mrb_value val, void *p)
+hash_has_value_i($state *mrb, $value key, $value val, void *p)
 {
   struct has_v_arg *arg = (struct has_v_arg*)p;
   
-  if (mrb_equal(mrb, arg->val, val)) {
+  if ($equal(mrb, arg->val, val)) {
     arg->found = TRUE;
     return 1;
   }
@@ -1329,21 +1329,21 @@ hash_has_value_i(mrb_state *mrb, mrb_value key, mrb_value val, void *p)
  *     h.has_value?(999)   #=> false
  */
 
-static mrb_value
-mrb_hash_has_value(mrb_state *mrb, mrb_value hash)
+static $value
+$hash_has_value($state *mrb, $value hash)
 {
-  mrb_value val;
+  $value val;
   struct has_v_arg arg;
   
-  mrb_get_args(mrb, "o", &val);
+  $get_args(mrb, "o", &val);
   arg.found = FALSE;
   arg.val = val;
   sg_foreach(mrb, RHASH_TBL(hash), hash_has_value_i, &arg);
-  return mrb_bool_value(arg.found);
+  return $bool_value(arg.found);
 }
 
 static int
-merge_i(mrb_state *mrb, mrb_value key, mrb_value val, void *data)
+merge_i($state *mrb, $value key, $value val, void *data)
 {
   seglist *h1 = (seglist*)data;
 
@@ -1351,13 +1351,13 @@ merge_i(mrb_state *mrb, mrb_value key, mrb_value val, void *data)
   return 0;
 }
 
-MRB_API void
-mrb_hash_merge(mrb_state *mrb, mrb_value hash1, mrb_value hash2)
+$API void
+$hash_merge($state *mrb, $value hash1, $value hash2)
 {
   seglist *h1, *h2;
 
-  mrb_hash_modify(mrb, hash1);
-  hash2 = mrb_ensure_hash_type(mrb, hash2);
+  $hash_modify(mrb, hash1);
+  hash2 = $ensure_hash_type(mrb, hash2);
   h1 = RHASH_TBL(hash1);
   h2 = RHASH_TBL(hash2);
 
@@ -1367,7 +1367,7 @@ mrb_hash_merge(mrb_state *mrb, mrb_value hash1, mrb_value hash2)
     return;
   }
   sg_foreach(mrb, h2, merge_i, h1);
-  mrb_write_barrier(mrb, (struct RBasic*)RHASH(hash1));
+  $write_barrier(mrb, (struct RBasic*)RHASH(hash1));
   return;
 }
 
@@ -1384,45 +1384,45 @@ mrb_hash_merge(mrb_state *mrb, mrb_value hash1, mrb_value hash2)
  *     h.rehash   #=> {"AA"=>"b"}
  *     h["AA"]    #=> "b"
  */
-static mrb_value
-mrb_hash_rehash(mrb_state *mrb, mrb_value self)
+static $value
+$hash_rehash($state *mrb, $value self)
 {
   sg_compact(mrb, RHASH_TBL(self));
   return self;
 }
 
 void
-mrb_init_hash(mrb_state *mrb)
+$init_hash($state *mrb)
 {
   struct RClass *h;
 
-  mrb->hash_class = h = mrb_define_class(mrb, "Hash", mrb->object_class);              /* 15.2.13 */
-  MRB_SET_INSTANCE_TT(h, MRB_TT_HASH);
+  mrb->hash_class = h = $define_class(mrb, "Hash", mrb->object_class);              /* 15.2.13 */
+  $SET_INSTANCE_TT(h, $TT_HASH);
 
-  mrb_define_method(mrb, h, "initialize_copy", mrb_hash_init_copy,   MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, h, "[]",              mrb_hash_aget,        MRB_ARGS_REQ(1)); /* 15.2.13.4.2  */
-  mrb_define_method(mrb, h, "[]=",             mrb_hash_aset,        MRB_ARGS_REQ(2)); /* 15.2.13.4.3  */
-  mrb_define_method(mrb, h, "clear",           mrb_hash_clear,       MRB_ARGS_NONE()); /* 15.2.13.4.4  */
-  mrb_define_method(mrb, h, "default",         mrb_hash_default,     MRB_ARGS_ANY());  /* 15.2.13.4.5  */
-  mrb_define_method(mrb, h, "default=",        mrb_hash_set_default, MRB_ARGS_REQ(1)); /* 15.2.13.4.6  */
-  mrb_define_method(mrb, h, "default_proc",    mrb_hash_default_proc,MRB_ARGS_NONE()); /* 15.2.13.4.7  */
-  mrb_define_method(mrb, h, "default_proc=",   mrb_hash_set_default_proc,MRB_ARGS_REQ(1)); /* 15.2.13.4.7  */
-  mrb_define_method(mrb, h, "__delete",        mrb_hash_delete,      MRB_ARGS_REQ(1)); /* core of 15.2.13.4.8  */
-  mrb_define_method(mrb, h, "empty?",          mrb_hash_empty_m,     MRB_ARGS_NONE()); /* 15.2.13.4.12 */
-  mrb_define_method(mrb, h, "has_key?",        mrb_hash_has_key,     MRB_ARGS_REQ(1)); /* 15.2.13.4.13 */
-  mrb_define_method(mrb, h, "has_value?",      mrb_hash_has_value,   MRB_ARGS_REQ(1)); /* 15.2.13.4.14 */
-  mrb_define_method(mrb, h, "include?",        mrb_hash_has_key,     MRB_ARGS_REQ(1)); /* 15.2.13.4.15 */
-  mrb_define_method(mrb, h, "initialize",      mrb_hash_init,        MRB_ARGS_OPT(1)); /* 15.2.13.4.16 */
-  mrb_define_method(mrb, h, "key?",            mrb_hash_has_key,     MRB_ARGS_REQ(1)); /* 15.2.13.4.18 */
-  mrb_define_method(mrb, h, "keys",            mrb_hash_keys,        MRB_ARGS_NONE()); /* 15.2.13.4.19 */
-  mrb_define_method(mrb, h, "length",          mrb_hash_size_m,      MRB_ARGS_NONE()); /* 15.2.13.4.20 */
-  mrb_define_method(mrb, h, "member?",         mrb_hash_has_key,     MRB_ARGS_REQ(1)); /* 15.2.13.4.21 */
-  mrb_define_method(mrb, h, "shift",           mrb_hash_shift,       MRB_ARGS_NONE()); /* 15.2.13.4.24 */
-  mrb_define_method(mrb, h, "size",            mrb_hash_size_m,      MRB_ARGS_NONE()); /* 15.2.13.4.25 */
-  mrb_define_method(mrb, h, "store",           mrb_hash_aset,        MRB_ARGS_REQ(2)); /* 15.2.13.4.26 */
-  mrb_define_method(mrb, h, "value?",          mrb_hash_has_value,   MRB_ARGS_REQ(1)); /* 15.2.13.4.27 */
-  mrb_define_method(mrb, h, "values",          mrb_hash_values,      MRB_ARGS_NONE()); /* 15.2.13.4.28 */
-  mrb_define_method(mrb, h, "rehash",          mrb_hash_rehash,      MRB_ARGS_NONE());
+  $define_method(mrb, h, "initialize_copy", $hash_init_copy,   $ARGS_REQ(1));
+  $define_method(mrb, h, "[]",              $hash_aget,        $ARGS_REQ(1)); /* 15.2.13.4.2  */
+  $define_method(mrb, h, "[]=",             $hash_aset,        $ARGS_REQ(2)); /* 15.2.13.4.3  */
+  $define_method(mrb, h, "clear",           $hash_clear,       $ARGS_NONE()); /* 15.2.13.4.4  */
+  $define_method(mrb, h, "default",         $hash_default,     $ARGS_ANY());  /* 15.2.13.4.5  */
+  $define_method(mrb, h, "default=",        $hash_set_default, $ARGS_REQ(1)); /* 15.2.13.4.6  */
+  $define_method(mrb, h, "default_proc",    $hash_default_proc,$ARGS_NONE()); /* 15.2.13.4.7  */
+  $define_method(mrb, h, "default_proc=",   $hash_set_default_proc,$ARGS_REQ(1)); /* 15.2.13.4.7  */
+  $define_method(mrb, h, "__delete",        $hash_delete,      $ARGS_REQ(1)); /* core of 15.2.13.4.8  */
+  $define_method(mrb, h, "empty?",          $hash_empty_m,     $ARGS_NONE()); /* 15.2.13.4.12 */
+  $define_method(mrb, h, "has_key?",        $hash_has_key,     $ARGS_REQ(1)); /* 15.2.13.4.13 */
+  $define_method(mrb, h, "has_value?",      $hash_has_value,   $ARGS_REQ(1)); /* 15.2.13.4.14 */
+  $define_method(mrb, h, "include?",        $hash_has_key,     $ARGS_REQ(1)); /* 15.2.13.4.15 */
+  $define_method(mrb, h, "initialize",      $hash_init,        $ARGS_OPT(1)); /* 15.2.13.4.16 */
+  $define_method(mrb, h, "key?",            $hash_has_key,     $ARGS_REQ(1)); /* 15.2.13.4.18 */
+  $define_method(mrb, h, "keys",            $hash_keys,        $ARGS_NONE()); /* 15.2.13.4.19 */
+  $define_method(mrb, h, "length",          $hash_size_m,      $ARGS_NONE()); /* 15.2.13.4.20 */
+  $define_method(mrb, h, "member?",         $hash_has_key,     $ARGS_REQ(1)); /* 15.2.13.4.21 */
+  $define_method(mrb, h, "shift",           $hash_shift,       $ARGS_NONE()); /* 15.2.13.4.24 */
+  $define_method(mrb, h, "size",            $hash_size_m,      $ARGS_NONE()); /* 15.2.13.4.25 */
+  $define_method(mrb, h, "store",           $hash_aset,        $ARGS_REQ(2)); /* 15.2.13.4.26 */
+  $define_method(mrb, h, "value?",          $hash_has_value,   $ARGS_REQ(1)); /* 15.2.13.4.27 */
+  $define_method(mrb, h, "values",          $hash_values,      $ARGS_NONE()); /* 15.2.13.4.28 */
+  $define_method(mrb, h, "rehash",          $hash_rehash,      $ARGS_NONE());
 
-  mrb_define_method(mrb, h, "to_hash",         mrb_hash_to_hash,     MRB_ARGS_NONE()); /* 15.2.13.4.29 (x)*/
+  $define_method(mrb, h, "to_hash",         $hash_to_hash,     $ARGS_NONE()); /* 15.2.13.4.29 (x)*/
 }

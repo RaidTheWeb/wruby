@@ -9,22 +9,22 @@
 #include <mruby/proc.h>
 #include <mruby/opcode.h>
 
-static mrb_code call_iseq[] = {
+static $code call_iseq[] = {
   OP_CALL,
 };
 
 struct RProc*
-mrb_proc_new(mrb_state *mrb, mrb_irep *irep)
+$proc_new($state *mrb, $irep *irep)
 {
   struct RProc *p;
-  mrb_callinfo *ci = mrb->c->ci;
+  $callinfo *ci = mrb->c->ci;
 
-  p = (struct RProc*)mrb_obj_alloc(mrb, MRB_TT_PROC, mrb->proc_class);
+  p = (struct RProc*)$obj_alloc(mrb, $TT_PROC, mrb->proc_class);
   if (ci) {
     struct RClass *tc = NULL;
 
     if (ci->proc) {
-      tc = MRB_PROC_TARGET_CLASS(ci->proc);
+      tc = $PROC_TARGET_CLASS(ci->proc);
     }
     if (tc == NULL) {
       tc = ci->target_class;
@@ -33,24 +33,24 @@ mrb_proc_new(mrb_state *mrb, mrb_irep *irep)
     p->e.target_class = tc;
   }
   p->body.irep = irep;
-  mrb_irep_incref(mrb, irep);
+  $irep_incref(mrb, irep);
 
   return p;
 }
 
 static struct REnv*
-env_new(mrb_state *mrb, mrb_int nlocals)
+env_new($state *mrb, $int nlocals)
 {
   struct REnv *e;
-  mrb_callinfo *ci = mrb->c->ci;
+  $callinfo *ci = mrb->c->ci;
   int bidx;
 
-  e = (struct REnv*)mrb_obj_alloc(mrb, MRB_TT_ENV, NULL);
-  MRB_ENV_SET_STACK_LEN(e, nlocals);
+  e = (struct REnv*)$obj_alloc(mrb, $TT_ENV, NULL);
+  $ENV_SET_STACK_LEN(e, nlocals);
   bidx = ci->argc;
   if (ci->argc < 0) bidx = 2;
   else bidx += 1;
-  MRB_ENV_SET_BIDX(e, bidx);
+  $ENV_SET_BIDX(e, bidx);
   e->mid = ci->mid;
   e->stack = mrb->c->stack;
   e->cxt = mrb->c;
@@ -59,9 +59,9 @@ env_new(mrb_state *mrb, mrb_int nlocals)
 }
 
 static void
-closure_setup(mrb_state *mrb, struct RProc *p)
+closure_setup($state *mrb, struct RProc *p)
 {
-  mrb_callinfo *ci = mrb->c->ci;
+  $callinfo *ci = mrb->c->ci;
   struct RProc *up = p->upper;
   struct REnv *e = NULL;
 
@@ -69,57 +69,57 @@ closure_setup(mrb_state *mrb, struct RProc *p)
     e = ci->env;
   }
   else if (up) {
-    struct RClass *tc = MRB_PROC_TARGET_CLASS(p);
+    struct RClass *tc = $PROC_TARGET_CLASS(p);
 
     e = env_new(mrb, up->body.irep->nlocals);
     ci->env = e;
     if (tc) {
       e->c = tc;
-      mrb_field_write_barrier(mrb, (struct RBasic*)e, (struct RBasic*)tc);
+      $field_write_barrier(mrb, (struct RBasic*)e, (struct RBasic*)tc);
     }
   }
   if (e) {
     p->e.env = e;
-    p->flags |= MRB_PROC_ENVSET;
-    mrb_field_write_barrier(mrb, (struct RBasic*)p, (struct RBasic*)e);
+    p->flags |= $PROC_ENVSET;
+    $field_write_barrier(mrb, (struct RBasic*)p, (struct RBasic*)e);
   }
 }
 
 struct RProc*
-mrb_closure_new(mrb_state *mrb, mrb_irep *irep)
+$closure_new($state *mrb, $irep *irep)
 {
-  struct RProc *p = mrb_proc_new(mrb, irep);
+  struct RProc *p = $proc_new(mrb, irep);
 
   closure_setup(mrb, p);
   return p;
 }
 
-MRB_API struct RProc*
-mrb_proc_new_cfunc(mrb_state *mrb, mrb_func_t func)
+$API struct RProc*
+$proc_new_cfunc($state *mrb, $func_t func)
 {
   struct RProc *p;
 
-  p = (struct RProc*)mrb_obj_alloc(mrb, MRB_TT_PROC, mrb->proc_class);
+  p = (struct RProc*)$obj_alloc(mrb, $TT_PROC, mrb->proc_class);
   p->body.func = func;
-  p->flags |= MRB_PROC_CFUNC_FL;
+  p->flags |= $PROC_CFUNC_FL;
   p->upper = 0;
   p->e.target_class = 0;
 
   return p;
 }
 
-MRB_API struct RProc*
-mrb_proc_new_cfunc_with_env(mrb_state *mrb, mrb_func_t func, mrb_int argc, const mrb_value *argv)
+$API struct RProc*
+$proc_new_cfunc_with_env($state *mrb, $func_t func, $int argc, const $value *argv)
 {
-  struct RProc *p = mrb_proc_new_cfunc(mrb, func);
+  struct RProc *p = $proc_new_cfunc(mrb, func);
   struct REnv *e;
   int i;
 
   p->e.env = e = env_new(mrb, argc);
-  p->flags |= MRB_PROC_ENVSET;
-  mrb_field_write_barrier(mrb, (struct RBasic*)p, (struct RBasic*)e);
-  MRB_ENV_UNSHARE_STACK(e);
-  e->stack = (mrb_value*)mrb_malloc(mrb, sizeof(mrb_value) * argc);
+  p->flags |= $PROC_ENVSET;
+  $field_write_barrier(mrb, (struct RBasic*)p, (struct RBasic*)e);
+  $ENV_UNSHARE_STACK(e);
+  e->stack = ($value*)$malloc(mrb, sizeof($value) * argc);
   if (argv) {
     for (i = 0; i < argc; ++i) {
       e->stack[i] = argv[i];
@@ -133,35 +133,35 @@ mrb_proc_new_cfunc_with_env(mrb_state *mrb, mrb_func_t func, mrb_int argc, const
   return p;
 }
 
-MRB_API struct RProc*
-mrb_closure_new_cfunc(mrb_state *mrb, mrb_func_t func, int nlocals)
+$API struct RProc*
+$closure_new_cfunc($state *mrb, $func_t func, int nlocals)
 {
-  return mrb_proc_new_cfunc_with_env(mrb, func, nlocals, NULL);
+  return $proc_new_cfunc_with_env(mrb, func, nlocals, NULL);
 }
 
-MRB_API mrb_value
-mrb_proc_cfunc_env_get(mrb_state *mrb, mrb_int idx)
+$API $value
+$proc_cfunc_env_get($state *mrb, $int idx)
 {
   struct RProc *p = mrb->c->ci->proc;
   struct REnv *e;
 
-  if (!p || !MRB_PROC_CFUNC_P(p)) {
-    mrb_raise(mrb, E_TYPE_ERROR, "Can't get cfunc env from non-cfunc proc.");
+  if (!p || !$PROC_CFUNC_P(p)) {
+    $raise(mrb, E_TYPE_ERROR, "Can't get cfunc env from non-cfunc proc.");
   }
-  e = MRB_PROC_ENV(p);
+  e = $PROC_ENV(p);
   if (!e) {
-    mrb_raise(mrb, E_TYPE_ERROR, "Can't get cfunc env from cfunc Proc without REnv.");
+    $raise(mrb, E_TYPE_ERROR, "Can't get cfunc env from cfunc Proc without REnv.");
   }
-  if (idx < 0 || MRB_ENV_STACK_LEN(e) <= idx) {
-    mrb_raisef(mrb, E_INDEX_ERROR, "Env index out of range: %S (expected: 0 <= index < %S)",
-               mrb_fixnum_value(idx), mrb_fixnum_value(MRB_ENV_STACK_LEN(e)));
+  if (idx < 0 || $ENV_STACK_LEN(e) <= idx) {
+    $raisef(mrb, E_INDEX_ERROR, "Env index out of range: %S (expected: 0 <= index < %S)",
+               $fixnum_value(idx), $fixnum_value($ENV_STACK_LEN(e)));
   }
 
   return e->stack[idx];
 }
 
 void
-mrb_proc_copy(struct RProc *a, struct RProc *b)
+$proc_copy(struct RProc *a, struct RProc *b)
 {
   if (a->body.irep) {
     /* already initialized proc */
@@ -169,7 +169,7 @@ mrb_proc_copy(struct RProc *a, struct RProc *b)
   }
   a->flags = b->flags;
   a->body = b->body;
-  if (!MRB_PROC_CFUNC_P(a) && a->body.irep) {
+  if (!$PROC_CFUNC_P(a) && a->body.irep) {
     a->body.irep->refcnt++;
   }
   a->upper = b->upper;
@@ -177,82 +177,82 @@ mrb_proc_copy(struct RProc *a, struct RProc *b)
   /* a->e.target_class = a->e.target_class; */
 }
 
-static mrb_value
-mrb_proc_s_new(mrb_state *mrb, mrb_value proc_class)
+static $value
+$proc_s_new($state *mrb, $value proc_class)
 {
-  mrb_value blk;
-  mrb_value proc;
+  $value blk;
+  $value proc;
   struct RProc *p;
 
-  mrb_get_args(mrb, "&", &blk);
-  if (mrb_nil_p(blk)) {
+  $get_args(mrb, "&", &blk);
+  if ($nil_p(blk)) {
     /* Calling Proc.new without a block is not implemented yet */
-    mrb_raise(mrb, E_ARGUMENT_ERROR, "tried to create Proc object without a block");
+    $raise(mrb, E_ARGUMENT_ERROR, "tried to create Proc object without a block");
   }
-  p = (struct RProc *)mrb_obj_alloc(mrb, MRB_TT_PROC, mrb_class_ptr(proc_class));
-  mrb_proc_copy(p, mrb_proc_ptr(blk));
-  proc = mrb_obj_value(p);
-  mrb_funcall_with_block(mrb, proc, mrb_intern_lit(mrb, "initialize"), 0, NULL, proc);
-  if (!MRB_PROC_STRICT_P(p) &&
-      mrb->c->ci > mrb->c->cibase && MRB_PROC_ENV(p) == mrb->c->ci[-1].env) {
-    p->flags |= MRB_PROC_ORPHAN;
+  p = (struct RProc *)$obj_alloc(mrb, $TT_PROC, $class_ptr(proc_class));
+  $proc_copy(p, $proc_ptr(blk));
+  proc = $obj_value(p);
+  $funcall_with_block(mrb, proc, $intern_lit(mrb, "initialize"), 0, NULL, proc);
+  if (!$PROC_STRICT_P(p) &&
+      mrb->c->ci > mrb->c->cibase && $PROC_ENV(p) == mrb->c->ci[-1].env) {
+    p->flags |= $PROC_ORPHAN;
   }
   return proc;
 }
 
-static mrb_value
-mrb_proc_init_copy(mrb_state *mrb, mrb_value self)
+static $value
+$proc_init_copy($state *mrb, $value self)
 {
-  mrb_value proc;
+  $value proc;
 
-  mrb_get_args(mrb, "o", &proc);
-  if (mrb_type(proc) != MRB_TT_PROC) {
-    mrb_raise(mrb, E_ARGUMENT_ERROR, "not a proc");
+  $get_args(mrb, "o", &proc);
+  if ($type(proc) != $TT_PROC) {
+    $raise(mrb, E_ARGUMENT_ERROR, "not a proc");
   }
-  mrb_proc_copy(mrb_proc_ptr(self), mrb_proc_ptr(proc));
+  $proc_copy($proc_ptr(self), $proc_ptr(proc));
   return self;
 }
 
 int
-mrb_proc_cfunc_p(struct RProc *p)
+$proc_cfunc_p(struct RProc *p)
 {
-  return MRB_PROC_CFUNC_P(p);
+  return $PROC_CFUNC_P(p);
 }
 
 /* 15.2.17.4.2 */
-static mrb_value
-mrb_proc_arity(mrb_state *mrb, mrb_value self)
+static $value
+$proc_arity($state *mrb, $value self)
 {
-  struct RProc *p = mrb_proc_ptr(self);
-  struct mrb_irep *irep;
-  mrb_code *pc;
-  mrb_aspec aspec;
+  struct RProc *p = $proc_ptr(self);
+  struct $irep *irep;
+  $code *pc;
+  $aspec aspec;
   int ma, op, ra, pa, arity;
 
-  if (MRB_PROC_CFUNC_P(p)) {
+  if ($PROC_CFUNC_P(p)) {
     /* TODO cfunc aspec not implemented yet */
-    return mrb_fixnum_value(-1);
+    return $fixnum_value(-1);
   }
 
   irep = p->body.irep;
   if (!irep) {
-    return mrb_fixnum_value(0);
+    return $fixnum_value(0);
   }
 
   pc = irep->iseq;
   /* arity is depend on OP_ENTER */
   if (*pc != OP_ENTER) {
-    return mrb_fixnum_value(0);
+    return $fixnum_value(0);
   }
 
   aspec = PEEK_W(pc+1);
-  ma = MRB_ASPEC_REQ(aspec);
-  op = MRB_ASPEC_OPT(aspec);
-  ra = MRB_ASPEC_REST(aspec);
-  pa = MRB_ASPEC_POST(aspec);
-  arity = ra || (MRB_PROC_STRICT_P(p) && op) ? -(ma + pa + 1) : ma + pa;
+  ma = $ASPEC_REQ(aspec);
+  op = $ASPEC_OPT(aspec);
+  ra = $ASPEC_REST(aspec);
+  pa = $ASPEC_POST(aspec);
+  arity = ra || ($PROC_STRICT_P(p) && op) ? -(ma + pa + 1) : ma + pa;
 
-  return mrb_fixnum_value(arity);
+  return $fixnum_value(arity);
 }
 
 /* 15.3.1.2.6  */
@@ -264,52 +264,52 @@ mrb_proc_arity(mrb_state *mrb, mrb_value self)
  * Equivalent to <code>Proc.new</code>, except the resulting Proc objects
  * check the number of parameters passed when called.
  */
-static mrb_value
-proc_lambda(mrb_state *mrb, mrb_value self)
+static $value
+proc_lambda($state *mrb, $value self)
 {
-  mrb_value blk;
+  $value blk;
   struct RProc *p;
 
-  mrb_get_args(mrb, "&", &blk);
-  if (mrb_nil_p(blk)) {
-    mrb_raise(mrb, E_ARGUMENT_ERROR, "tried to create Proc object without a block");
+  $get_args(mrb, "&", &blk);
+  if ($nil_p(blk)) {
+    $raise(mrb, E_ARGUMENT_ERROR, "tried to create Proc object without a block");
   }
-  if (mrb_type(blk) != MRB_TT_PROC) {
-    mrb_raise(mrb, E_ARGUMENT_ERROR, "not a proc");
+  if ($type(blk) != $TT_PROC) {
+    $raise(mrb, E_ARGUMENT_ERROR, "not a proc");
   }
-  p = mrb_proc_ptr(blk);
-  if (!MRB_PROC_STRICT_P(p)) {
-    struct RProc *p2 = (struct RProc*)mrb_obj_alloc(mrb, MRB_TT_PROC, p->c);
-    mrb_proc_copy(p2, p);
-    p2->flags |= MRB_PROC_STRICT;
-    return mrb_obj_value(p2);
+  p = $proc_ptr(blk);
+  if (!$PROC_STRICT_P(p)) {
+    struct RProc *p2 = (struct RProc*)$obj_alloc(mrb, $TT_PROC, p->c);
+    $proc_copy(p2, p);
+    p2->flags |= $PROC_STRICT;
+    return $obj_value(p2);
   }
   return blk;
 }
 
 void
-mrb_init_proc(mrb_state *mrb)
+$init_proc($state *mrb)
 {
   struct RProc *p;
-  mrb_method_t m;
-  mrb_irep *call_irep = (mrb_irep *)mrb_malloc(mrb, sizeof(mrb_irep));
-  static const mrb_irep mrb_irep_zero = { 0 };
+  $method_t m;
+  $irep *call_irep = ($irep *)$malloc(mrb, sizeof($irep));
+  static const $irep $irep_zero = { 0 };
 
-  *call_irep = mrb_irep_zero;
-  call_irep->flags = MRB_ISEQ_NO_FREE;
+  *call_irep = $irep_zero;
+  call_irep->flags = $ISEQ_NO_FREE;
   call_irep->iseq = call_iseq;
   call_irep->ilen = 1;
   call_irep->nregs = 2;         /* receiver and block */
 
-  mrb_define_class_method(mrb, mrb->proc_class, "new", mrb_proc_s_new, MRB_ARGS_ANY());
-  mrb_define_method(mrb, mrb->proc_class, "initialize_copy", mrb_proc_init_copy, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, mrb->proc_class, "arity", mrb_proc_arity, MRB_ARGS_NONE());
+  $define_class_method(mrb, mrb->proc_class, "new", $proc_s_new, $ARGS_ANY());
+  $define_method(mrb, mrb->proc_class, "initialize_copy", $proc_init_copy, $ARGS_REQ(1));
+  $define_method(mrb, mrb->proc_class, "arity", $proc_arity, $ARGS_NONE());
 
-  p = mrb_proc_new(mrb, call_irep);
-  MRB_METHOD_FROM_PROC(m, p);
-  mrb_define_method_raw(mrb, mrb->proc_class, mrb_intern_lit(mrb, "call"), m);
-  mrb_define_method_raw(mrb, mrb->proc_class, mrb_intern_lit(mrb, "[]"), m);
+  p = $proc_new(mrb, call_irep);
+  $METHOD_FROM_PROC(m, p);
+  $define_method_raw(mrb, mrb->proc_class, $intern_lit(mrb, "call"), m);
+  $define_method_raw(mrb, mrb->proc_class, $intern_lit(mrb, "[]"), m);
 
-  mrb_define_class_method(mrb, mrb->kernel_module, "lambda", proc_lambda, MRB_ARGS_NONE()); /* 15.3.1.2.6  */
-  mrb_define_method(mrb, mrb->kernel_module,       "lambda", proc_lambda, MRB_ARGS_NONE()); /* 15.3.1.3.27 */
+  $define_class_method(mrb, mrb->kernel_module, "lambda", proc_lambda, $ARGS_NONE()); /* 15.3.1.2.6  */
+  $define_method(mrb, mrb->kernel_module,       "lambda", proc_lambda, $ARGS_NONE()); /* 15.3.1.3.27 */
 }

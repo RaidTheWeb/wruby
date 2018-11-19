@@ -1,10 +1,10 @@
-#ifndef MRB_VALUE_ARRAY_H__
-#define MRB_VALUE_ARRAY_H__
+#ifndef $VALUE_ARRAY_H__
+#define $VALUE_ARRAY_H__
 
 #include <mruby.h>
 
 static inline void
-value_move(mrb_value *s1, const mrb_value *s2, size_t n)
+value_move($value *s1, const $value *s2, size_t n)
 {
   if (s1 > s2 && s1 < s2 + n)
   {
@@ -24,4 +24,4 @@ value_move(mrb_value *s1, const mrb_value *s2, size_t n)
   }
 }
 
-#endif /* MRB_VALUE_ARRAY_H__ */
+#endif /* $VALUE_ARRAY_H__ */

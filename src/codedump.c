@@ -5,9 +5,9 @@
 #include <mruby/string.h>
 #include <mruby/proc.h>
 
-#ifndef MRB_DISABLE_STDIO
+#ifndef $DISABLE_STDIO
 static void
-print_r(mrb_state *mrb, mrb_irep *irep, size_t n)
+print_r($state *mrb, $irep *irep, size_t n)
 {
   size_t i;
 
@@ -15,14 +15,14 @@ print_r(mrb_state *mrb, mrb_irep *irep, size_t n)
 
   for (i=0; i+1<irep->nlocals; i++) {
     if (irep->lv[i].r == n) {
-      mrb_sym sym = irep->lv[i].name;
-      printf(" R%d:%s", (int)n, mrb_sym2name(mrb, sym));
+      $sym sym = irep->lv[i].name;
+      printf(" R%d:%s", (int)n, $sym2name(mrb, sym));
     }
   }
 }
 
 static void
-print_lv_a(mrb_state *mrb, mrb_irep *irep, uint16_t a)
+print_lv_a($state *mrb, $irep *irep, uint16_t a)
 {
   if (!irep->lv || a >= irep->nlocals || a == 0) {
     printf("\n");
@@ -34,7 +34,7 @@ print_lv_a(mrb_state *mrb, mrb_irep *irep, uint16_t a)
 }
 
 static void
-print_lv_ab(mrb_state *mrb, mrb_irep *irep, uint16_t a, uint16_t b)
+print_lv_ab($state *mrb, $irep *irep, uint16_t a, uint16_t b)
 {
   if (!irep->lv || (a >= irep->nlocals && b >= irep->nlocals) || a+b == 0) {
     printf("\n");
@@ -47,11 +47,11 @@ print_lv_ab(mrb_state *mrb, mrb_irep *irep, uint16_t a, uint16_t b)
 }
 
 static void
-print_header(mrb_irep *irep, ptrdiff_t i)
+print_header($irep *irep, ptrdiff_t i)
 {
   int32_t line;
 
-  line = mrb_debug_get_line(irep, i);
+  line = $debug_get_line(irep, i);
   if (line < 0) {
     printf("      ");
   }
@@ -65,11 +65,11 @@ print_header(mrb_irep *irep, ptrdiff_t i)
 #define CASE(insn,ops) case insn: FETCH_ ## ops (); L_ ## insn
 
 static void
-codedump(mrb_state *mrb, mrb_irep *irep)
+codedump($state *mrb, $irep *irep)
 {
   int ai;
-  mrb_code *pc, *pcend;
-  mrb_code ins;
+  $code *pc, *pcend;
+  $code ins;
   const char *file = NULL, *next_file;
 
   if (!irep) return;
@@ -81,7 +81,7 @@ codedump(mrb_state *mrb, mrb_irep *irep)
 
     printf("local variable names:\n");
     for (i = 1; i < irep->nlocals; ++i) {
-      char const *n = mrb_sym2name(mrb, irep->lv[i - 1].name);
+      char const *n = $sym2name(mrb, irep->lv[i - 1].name);
       printf("  R%d:%s\n", irep->lv[i - 1].r, n? n : "");
     }
   }
@@ -94,10 +94,10 @@ codedump(mrb_state *mrb, mrb_irep *irep)
     uint16_t b;
     uint8_t c;
 
-    ai = mrb_gc_arena_save(mrb);
+    ai = $gc_arena_save(mrb);
 
     i = pc - irep->iseq;
-    next_file = mrb_debug_get_filename(irep, i);
+    next_file = $debug_get_filename(irep, i);
     if (next_file && file != next_file) {
       printf("file: %s\n", next_file);
       file = next_file;
@@ -114,8 +114,8 @@ codedump(mrb_state *mrb, mrb_irep *irep)
       break;
     CASE(OP_LOADL, BB):
       {
-        mrb_value v = irep->pool[b];
-        mrb_value s = mrb_inspect(mrb, v);
+        $value v = irep->pool[b];
+        $value s = $inspect(mrb, v);
         printf("OP_LOADL\tR%d\tL(%d)\t; %s", a, b, RSTRING_PTR(s));
       }
       print_lv_a(mrb, irep, a);
@@ -145,7 +145,7 @@ codedump(mrb_state *mrb, mrb_irep *irep)
       print_lv_a(mrb, irep, a);
       break;
     CASE(OP_LOADSYM, BB):
-      printf("OP_LOADSYM\tR%d\t:%s\t", a, mrb_sym2name(mrb, irep->syms[b]));
+      printf("OP_LOADSYM\tR%d\t:%s\t", a, $sym2name(mrb, irep->syms[b]));
       print_lv_a(mrb, irep, a);
       break;
     CASE(OP_LOADNIL, B):
@@ -165,43 +165,43 @@ codedump(mrb_state *mrb, mrb_irep *irep)
       print_lv_a(mrb, irep, a);
       break;
     CASE(OP_GETGV, BB):
-      printf("OP_GETGV\tR%d\t:%s", a, mrb_sym2name(mrb, irep->syms[b]));
+      printf("OP_GETGV\tR%d\t:%s", a, $sym2name(mrb, irep->syms[b]));
       print_lv_a(mrb, irep, a);
       break;
     CASE(OP_SETGV, BB):
-      printf("OP_SETGV\t:%s\tR%d", mrb_sym2name(mrb, irep->syms[b]), a);
+      printf("OP_SETGV\t:%s\tR%d", $sym2name(mrb, irep->syms[b]), a);
       print_lv_a(mrb, irep, a);
       break;
     CASE(OP_GETSV, BB):
-      printf("OP_GETSV\tR%d\t:%s", a, mrb_sym2name(mrb, irep->syms[b]));
+      printf("OP_GETSV\tR%d\t:%s", a, $sym2name(mrb, irep->syms[b]));
       print_lv_a(mrb, irep, a);
       break;
     CASE(OP_SETSV, BB):
-      printf("OP_SETSV\t:%s\tR%d", mrb_sym2name(mrb, irep->syms[b]), a);
+      printf("OP_SETSV\t:%s\tR%d", $sym2name(mrb, irep->syms[b]), a);
       print_lv_a(mrb, irep, a);
       break;
     CASE(OP_GETCONST, BB):
-      printf("OP_GETCONST\tR%d\t:%s", a, mrb_sym2name(mrb, irep->syms[b]));
+      printf("OP_GETCONST\tR%d\t:%s", a, $sym2name(mrb, irep->syms[b]));
       print_lv_a(mrb, irep, a);
       break;
     CASE(OP_SETCONST, BB):
-      printf("OP_SETCONST\t:%s\tR%d", mrb_sym2name(mrb, irep->syms[b]), a);
+      printf("OP_SETCONST\t:%s\tR%d", $sym2name(mrb, irep->syms[b]), a);
       print_lv_a(mrb, irep, a);
       break;
     CASE(OP_GETMCNST, BB):
-      printf("OP_GETMCNST\tR%d\tR%d::%s", a, a, mrb_sym2name(mrb, irep->syms[b]));
+      printf("OP_GETMCNST\tR%d\tR%d::%s", a, a, $sym2name(mrb, irep->syms[b]));
       print_lv_a(mrb, irep, a);
       break;
     CASE(OP_SETMCNST, BB):
-      printf("OP_SETMCNST\tR%d::%s\tR%d", a+1, mrb_sym2name(mrb, irep->syms[b]), a);
+      printf("OP_SETMCNST\tR%d::%s\tR%d", a+1, $sym2name(mrb, irep->syms[b]), a);
       print_lv_a(mrb, irep, a);
       break;
     CASE(OP_GETIV, BB):
-      printf("OP_GETIV\tR%d\t%s", a, mrb_sym2name(mrb, irep->syms[b]));
+      printf("OP_GETIV\tR%d\t%s", a, $sym2name(mrb, irep->syms[b]));
       print_lv_a(mrb, irep, a);
       break;
     CASE(OP_SETIV, BB):
-      printf("OP_SETIV\t%s\tR%d", mrb_sym2name(mrb, irep->syms[b]), a);
+      printf("OP_SETIV\t%s\tR%d", $sym2name(mrb, irep->syms[b]), a);
       print_lv_a(mrb, irep, a);
       break;
     CASE(OP_GETUPVAR, BBB):
@@ -213,11 +213,11 @@ codedump(mrb_state *mrb, mrb_irep *irep)
       print_lv_a(mrb, irep, a);
       break;
     CASE(OP_GETCV, BB):
-      printf("OP_GETCV\tR%d\t%s", a, mrb_sym2name(mrb, irep->syms[b]));
+      printf("OP_GETCV\tR%d\t%s", a, $sym2name(mrb, irep->syms[b]));
       print_lv_a(mrb, irep, a);
       break;
     CASE(OP_SETCV, BB):
-      printf("OP_SETCV\t%s\tR%d", mrb_sym2name(mrb, irep->syms[b]), a);
+      printf("OP_SETCV\t%s\tR%d", $sym2name(mrb, irep->syms[b]), a);
       print_lv_a(mrb, irep, a);
       break;
     CASE(OP_JMP, S):
@@ -236,16 +236,16 @@ codedump(mrb_state *mrb, mrb_irep *irep)
       print_lv_a(mrb, irep, a);
       break;
     CASE(OP_SENDV, BB):
-      printf("OP_SENDV\tR%d\t:%s\n", a, mrb_sym2name(mrb, irep->syms[b]));
+      printf("OP_SENDV\tR%d\t:%s\n", a, $sym2name(mrb, irep->syms[b]));
       break;
     CASE(OP_SENDVB, BB):
-      printf("OP_SENDVB\tR%d\t:%s\n", a, mrb_sym2name(mrb, irep->syms[b]));
+      printf("OP_SENDVB\tR%d\t:%s\n", a, $sym2name(mrb, irep->syms[b]));
       break;
     CASE(OP_SEND, BBB):
-      printf("OP_SEND\tR%d\t:%s\t%d\n", a, mrb_sym2name(mrb, irep->syms[b]), c);
+      printf("OP_SEND\tR%d\t:%s\t%d\n", a, $sym2name(mrb, irep->syms[b]), c);
       break;
     CASE(OP_SENDB, BBB):
-      printf("OP_SENDB\tR%d\t:%s\t%d\n", a, mrb_sym2name(mrb, irep->syms[b]), c);
+      printf("OP_SENDB\tR%d\t:%s\t%d\n", a, $sym2name(mrb, irep->syms[b]), c);
       break;
     CASE(OP_CALL, Z):
       printf("OP_CALL\n");
@@ -273,14 +273,14 @@ codedump(mrb_state *mrb, mrb_irep *irep)
              a & 0x1);
       break;
     CASE(OP_KEY_P, BB):
-      printf("OP_KEY_P\tR%d\t:%s\t", a, mrb_sym2name(mrb, irep->syms[b]));
+      printf("OP_KEY_P\tR%d\t:%s\t", a, $sym2name(mrb, irep->syms[b]));
       print_lv_a(mrb, irep, a);
       break;
     CASE(OP_KEYEND, Z):
       printf("OP_KEYEND\n");
       break;
     CASE(OP_KARG, BB):
-      printf("OP_KARG\tR%d\t:%s\t", a, mrb_sym2name(mrb, irep->syms[b]));
+      printf("OP_KARG\tR%d\t:%s\t", a, $sym2name(mrb, irep->syms[b]));
       print_lv_a(mrb, irep, a);
       break;
     CASE(OP_RETURN, B):
@@ -320,13 +320,13 @@ codedump(mrb_state *mrb, mrb_irep *irep)
       printf("OP_RANGE_EXC\tR%d\n", a);
       break;
     CASE(OP_DEF, BB):
-      printf("OP_DEF\tR%d\t:%s\n", a, mrb_sym2name(mrb, irep->syms[b]));
+      printf("OP_DEF\tR%d\t:%s\n", a, $sym2name(mrb, irep->syms[b]));
       break;
     CASE(OP_UNDEF, B):
-      printf("OP_UNDEF\t:%s\n", mrb_sym2name(mrb, irep->syms[a]));
+      printf("OP_UNDEF\t:%s\n", $sym2name(mrb, irep->syms[a]));
       break;
     CASE(OP_ALIAS, BB):
-      printf("OP_ALIAS\t:%s\t%s\n", mrb_sym2name(mrb, irep->syms[a]), mrb_sym2name(mrb, irep->syms[b]));
+      printf("OP_ALIAS\t:%s\t%s\n", $sym2name(mrb, irep->syms[a]), $sym2name(mrb, irep->syms[b]));
       break;
     CASE(OP_ADD, B):
       printf("OP_ADD\tR%d\t\n", a);
@@ -399,8 +399,8 @@ codedump(mrb_state *mrb, mrb_irep *irep)
       break;
     CASE(OP_STRING, BB):
       {
-        mrb_value v = irep->pool[b];
-        mrb_value s = mrb_str_dump(mrb, mrb_str_new(mrb, RSTRING_PTR(v), RSTRING_LEN(v)));
+        $value v = irep->pool[b];
+        $value s = $str_dump(mrb, $str_new(mrb, RSTRING_PTR(v), RSTRING_LEN(v)));
         printf("OP_STRING\tR%d\tL(%d)\t; %s", a, b, RSTRING_PTR(s));
       }
       print_lv_a(mrb, irep, a);
@@ -427,11 +427,11 @@ codedump(mrb_state *mrb, mrb_irep *irep)
       print_lv_a(mrb, irep, a);
       break;
     CASE(OP_CLASS, BB):
-      printf("OP_CLASS\tR%d\t:%s", a, mrb_sym2name(mrb, irep->syms[b]));
+      printf("OP_CLASS\tR%d\t:%s", a, $sym2name(mrb, irep->syms[b]));
       print_lv_a(mrb, irep, a);
       break;
     CASE(OP_MODULE, BB):
-      printf("OP_MODULE\tR%d\t:%s", a, mrb_sym2name(mrb, irep->syms[b]));
+      printf("OP_MODULE\tR%d\t:%s", a, $sym2name(mrb, irep->syms[b]));
       print_lv_a(mrb, irep, a);
       break;
     CASE(OP_EXEC, BB):
@@ -448,8 +448,8 @@ codedump(mrb_state *mrb, mrb_irep *irep)
       break;
     CASE(OP_ERR, B):
       {
-        mrb_value v = irep->pool[a];
-        mrb_value s = mrb_str_dump(mrb, mrb_str_new(mrb, RSTRING_PTR(v), RSTRING_LEN(v)));
+        $value v = irep->pool[a];
+        $value s = $str_dump(mrb, $str_new(mrb, RSTRING_PTR(v), RSTRING_LEN(v)));
         printf("OP_ERR\t%s\n", RSTRING_PTR(s));
       }
       break;
@@ -521,13 +521,13 @@ codedump(mrb_state *mrb, mrb_irep *irep)
       printf("OP_unknown (0x%x)\n", ins);
       break;
     }
-    mrb_gc_arena_restore(mrb, ai);
+    $gc_arena_restore(mrb, ai);
   }
   printf("\n");
 }
 
 static void
-codedump_recur(mrb_state *mrb, mrb_irep *irep)
+codedump_recur($state *mrb, $irep *irep)
 {
   int i;
 
@@ -539,9 +539,9 @@ codedump_recur(mrb_state *mrb, mrb_irep *irep)
 #endif
 
 void
-mrb_codedump_all(mrb_state *mrb, struct RProc *proc)
+$codedump_all($state *mrb, struct RProc *proc)
 {
-#ifndef MRB_DISABLE_STDIO
+#ifndef $DISABLE_STDIO
   codedump_recur(mrb, proc->body.irep);
 #endif
 }

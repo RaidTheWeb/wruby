@@ -1,14 +1,14 @@
 #include <limits.h>
 #include <mruby.h>
 
-static inline mrb_int
-to_int(mrb_value x)
+static inline $int
+to_int($value x)
 {
   double f;
 
-  if (mrb_fixnum_p(x)) return mrb_fixnum(x);
-  f = mrb_float(x);
-  return (mrb_int)f;
+  if ($fixnum_p(x)) return $fixnum(x);
+  f = $float(x);
+  return ($int)f;
 }
 
 /*
@@ -22,19 +22,19 @@ to_int(mrb_value x)
  *     65.chr    #=> "A"
  *     230.chr   #=> "\xE6"
  */
-static mrb_value
-mrb_int_chr(mrb_state *mrb, mrb_value x)
+static $value
+$int_chr($state *mrb, $value x)
 {
-  mrb_int chr;
+  $int chr;
   char c;
 
   chr = to_int(x);
   if (chr >= (1 << CHAR_BIT)) {
-    mrb_raisef(mrb, E_RANGE_ERROR, "%S out of char range", x);
+    $raisef(mrb, E_RANGE_ERROR, "%S out of char range", x);
   }
   c = (char)chr;
 
-  return mrb_str_new(mrb, &c, 1);
+  return $str_new(mrb, &c, 1);
 }
 
 /*
@@ -43,14 +43,14 @@ mrb_int_chr(mrb_state *mrb, mrb_value x)
  *
  *  Returns +true+ if all bits of <code>+int+ & +mask+</code> are 1.
  */
-static mrb_value
-mrb_int_allbits(mrb_state *mrb, mrb_value self)
+static $value
+$int_allbits($state *mrb, $value self)
 {
-  mrb_int n, m;
+  $int n, m;
 
   n = to_int(self);
-  mrb_get_args(mrb, "i", &m);
-  return mrb_bool_value((n & m) == m);
+  $get_args(mrb, "i", &m);
+  return $bool_value((n & m) == m);
 }
 
 /*
@@ -59,14 +59,14 @@ mrb_int_allbits(mrb_state *mrb, mrb_value self)
  *
  *  Returns +true+ if any bits of <code>+int+ & +mask+</code> are 1.
  */
-static mrb_value
-mrb_int_anybits(mrb_state *mrb, mrb_value self)
+static $value
+$int_anybits($state *mrb, $value self)
 {
-  mrb_int n, m;
+  $int n, m;
 
   n = to_int(self);
-  mrb_get_args(mrb, "i", &m);
-  return mrb_bool_value((n & m) != 0);
+  $get_args(mrb, "i", &m);
+  return $bool_value((n & m) != 0);
 }
 
 /*
@@ -75,28 +75,28 @@ mrb_int_anybits(mrb_state *mrb, mrb_value self)
  *
  *  Returns +true+ if no bits of <code>+int+ & +mask+</code> are 1.
  */
-static mrb_value
-mrb_int_nobits(mrb_state *mrb, mrb_value self)
+static $value
+$int_nobits($state *mrb, $value self)
 {
-  mrb_int n, m;
+  $int n, m;
 
   n = to_int(self);
-  mrb_get_args(mrb, "i", &m);
-  return mrb_bool_value((n & m) == 0);
+  $get_args(mrb, "i", &m);
+  return $bool_value((n & m) == 0);
 }
 
 void
-mrb_mruby_numeric_ext_gem_init(mrb_state* mrb)
+$mruby_numeric_ext_gem_init($state* mrb)
 {
-  struct RClass *i = mrb_module_get(mrb, "Integral");
+  struct RClass *i = $module_get(mrb, "Integral");
 
-  mrb_define_method(mrb, i, "chr", mrb_int_chr, MRB_ARGS_NONE());
-  mrb_define_method(mrb, i, "allbits?", mrb_int_allbits, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, i, "anybits?", mrb_int_anybits, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, i, "nobits?", mrb_int_nobits, MRB_ARGS_REQ(1));
+  $define_method(mrb, i, "chr", $int_chr, $ARGS_NONE());
+  $define_method(mrb, i, "allbits?", $int_allbits, $ARGS_REQ(1));
+  $define_method(mrb, i, "anybits?", $int_anybits, $ARGS_REQ(1));
+  $define_method(mrb, i, "nobits?", $int_nobits, $ARGS_REQ(1));
 }
 
 void
-mrb_mruby_numeric_ext_gem_final(mrb_state* mrb)
+$mruby_numeric_ext_gem_final($state* mrb)
 {
 }

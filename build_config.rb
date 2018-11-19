@@ -73,7 +73,7 @@ MRuby::Build.new do |conf|
   # gperf settings
   # conf.gperf do |gperf|
   #   gperf.command = 'gperf'
-  #   gperf.compile_options = '-L ANSI-C -C -p -j1 -i 1 -g -o -t -N mrb_reserved_word -k"1,3,$" %{infile} > %{outfile}'
+  #   gperf.compile_options = '-L ANSI-C -C -p -j1 -i 1 -g -o -t -N $reserved_word -k"1,3,$" %{infile} > %{outfile}'
   # end
 
   # file extensions
@@ -106,7 +106,7 @@ MRuby::Build.new('host-debug') do |conf|
   conf.gembox 'default'
 
   # C compiler settings
-  conf.cc.defines = %w(MRB_ENABLE_DEBUG_HOOK)
+  conf.cc.defines = %w($ENABLE_DEBUG_HOOK)
 
   # Generate mruby debugger command (require mruby-eval)
   conf.gem :core => "mruby-bin-debugger"

@@ -5,81 +5,81 @@
 #include <mruby/string.h>
 #include <mruby/range.h>
 
-static mrb_value
-mrb_str_getbyte(mrb_state *mrb, mrb_value str)
+static $value
+$str_getbyte($state *mrb, $value str)
 {
-  mrb_int pos;
-  mrb_get_args(mrb, "i", &pos);
+  $int pos;
+  $get_args(mrb, "i", &pos);
 
   if (pos < 0)
     pos += RSTRING_LEN(str);
   if (pos < 0 ||  RSTRING_LEN(str) <= pos)
-    return mrb_nil_value();
+    return $nil_value();
 
-  return mrb_fixnum_value((unsigned char)RSTRING_PTR(str)[pos]);
+  return $fixnum_value((unsigned char)RSTRING_PTR(str)[pos]);
 }
 
-static mrb_value
-mrb_str_setbyte(mrb_state *mrb, mrb_value str)
+static $value
+$str_setbyte($state *mrb, $value str)
 {
-  mrb_int pos, byte;
-  mrb_int len;
+  $int pos, byte;
+  $int len;
 
-  mrb_get_args(mrb, "ii", &pos, &byte);
+  $get_args(mrb, "ii", &pos, &byte);
 
   len = RSTRING_LEN(str);
   if (pos < -len || len <= pos)
-    mrb_raisef(mrb, E_INDEX_ERROR, "index %S is out of array", mrb_fixnum_value(pos));
+    $raisef(mrb, E_INDEX_ERROR, "index %S is out of array", $fixnum_value(pos));
   if (pos < 0)
     pos += len;
 
-  mrb_str_modify(mrb, mrb_str_ptr(str));
+  $str_modify(mrb, $str_ptr(str));
   byte &= 0xff;
   RSTRING_PTR(str)[pos] = (unsigned char)byte;
-  return mrb_fixnum_value((unsigned char)byte);
+  return $fixnum_value((unsigned char)byte);
 }
 
-static mrb_value
-mrb_str_byteslice(mrb_state *mrb, mrb_value str)
+static $value
+$str_byteslice($state *mrb, $value str)
 {
-  mrb_value a1;
-  mrb_int len;
+  $value a1;
+  $int len;
 
-  if (mrb_get_argc(mrb) == 2) {
-    mrb_int pos;
-    mrb_get_args(mrb, "ii", &pos, &len);
-    return mrb_str_substr(mrb, str, pos, len);
+  if ($get_argc(mrb) == 2) {
+    $int pos;
+    $get_args(mrb, "ii", &pos, &len);
+    return $str_substr(mrb, str, pos, len);
   }
-  mrb_get_args(mrb, "o|i", &a1, &len);
-  switch (mrb_type(a1)) {
-  case MRB_TT_RANGE:
+  $get_args(mrb, "o|i", &a1, &len);
+  switch ($type(a1)) {
+  case $TT_RANGE:
     {
-      mrb_int beg;
+      $int beg;
 
       len = RSTRING_LEN(str);
-      switch (mrb_range_beg_len(mrb, a1, &beg, &len, len, TRUE)) {
+      switch ($range_beg_len(mrb, a1, &beg, &len, len, TRUE)) {
       case 0:                   /* not range */
         break;
       case 1:                   /* range */
-        return mrb_str_substr(mrb, str, beg, len);
+        return $str_substr(mrb, str, beg, len);
       case 2:                   /* out of range */
-        mrb_raisef(mrb, E_RANGE_ERROR, "%S out of range", a1);
+        $raisef(mrb, E_RANGE_ERROR, "%S out of range", a1);
         break;
       }
-      return mrb_nil_value();
+      return $nil_value();
     }
-#ifndef MRB_WITHOUT_FLOAT
-  case MRB_TT_FLOAT:
-    a1 = mrb_fixnum_value((mrb_int)mrb_float(a1));
+#ifndef $WITHOUT_FLOAT
+  case $TT_FLOAT:
+    a1 = $fixnum_value(($int)$float(a1));
     /* fall through */
 #endif
-  case MRB_TT_FIXNUM:
-    return mrb_str_substr(mrb, str, mrb_fixnum(a1), 1);
+  case $TT_FIXNUM:
+    return $str_substr(mrb, str, $fixnum(a1), 1);
   default:
-    mrb_raise(mrb, E_TYPE_ERROR, "wrong type of argument");
+    $raise(mrb, E_TYPE_ERROR, "wrong type of argument");
   }
   /* not reached */
-  return mrb_nil_value();
+  return $nil_value();
 }
 
 /*
@@ -90,14 +90,14 @@ mrb_str_byteslice(mrb_state *mrb, mrb_value str)
  *  place, returning <i>str</i>, or <code>nil</code> if no changes were made.
  *  Note: case conversion is effective only in ASCII region.
  */
-static mrb_value
-mrb_str_swapcase_bang(mrb_state *mrb, mrb_value str)
+static $value
+$str_swapcase_bang($state *mrb, $value str)
 {
   char *p, *pend;
   int modify = 0;
-  struct RString *s = mrb_str_ptr(str);
+  struct RString *s = $str_ptr(str);
 
-  mrb_str_modify(mrb, s);
+  $str_modify(mrb, s);
   p = RSTRING_PTR(str);
   pend = p + RSTRING_LEN(str);
   while (p < pend) {
@@ -113,7 +113,7 @@ mrb_str_swapcase_bang(mrb_state *mrb, mrb_value str)
   }
 
   if (modify) return str;
-  return mrb_nil_value();
+  return $nil_value();
 }
 
 /*
@@ -127,17 +127,17 @@ mrb_str_swapcase_bang(mrb_state *mrb, mrb_value str)
  *     "Hello".swapcase          #=> "hELLO"
  *     "cYbEr_PuNk11".swapcase   #=> "CyBeR_pUnK11"
  */
-static mrb_value
-mrb_str_swapcase(mrb_state *mrb, mrb_value self)
+static $value
+$str_swapcase($state *mrb, $value self)
 {
-  mrb_value str;
+  $value str;
 
-  str = mrb_str_dup(mrb, self);
-  mrb_str_swapcase_bang(mrb, str);
+  str = $str_dup(mrb, self);
+  $str_swapcase_bang(mrb, str);
   return str;
 }
 
-static mrb_value mrb_fixnum_chr(mrb_state *mrb, mrb_value num);
+static $value $fixnum_chr($state *mrb, $value num);
 
 /*
  *  call-seq:
@@ -154,17 +154,17 @@ static mrb_value mrb_fixnum_chr(mrb_state *mrb, mrb_value num);
  *     a << "world"   #=> "hello world"
  *     a.concat(33)   #=> "hello world!"
  */
-static mrb_value
-mrb_str_concat_m(mrb_state *mrb, mrb_value self)
+static $value
+$str_concat_m($state *mrb, $value self)
 {
-  mrb_value str;
+  $value str;
 
-  mrb_get_args(mrb, "o", &str);
-  if (mrb_fixnum_p(str))
-    str = mrb_fixnum_chr(mrb, str);
+  $get_args(mrb, "o", &str);
+  if ($fixnum_p(str))
+    str = $fixnum_chr(mrb, str);
   else
-    str = mrb_string_type(mrb, str);
-  mrb_str_concat(mrb, self, str);
+    str = $string_type(mrb, str);
+  $str_concat(mrb, self, str);
   return self;
 }
 
@@ -181,27 +181,27 @@ mrb_str_concat_m(mrb_state *mrb, mrb_value self)
  *    "hello".start_with?("heaven", "paradise") #=> false
  *    "h".start_with?("heaven", "hell")         #=> false
  */
-static mrb_value
-mrb_str_start_with(mrb_state *mrb, mrb_value self)
+static $value
+$str_start_with($state *mrb, $value self)
 {
-  mrb_value *argv, sub;
-  mrb_int argc, i;
-  mrb_get_args(mrb, "*", &argv, &argc);
+  $value *argv, sub;
+  $int argc, i;
+  $get_args(mrb, "*", &argv, &argc);
 
   for (i = 0; i < argc; i++) {
     size_t len_l, len_r;
-    int ai = mrb_gc_arena_save(mrb);
-    sub = mrb_string_type(mrb, argv[i]);
-    mrb_gc_arena_restore(mrb, ai);
+    int ai = $gc_arena_save(mrb);
+    sub = $string_type(mrb, argv[i]);
+    $gc_arena_restore(mrb, ai);
     len_l = RSTRING_LEN(self);
     len_r = RSTRING_LEN(sub);
     if (len_l >= len_r) {
       if (memcmp(RSTRING_PTR(self), RSTRING_PTR(sub), len_r) == 0) {
-        return mrb_true_value();
+        return $true_value();
       }
     }
   }
-  return mrb_false_value();
+  return $false_value();
 }
 
 /*
@@ -210,29 +210,29 @@ mrb_str_start_with(mrb_state *mrb, mrb_value self)
  *
  *  Returns true if +str+ ends with one of the +suffixes+ given.
  */
-static mrb_value
-mrb_str_end_with(mrb_state *mrb, mrb_value self)
+static $value
+$str_end_with($state *mrb, $value self)
 {
-  mrb_value *argv, sub;
-  mrb_int argc, i;
-  mrb_get_args(mrb, "*", &argv, &argc);
+  $value *argv, sub;
+  $int argc, i;
+  $get_args(mrb, "*", &argv, &argc);
 
   for (i = 0; i < argc; i++) {
     size_t len_l, len_r;
-    int ai = mrb_gc_arena_save(mrb);
-    sub = mrb_string_type(mrb, argv[i]);
-    mrb_gc_arena_restore(mrb, ai);
+    int ai = $gc_arena_save(mrb);
+    sub = $string_type(mrb, argv[i]);
+    $gc_arena_restore(mrb, ai);
     len_l = RSTRING_LEN(self);
     len_r = RSTRING_LEN(sub);
     if (len_l >= len_r) {
       if (memcmp(RSTRING_PTR(self) + (len_l - len_r),
                  RSTRING_PTR(sub),
                  len_r) == 0) {
-        return mrb_true_value();
+        return $true_value();
       }
     }
   }
-  return mrb_false_value();
+  return $false_value();
 }
 
 enum tr_pattern_type {
@@ -251,8 +251,8 @@ enum tr_pattern_type {
 */
 struct tr_pattern {
   uint8_t type;		// 1:in-order, 2:range
-  mrb_bool flag_reverse : 1;
-  mrb_bool flag_on_heap : 1;
+  $bool flag_reverse : 1;
+  $bool flag_on_heap : 1;
   uint16_t n;
   union {
     uint16_t start_pos;
@@ -264,23 +264,23 @@ struct tr_pattern {
 #define STATIC_TR_PATTERN { 0 }
 
 static inline void
-tr_free_pattern(mrb_state *mrb, struct tr_pattern *pat)
+tr_free_pattern($state *mrb, struct tr_pattern *pat)
 {
   while (pat) {
     struct tr_pattern *p = pat->next;
     if (pat->flag_on_heap) {
-      mrb_free(mrb, pat);
+      $free(mrb, pat);
     }
     pat = p;
   }
 }
 
 static struct tr_pattern*
-tr_parse_pattern(mrb_state *mrb, struct tr_pattern *ret, const mrb_value v_pattern, mrb_bool flag_reverse_enable)
+tr_parse_pattern($state *mrb, struct tr_pattern *ret, const $value v_pattern, $bool flag_reverse_enable)
 {
   const char *pattern = RSTRING_PTR(v_pattern);
-  mrb_int pattern_length = RSTRING_LEN(v_pattern);
-  mrb_bool flag_reverse = FALSE;
+  $int pattern_length = RSTRING_LEN(v_pattern);
+  $bool flag_reverse = FALSE;
   struct tr_pattern *pat1;
   int i = 0;
 
@@ -291,15 +291,15 @@ tr_parse_pattern(mrb_state *mrb, struct tr_pattern *ret, const mrb_value v_patte
 
   while (i < pattern_length) {
     /* is range pattern ? */
-    mrb_bool const ret_uninit = (ret->type == TR_UNINITIALIZED);
+    $bool const ret_uninit = (ret->type == TR_UNINITIALIZED);
     pat1 = ret_uninit
            ? ret
-           : (struct tr_pattern*)mrb_malloc_simple(mrb, sizeof(struct tr_pattern));
+           : (struct tr_pattern*)$malloc_simple(mrb, sizeof(struct tr_pattern));
     if ((i+2) < pattern_length && pattern[i] != '\\' && pattern[i+1] == '-') {
       if (pat1 == NULL && ret) {
       nomem:
         tr_free_pattern(mrb, ret);
-        mrb_exc_raise(mrb, mrb_obj_value(mrb->nomem_err));
+        $exc_raise(mrb, $obj_value(mrb->nomem_err));
         return NULL;            /* not reached */
       }
       pat1->type = TR_RANGE;
@@ -349,12 +349,12 @@ tr_parse_pattern(mrb_state *mrb, struct tr_pattern *ret, const mrb_value v_patte
   return ret;
 }
 
-static inline mrb_int
+static inline $int
 tr_find_character(const struct tr_pattern *pat, const char *pat_str, int ch)
 {
-  mrb_int ret = -1;
-  mrb_int n_sum = 0;
-  mrb_int flag_reverse = pat ? pat->flag_reverse : 0;
+  $int ret = -1;
+  $int n_sum = 0;
+  $int flag_reverse = pat ? pat->flag_reverse : 0;
 
   while (pat != NULL) {
     if (pat->type == TR_IN_ORDER) {
@@ -368,26 +368,26 @@ tr_find_character(const struct tr_pattern *pat, const char *pat_str, int ch)
         ret = n_sum + ch - pat->val.ch[0];
     }
     else {
-      mrb_assert(pat->type == TR_UNINITIALIZED);
+      $assert(pat->type == TR_UNINITIALIZED);
     }
     n_sum += pat->n;
     pat = pat->next;
   }
 
   if (flag_reverse) {
-    return (ret < 0) ? MRB_INT_MAX : -1;
+    return (ret < 0) ? $INT_MAX : -1;
   }
   return ret;
 }
 
-static inline mrb_int
-tr_get_character(const struct tr_pattern *pat, const char *pat_str, mrb_int n_th)
+static inline $int
+tr_get_character(const struct tr_pattern *pat, const char *pat_str, $int n_th)
 {
-  mrb_int n_sum = 0;
+  $int n_sum = 0;
 
   while (pat != NULL) {
     if (n_th < (n_sum + pat->n)) {
-      mrb_int i = (n_th - n_sum);
+      $int i = (n_th - n_sum);
 
       switch (pat->type) {
       case TR_IN_ORDER:
@@ -415,27 +415,27 @@ tr_get_character(const struct tr_pattern *pat, const char *pat_str, mrb_int n_th
   return -1;
 }
 
-static mrb_bool
-str_tr(mrb_state *mrb, mrb_value str, mrb_value p1, mrb_value p2, mrb_bool squeeze)
+static $bool
+str_tr($state *mrb, $value str, $value p1, $value p2, $bool squeeze)
 {
   struct tr_pattern pat = STATIC_TR_PATTERN;
   struct tr_pattern rep_storage = STATIC_TR_PATTERN;
   char *s;
-  mrb_int len;
-  mrb_int i;
-  mrb_int j;
-  mrb_bool flag_changed = FALSE;
-  mrb_int lastch = -1;
+  $int len;
+  $int i;
+  $int j;
+  $bool flag_changed = FALSE;
+  $int lastch = -1;
   struct tr_pattern *rep;
 
-  mrb_str_modify(mrb, mrb_str_ptr(str));
+  $str_modify(mrb, $str_ptr(str));
   tr_parse_pattern(mrb, &pat, p1, TRUE);
   rep = tr_parse_pattern(mrb, &rep_storage, p2, FALSE);
   s = RSTRING_PTR(str);
   len = RSTRING_LEN(str);
 
   for (i=j=0; i<len; i++,j++) {
-    mrb_int n = tr_find_character(&pat, RSTRING_PTR(p1), s[i]);
+    $int n = tr_find_character(&pat, RSTRING_PTR(p1), s[i]);
 
     if (i>j) s[j] = s[i];
     if (n >= 0) {
@@ -444,15 +444,15 @@ str_tr(mrb_state *mrb, mrb_value str, mrb_value p1, mrb_value p2, mrb_bool squee
 	j--;
       }
       else {
-        mrb_int c = tr_get_character(rep, RSTRING_PTR(p2), n);
+        $int c = tr_get_character(rep, RSTRING_PTR(p2), n);
 
         if (c < 0 || (squeeze && c == lastch)) {
           j--;
           continue;
         }
         if (c > 0x80) {
-          mrb_raisef(mrb, E_ARGUMENT_ERROR, "character (%S) out of range",
-                     mrb_fixnum_value((mrb_int)c));
+          $raisef(mrb, E_ARGUMENT_ERROR, "character (%S) out of range",
+                     $fixnum_value(($int)c));
         }
 	lastch = c;
 	s[i] = (char)c;
@@ -507,14 +507,14 @@ str_tr(mrb_state *mrb, mrb_value str, mrb_value p1, mrb_value p2, mrb_bool squee
  *
  *  Note: conversion is effective only in ASCII region.
  */
-static mrb_value
-mrb_str_tr(mrb_state *mrb, mrb_value str)
+static $value
+$str_tr($state *mrb, $value str)
 {
-  mrb_value dup;
-  mrb_value p1, p2;
+  $value dup;
+  $value p1, p2;
 
-  mrb_get_args(mrb, "SS", &p1, &p2);
-  dup = mrb_str_dup(mrb, str);
+  $get_args(mrb, "SS", &p1, &p2);
+  dup = $str_dup(mrb, str);
   str_tr(mrb, dup, p1, p2, FALSE);
   return dup;
 }
@@ -526,16 +526,16 @@ mrb_str_tr(mrb_state *mrb, mrb_value str)
  * Translates str in place, using the same rules as String#tr.
  * Returns str, or nil if no changes were made.
  */
-static mrb_value
-mrb_str_tr_bang(mrb_state *mrb, mrb_value str)
+static $value
+$str_tr_bang($state *mrb, $value str)
 {
-  mrb_value p1, p2;
+  $value p1, p2;
 
-  mrb_get_args(mrb, "SS", &p1, &p2);
+  $get_args(mrb, "SS", &p1, &p2);
   if (str_tr(mrb, str, p1, p2, FALSE)) {
     return str;
   }
-  return mrb_nil_value();
+  return $nil_value();
 }
 
 /*
@@ -549,14 +549,14 @@ mrb_str_tr_bang(mrb_state *mrb, mrb_value str)
  *  "hello".tr_s('el', '*')    #=> "h*o"
  *  "hello".tr_s('el', 'hx')   #=> "hhxo"
  */
-static mrb_value
-mrb_str_tr_s(mrb_state *mrb, mrb_value str)
+static $value
+$str_tr_s($state *mrb, $value str)
 {
-  mrb_value dup;
-  mrb_value p1, p2;
+  $value dup;
+  $value p1, p2;
 
-  mrb_get_args(mrb, "SS", &p1, &p2);
-  dup = mrb_str_dup(mrb, str);
+  $get_args(mrb, "SS", &p1, &p2);
+  dup = $str_dup(mrb, str);
   str_tr(mrb, dup, p1, p2, TRUE);
   return dup;
 }
@@ -568,31 +568,31 @@ mrb_str_tr_s(mrb_state *mrb, mrb_value str)
  * Performs String#tr_s processing on str in place, returning
  * str, or nil if no changes were made.
  */
-static mrb_value
-mrb_str_tr_s_bang(mrb_state *mrb, mrb_value str)
+static $value
+$str_tr_s_bang($state *mrb, $value str)
 {
-  mrb_value p1, p2;
+  $value p1, p2;
 
-  mrb_get_args(mrb, "SS", &p1, &p2);
+  $get_args(mrb, "SS", &p1, &p2);
   if (str_tr(mrb, str, p1, p2, TRUE)) {
     return str;
   }
-  return mrb_nil_value();
+  return $nil_value();
 }
 
-static mrb_bool
-str_squeeze(mrb_state *mrb, mrb_value str, mrb_value v_pat)
+static $bool
+str_squeeze($state *mrb, $value str, $value v_pat)
 {
   struct tr_pattern pat_storage = STATIC_TR_PATTERN;
   struct tr_pattern *pat = NULL;
-  mrb_int i, j;
+  $int i, j;
   char *s;
-  mrb_int len;
-  mrb_bool flag_changed = FALSE;
-  mrb_int lastch = -1;
+  $int len;
+  $bool flag_changed = FALSE;
+  $int lastch = -1;
 
-  mrb_str_modify(mrb, mrb_str_ptr(str));
-  if (!mrb_nil_p(v_pat)) {
+  $str_modify(mrb, $str_ptr(str));
+  if (!$nil_p(v_pat)) {
     pat = tr_parse_pattern(mrb, &pat_storage, v_pat, TRUE);
   }
   s = RSTRING_PTR(str);
@@ -600,7 +600,7 @@ str_squeeze(mrb_state *mrb, mrb_value str, mrb_value v_pat)
 
   if (pat) {
     for (i=j=0; i<len; i++,j++) {
-      mrb_int n = tr_find_character(pat, RSTRING_PTR(v_pat), s[i]);
+      $int n = tr_find_character(pat, RSTRING_PTR(v_pat), s[i]);
 
       if (i>j) s[j] = s[i];
       if (n >= 0 && s[i] == lastch) {
@@ -643,14 +643,14 @@ str_squeeze(mrb_state *mrb, mrb_value str, mrb_value v_pat)
  *  "  now   is  the".squeeze(" ")         #=> " now is the"
  *  "putters shoot balls".squeeze("m-z")   #=> "puters shot balls"
  */
-static mrb_value
-mrb_str_squeeze(mrb_state *mrb, mrb_value str)
+static $value
+$str_squeeze($state *mrb, $value str)
 {
-  mrb_value pat = mrb_nil_value();
-  mrb_value dup;
+  $value pat = $nil_value();
+  $value dup;
 
-  mrb_get_args(mrb, "|S", &pat);
-  dup = mrb_str_dup(mrb, str);
+  $get_args(mrb, "|S", &pat);
+  dup = $str_dup(mrb, str);
   str_squeeze(mrb, dup, pat);
   return dup;
 }
@@ -662,34 +662,34 @@ mrb_str_squeeze(mrb_state *mrb, mrb_value str)
  * Squeezes str in place, returning either str, or nil if no
  * changes were made.
  */
-static mrb_value
-mrb_str_squeeze_bang(mrb_state *mrb, mrb_value str)
+static $value
+$str_squeeze_bang($state *mrb, $value str)
 {
-  mrb_value pat = mrb_nil_value();
+  $value pat = $nil_value();
 
-  mrb_get_args(mrb, "|S", &pat);
+  $get_args(mrb, "|S", &pat);
   if (str_squeeze(mrb, str, pat)) {
     return str;
   }
-  return mrb_nil_value();
+  return $nil_value();
 }
 
-static mrb_bool
-str_delete(mrb_state *mrb, mrb_value str, mrb_value v_pat)
+static $bool
+str_delete($state *mrb, $value str, $value v_pat)
 {
   struct tr_pattern pat = STATIC_TR_PATTERN;
-  mrb_int i, j;
+  $int i, j;
   char *s;
-  mrb_int len;
-  mrb_bool flag_changed = FALSE;
+  $int len;
+  $bool flag_changed = FALSE;
 
-  mrb_str_modify(mrb, mrb_str_ptr(str));
+  $str_modify(mrb, $str_ptr(str));
   tr_parse_pattern(mrb, &pat, v_pat, TRUE);
   s = RSTRING_PTR(str);
   len = RSTRING_LEN(str);
 
   for (i=j=0; i<len; i++,j++) {
-    mrb_int n = tr_find_character(&pat, RSTRING_PTR(v_pat), s[i]);
+    $int n = tr_find_character(&pat, RSTRING_PTR(v_pat), s[i]);
 
     if (i>j) s[j] = s[i];
     if (n >= 0) {
@@ -705,28 +705,28 @@ str_delete(mrb_state *mrb, mrb_value str, mrb_value v_pat)
   return flag_changed;
 }
 
-static mrb_value
-mrb_str_delete(mrb_state *mrb, mrb_value str)
+static $value
+$str_delete($state *mrb, $value str)
 {
-  mrb_value pat;
-  mrb_value dup;
+  $value pat;
+  $value dup;
 
-  mrb_get_args(mrb, "S", &pat);
-  dup = mrb_str_dup(mrb, str);
+  $get_args(mrb, "S", &pat);
+  dup = $str_dup(mrb, str);
   str_delete(mrb, dup, pat);
   return dup;
 }
 
-static mrb_value
-mrb_str_delete_bang(mrb_state *mrb, mrb_value str)
+static $value
+$str_delete_bang($state *mrb, $value str)
 {
-  mrb_value pat;
+  $value pat;
 
-  mrb_get_args(mrb, "S", &pat);
+  $get_args(mrb, "S", &pat);
   if (str_delete(mrb, str, pat)) {
     return str;
   }
-  return mrb_nil_value();
+  return $nil_value();
 }
 
 /*
@@ -740,39 +740,39 @@ mrb_str_delete_bang(mrb_state *mrb, mrb_value str)
  * be used to escape ^ or - and is otherwise ignored unless it appears at
  * the end of a sequence or the end of a other_str.
  */
-static mrb_value
-mrb_str_count(mrb_state *mrb, mrb_value str)
+static $value
+$str_count($state *mrb, $value str)
 {
-  mrb_value v_pat = mrb_nil_value();
-  mrb_int i;
+  $value v_pat = $nil_value();
+  $int i;
   char *s;
-  mrb_int len;
-  mrb_int count = 0;
+  $int len;
+  $int count = 0;
   struct tr_pattern pat = STATIC_TR_PATTERN;
 
-  mrb_get_args(mrb, "S", &v_pat);
+  $get_args(mrb, "S", &v_pat);
   tr_parse_pattern(mrb, &pat, v_pat, TRUE);
   s = RSTRING_PTR(str);
   len = RSTRING_LEN(str);
   for (i = 0; i < len; i++) {
-    mrb_int n = tr_find_character(&pat, RSTRING_PTR(v_pat), s[i]);
+    $int n = tr_find_character(&pat, RSTRING_PTR(v_pat), s[i]);
 
     if (n >= 0) count++;
   }
   tr_free_pattern(mrb, &pat);
-  return mrb_fixnum_value(count);
+  return $fixnum_value(count);
 }
 
-static mrb_value
-mrb_str_hex(mrb_state *mrb, mrb_value self)
+static $value
+$str_hex($state *mrb, $value self)
 {
-  return mrb_str_to_inum(mrb, self, 16, FALSE);
+  return $str_to_inum(mrb, self, 16, FALSE);
 }
 
-static mrb_value
-mrb_str_oct(mrb_state *mrb, mrb_value self)
+static $value
+$str_oct($state *mrb, $value self)
 {
-  return mrb_str_to_inum(mrb, self, 8, FALSE);
+  return $str_to_inum(mrb, self, 8, FALSE);
 }
 
 /*
@@ -784,22 +784,22 @@ mrb_str_oct(mrb_state *mrb, mrb_value self)
  *     a = "abcde"
  *     a.chr    #=> "a"
  */
-static mrb_value
-mrb_str_chr(mrb_state *mrb, mrb_value self)
+static $value
+$str_chr($state *mrb, $value self)
 {
-  return mrb_str_substr(mrb, self, 0, 1);
+  return $str_substr(mrb, self, 0, 1);
 }
 
-static mrb_value
-mrb_fixnum_chr(mrb_state *mrb, mrb_value num)
+static $value
+$fixnum_chr($state *mrb, $value num)
 {
-  mrb_int cp = mrb_fixnum(num);
-#ifdef MRB_UTF8_STRING
+  $int cp = $fixnum(num);
+#ifdef $UTF8_STRING
   char utf8[4];
-  mrb_int len;
+  $int len;
 
   if (cp < 0 || 0x10FFFF < cp) {
-    mrb_raisef(mrb, E_RANGE_ERROR, "%S out of char range", num);
+    $raisef(mrb, E_RANGE_ERROR, "%S out of char range", num);
   }
   if (cp < 0x80) {
     utf8[0] = (char)cp;
@@ -823,15 +823,15 @@ mrb_fixnum_chr(mrb_state *mrb, mrb_value num)
     utf8[3] = (char)(0x80 | ( cp        & 0x3F));
     len = 4;
   }
-  return mrb_str_new(mrb, utf8, len);
+  return $str_new(mrb, utf8, len);
 #else
   char c;
 
   if (cp < 0 || 0xff < cp) {
-    mrb_raisef(mrb, E_RANGE_ERROR, "%S out of char range", num);
+    $raisef(mrb, E_RANGE_ERROR, "%S out of char range", num);
   }
   c = (char)cp;
-  return mrb_str_new(mrb, &c, 1);
+  return $str_new(mrb, &c, 1);
 #endif
 }
 
@@ -844,19 +844,19 @@ mrb_fixnum_chr(mrb_state *mrb, mrb_value num)
  *     a = "abc"
  *     a.succ    #=> "abd"
  */
-static mrb_value
-mrb_str_succ_bang(mrb_state *mrb, mrb_value self)
+static $value
+$str_succ_bang($state *mrb, $value self)
 {
-  mrb_value result;
+  $value result;
   unsigned char *p, *e, *b, *t;
   const char *prepend;
-  struct RString *s = mrb_str_ptr(self);
-  mrb_int l;
+  struct RString *s = $str_ptr(self);
+  $int l;
 
   if (RSTRING_LEN(self) == 0)
     return self;
 
-  mrb_str_modify(mrb, s);
+  $str_modify(mrb, s);
   l = RSTRING_LEN(self);
   b = p = (unsigned char*) RSTRING_PTR(self);
   t = e = p + l;
@@ -870,7 +870,7 @@ mrb_str_succ_bang(mrb_state *mrb, mrb_value self)
   }
   if (e < b) {
     e = p + l - 1;
-    result = mrb_str_new_lit(mrb, "");
+    result = $str_new_lit(mrb, "");
   }
   else {
     // find leading letter of the ascii/number
@@ -882,13 +882,13 @@ mrb_str_succ_bang(mrb_state *mrb, mrb_value self)
     }
     if (!ISALNUM(*b))
       b++;
-    result = mrb_str_new(mrb, (char*) p, b - p);
+    result = $str_new(mrb, (char*) p, b - p);
   }
 
   while (e >= b) {
     if (!ISALNUM(*e)) {
       if (*e == 0xff) {
-        mrb_str_cat_lit(mrb, result, "\x01");
+        $str_cat_lit(mrb, result, "\x01");
         (*e) = 0;
       }
       else
@@ -912,27 +912,27 @@ mrb_str_succ_bang(mrb_state *mrb, mrb_value self)
       (*e)++;
       break;
     }
-    if (prepend) mrb_str_cat_cstr(mrb, result, prepend);
+    if (prepend) $str_cat_cstr(mrb, result, prepend);
     e--;
   }
-  result = mrb_str_cat(mrb, result, (char*) b, t - b);
+  result = $str_cat(mrb, result, (char*) b, t - b);
   l = RSTRING_LEN(result);
-  mrb_str_resize(mrb, self, l);
+  $str_resize(mrb, self, l);
   memcpy(RSTRING_PTR(self), RSTRING_PTR(result), l);
   return self;
 }
 
-static mrb_value
-mrb_str_succ(mrb_state *mrb, mrb_value self)
+static $value
+$str_succ($state *mrb, $value self)
 {
-  mrb_value str;
+  $value str;
 
-  str = mrb_str_dup(mrb, self);
-  mrb_str_succ_bang(mrb, str);
+  str = $str_dup(mrb, self);
+  $str_succ_bang(mrb, str);
   return str;
 }
 
-#ifdef MRB_UTF8_STRING
+#ifdef $UTF8_STRING
 static const char utf8len_codepage_zero[256] =
 {
   1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -945,10 +945,10 @@ static const char utf8len_codepage_zero[256] =
   3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,
 };
 
-static mrb_int
+static $int
 utf8code(unsigned char* p)
 {
-  mrb_int len;
+  $int len;
 
   if (p[0] < 0x80)
     return p[0];
@@ -981,20 +981,20 @@ utf8code(unsigned char* p)
   return p[0];
 }
 
-static mrb_value
-mrb_str_ord(mrb_state* mrb, mrb_value str)
+static $value
+$str_ord($state* mrb, $value str)
 {
   if (RSTRING_LEN(str) == 0)
-    mrb_raise(mrb, E_ARGUMENT_ERROR, "empty string");
-  return mrb_fixnum_value(utf8code((unsigned char*) RSTRING_PTR(str)));
+    $raise(mrb, E_ARGUMENT_ERROR, "empty string");
+  return $fixnum_value(utf8code((unsigned char*) RSTRING_PTR(str)));
 }
 #else
-static mrb_value
-mrb_str_ord(mrb_state* mrb, mrb_value str)
+static $value
+$str_ord($state* mrb, $value str)
 {
   if (RSTRING_LEN(str) == 0)
-    mrb_raise(mrb, E_ARGUMENT_ERROR, "empty string");
-  return mrb_fixnum_value((unsigned char)RSTRING_PTR(str)[0]);
+    $raise(mrb, E_ARGUMENT_ERROR, "empty string");
+  return $fixnum_value((unsigned char)RSTRING_PTR(str)[0]);
 }
 #endif
 
@@ -1008,23 +1008,23 @@ mrb_str_ord(mrb_state* mrb, mrb_value str)
  *     "hello".delete_prefix!("hel") #=> "lo"
  *     "hello".delete_prefix!("llo") #=> nil
  */
-static mrb_value
-mrb_str_del_prefix_bang(mrb_state *mrb, mrb_value self)
+static $value
+$str_del_prefix_bang($state *mrb, $value self)
 {
-  mrb_int plen, slen;
+  $int plen, slen;
   char *ptr, *s;
   struct RString *str = RSTRING(self);
 
-  mrb_get_args(mrb, "s", &ptr, &plen);
+  $get_args(mrb, "s", &ptr, &plen);
   slen = RSTR_LEN(str);
-  if (plen > slen) return mrb_nil_value();
+  if (plen > slen) return $nil_value();
   s = RSTR_PTR(str);
-  if (memcmp(s, ptr, plen) != 0) return mrb_nil_value();
-  if (!MRB_FROZEN_P(str) && (RSTR_SHARED_P(str) || RSTR_FSHARED_P(str))) {
+  if (memcmp(s, ptr, plen) != 0) return $nil_value();
+  if (!$FROZEN_P(str) && (RSTR_SHARED_P(str) || RSTR_FSHARED_P(str))) {
     str->as.heap.ptr += plen;
   }
   else {
-    mrb_str_modify(mrb, str);
+    $str_modify(mrb, str);
     s = RSTR_PTR(str);
     memmove(s, s+plen, slen-plen);
   }
@@ -1041,18 +1041,18 @@ mrb_str_del_prefix_bang(mrb_state *mrb, mrb_value self)
  *     "hello".delete_prefix("hel") #=> "lo"
  *     "hello".delete_prefix("llo") #=> "hello"
  */
-static mrb_value
-mrb_str_del_prefix(mrb_state *mrb, mrb_value self)
+static $value
+$str_del_prefix($state *mrb, $value self)
 {
-  mrb_int plen, slen;
+  $int plen, slen;
   char *ptr;
 
-  mrb_get_args(mrb, "s", &ptr, &plen);
+  $get_args(mrb, "s", &ptr, &plen);
   slen = RSTRING_LEN(self);
-  if (plen > slen) return mrb_str_dup(mrb, self);
+  if (plen > slen) return $str_dup(mrb, self);
   if (memcmp(RSTRING_PTR(self), ptr, plen) != 0)
-    return mrb_str_dup(mrb, self);
-  return mrb_str_substr(mrb, self, plen, slen-plen);
+    return $str_dup(mrb, self);
+  return $str_substr(mrb, self, plen, slen-plen);
 }
 
 /*
@@ -1065,23 +1065,23 @@ mrb_str_del_prefix(mrb_state *mrb, mrb_value self)
  *     "hello".delete_suffix!("llo") #=> "he"
  *     "hello".delete_suffix!("hel") #=> nil
  */
-static mrb_value
-mrb_str_del_suffix_bang(mrb_state *mrb, mrb_value self)
+static $value
+$str_del_suffix_bang($state *mrb, $value self)
 {
-  mrb_int plen, slen;
+  $int plen, slen;
   char *ptr, *s;
   struct RString *str = RSTRING(self);
 
-  mrb_get_args(mrb, "s", &ptr, &plen);
+  $get_args(mrb, "s", &ptr, &plen);
   slen = RSTR_LEN(str);
-  if (plen > slen) return mrb_nil_value();
+  if (plen > slen) return $nil_value();
   s = RSTR_PTR(str);
-  if (memcmp(s+slen-plen, ptr, plen) != 0) return mrb_nil_value();
-  if (!MRB_FROZEN_P(str) && (RSTR_SHARED_P(str) || RSTR_FSHARED_P(str))) {
+  if (memcmp(s+slen-plen, ptr, plen) != 0) return $nil_value();
+  if (!$FROZEN_P(str) && (RSTR_SHARED_P(str) || RSTR_FSHARED_P(str))) {
     /* no need to modify string */
   }
   else {
-    mrb_str_modify(mrb, str);
+    $str_modify(mrb, str);
   }
   RSTR_SET_LEN(str, slen-plen);
   return self;
@@ -1096,87 +1096,87 @@ mrb_str_del_suffix_bang(mrb_state *mrb, mrb_value self)
  *     "hello".delete_suffix("hel") #=> "lo"
  *     "hello".delete_suffix("llo") #=> "hello"
  */
-static mrb_value
-mrb_str_del_suffix(mrb_state *mrb, mrb_value self)
+static $value
+$str_del_suffix($state *mrb, $value self)
 {
-  mrb_int plen, slen;
+  $int plen, slen;
   char *ptr;
 
-  mrb_get_args(mrb, "s", &ptr, &plen);
+  $get_args(mrb, "s", &ptr, &plen);
   slen = RSTRING_LEN(self);
-  if (plen > slen) return mrb_str_dup(mrb, self);
+  if (plen > slen) return $str_dup(mrb, self);
   if (memcmp(RSTRING_PTR(self)+slen-plen, ptr, plen) != 0)
-    return mrb_str_dup(mrb, self);
-  return mrb_str_substr(mrb, self, 0, slen-plen);
+    return $str_dup(mrb, self);
+  return $str_substr(mrb, self, 0, slen-plen);
 }
 
-static mrb_value
-mrb_str_lines(mrb_state *mrb, mrb_value self)
+static $value
+$str_lines($state *mrb, $value self)
 {
-  mrb_value result;
+  $value result;
   int ai;
-  mrb_int len;
+  $int len;
   char *b = RSTRING_PTR(self);
   char *p = b, *t;
   char *e = b + RSTRING_LEN(self);
 
-  mrb_get_args(mrb, "");
+  $get_args(mrb, "");
 
-  result = mrb_ary_new(mrb);
-  ai = mrb_gc_arena_save(mrb);
+  result = $ary_new(mrb);
+  ai = $gc_arena_save(mrb);
   while (p < e) {
     t = p;
     while (p < e && *p != '\n') p++;
     if (*p == '\n') p++;
-    len = (mrb_int) (p - t);
-    mrb_ary_push(mrb, result, mrb_str_new(mrb, t, len));
-    mrb_gc_arena_restore(mrb, ai);
+    len = ($int) (p - t);
+    $ary_push(mrb, result, $str_new(mrb, t, len));
+    $gc_arena_restore(mrb, ai);
   }
   return result;
 }
 
 void
-mrb_mruby_string_ext_gem_init(mrb_state* mrb)
+$mruby_string_ext_gem_init($state* mrb)
 {
   struct RClass * s = mrb->string_class;
 
-  mrb_define_method(mrb, s, "dump",            mrb_str_dump,            MRB_ARGS_NONE());
-  mrb_define_method(mrb, s, "getbyte",         mrb_str_getbyte,         MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, s, "setbyte",         mrb_str_setbyte,         MRB_ARGS_REQ(2));
-  mrb_define_method(mrb, s, "byteslice",       mrb_str_byteslice,       MRB_ARGS_REQ(1)|MRB_ARGS_OPT(1));
-  mrb_define_method(mrb, s, "swapcase!",       mrb_str_swapcase_bang,   MRB_ARGS_NONE());
-  mrb_define_method(mrb, s, "swapcase",        mrb_str_swapcase,        MRB_ARGS_NONE());
-  mrb_define_method(mrb, s, "concat",          mrb_str_concat_m,        MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, s, "<<",              mrb_str_concat_m,        MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, s, "count",           mrb_str_count,           MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, s, "tr",              mrb_str_tr,              MRB_ARGS_REQ(2));
-  mrb_define_method(mrb, s, "tr!",             mrb_str_tr_bang,         MRB_ARGS_REQ(2));
-  mrb_define_method(mrb, s, "tr_s",            mrb_str_tr_s,            MRB_ARGS_REQ(2));
-  mrb_define_method(mrb, s, "tr_s!",           mrb_str_tr_s_bang,       MRB_ARGS_REQ(2));
-  mrb_define_method(mrb, s, "squeeze",         mrb_str_squeeze,         MRB_ARGS_OPT(1));
-  mrb_define_method(mrb, s, "squeeze!",        mrb_str_squeeze_bang,    MRB_ARGS_OPT(1));
-  mrb_define_method(mrb, s, "delete",          mrb_str_delete,          MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, s, "delete!",         mrb_str_delete_bang,     MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, s, "start_with?",     mrb_str_start_with,      MRB_ARGS_REST());
-  mrb_define_method(mrb, s, "end_with?",       mrb_str_end_with,        MRB_ARGS_REST());
-  mrb_define_method(mrb, s, "hex",             mrb_str_hex,             MRB_ARGS_NONE());
-  mrb_define_method(mrb, s, "oct",             mrb_str_oct,             MRB_ARGS_NONE());
-  mrb_define_method(mrb, s, "chr",             mrb_str_chr,             MRB_ARGS_NONE());
-  mrb_define_method(mrb, s, "succ",            mrb_str_succ,            MRB_ARGS_NONE());
-  mrb_define_method(mrb, s, "succ!",           mrb_str_succ_bang,       MRB_ARGS_NONE());
-  mrb_define_alias(mrb,  s, "next",            "succ");
-  mrb_define_alias(mrb,  s, "next!",           "succ!");
-  mrb_define_method(mrb, s, "ord",             mrb_str_ord,             MRB_ARGS_NONE());
-  mrb_define_method(mrb, s, "delete_prefix!",  mrb_str_del_prefix_bang, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, s, "delete_prefix",   mrb_str_del_prefix,      MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, s, "delete_suffix!",  mrb_str_del_suffix_bang, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, s, "delete_suffix",   mrb_str_del_suffix,      MRB_ARGS_REQ(1));
+  $define_method(mrb, s, "dump",            $str_dump,            $ARGS_NONE());
+  $define_method(mrb, s, "getbyte",         $str_getbyte,         $ARGS_REQ(1));
+  $define_method(mrb, s, "setbyte",         $str_setbyte,         $ARGS_REQ(2));
+  $define_method(mrb, s, "byteslice",       $str_byteslice,       $ARGS_REQ(1)|$ARGS_OPT(1));
+  $define_method(mrb, s, "swapcase!",       $str_swapcase_bang,   $ARGS_NONE());
+  $define_method(mrb, s, "swapcase",        $str_swapcase,        $ARGS_NONE());
+  $define_method(mrb, s, "concat",          $str_concat_m,        $ARGS_REQ(1));
+  $define_method(mrb, s, "<<",              $str_concat_m,        $ARGS_REQ(1));
+  $define_method(mrb, s, "count",           $str_count,           $ARGS_REQ(1));
+  $define_method(mrb, s, "tr",              $str_tr,              $ARGS_REQ(2));
+  $define_method(mrb, s, "tr!",             $str_tr_bang,         $ARGS_REQ(2));
+  $define_method(mrb, s, "tr_s",            $str_tr_s,            $ARGS_REQ(2));
+  $define_method(mrb, s, "tr_s!",           $str_tr_s_bang,       $ARGS_REQ(2));
+  $define_method(mrb, s, "squeeze",         $str_squeeze,         $ARGS_OPT(1));
+  $define_method(mrb, s, "squeeze!",        $str_squeeze_bang,    $ARGS_OPT(1));
+  $define_method(mrb, s, "delete",          $str_delete,          $ARGS_REQ(1));
+  $define_method(mrb, s, "delete!",         $str_delete_bang,     $ARGS_REQ(1));
+  $define_method(mrb, s, "start_with?",     $str_start_with,      $ARGS_REST());
+  $define_method(mrb, s, "end_with?",       $str_end_with,        $ARGS_REST());
+  $define_method(mrb, s, "hex",             $str_hex,             $ARGS_NONE());
+  $define_method(mrb, s, "oct",             $str_oct,             $ARGS_NONE());
+  $define_method(mrb, s, "chr",             $str_chr,             $ARGS_NONE());
+  $define_method(mrb, s, "succ",            $str_succ,            $ARGS_NONE());
+  $define_method(mrb, s, "succ!",           $str_succ_bang,       $ARGS_NONE());
+  $define_alias(mrb,  s, "next",            "succ");
+  $define_alias(mrb,  s, "next!",           "succ!");
+  $define_method(mrb, s, "ord",             $str_ord,             $ARGS_NONE());
+  $define_method(mrb, s, "delete_prefix!",  $str_del_prefix_bang, $ARGS_REQ(1));
+  $define_method(mrb, s, "delete_prefix",   $str_del_prefix,      $ARGS_REQ(1));
+  $define_method(mrb, s, "delete_suffix!",  $str_del_suffix_bang, $ARGS_REQ(1));
+  $define_method(mrb, s, "delete_suffix",   $str_del_suffix,      $ARGS_REQ(1));
 
-  mrb_define_method(mrb, s, "__lines",         mrb_str_lines,           MRB_ARGS_NONE());
-  mrb_define_method(mrb, mrb->fixnum_class, "chr", mrb_fixnum_chr, MRB_ARGS_NONE());
+  $define_method(mrb, s, "__lines",         $str_lines,           $ARGS_NONE());
+  $define_method(mrb, mrb->fixnum_class, "chr", $fixnum_chr, $ARGS_NONE());
 }
 
 void
-mrb_mruby_string_ext_gem_final(mrb_state* mrb)
+$mruby_string_ext_gem_final($state* mrb)
 {
 }
