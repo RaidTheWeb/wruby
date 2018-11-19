@@ -10,9 +10,9 @@
 
 #ifndef MRB_DISABLE_STDIO
 static void
-printstr(mrb_value obj, FILE *stream)
+printstr(_value obj, FILE *stream)
 {
-  if (mrb_string_p(obj)) {
+  if (_string_p(obj)) {
     fwrite(RSTRING_PTR(obj), RSTRING_LEN(obj), 1, stream);
     putc('\n', stream);
   }
@@ -22,26 +22,26 @@ printstr(mrb_value obj, FILE *stream)
 #endif
 
 MRB_API void
-mrb_p(mrb_state *mrb, mrb_value obj)
+_p(_state *mrb, _value obj)
 {
-  printstr(mrb_inspect(mrb, obj), stdout);
+  printstr(_inspect(mrb, obj), stdout);
 }
 
 MRB_API void
-mrb_print_error(mrb_state *mrb)
+_print_error(_state *mrb)
 {
-  mrb_print_backtrace(mrb);
-  printstr(mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0), stderr);
+  _print_backtrace(mrb);
+  printstr(_funcall(mrb, _obj_value(mrb->exc), "inspect", 0), stderr);
 }
 
 MRB_API void
-mrb_show_version(mrb_state *mrb)
+_show_version(_state *mrb)
 {
-  printstr(mrb_const_get(mrb, mrb_obj_value(mrb->object_class), mrb_intern_lit(mrb, "MRUBY_DESCRIPTION")), stdout);
+  printstr(_const_get(mrb, _obj_value(mrb->object_class), _intern_lit(mrb, "MRUBY_DESCRIPTION")), stdout);
 }
 
 MRB_API void
-mrb_show_copyright(mrb_state *mrb)
+_show_copyright(_state *mrb)
 {
-  printstr(mrb_const_get(mrb, mrb_obj_value(mrb->object_class), mrb_intern_lit(mrb, "MRUBY_COPYRIGHT")), stdout);
+  printstr(_const_get(mrb, _obj_value(mrb->object_class), _intern_lit(mrb, "MRUBY_COPYRIGHT")), stdout);
 }

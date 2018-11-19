@@ -12,11 +12,11 @@
 #include <mruby/irep.h>
 
 MRB_API struct RData*
-mrb_data_object_alloc(mrb_state *mrb, struct RClass *klass, void *ptr, const mrb_data_type *type)
+_data_object_alloc(_state *mrb, struct RClass *klass, void *ptr, const _data_type *type)
 {
   struct RData *data;
 
-  data = (struct RData*)mrb_obj_alloc(mrb, MRB_TT_DATA, klass);
+  data = (struct RData*)_obj_alloc(mrb, MRB_TT_DATA, klass);
   data->data = ptr;
   data->type = type;
 
@@ -24,31 +24,31 @@ mrb_data_object_alloc(mrb_state *mrb, struct RClass *klass, void *ptr, const mrb
 }
 
 MRB_API void
-mrb_data_check_type(mrb_state *mrb, mrb_value obj, const mrb_data_type *type)
+_data_check_type(_state *mrb, _value obj, const _data_type *type)
 {
-  if (mrb_type(obj) != MRB_TT_DATA) {
-    mrb_check_type(mrb, obj, MRB_TT_DATA);
+  if (_type(obj) != MRB_TT_DATA) {
+    _check_type(mrb, obj, MRB_TT_DATA);
   }
   if (DATA_TYPE(obj) != type) {
-    const mrb_data_type *t2 = DATA_TYPE(obj);
+    const _data_type *t2 = DATA_TYPE(obj);
 
     if (t2) {
-      mrb_raisef(mrb, E_TYPE_ERROR, "wrong argument type %S (expected %S)",
-                 mrb_str_new_cstr(mrb, t2->struct_name), mrb_str_new_cstr(mrb, type->struct_name));
+      _raisef(mrb, E_TYPE_ERROR, "wrong argument type %S (expected %S)",
+                 _str_new_cstr(mrb, t2->struct_name), _str_new_cstr(mrb, type->struct_name));
     }
     else {
-      struct RClass *c = mrb_class(mrb, obj);
+      struct RClass *c = _class(mrb, obj);
 
-      mrb_raisef(mrb, E_TYPE_ERROR, "uninitialized %S (expected %S)",
-                 mrb_obj_value(c), mrb_str_new_cstr(mrb, type->struct_name));
+      _raisef(mrb, E_TYPE_ERROR, "uninitialized %S (expected %S)",
+                 _obj_value(c), _str_new_cstr(mrb, type->struct_name));
     }
   }
 }
 
 MRB_API void*
-mrb_data_check_get_ptr(mrb_state *mrb, mrb_value obj, const mrb_data_type *type)
+_data_check_get_ptr(_state *mrb, _value obj, const _data_type *type)
 {
-  if (mrb_type(obj) != MRB_TT_DATA) {
+  if (_type(obj) != MRB_TT_DATA) {
     return NULL;
   }
   if (DATA_TYPE(obj) != type) {
@@ -58,40 +58,40 @@ mrb_data_check_get_ptr(mrb_state *mrb, mrb_value obj, const mrb_data_type *type)
 }
 
 MRB_API void*
-mrb_data_get_ptr(mrb_state *mrb, mrb_value obj, const mrb_data_type *type)
+_data_get_ptr(_state *mrb, _value obj, const _data_type *type)
 {
-  mrb_data_check_type(mrb, obj, type);
+  _data_check_type(mrb, obj, type);
   return DATA_PTR(obj);
 }
 
-MRB_API mrb_sym
-mrb_obj_to_sym(mrb_state *mrb, mrb_value name)
+MRB_API _sym
+_obj_to_sym(_state *mrb, _value name)
 {
-  mrb_sym id;
+  _sym id;
 
-  switch (mrb_type(name)) {
+  switch (_type(name)) {
     default:
-      name = mrb_check_string_type(mrb, name);
-      if (mrb_nil_p(name)) {
-        name = mrb_inspect(mrb, name);
-        mrb_raisef(mrb, E_TYPE_ERROR, "%S is not a symbol", name);
+      name = _check_string_type(mrb, name);
+      if (_nil_p(name)) {
+        name = _inspect(mrb, name);
+        _raisef(mrb, E_TYPE_ERROR, "%S is not a symbol", name);
         /* not reached */
       }
       /* fall through */
     case MRB_TT_STRING:
-      name = mrb_str_intern(mrb, name);
+      name = _str_intern(mrb, name);
       /* fall through */
     case MRB_TT_SYMBOL:
-      id = mrb_symbol(name);
+      id = _symbol(name);
   }
   return id;
 }
 
-MRB_API mrb_int
+MRB_API _int
 #ifdef MRB_WITHOUT_FLOAT
-mrb_fixnum_id(mrb_int f)
+_fixnum_id(_int f)
 #else
-mrb_float_id(mrb_float f)
+_float_id(_float f)
 #endif
 {
   const char *p = (const char*)&f;
@@ -108,15 +108,15 @@ mrb_float_id(mrb_float f)
   }
   id = id + (id>>5);
 
-  return (mrb_int)id;
+  return (_int)id;
 }
 
-MRB_API mrb_int
-mrb_obj_id(mrb_value obj)
+MRB_API _int
+_obj_id(_value obj)
 {
-  mrb_int tt = mrb_type(obj);
+  _int tt = _type(obj);
 
-#define MakeID2(p,t) (mrb_int)(((intptr_t)(p))^(t))
+#define MakeID2(p,t) (_int)(((intptr_t)(p))^(t))
 #define MakeID(p)    MakeID2(p,tt)
 
   switch (tt) {
@@ -124,20 +124,20 @@ mrb_obj_id(mrb_value obj)
   case MRB_TT_UNDEF:
     return MakeID(0); /* not define */
   case MRB_TT_FALSE:
-    if (mrb_nil_p(obj))
+    if (_nil_p(obj))
       return MakeID(1);
     return MakeID(0);
   case MRB_TT_TRUE:
     return MakeID(1);
   case MRB_TT_SYMBOL:
-    return MakeID(mrb_symbol(obj));
+    return MakeID(_symbol(obj));
   case MRB_TT_FIXNUM:
 #ifdef MRB_WITHOUT_FLOAT
-    return MakeID(mrb_fixnum_id(mrb_fixnum(obj)));
+    return MakeID(_fixnum_id(_fixnum(obj)));
 #else
-    return MakeID2(mrb_float_id((mrb_float)mrb_fixnum(obj)), MRB_TT_FLOAT);
+    return MakeID2(_float_id((_float)_fixnum(obj)), MRB_TT_FLOAT);
   case MRB_TT_FLOAT:
-    return MakeID(mrb_float_id(mrb_float(obj)));
+    return MakeID(_float_id(_float(obj)));
 #endif
   case MRB_TT_STRING:
   case MRB_TT_OBJECT:
@@ -154,53 +154,53 @@ mrb_obj_id(mrb_value obj)
   case MRB_TT_DATA:
   case MRB_TT_ISTRUCT:
   default:
-    return MakeID(mrb_ptr(obj));
+    return MakeID(_ptr(obj));
   }
 }
 
 #ifdef MRB_WORD_BOXING
 #ifndef MRB_WITHOUT_FLOAT
-MRB_API mrb_value
-mrb_word_boxing_float_value(mrb_state *mrb, mrb_float f)
+MRB_API _value
+_word_boxing_float_value(_state *mrb, _float f)
 {
-  mrb_value v;
+  _value v;
 
-  v.value.p = mrb_obj_alloc(mrb, MRB_TT_FLOAT, mrb->float_class);
+  v.value.p = _obj_alloc(mrb, MRB_TT_FLOAT, mrb->float_class);
   v.value.fp->f = f;
   return v;
 }
 
-MRB_API mrb_value
-mrb_word_boxing_float_pool(mrb_state *mrb, mrb_float f)
+MRB_API _value
+_word_boxing_float_pool(_state *mrb, _float f)
 {
-  struct RFloat *nf = (struct RFloat *)mrb_malloc(mrb, sizeof(struct RFloat));
+  struct RFloat *nf = (struct RFloat *)_malloc(mrb, sizeof(struct RFloat));
   nf->tt = MRB_TT_FLOAT;
   nf->c = mrb->float_class;
   nf->f = f;
-  return mrb_obj_value(nf);
+  return _obj_value(nf);
 }
 #endif  /* MRB_WITHOUT_FLOAT */
 
-MRB_API mrb_value
-mrb_word_boxing_cptr_value(mrb_state *mrb, void *p)
+MRB_API _value
+_word_boxing_cptr_value(_state *mrb, void *p)
 {
-  mrb_value v;
+  _value v;
 
-  v.value.p = mrb_obj_alloc(mrb, MRB_TT_CPTR, mrb->object_class);
+  v.value.p = _obj_alloc(mrb, MRB_TT_CPTR, mrb->object_class);
   v.value.vp->p = p;
   return v;
 }
 #endif  /* MRB_WORD_BOXING */
 
-MRB_API mrb_bool
-mrb_regexp_p(mrb_state *mrb, mrb_value v)
+MRB_API _bool
+_regexp_p(_state *mrb, _value v)
 {
   if (mrb->flags & MRB_STATE_NO_REGEXP) {
     return FALSE;
   }
-  if ((mrb->flags & MRB_STATE_REGEXP) || mrb_class_defined(mrb, REGEXP_CLASS)) {
+  if ((mrb->flags & MRB_STATE_REGEXP) || _class_defined(mrb, REGEXP_CLASS)) {
     mrb->flags |= MRB_STATE_REGEXP;
-    return mrb_obj_is_kind_of(mrb, v, mrb_class_get(mrb, REGEXP_CLASS));
+    return _obj_is_kind_of(mrb, v, _class_get(mrb, REGEXP_CLASS));
   }
   else {
     mrb->flags |= MRB_STATE_REGEXP;
@@ -213,15 +213,15 @@ mrb_regexp_p(mrb_state *mrb, mrb_value v)
 
 #ifndef va_copy
 static void
-mrb_msvc_va_copy(va_list *dest, va_list src)
+_msvc_va_copy(va_list *dest, va_list src)
 {
   *dest = src;
 }
-#define va_copy(dest, src) mrb_msvc_va_copy(&(dest), src)
+#define va_copy(dest, src) _msvc_va_copy(&(dest), src)
 #endif
 
 MRB_API int
-mrb_msvc_vsnprintf(char *s, size_t n, const char *format, va_list arg)
+_msvc_vsnprintf(char *s, size_t n, const char *format, va_list arg)
 {
   int cnt;
   va_list argcp;
@@ -234,12 +234,12 @@ mrb_msvc_vsnprintf(char *s, size_t n, const char *format, va_list arg)
 }
 
 MRB_API int
-mrb_msvc_snprintf(char *s, size_t n, const char *format, ...)
+_msvc_snprintf(char *s, size_t n, const char *format, ...)
 {
   va_list arg;
   int ret;
   va_start(arg, format);
-  ret = mrb_msvc_vsnprintf(s, n, format, arg);
+  ret = _msvc_vsnprintf(s, n, format, arg);
   va_end(arg);
   return ret;
 }

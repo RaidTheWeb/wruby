@@ -15,36 +15,36 @@
 MRB_BEGIN_DECL
 
 
-typedef struct mrb_shared_array {
+typedef struct _shared_array {
   int refcnt;
-  mrb_int len;
-  mrb_value *ptr;
-} mrb_shared_array;
+  _int len;
+  _value *ptr;
+} _shared_array;
 
-#define MRB_ARY_EMBED_LEN_MAX ((mrb_int)(sizeof(void*)*3/sizeof(mrb_value)))
+#define MRB_ARY_EMBED_LEN_MAX ((_int)(sizeof(void*)*3/sizeof(_value)))
 struct RArray {
   MRB_OBJECT_HEADER;
   union {
     struct {
-      mrb_int len;
+      _int len;
       union {
-        mrb_int capa;
-        mrb_shared_array *shared;
+        _int capa;
+        _shared_array *shared;
       } aux;
-      mrb_value *ptr;
+      _value *ptr;
     } heap;
-    mrb_value embed[MRB_ARY_EMBED_LEN_MAX];
+    _value embed[MRB_ARY_EMBED_LEN_MAX];
   } as;
 };
 
-#define mrb_ary_ptr(v)    ((struct RArray*)(mrb_ptr(v)))
-#define mrb_ary_value(p)  mrb_obj_value((void*)(p))
-#define RARRAY(v)  ((struct RArray*)(mrb_ptr(v)))
+#define _ary_ptr(v)    ((struct RArray*)(_ptr(v)))
+#define _ary_value(p)  _obj_value((void*)(p))
+#define RARRAY(v)  ((struct RArray*)(_ptr(v)))
 
 #define MRB_ARY_EMBED_MASK  7
 #define ARY_EMBED_P(a) ((a)->flags & MRB_ARY_EMBED_MASK)
 #define ARY_UNSET_EMBED_FLAG(a) ((a)->flags &= ~(MRB_ARY_EMBED_MASK))
-#define ARY_EMBED_LEN(a) ((mrb_int)(((a)->flags & MRB_ARY_EMBED_MASK) - 1))
+#define ARY_EMBED_LEN(a) ((_int)(((a)->flags & MRB_ARY_EMBED_MASK) - 1))
 #define ARY_SET_EMBED_LEN(a,len) ((a)->flags = ((a)->flags&~MRB_ARY_EMBED_MASK) | ((uint32_t)(len) + 1))
 #define ARY_EMBED_PTR(a) (&((a)->as.embed[0]))
 
@@ -54,7 +54,7 @@ struct RArray {
 #define RARRAY_PTR(a) ARY_PTR(RARRAY(a))
 #define ARY_SET_LEN(a,n) do {\
   if (ARY_EMBED_P(a)) {\
-    mrb_assert((n) <= MRB_ARY_EMBED_LEN_MAX); \
+    _assert((n) <= MRB_ARY_EMBED_LEN_MAX); \
     ARY_SET_EMBED_LEN(a,n);\
   }\
   else\
@@ -66,9 +66,9 @@ struct RArray {
 #define ARY_SET_SHARED_FLAG(a) ((a)->flags |= MRB_ARY_SHARED)
 #define ARY_UNSET_SHARED_FLAG(a) ((a)->flags &= ~MRB_ARY_SHARED)
 
-void mrb_ary_decref(mrb_state*, mrb_shared_array*);
-MRB_API void mrb_ary_modify(mrb_state*, struct RArray*);
-MRB_API mrb_value mrb_ary_new_capa(mrb_state*, mrb_int);
+void _ary_decref(_state*, _shared_array*);
+MRB_API void _ary_modify(_state*, struct RArray*);
+MRB_API _value _ary_new_capa(_state*, _int);
 
 /*
  * Initializes a new array.
@@ -80,7 +80,7 @@ MRB_API mrb_value mrb_ary_new_capa(mrb_state*, mrb_int);
  * @param mrb The mruby state reference.
  * @return The initialized array.
  */
-MRB_API mrb_value mrb_ary_new(mrb_state *mrb);
+MRB_API _value _ary_new(_state *mrb);
 
 /*
  * Initializes a new array with initial values
@@ -94,7 +94,7 @@ MRB_API mrb_value mrb_ary_new(mrb_state *mrb);
  * @param vals The actual values.
  * @return The initialized array.
  */
-MRB_API mrb_value mrb_ary_new_from_values(mrb_state *mrb, mrb_int size, const mrb_value *vals);
+MRB_API _value _ary_new_from_values(_state *mrb, _int size, const _value *vals);
 
 /*
  * Initializes a new array with two initial values
@@ -108,7 +108,7 @@ MRB_API mrb_value mrb_ary_new_from_values(mrb_state *mrb, mrb_int size, const mr
  * @param cdr The second value.
  * @return The initialized array.
  */
-MRB_API mrb_value mrb_assoc_new(mrb_state *mrb, mrb_value car, mrb_value cdr);
+MRB_API _value _assoc_new(_state *mrb, _value car, _value cdr);
 
 /*
  * Concatenate two arrays. The target array will be modified
@@ -120,7 +120,7 @@ MRB_API mrb_value mrb_assoc_new(mrb_state *mrb, mrb_value car, mrb_value cdr);
  * @param self The target array.
  * @param other The array that will be concatenated to self.
  */
-MRB_API void mrb_ary_concat(mrb_state *mrb, mrb_value self, mrb_value other);
+MRB_API void _ary_concat(_state *mrb, _value self, _value other);
 
 /*
  * Create an array from the input. It tries calling to_a on the
@@ -131,7 +131,7 @@ MRB_API void mrb_ary_concat(mrb_state *mrb, mrb_value self, mrb_value other);
  * @param value The value to change into an array.
  * @return An array representation of value.
  */
-MRB_API mrb_value mrb_ary_splat(mrb_state *mrb, mrb_value value);
+MRB_API _value _ary_splat(_state *mrb, _value value);
 
 /*
  * Pushes value into array.
@@ -144,7 +144,7 @@ MRB_API mrb_value mrb_ary_splat(mrb_state *mrb, mrb_value value);
  * @param ary The array in which the value will be pushed
  * @param value The value to be pushed into array
  */
-MRB_API void mrb_ary_push(mrb_state *mrb, mrb_value array, mrb_value value);
+MRB_API void _ary_push(_state *mrb, _value array, _value value);
 
 /*
  * Pops the last element from the array.
@@ -157,7 +157,7 @@ MRB_API void mrb_ary_push(mrb_state *mrb, mrb_value array, mrb_value value);
  * @param ary The array from which the value will be popped.
  * @return The popped value.
  */
-MRB_API mrb_value mrb_ary_pop(mrb_state *mrb, mrb_value ary);
+MRB_API _value _ary_pop(_state *mrb, _value ary);
 
 /*
  * Returns a reference to an element of the array on the given index.
@@ -171,7 +171,7 @@ MRB_API mrb_value mrb_ary_pop(mrb_state *mrb, mrb_value ary);
  * @param n The array index being referenced
  * @return The referenced value.
  */
-MRB_API mrb_value mrb_ary_ref(mrb_state *mrb, mrb_value ary, mrb_int n);
+MRB_API _value _ary_ref(_state *mrb, _value ary, _int n);
 
 /*
  * Sets a value on an array at the given index
@@ -185,7 +185,7 @@ MRB_API mrb_value mrb_ary_ref(mrb_state *mrb, mrb_value ary, mrb_int n);
  * @param n The array index being referenced.
  * @param val The value being setted.
  */
-MRB_API void mrb_ary_set(mrb_state *mrb, mrb_value ary, mrb_int n, mrb_value val);
+MRB_API void _ary_set(_state *mrb, _value ary, _int n, _value val);
 
 /*
  * Replace the array with another array
@@ -198,8 +198,8 @@ MRB_API void mrb_ary_set(mrb_state *mrb, mrb_value ary, mrb_int n, mrb_value val
  * @param self The target array.
  * @param other The array to replace it with.
  */
-MRB_API void mrb_ary_replace(mrb_state *mrb, mrb_value self, mrb_value other);
-MRB_API mrb_value mrb_check_array_type(mrb_state *mrb, mrb_value self);
+MRB_API void _ary_replace(_state *mrb, _value self, _value other);
+MRB_API _value _check_array_type(_state *mrb, _value self);
 
 /*
  * Unshift an element into the array
@@ -212,7 +212,7 @@ MRB_API mrb_value mrb_check_array_type(mrb_state *mrb, mrb_value self);
  * @param self The target array.
  * @param item The item to unshift.
  */
-MRB_API mrb_value mrb_ary_unshift(mrb_state *mrb, mrb_value self, mrb_value item);
+MRB_API _value _ary_unshift(_state *mrb, _value self, _value item);
 
 /*
  * Get nth element in the array
@@ -224,7 +224,7 @@ MRB_API mrb_value mrb_ary_unshift(mrb_state *mrb, mrb_value self, mrb_value item
  * @param ary The target array.
  * @param offset The element position (negative counts from the tail).
  */
-MRB_API mrb_value mrb_ary_entry(mrb_value ary, mrb_int offset);
+MRB_API _value _ary_entry(_value ary, _int offset);
 
 /*
  * Shifts the first element from the array.
@@ -237,7 +237,7 @@ MRB_API mrb_value mrb_ary_entry(mrb_value ary, mrb_int offset);
  * @param self The array from which the value will be shifted.
  * @return The shifted value.
  */
-MRB_API mrb_value mrb_ary_shift(mrb_state *mrb, mrb_value self);
+MRB_API _value _ary_shift(_state *mrb, _value self);
 
 /*
  * Removes all elements from the array
@@ -250,7 +250,7 @@ MRB_API mrb_value mrb_ary_shift(mrb_state *mrb, mrb_value self);
  * @param self The target array.
  * @return self
  */
-MRB_API mrb_value mrb_ary_clear(mrb_state *mrb, mrb_value self);
+MRB_API _value _ary_clear(_state *mrb, _value self);
 
 /*
  * Join the array elements together in a string
@@ -263,7 +263,7 @@ MRB_API mrb_value mrb_ary_clear(mrb_state *mrb, mrb_value self);
  * @param ary The target array
  * @param sep The separater, can be NULL
  */
-MRB_API mrb_value mrb_ary_join(mrb_state *mrb, mrb_value ary, mrb_value sep);
+MRB_API _value _ary_join(_state *mrb, _value ary, _value sep);
 
 /*
  * Update the capacity of the array
@@ -272,7 +272,7 @@ MRB_API mrb_value mrb_ary_join(mrb_state *mrb, mrb_value ary, mrb_value sep);
  * @param ary The target array.
  * @param new_len The new capacity of the array
  */
-MRB_API mrb_value mrb_ary_resize(mrb_state *mrb, mrb_value ary, mrb_int new_len);
+MRB_API _value _ary_resize(_state *mrb, _value ary, _int new_len);
 
 MRB_END_DECL
 

@@ -5,35 +5,35 @@
 
 extern const uint8_t mrbtest_assert_irep[];
 
-void mrbgemtest_init(mrb_state* mrb);
-void mrb_init_test_driver(mrb_state* mrb, mrb_bool verbose);
-void mrb_t_pass_result(mrb_state *mrb_dst, mrb_state *mrb_src);
+void mrbgemtest_init(_state* mrb);
+void _init_test_driver(_state* mrb, _bool verbose);
+void _t_pass_result(_state *_dst, _state *_src);
 
 void
-mrb_init_mrbtest(mrb_state *mrb)
+_init_mrbtest(_state *mrb)
 {
-  mrb_state *core_test;
+  _state *core_test;
 
-  mrb_load_irep(mrb, mrbtest_assert_irep);
+  _load_irep(mrb, mrbtest_assert_irep);
 
-  core_test = mrb_open_core(mrb_default_allocf, NULL);
+  core_test = _open_core(_default_allocf, NULL);
   if (core_test == NULL) {
-    fprintf(stderr, "Invalid mrb_state, exiting %s", __FUNCTION__);
+    fprintf(stderr, "Invalid _state, exiting %s", __FUNCTION__);
     exit(EXIT_FAILURE);
   }
-  mrb_init_test_driver(core_test, mrb_test(mrb_gv_get(mrb, mrb_intern_lit(mrb, "$mrbtest_verbose"))));
-  mrb_load_irep(core_test, mrbtest_assert_irep);
-  mrb_t_pass_result(mrb, core_test);
+  _init_test_driver(core_test, _test(_gv_get(mrb, _intern_lit(mrb, "$mrbtest_verbose"))));
+  _load_irep(core_test, mrbtest_assert_irep);
+  _t_pass_result(mrb, core_test);
 
 #ifndef DISABLE_GEMS
   mrbgemtest_init(mrb);
 #endif
 
   if (mrb->exc) {
-    mrb_print_error(mrb);
-    mrb_close(mrb);
+    _print_error(mrb);
+    _close(mrb);
     exit(EXIT_FAILURE);
   }
-  mrb_close(core_test);
+  _close(core_test);
 }
 

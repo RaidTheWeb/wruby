@@ -15,13 +15,13 @@
 MRB_BEGIN_DECL
 
 
-struct mrb_state;
+struct _state;
 
 #define MRB_EACH_OBJ_OK 0
 #define MRB_EACH_OBJ_BREAK 1
-typedef int (mrb_each_object_callback)(struct mrb_state *mrb, struct RBasic *obj, void *data);
-void mrb_objspace_each_objects(struct mrb_state *mrb, mrb_each_object_callback *callback, void *data);
-MRB_API void mrb_free_context(struct mrb_state *mrb, struct mrb_context *c);
+typedef int (_each_object_callback)(struct _state *mrb, struct RBasic *obj, void *data);
+void _objspace_each_objects(struct _state *mrb, _each_object_callback *callback, void *data);
+MRB_API void _free_context(struct _state *mrb, struct _context *c);
 
 #ifndef MRB_GC_ARENA_SIZE
 #define MRB_GC_ARENA_SIZE 100
@@ -31,7 +31,7 @@ typedef enum {
   MRB_GC_STATE_ROOT = 0,
   MRB_GC_STATE_MARK,
   MRB_GC_STATE_SWEEP
-} mrb_gc_state;
+} _gc_state;
 
 /* Disable MSVC warning "C4200: nonstandard extension used: zero-sized array
  * in struct/union" when in C++ mode */
@@ -40,24 +40,24 @@ typedef enum {
 #pragma warning(disable : 4200)
 #endif
 
-typedef struct mrb_heap_page {
+typedef struct _heap_page {
   struct RBasic *freelist;
-  struct mrb_heap_page *prev;
-  struct mrb_heap_page *next;
-  struct mrb_heap_page *free_next;
-  struct mrb_heap_page *free_prev;
-  mrb_bool old:1;
+  struct _heap_page *prev;
+  struct _heap_page *next;
+  struct _heap_page *free_next;
+  struct _heap_page *free_prev;
+  _bool old:1;
   void *objects[];
-} mrb_heap_page;
+} _heap_page;
 
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-typedef struct mrb_gc {
-  mrb_heap_page *heaps;                /* heaps for GC */
-  mrb_heap_page *sweeps;
-  mrb_heap_page *free_heaps;
+typedef struct _gc {
+  _heap_page *heaps;                /* heaps for GC */
+  _heap_page *sweeps;
+  _heap_page *free_heaps;
   size_t live; /* count of live objects */
 #ifdef MRB_GC_FIXED_ARENA
   struct RBasic *arena[MRB_GC_ARENA_SIZE]; /* GC protection array */
@@ -67,7 +67,7 @@ typedef struct mrb_gc {
 #endif
   int arena_idx;
 
-  mrb_gc_state state; /* state of gc */
+  _gc_state state; /* state of gc */
   int current_white_part; /* make white object by white_part */
   struct RBasic *gray_list; /* list of gray objects to be traversed incrementally */
   struct RBasic *atomic_gray_list; /* list of objects to be traversed atomically */
@@ -75,16 +75,16 @@ typedef struct mrb_gc {
   size_t threshold;
   int interval_ratio;
   int step_ratio;
-  mrb_bool iterating     :1;
-  mrb_bool disabled      :1;
-  mrb_bool full          :1;
-  mrb_bool generational  :1;
-  mrb_bool out_of_memory :1;
+  _bool iterating     :1;
+  _bool disabled      :1;
+  _bool full          :1;
+  _bool generational  :1;
+  _bool out_of_memory :1;
   size_t majorgc_old_threshold;
-} mrb_gc;
+} _gc;
 
-MRB_API mrb_bool
-mrb_object_dead_p(struct mrb_state *mrb, struct RBasic *object);
+MRB_API _bool
+_object_dead_p(struct _state *mrb, struct RBasic *object);
 
 MRB_END_DECL
 

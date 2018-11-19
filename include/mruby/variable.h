@@ -16,8 +16,8 @@ MRB_BEGIN_DECL
 
 typedef struct global_variable {
   int   counter;
-  mrb_value *data;
-  mrb_value (*getter)(void);
+  _value *data;
+  _value (*getter)(void);
   void  (*setter)(void);
   /* void  (*marker)(); */
   /* int block_trace; */
@@ -26,31 +26,31 @@ typedef struct global_variable {
 
 struct global_entry {
   global_variable *var;
-  mrb_sym id;
+  _sym id;
 };
 
-mrb_value mrb_vm_special_get(mrb_state*, mrb_sym);
-void mrb_vm_special_set(mrb_state*, mrb_sym, mrb_value);
-mrb_value mrb_vm_cv_get(mrb_state*, mrb_sym);
-void mrb_vm_cv_set(mrb_state*, mrb_sym, mrb_value);
-mrb_value mrb_vm_const_get(mrb_state*, mrb_sym);
-void mrb_vm_const_set(mrb_state*, mrb_sym, mrb_value);
-MRB_API mrb_value mrb_const_get(mrb_state*, mrb_value, mrb_sym);
-MRB_API void mrb_const_set(mrb_state*, mrb_value, mrb_sym, mrb_value);
-MRB_API mrb_bool mrb_const_defined(mrb_state*, mrb_value, mrb_sym);
-MRB_API void mrb_const_remove(mrb_state*, mrb_value, mrb_sym);
+_value _vm_special_get(_state*, _sym);
+void _vm_special_set(_state*, _sym, _value);
+_value _vm_cv_get(_state*, _sym);
+void _vm_cv_set(_state*, _sym, _value);
+_value _vm_const_get(_state*, _sym);
+void _vm_const_set(_state*, _sym, _value);
+MRB_API _value _const_get(_state*, _value, _sym);
+MRB_API void _const_set(_state*, _value, _sym, _value);
+MRB_API _bool _const_defined(_state*, _value, _sym);
+MRB_API void _const_remove(_state*, _value, _sym);
 
-MRB_API mrb_bool mrb_iv_name_sym_p(mrb_state *mrb, mrb_sym sym);
-MRB_API void mrb_iv_name_sym_check(mrb_state *mrb, mrb_sym sym);
-MRB_API mrb_value mrb_obj_iv_get(mrb_state *mrb, struct RObject *obj, mrb_sym sym);
-MRB_API void mrb_obj_iv_set(mrb_state *mrb, struct RObject *obj, mrb_sym sym, mrb_value v);
-MRB_API mrb_bool mrb_obj_iv_defined(mrb_state *mrb, struct RObject *obj, mrb_sym sym);
-MRB_API mrb_value mrb_iv_get(mrb_state *mrb, mrb_value obj, mrb_sym sym);
-MRB_API void mrb_iv_set(mrb_state *mrb, mrb_value obj, mrb_sym sym, mrb_value v);
-MRB_API mrb_bool mrb_iv_defined(mrb_state*, mrb_value, mrb_sym);
-MRB_API mrb_value mrb_iv_remove(mrb_state *mrb, mrb_value obj, mrb_sym sym);
-MRB_API void mrb_iv_copy(mrb_state *mrb, mrb_value dst, mrb_value src);
-MRB_API mrb_bool mrb_const_defined_at(mrb_state *mrb, mrb_value mod, mrb_sym id);
+MRB_API _bool _iv_name_sym_p(_state *mrb, _sym sym);
+MRB_API void _iv_name_sym_check(_state *mrb, _sym sym);
+MRB_API _value _obj_iv_get(_state *mrb, struct RObject *obj, _sym sym);
+MRB_API void _obj_iv_set(_state *mrb, struct RObject *obj, _sym sym, _value v);
+MRB_API _bool _obj_iv_defined(_state *mrb, struct RObject *obj, _sym sym);
+MRB_API _value _iv_get(_state *mrb, _value obj, _sym sym);
+MRB_API void _iv_set(_state *mrb, _value obj, _sym sym, _value v);
+MRB_API _bool _iv_defined(_state*, _value, _sym);
+MRB_API _value _iv_remove(_state *mrb, _value obj, _sym sym);
+MRB_API void _iv_copy(_state *mrb, _value dst, _value src);
+MRB_API _bool _const_defined_at(_state *mrb, _value mod, _sym id);
 
 /**
  * Get a global variable. Will return nil if the var does not exist
@@ -63,14 +63,14 @@ MRB_API mrb_bool mrb_const_defined_at(mrb_state *mrb, mrb_value mod, mrb_sym id)
  *
  *     !!!c
  *     // C style
- *     mrb_sym sym = mrb_intern_lit(mrb, "$value");
- *     mrb_value var = mrb_gv_get(mrb, sym);
+ *     _sym sym = _intern_lit(mrb, "$value");
+ *     _value var = _gv_get(mrb, sym);
  *
  * @param mrb The mruby state reference
  * @param sym The name of the global variable
  * @return The value of that global variable. May be nil
  */
-MRB_API mrb_value mrb_gv_get(mrb_state *mrb, mrb_sym sym);
+MRB_API _value _gv_get(_state *mrb, _sym sym);
 
 /**
  * Set a global variable
@@ -83,14 +83,14 @@ MRB_API mrb_value mrb_gv_get(mrb_state *mrb, mrb_sym sym);
  *
  *     !!!c
  *     // C style
- *     mrb_sym sym = mrb_intern_lit(mrb, "$value");
- *     mrb_gv_set(mrb, sym, mrb_str_new_lit("foo"));
+ *     _sym sym = _intern_lit(mrb, "$value");
+ *     _gv_set(mrb, sym, _str_new_lit("foo"));
  *
  * @param mrb The mruby state reference
  * @param sym The name of the global variable
  * @param val The value of the global variable
  */
-MRB_API void mrb_gv_set(mrb_state *mrb, mrb_sym sym, mrb_value val);
+MRB_API void _gv_set(_state *mrb, _sym sym, _value val);
 
 /**
  * Remove a global variable.
@@ -103,33 +103,33 @@ MRB_API void mrb_gv_set(mrb_state *mrb, mrb_sym sym, mrb_value val);
  *
  *     !!!c
  *     // C style
- *     mrb_sym sym = mrb_intern_lit(mrb, "$value");
- *     mrb_gv_remove(mrb, sym);
+ *     _sym sym = _intern_lit(mrb, "$value");
+ *     _gv_remove(mrb, sym);
  *
  * @param mrb The mruby state reference
  * @param sym The name of the global variable
  * @param val The value of the global variable
  */
-MRB_API void mrb_gv_remove(mrb_state *mrb, mrb_sym sym);
+MRB_API void _gv_remove(_state *mrb, _sym sym);
 
-MRB_API mrb_value mrb_cv_get(mrb_state *mrb, mrb_value mod, mrb_sym sym);
-MRB_API void mrb_mod_cv_set(mrb_state *mrb, struct RClass * c, mrb_sym sym, mrb_value v);
-MRB_API void mrb_cv_set(mrb_state *mrb, mrb_value mod, mrb_sym sym, mrb_value v);
-MRB_API mrb_bool mrb_cv_defined(mrb_state *mrb, mrb_value mod, mrb_sym sym);
-mrb_value mrb_obj_iv_inspect(mrb_state*, struct RObject*);
-mrb_value mrb_mod_constants(mrb_state *mrb, mrb_value mod);
-mrb_value mrb_f_global_variables(mrb_state *mrb, mrb_value self);
-mrb_value mrb_obj_instance_variables(mrb_state*, mrb_value);
-mrb_value mrb_mod_class_variables(mrb_state*, mrb_value);
-mrb_value mrb_mod_cv_get(mrb_state *mrb, struct RClass * c, mrb_sym sym);
-mrb_bool mrb_mod_cv_defined(mrb_state *mrb, struct RClass * c, mrb_sym sym);
+MRB_API _value _cv_get(_state *mrb, _value mod, _sym sym);
+MRB_API void _mod_cv_set(_state *mrb, struct RClass * c, _sym sym, _value v);
+MRB_API void _cv_set(_state *mrb, _value mod, _sym sym, _value v);
+MRB_API _bool _cv_defined(_state *mrb, _value mod, _sym sym);
+_value _obj_iv_inspect(_state*, struct RObject*);
+_value _mod_constants(_state *mrb, _value mod);
+_value _f_global_variables(_state *mrb, _value self);
+_value _obj_instance_variables(_state*, _value);
+_value _mod_class_variables(_state*, _value);
+_value _mod_cv_get(_state *mrb, struct RClass * c, _sym sym);
+_bool _mod_cv_defined(_state *mrb, struct RClass * c, _sym sym);
 
 /* GC functions */
-void mrb_gc_mark_gv(mrb_state*);
-void mrb_gc_free_gv(mrb_state*);
-void mrb_gc_mark_iv(mrb_state*, struct RObject*);
-size_t mrb_gc_mark_iv_size(mrb_state*, struct RObject*);
-void mrb_gc_free_iv(mrb_state*, struct RObject*);
+void _gc_mark_gv(_state*);
+void _gc_free_gv(_state*);
+void _gc_mark_iv(_state*, struct RObject*);
+size_t _gc_mark_iv_size(_state*, struct RObject*);
+void _gc_free_iv(_state*, struct RObject*);
 
 MRB_END_DECL
 

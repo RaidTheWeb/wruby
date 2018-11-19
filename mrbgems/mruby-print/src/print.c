@@ -13,23 +13,23 @@
 #endif
 
 static void
-printstr(mrb_state *mrb, mrb_value obj)
+printstr(_state *mrb, _value obj)
 {
-  if (mrb_string_p(obj)) {
+  if (_string_p(obj)) {
 #if defined(_WIN32)
     if (isatty(fileno(stdout))) {
       DWORD written;
       int mlen = (int)RSTRING_LEN(obj);
       char* utf8 = RSTRING_PTR(obj);
       int wlen = MultiByteToWideChar(CP_UTF8, 0, utf8, mlen, NULL, 0);
-      wchar_t* utf16 = (wchar_t*)mrb_malloc(mrb, (wlen+1) * sizeof(wchar_t));
+      wchar_t* utf16 = (wchar_t*)_malloc(mrb, (wlen+1) * sizeof(wchar_t));
       if (utf16 == NULL) return;
       if (MultiByteToWideChar(CP_UTF8, 0, utf8, mlen, utf16, wlen) > 0) {
         utf16[wlen] = 0;
         WriteConsoleW(GetStdHandle(STD_OUTPUT_HANDLE),
           utf16, wlen, &written, NULL);
       }
-      mrb_free(mrb, utf16);
+      _free(mrb, utf16);
     } else
 #endif
       fwrite(RSTRING_PTR(obj), RSTRING_LEN(obj), 1, stdout);
@@ -39,26 +39,26 @@ printstr(mrb_state *mrb, mrb_value obj)
 
 /* 15.3.1.2.9  */
 /* 15.3.1.3.34 */
-mrb_value
-mrb_printstr(mrb_state *mrb, mrb_value self)
+_value
+_printstr(_state *mrb, _value self)
 {
-  mrb_value argv;
+  _value argv;
 
-  mrb_get_args(mrb, "o", &argv);
+  _get_args(mrb, "o", &argv);
   printstr(mrb, argv);
 
   return argv;
 }
 
 void
-mrb_mruby_print_gem_init(mrb_state* mrb)
+_mruby_print_gem_init(_state* mrb)
 {
   struct RClass *krn;
   krn = mrb->kernel_module;
-  mrb_define_method(mrb, krn, "__printstr__", mrb_printstr, MRB_ARGS_REQ(1));
+  _define_method(mrb, krn, "__printstr__", _printstr, MRB_ARGS_REQ(1));
 }
 
 void
-mrb_mruby_print_gem_final(mrb_state* mrb)
+_mruby_print_gem_final(_state* mrb)
 {
 }

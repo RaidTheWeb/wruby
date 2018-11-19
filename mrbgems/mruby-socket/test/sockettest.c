@@ -36,48 +36,48 @@ mkstemp(char *p)
 
 #endif
 
-mrb_value
-mrb_sockettest_tmppath(mrb_state *mrb, mrb_value klass)
+_value
+_sockettest_tmppath(_state *mrb, _value klass)
 {
   char name[] = "mruby-socket.XXXXXXXX";
   int fd = mkstemp(name);
   if (fd == -1) {
-    mrb_sys_fail(mrb, 0);
+    _sys_fail(mrb, 0);
   }
   if (close(fd) == -1) {
-    mrb_sys_fail(mrb, 0);
+    _sys_fail(mrb, 0);
   }
   if (unlink(name) == -1) {
-    mrb_sys_fail(mrb, 0);
+    _sys_fail(mrb, 0);
   }
-  return mrb_str_new_cstr(mrb, name);
+  return _str_new_cstr(mrb, name);
 }
 
-mrb_value
-mrb_sockettest_win_p(mrb_state *mrb, mrb_value klass)
+_value
+_sockettest_win_p(_state *mrb, _value klass)
 {
 #ifdef _WIN32
-  return mrb_true_value();
+  return _true_value();
 #else
-  return mrb_false_value();
+  return _false_value();
 #endif
 }
 
-mrb_value
-mrb_sockettest_cygwin_p(mrb_state *mrb, mrb_value klass)
+_value
+_sockettest_cygwin_p(_state *mrb, _value klass)
 {
 #if defined(__CYGWIN__) || defined(__CYGWIN32__)
-  return mrb_true_value();
+  return _true_value();
 #else
-  return mrb_false_value();
+  return _false_value();
 #endif
 }
 
 void
-mrb_mruby_socket_gem_test(mrb_state* mrb)
+_mruby_socket_gem_test(_state* mrb)
 {
-  struct RClass *c = mrb_define_module(mrb, "SocketTest");
-  mrb_define_class_method(mrb, c, "tmppath", mrb_sockettest_tmppath, MRB_ARGS_NONE());
-  mrb_define_class_method(mrb, c, "win?", mrb_sockettest_win_p, MRB_ARGS_NONE());
-  mrb_define_class_method(mrb, c, "cygwin?", mrb_sockettest_cygwin_p, MRB_ARGS_NONE());
+  struct RClass *c = _define_module(mrb, "SocketTest");
+  _define_class_method(mrb, c, "tmppath", _sockettest_tmppath, MRB_ARGS_NONE());
+  _define_class_method(mrb, c, "win?", _sockettest_win_p, MRB_ARGS_NONE());
+  _define_class_method(mrb, c, "cygwin?", _sockettest_cygwin_p, MRB_ARGS_NONE());
 }

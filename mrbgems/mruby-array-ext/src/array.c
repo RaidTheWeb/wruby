@@ -24,21 +24,21 @@
  *     a.assoc("foo")      #=> nil
  */
 
-static mrb_value
-mrb_ary_assoc(mrb_state *mrb, mrb_value ary)
+static _value
+_ary_assoc(_state *mrb, _value ary)
 {
-  mrb_int i;
-  mrb_value v, k;
+  _int i;
+  _value v, k;
 
-  mrb_get_args(mrb, "o", &k);
+  _get_args(mrb, "o", &k);
 
   for (i = 0; i < RARRAY_LEN(ary); ++i) {
-    v = mrb_check_array_type(mrb, RARRAY_PTR(ary)[i]);
-    if (!mrb_nil_p(v) && RARRAY_LEN(v) > 0 &&
-        mrb_equal(mrb, RARRAY_PTR(v)[0], k))
+    v = _check_array_type(mrb, RARRAY_PTR(ary)[i]);
+    if (!_nil_p(v) && RARRAY_LEN(v) > 0 &&
+        _equal(mrb, RARRAY_PTR(v)[0], k))
       return v;
   }
-  return mrb_nil_value();
+  return _nil_value();
 }
 
 /*
@@ -55,22 +55,22 @@ mrb_ary_assoc(mrb_state *mrb, mrb_value ary)
  *     a.rassoc("four")   #=> nil
  */
 
-static mrb_value
-mrb_ary_rassoc(mrb_state *mrb, mrb_value ary)
+static _value
+_ary_rassoc(_state *mrb, _value ary)
 {
-  mrb_int i;
-  mrb_value v, value;
+  _int i;
+  _value v, value;
 
-  mrb_get_args(mrb, "o", &value);
+  _get_args(mrb, "o", &value);
 
   for (i = 0; i < RARRAY_LEN(ary); ++i) {
     v = RARRAY_PTR(ary)[i];
-    if (mrb_type(v) == MRB_TT_ARRAY &&
+    if (_type(v) == MRB_TT_ARRAY &&
         RARRAY_LEN(v) > 1 &&
-        mrb_equal(mrb, RARRAY_PTR(v)[1], value))
+        _equal(mrb, RARRAY_PTR(v)[1], value))
       return v;
   }
-  return mrb_nil_value();
+  return _nil_value();
 }
 
 /*
@@ -86,24 +86,24 @@ mrb_ary_rassoc(mrb_state *mrb, mrb_value ary)
  *     a.at(-1)    #=> "e"
  */
 
-static mrb_value
-mrb_ary_at(mrb_state *mrb, mrb_value ary)
+static _value
+_ary_at(_state *mrb, _value ary)
 {
-  mrb_int pos;
-  mrb_get_args(mrb, "i", &pos);
+  _int pos;
+  _get_args(mrb, "i", &pos);
 
-  return mrb_ary_entry(ary, pos);
+  return _ary_entry(ary, pos);
 }
 
-static mrb_value
-mrb_ary_values_at(mrb_state *mrb, mrb_value self)
+static _value
+_ary_values_at(_state *mrb, _value self)
 {
-  mrb_int argc;
-  mrb_value *argv;
+  _int argc;
+  _value *argv;
 
-  mrb_get_args(mrb, "*", &argv, &argc);
+  _get_args(mrb, "*", &argv, &argc);
 
-  return mrb_get_values_at(mrb, self, RARRAY_LEN(self), argc, argv, mrb_ary_ref);
+  return _get_values_at(mrb, self, RARRAY_LEN(self), argc, argv, _ary_ref);
 }
 
 
@@ -128,51 +128,51 @@ mrb_ary_values_at(mrb_state *mrb, mrb_value self)
  *     a               #=> ["a"]
  */
 
-static mrb_value
-mrb_ary_slice_bang(mrb_state *mrb, mrb_value self)
+static _value
+_ary_slice_bang(_state *mrb, _value self)
 {
-  struct RArray *a = mrb_ary_ptr(self);
-  mrb_int i, j, k, len, alen;
-  mrb_value val;
-  mrb_value *ptr;
-  mrb_value ary;
+  struct RArray *a = _ary_ptr(self);
+  _int i, j, k, len, alen;
+  _value val;
+  _value *ptr;
+  _value ary;
 
-  mrb_ary_modify(mrb, a);
+  _ary_modify(mrb, a);
 
-  if (mrb_get_argc(mrb) == 1) {
-    mrb_value index;
+  if (_get_argc(mrb) == 1) {
+    _value index;
 
-    mrb_get_args(mrb, "o|i", &index, &len);
-    switch (mrb_type(index)) {
+    _get_args(mrb, "o|i", &index, &len);
+    switch (_type(index)) {
     case MRB_TT_RANGE:
-      if (mrb_range_beg_len(mrb, index, &i, &len, ARY_LEN(a), TRUE) == 1) {
+      if (_range_beg_len(mrb, index, &i, &len, ARY_LEN(a), TRUE) == 1) {
         goto delete_pos_len;
       }
       else {
-        return mrb_nil_value();
+        return _nil_value();
       }
     case MRB_TT_FIXNUM:
-      val = mrb_funcall(mrb, self, "delete_at", 1, index);
+      val = _funcall(mrb, self, "delete_at", 1, index);
       return val;
     default:
-      val = mrb_funcall(mrb, self, "delete_at", 1, index);
+      val = _funcall(mrb, self, "delete_at", 1, index);
       return val;
     }
   }
 
-  mrb_get_args(mrb, "ii", &i, &len);
+  _get_args(mrb, "ii", &i, &len);
  delete_pos_len:
   alen = ARY_LEN(a);
   if (i < 0) i += alen;
-  if (i < 0 || alen < i) return mrb_nil_value();
-  if (len < 0) return mrb_nil_value();
-  if (alen == i) return mrb_ary_new(mrb);
+  if (i < 0 || alen < i) return _nil_value();
+  if (len < 0) return _nil_value();
+  if (alen == i) return _ary_new(mrb);
   if (len > alen - i) len = alen - i;
 
-  ary = mrb_ary_new_capa(mrb, len);
+  ary = _ary_new_capa(mrb, len);
   ptr = ARY_PTR(a);
   for (j = i, k = 0; k < len; ++j, ++k) {
-    mrb_ary_push(mrb, ary, ptr[j]);
+    _ary_push(mrb, ary, ptr[j]);
   }
 
   ptr += i;
@@ -181,23 +181,23 @@ mrb_ary_slice_bang(mrb_state *mrb, mrb_value self)
     ++ptr;
   }
 
-  mrb_ary_resize(mrb, self, alen - len);
+  _ary_resize(mrb, self, alen - len);
   return ary;
 }
 
 void
-mrb_mruby_array_ext_gem_init(mrb_state* mrb)
+_mruby_array_ext_gem_init(_state* mrb)
 {
   struct RClass * a = mrb->array_class;
 
-  mrb_define_method(mrb, a, "assoc",  mrb_ary_assoc,  MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, a, "at",     mrb_ary_at,     MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, a, "rassoc", mrb_ary_rassoc, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, a, "values_at", mrb_ary_values_at, MRB_ARGS_ANY());
-  mrb_define_method(mrb, a, "slice!", mrb_ary_slice_bang,   MRB_ARGS_ANY());
+  _define_method(mrb, a, "assoc",  _ary_assoc,  MRB_ARGS_REQ(1));
+  _define_method(mrb, a, "at",     _ary_at,     MRB_ARGS_REQ(1));
+  _define_method(mrb, a, "rassoc", _ary_rassoc, MRB_ARGS_REQ(1));
+  _define_method(mrb, a, "values_at", _ary_values_at, MRB_ARGS_ANY());
+  _define_method(mrb, a, "slice!", _ary_slice_bang,   MRB_ARGS_ANY());
 }
 
 void
-mrb_mruby_array_ext_gem_final(mrb_state* mrb)
+_mruby_array_ext_gem_final(_state* mrb)
 {
 }

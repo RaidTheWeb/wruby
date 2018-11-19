@@ -16,41 +16,41 @@ MRB_BEGIN_DECL
 
 #include <mruby.h>
 
-struct mrb_jmpbuf;
+struct _jmpbuf;
 
-struct mrb_parser_state;
+struct _parser_state;
 /* load context */
 typedef struct mrbc_context {
-  mrb_sym *syms;
+  _sym *syms;
   int slen;
   char *filename;
   short lineno;
-  int (*partial_hook)(struct mrb_parser_state*);
+  int (*partial_hook)(struct _parser_state*);
   void *partial_data;
   struct RClass *target_class;
-  mrb_bool capture_errors:1;
-  mrb_bool dump_result:1;
-  mrb_bool no_exec:1;
-  mrb_bool keep_lv:1;
-  mrb_bool no_optimize:1;
-  mrb_bool on_eval:1;
+  _bool capture_errors:1;
+  _bool dump_result:1;
+  _bool no_exec:1;
+  _bool keep_lv:1;
+  _bool no_optimize:1;
+  _bool on_eval:1;
 
   size_t parser_nerr;
 } mrbc_context;
 
-MRB_API mrbc_context* mrbc_context_new(mrb_state *mrb);
-MRB_API void mrbc_context_free(mrb_state *mrb, mrbc_context *cxt);
-MRB_API const char *mrbc_filename(mrb_state *mrb, mrbc_context *c, const char *s);
-MRB_API void mrbc_partial_hook(mrb_state *mrb, mrbc_context *c, int (*partial_hook)(struct mrb_parser_state*), void*data);
+MRB_API mrbc_context* mrbc_context_new(_state *mrb);
+MRB_API void mrbc_context_free(_state *mrb, mrbc_context *cxt);
+MRB_API const char *mrbc_filename(_state *mrb, mrbc_context *c, const char *s);
+MRB_API void mrbc_partial_hook(_state *mrb, mrbc_context *c, int (*partial_hook)(struct _parser_state*), void*data);
 
 /* AST node structure */
-typedef struct mrb_ast_node {
-  struct mrb_ast_node *car, *cdr;
+typedef struct _ast_node {
+  struct _ast_node *car, *cdr;
   uint16_t lineno, filename_index;
-} mrb_ast_node;
+} _ast_node;
 
 /* lexer states */
-enum mrb_lex_state_enum {
+enum _lex_state_enum {
   EXPR_BEG,                   /* ignore newline, +/- is a sign. */
   EXPR_END,                   /* newline significant, +/- is an operator. */
   EXPR_ENDARG,                /* ditto, and unbound braces. */
@@ -66,7 +66,7 @@ enum mrb_lex_state_enum {
 };
 
 /* saved error message */
-struct mrb_parser_message {
+struct _parser_message {
   int lineno;
   int column;
   char* message;
@@ -81,7 +81,7 @@ struct mrb_parser_message {
 #define STR_FUNC_HEREDOC 0x40
 #define STR_FUNC_XQUOTE  0x80
 
-enum mrb_string_type {
+enum _string_type {
   str_not_parsing  = (0),
   str_squote   = (STR_FUNC_PARSING),
   str_dquote   = (STR_FUNC_PARSING|STR_FUNC_EXPAND),
@@ -96,23 +96,23 @@ enum mrb_string_type {
 };
 
 /* heredoc structure */
-struct mrb_parser_heredoc_info {
-  mrb_bool allow_indent:1;
-  mrb_bool line_head:1;
-  enum mrb_string_type type;
+struct _parser_heredoc_info {
+  _bool allow_indent:1;
+  _bool line_head:1;
+  enum _string_type type;
   const char *term;
   int term_len;
-  mrb_ast_node *doc;
+  _ast_node *doc;
 };
 
 #define MRB_PARSER_TOKBUF_MAX 65536
 #define MRB_PARSER_TOKBUF_SIZE 256
 
 /* parser structure */
-struct mrb_parser_state {
-  mrb_state *mrb;
-  struct mrb_pool *pool;
-  mrb_ast_node *cells;
+struct _parser_state {
+  _state *mrb;
+  struct _pool *pool;
+  _ast_node *cells;
   const char *s, *send;
 #ifndef MRB_DISABLE_STDIO
   FILE *f;
@@ -122,73 +122,73 @@ struct mrb_parser_state {
   int lineno;
   int column;
 
-  enum mrb_lex_state_enum lstate;
-  mrb_ast_node *lex_strterm; /* (type nest_level beg . end) */
+  enum _lex_state_enum lstate;
+  _ast_node *lex_strterm; /* (type nest_level beg . end) */
 
   unsigned int cond_stack;
   unsigned int cmdarg_stack;
   int paren_nest;
   int lpar_beg;
   int in_def, in_single;
-  mrb_bool cmd_start:1;
-  mrb_ast_node *locals;
+  _bool cmd_start:1;
+  _ast_node *locals;
 
-  mrb_ast_node *pb;
+  _ast_node *pb;
   char *tokbuf;
   char buf[MRB_PARSER_TOKBUF_SIZE];
   int tidx;
   int tsiz;
 
-  mrb_ast_node *all_heredocs; /* list of mrb_parser_heredoc_info* */
-  mrb_ast_node *heredocs_from_nextline;
-  mrb_ast_node *parsing_heredoc;
-  mrb_ast_node *lex_strterm_before_heredoc;
-  mrb_bool heredoc_end_now:1; /* for mirb */
+  _ast_node *all_heredocs; /* list of _parser_heredoc_info* */
+  _ast_node *heredocs_from_nextline;
+  _ast_node *parsing_heredoc;
+  _ast_node *lex_strterm_before_heredoc;
+  _bool heredoc_end_now:1; /* for mirb */
 
   void *ylval;
 
   size_t nerr;
   size_t nwarn;
-  mrb_ast_node *tree;
+  _ast_node *tree;
 
-  mrb_bool no_optimize:1;
-  mrb_bool on_eval:1;
-  mrb_bool capture_errors:1;
-  struct mrb_parser_message error_buffer[10];
-  struct mrb_parser_message warn_buffer[10];
+  _bool no_optimize:1;
+  _bool on_eval:1;
+  _bool capture_errors:1;
+  struct _parser_message error_buffer[10];
+  struct _parser_message warn_buffer[10];
 
-  mrb_sym* filename_table;
+  _sym* filename_table;
   size_t filename_table_length;
   int current_filename_index;
 
-  struct mrb_jmpbuf* jmp;
+  struct _jmpbuf* jmp;
 };
 
-MRB_API struct mrb_parser_state* mrb_parser_new(mrb_state*);
-MRB_API void mrb_parser_free(struct mrb_parser_state*);
-MRB_API void mrb_parser_parse(struct mrb_parser_state*,mrbc_context*);
+MRB_API struct _parser_state* _parser_new(_state*);
+MRB_API void _parser_free(struct _parser_state*);
+MRB_API void _parser_parse(struct _parser_state*,mrbc_context*);
 
-MRB_API void mrb_parser_set_filename(struct mrb_parser_state*, char const*);
-MRB_API char const* mrb_parser_get_filename(struct mrb_parser_state*, uint16_t idx);
+MRB_API void _parser_set_filename(struct _parser_state*, char const*);
+MRB_API char const* _parser_get_filename(struct _parser_state*, uint16_t idx);
 
 /* utility functions */
 #ifndef MRB_DISABLE_STDIO
-MRB_API struct mrb_parser_state* mrb_parse_file(mrb_state*,FILE*,mrbc_context*);
+MRB_API struct _parser_state* _parse_file(_state*,FILE*,mrbc_context*);
 #endif
-MRB_API struct mrb_parser_state* mrb_parse_string(mrb_state*,const char*,mrbc_context*);
-MRB_API struct mrb_parser_state* mrb_parse_nstring(mrb_state*,const char*,size_t,mrbc_context*);
-MRB_API struct RProc* mrb_generate_code(mrb_state*, struct mrb_parser_state*);
-MRB_API mrb_value mrb_load_exec(mrb_state *mrb, struct mrb_parser_state *p, mrbc_context *c);
+MRB_API struct _parser_state* _parse_string(_state*,const char*,mrbc_context*);
+MRB_API struct _parser_state* _parse_nstring(_state*,const char*,size_t,mrbc_context*);
+MRB_API struct RProc* _generate_code(_state*, struct _parser_state*);
+MRB_API _value _load_exec(_state *mrb, struct _parser_state *p, mrbc_context *c);
 
 /* program load functions */
 #ifndef MRB_DISABLE_STDIO
-MRB_API mrb_value mrb_load_file(mrb_state*,FILE*);
-MRB_API mrb_value mrb_load_file_cxt(mrb_state*,FILE*, mrbc_context *cxt);
+MRB_API _value _load_file(_state*,FILE*);
+MRB_API _value _load_file_cxt(_state*,FILE*, mrbc_context *cxt);
 #endif
-MRB_API mrb_value mrb_load_string(mrb_state *mrb, const char *s);
-MRB_API mrb_value mrb_load_nstring(mrb_state *mrb, const char *s, size_t len);
-MRB_API mrb_value mrb_load_string_cxt(mrb_state *mrb, const char *s, mrbc_context *cxt);
-MRB_API mrb_value mrb_load_nstring_cxt(mrb_state *mrb, const char *s, size_t len, mrbc_context *cxt);
+MRB_API _value _load_string(_state *mrb, const char *s);
+MRB_API _value _load_nstring(_state *mrb, const char *s, size_t len);
+MRB_API _value _load_string_cxt(_state *mrb, const char *s, mrbc_context *cxt);
+MRB_API _value _load_nstring_cxt(_state *mrb, const char *s, size_t len, mrbc_context *cxt);
 
 /** @} */
 MRB_END_DECL

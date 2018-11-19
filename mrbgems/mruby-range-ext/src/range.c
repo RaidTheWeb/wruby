@@ -2,27 +2,27 @@
 #include <mruby/range.h>
 #include <math.h>
 
-static mrb_bool
-r_le(mrb_state *mrb, mrb_value a, mrb_value b)
+static _bool
+r_le(_state *mrb, _value a, _value b)
 {
-  mrb_value r = mrb_funcall(mrb, a, "<=>", 1, b); /* compare result */
+  _value r = _funcall(mrb, a, "<=>", 1, b); /* compare result */
   /* output :a < b => -1, a = b =>  0, a > b => +1 */
 
-  if (mrb_fixnum_p(r)) {
-    mrb_int c = mrb_fixnum(r);
+  if (_fixnum_p(r)) {
+    _int c = _fixnum(r);
     if (c == 0 || c == -1) return TRUE;
   }
 
   return FALSE;
 }
 
-static mrb_bool
-r_lt(mrb_state *mrb, mrb_value a, mrb_value b)
+static _bool
+r_lt(_state *mrb, _value a, _value b)
 {
-  mrb_value r = mrb_funcall(mrb, a, "<=>", 1, b);
+  _value r = _funcall(mrb, a, "<=>", 1, b);
   /* output :a < b => -1, a = b =>  0, a > b => +1 */
 
-  return mrb_fixnum_p(r) && mrb_fixnum(r) == -1;
+  return _fixnum_p(r) && _fixnum(r) == -1;
 }
 
 /*
@@ -39,14 +39,14 @@ r_lt(mrb_state *mrb, mrb_value a, mrb_value b)
  *     ("a".."z").cover?("5")    #=> false
  *     ("a".."z").cover?("cc")   #=> true
  */
-static mrb_value
-mrb_range_cover(mrb_state *mrb, mrb_value range)
+static _value
+_range_cover(_state *mrb, _value range)
 {
-  mrb_value val;
-  struct RRange *r = mrb_range_ptr(mrb, range);
-  mrb_value beg, end;
+  _value val;
+  struct RRange *r = _range_ptr(mrb, range);
+  _value beg, end;
 
-  mrb_get_args(mrb, "o", &val);
+  _get_args(mrb, "o", &val);
 
   beg = r->edges->beg;
   end = r->edges->end;
@@ -54,15 +54,15 @@ mrb_range_cover(mrb_state *mrb, mrb_value range)
   if (r_le(mrb, beg, val)) {
     if (r->excl) {
       if (r_lt(mrb, val, end))
-        return mrb_true_value();
+        return _true_value();
     }
     else {
       if (r_le(mrb, val, end))
-        return mrb_true_value();
+        return _true_value();
     }
   }
 
-  return mrb_false_value();
+  return _false_value();
 }
 
 /*
@@ -81,19 +81,19 @@ mrb_range_cover(mrb_state *mrb, mrb_value range)
  *    (10..20).last(3)   #=> [18, 19, 20]
  *    (10...20).last(3)  #=> [17, 18, 19]
  */
-static mrb_value
-mrb_range_last(mrb_state *mrb, mrb_value range)
+static _value
+_range_last(_state *mrb, _value range)
 {
-  mrb_value num;
-  mrb_value array;
-  struct RRange *r = mrb_range_ptr(mrb, range);
+  _value num;
+  _value array;
+  struct RRange *r = _range_ptr(mrb, range);
 
-  if (mrb_get_args(mrb, "|o", &num) == 0) {
+  if (_get_args(mrb, "|o", &num) == 0) {
     return r->edges->end;
   }
 
-  array = mrb_funcall(mrb, range, "to_a", 0);
-  return mrb_funcall(mrb, array, "last", 1, mrb_to_int(mrb, num));
+  array = _funcall(mrb, range, "to_a", 0);
+  return _funcall(mrb, array, "last", 1, _to_int(mrb, num));
 }
 
 /*
@@ -107,70 +107,70 @@ mrb_range_last(mrb_state *mrb, mrb_value range)
  *    ('a'..'z').size  #=> nil
  */
 
-static mrb_value
-mrb_range_size(mrb_state *mrb, mrb_value range)
+static _value
+_range_size(_state *mrb, _value range)
 {
-  struct RRange *r = mrb_range_ptr(mrb, range);
-  mrb_value beg, end;
-  mrb_float beg_f, end_f;
-  mrb_bool num_p = TRUE;
-  mrb_bool excl;
+  struct RRange *r = _range_ptr(mrb, range);
+  _value beg, end;
+  _float beg_f, end_f;
+  _bool num_p = TRUE;
+  _bool excl;
 
   beg = r->edges->beg;
   end = r->edges->end;
   excl = r->excl;
-  if (mrb_fixnum_p(beg)) {
-    beg_f = (mrb_float)mrb_fixnum(beg);
+  if (_fixnum_p(beg)) {
+    beg_f = (_float)_fixnum(beg);
   }
-  else if (mrb_float_p(beg)) {
-    beg_f = mrb_float(beg);
+  else if (_float_p(beg)) {
+    beg_f = _float(beg);
   }
   else {
     num_p = FALSE;
   }
-  if (mrb_fixnum_p(end)) {
-    end_f = (mrb_float)mrb_fixnum(end);
+  if (_fixnum_p(end)) {
+    end_f = (_float)_fixnum(end);
   }
-  else if (mrb_float_p(end)) {
-    end_f = mrb_float(end);
+  else if (_float_p(end)) {
+    end_f = _float(end);
   }
   else {
     num_p = FALSE;
   }
   if (num_p) {
-    mrb_float n = end_f - beg_f;
-    mrb_float err = (fabs(beg_f) + fabs(end_f) + fabs(end_f-beg_f)) * MRB_FLOAT_EPSILON;
+    _float n = end_f - beg_f;
+    _float err = (fabs(beg_f) + fabs(end_f) + fabs(end_f-beg_f)) * MRB_FLOAT_EPSILON;
 
     if (err>0.5) err=0.5;
     if (excl) {
-      if (n<=0) return mrb_fixnum_value(0);
+      if (n<=0) return _fixnum_value(0);
       if (n<1)
         n = 0;
       else
         n = floor(n - err);
     }
     else {
-      if (n<0) return mrb_fixnum_value(0);
+      if (n<0) return _fixnum_value(0);
       n = floor(n + err);
     }
     if (isinf(n+1))
-      return mrb_float_value(mrb, INFINITY);
-    return mrb_fixnum_value((mrb_int)n+1);
+      return _float_value(mrb, INFINITY);
+    return _fixnum_value((_int)n+1);
   }
-  return mrb_nil_value();
+  return _nil_value();
 }
 
 void
-mrb_mruby_range_ext_gem_init(mrb_state* mrb)
+_mruby_range_ext_gem_init(_state* mrb)
 {
-  struct RClass * s = mrb_class_get(mrb, "Range");
+  struct RClass * s = _class_get(mrb, "Range");
 
-  mrb_define_method(mrb, s, "cover?", mrb_range_cover, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, s, "last",   mrb_range_last,  MRB_ARGS_OPT(1));
-  mrb_define_method(mrb, s, "size",   mrb_range_size,  MRB_ARGS_NONE());
+  _define_method(mrb, s, "cover?", _range_cover, MRB_ARGS_REQ(1));
+  _define_method(mrb, s, "last",   _range_last,  MRB_ARGS_OPT(1));
+  _define_method(mrb, s, "size",   _range_size,  MRB_ARGS_NONE());
 }
 
 void
-mrb_mruby_range_ext_gem_final(mrb_state* mrb)
+_mruby_range_ext_gem_final(_state* mrb)
 {
 }

@@ -2,12 +2,12 @@
 #include <mruby/throw.h>
 #include <mruby/error.h>
 
-MRB_API mrb_value
-mrb_protect(mrb_state *mrb, mrb_func_t body, mrb_value data, mrb_bool *state)
+MRB_API _value
+_protect(_state *mrb, _func_t body, _value data, _bool *state)
 {
-  struct mrb_jmpbuf *prev_jmp = mrb->jmp;
-  struct mrb_jmpbuf c_jmp;
-  mrb_value result = mrb_nil_value();
+  struct _jmpbuf *prev_jmp = mrb->jmp;
+  struct _jmpbuf c_jmp;
+  _value result = _nil_value();
 
   if (state) { *state = FALSE; }
 
@@ -17,21 +17,21 @@ mrb_protect(mrb_state *mrb, mrb_func_t body, mrb_value data, mrb_bool *state)
     mrb->jmp = prev_jmp;
   } MRB_CATCH(&c_jmp) {
     mrb->jmp = prev_jmp;
-    result = mrb_obj_value(mrb->exc);
+    result = _obj_value(mrb->exc);
     mrb->exc = NULL;
     if (state) { *state = TRUE; }
   } MRB_END_EXC(&c_jmp);
 
-  mrb_gc_protect(mrb, result);
+  _gc_protect(mrb, result);
   return result;
 }
 
-MRB_API mrb_value
-mrb_ensure(mrb_state *mrb, mrb_func_t body, mrb_value b_data, mrb_func_t ensure, mrb_value e_data)
+MRB_API _value
+_ensure(_state *mrb, _func_t body, _value b_data, _func_t ensure, _value e_data)
 {
-  struct mrb_jmpbuf *prev_jmp = mrb->jmp;
-  struct mrb_jmpbuf c_jmp;
-  mrb_value result;
+  struct _jmpbuf *prev_jmp = mrb->jmp;
+  struct _jmpbuf c_jmp;
+  _value result;
 
   MRB_TRY(&c_jmp) {
     mrb->jmp = &c_jmp;
@@ -44,26 +44,26 @@ mrb_ensure(mrb_state *mrb, mrb_func_t body, mrb_value b_data, mrb_func_t ensure,
   } MRB_END_EXC(&c_jmp);
 
   ensure(mrb, e_data);
-  mrb_gc_protect(mrb, result);
+  _gc_protect(mrb, result);
   return result;
 }
 
-MRB_API mrb_value
-mrb_rescue(mrb_state *mrb, mrb_func_t body, mrb_value b_data,
-           mrb_func_t rescue, mrb_value r_data)
+MRB_API _value
+_rescue(_state *mrb, _func_t body, _value b_data,
+           _func_t rescue, _value r_data)
 {
-  return mrb_rescue_exceptions(mrb, body, b_data, rescue, r_data, 1, &mrb->eStandardError_class);
+  return _rescue_exceptions(mrb, body, b_data, rescue, r_data, 1, &mrb->eStandardError_class);
 }
 
-MRB_API mrb_value
-mrb_rescue_exceptions(mrb_state *mrb, mrb_func_t body, mrb_value b_data, mrb_func_t rescue, mrb_value r_data,
-                      mrb_int len, struct RClass **classes)
+MRB_API _value
+_rescue_exceptions(_state *mrb, _func_t body, _value b_data, _func_t rescue, _value r_data,
+                      _int len, struct RClass **classes)
 {
-  struct mrb_jmpbuf *prev_jmp = mrb->jmp;
-  struct mrb_jmpbuf c_jmp;
-  mrb_value result;
-  mrb_bool error_matched = FALSE;
-  mrb_int i;
+  struct _jmpbuf *prev_jmp = mrb->jmp;
+  struct _jmpbuf c_jmp;
+  _value result;
+  _bool error_matched = FALSE;
+  _int i;
 
   MRB_TRY(&c_jmp) {
     mrb->jmp = &c_jmp;
@@ -73,7 +73,7 @@ mrb_rescue_exceptions(mrb_state *mrb, mrb_func_t body, mrb_value b_data, mrb_fun
     mrb->jmp = prev_jmp;
 
     for (i = 0; i < len; ++i) {
-      if (mrb_obj_is_kind_of(mrb, mrb_obj_value(mrb->exc), classes[i])) {
+      if (_obj_is_kind_of(mrb, _obj_value(mrb->exc), classes[i])) {
         error_matched = TRUE;
         break;
       }
@@ -85,16 +85,16 @@ mrb_rescue_exceptions(mrb_state *mrb, mrb_func_t body, mrb_value b_data, mrb_fun
     result = rescue(mrb, r_data);
   } MRB_END_EXC(&c_jmp);
 
-  mrb_gc_protect(mrb, result);
+  _gc_protect(mrb, result);
   return result;
 }
 
 void
-mrb_mruby_error_gem_init(mrb_state *mrb)
+_mruby_error_gem_init(_state *mrb)
 {
 }
 
 void
-mrb_mruby_error_gem_final(mrb_state *mrb)
+_mruby_error_gem_final(_state *mrb)
 {
 }

@@ -16,11 +16,11 @@
 #if defined(MRB_ENABLE_CXX_EXCEPTION) && defined(__cplusplus)
 
 #define MRB_TRY(buf) do { try {
-#define MRB_CATCH(buf) } catch(mrb_jmpbuf_impl e) { if (e != (buf)->impl) { throw e; }
+#define MRB_CATCH(buf) } catch(_jmpbuf_impl e) { if (e != (buf)->impl) { throw e; }
 #define MRB_END_EXC(buf)  } } while(0)
 
 #define MRB_THROW(buf) throw((buf)->impl)
-typedef mrb_int mrb_jmpbuf_impl;
+typedef _int _jmpbuf_impl;
 
 #else
 
@@ -39,16 +39,16 @@ typedef mrb_int mrb_jmpbuf_impl;
 #define MRB_END_EXC(buf) } } while(0)
 
 #define MRB_THROW(buf) MRB_LONGJMP((buf)->impl, 1);
-#define mrb_jmpbuf_impl jmp_buf
+#define _jmpbuf_impl jmp_buf
 
 #endif
 
-struct mrb_jmpbuf {
-  mrb_jmpbuf_impl impl;
+struct _jmpbuf {
+  _jmpbuf_impl impl;
 
 #if defined(MRB_ENABLE_CXX_EXCEPTION) && defined(__cplusplus)
-  static mrb_int jmpbuf_id;
-  mrb_jmpbuf() : impl(jmpbuf_id++) {}
+  static _int jmpbuf_id;
+  _jmpbuf() : impl(jmpbuf_id++) {}
 #endif
 };
 

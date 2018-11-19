@@ -13,9 +13,9 @@ wasm-dis program.wasm> program.wast
 #include <mruby/irep.h>
 
 #import "program.c"
-// extern const char _binary_program_mrb_start;
-// extern const char _binary_program_mrb_end;
-// extern const int _binary_program_mrb_size;
+// extern const char _binary_program__start;
+// extern const char _binary_program__end;
+// extern const int _binary_program__size;
 uint8_t* other_module;
 
 #include <stdlib.h>
@@ -24,7 +24,7 @@ int reserve_mrb(int size){
 	if(size>0)
 		other_module=(uint8_t *)malloc(size);// new one
 	else
-		other_module=(uint8_t *)_binary_program_mrb_start;// old one
+		other_module=(uint8_t *)_binary_program__start;// old one
 	return (int)&other_module;
 }
 
@@ -33,33 +33,33 @@ int reserve_mrb(int size){
 // include/mruby/common.h:# define MRB_API __declspec(dllimport)
 // include/mruby/common.h:# define MRB_API extern
 
-// void mrb_vm_const_set(mrb_state*, mrb_sym, mrb_value);
-// MRB_API mrb_value mrb_const_get(mrb_state*, mrb_value, mrb_sym);
-// MRB_API void mrb_const_set(mrb_state*, mrb_value, mrb_sym, mrb_value);
-// MRB_API mrb_bool mrb_const_defined(mrb_state*, mrb_value, mrb_sym);
+// void _vm_const_set(_state*, _sym, _value);
+// MRB_API _value _const_get(_state*, _value, _sym);
+// MRB_API void _const_set(_state*, _value, _sym, _value);
+// MRB_API _bool _const_defined(_state*, _value, _sym);
 
 
 /*
-typedef struct mrb_value {
+typedef struct _value {
   union {
-    mrb_float f;
+    _float f;
     void *p;
-    mrb_int i;
-    mrb_sym sym;
+    _int i;
+    _sym sym;
   } value;
-  enum mrb_vtype tt;
-} mrb_value;
+  enum _vtype tt;
+} _value;
 */
 
-int run_mrb(uint8_t* mrb_program){
-  mrb_state *mrb = mrb_open();
+int run_mrb(uint8_t* _program){
+  _state *mrb = _open();
   // MRB_API 
-  mrb_value result=mrb_load_irep(mrb, mrb_program);
-  // mrb_load_string(mrb, "puts 'hello world'");
-  mrb_close(mrb);
+  _value result=_load_irep(mrb, _program);
+  // _load_string(mrb, "puts 'hello world'");
+  _close(mrb);
   return (int)result.value.i;
 }
 
 int main() {
-	run_mrb((uint8_t*)&_binary_program_mrb_start);
+	run_mrb((uint8_t*)&_binary_program__start);
 }

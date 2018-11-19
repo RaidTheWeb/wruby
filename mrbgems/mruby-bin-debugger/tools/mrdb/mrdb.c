@@ -19,9 +19,9 @@
 #include "apibreak.h"
 #include "apilist.h"
 
-void mrdb_state_free(mrb_state *);
+void mrdb_state_free(_state *);
 
-static mrb_debug_context *_debug_context = NULL;
+static _debug_context *a_debug_context = NULL;
 static mrdb_state *_mrdb_state = NULL;
 
 struct _args {
@@ -30,7 +30,7 @@ struct _args {
   char* srcpath;
   int argc;
   char** argv;
-  mrb_bool mrbfile : 1;
+  _bool mrbfile : 1;
 };
 
 typedef struct debug_command {
@@ -82,7 +82,7 @@ usage(const char *name)
 }
 
 static int
-parse_args(mrb_state *mrb, int argc, char **argv, struct _args *args)
+parse_args(_state *mrb, int argc, char **argv, struct _args *args)
 {
   char **origargv = argv;
   static const struct _args args_zero = { 0 };
@@ -111,7 +111,7 @@ append_srcpath:
           char *buf;
 
           buflen = strlen(item) + 1;
-          buf = (char *)mrb_malloc(mrb, buflen);
+          buf = (char *)_malloc(mrb, buflen);
           memcpy(buf, item, buflen);
           args->srcpath = buf;
         }
@@ -122,7 +122,7 @@ append_srcpath:
           srcpathlen = strlen(args->srcpath);
           itemlen = strlen(item);
           args->srcpath =
-            (char *)mrb_realloc(mrb, args->srcpath, srcpathlen + itemlen + 2);
+            (char *)_realloc(mrb, args->srcpath, srcpathlen + itemlen + 2);
           args->srcpath[srcpathlen] = '\n';
           memcpy(args->srcpath + srcpathlen + 1, item, itemlen + 1);
         }
@@ -134,11 +134,11 @@ append_srcpath:
       break;
     case '-':
       if (strcmp((*argv) + 2, "version") == 0) {
-        mrb_show_version(mrb);
+        _show_version(mrb);
         exit(EXIT_SUCCESS);
       }
       else if (strcmp((*argv) + 2, "copyright") == 0) {
-        mrb_show_copyright(mrb);
+        _show_copyright(mrb);
         exit(EXIT_SUCCESS);
       }
     default:
@@ -161,7 +161,7 @@ append_srcpath:
       argc--; argv++;
     }
   }
-  args->argv = (char **)mrb_realloc(mrb, args->argv, sizeof(char*) * (argc + 1));
+  args->argv = (char **)_realloc(mrb, args->argv, sizeof(char*) * (argc + 1));
   memcpy(args->argv, argv, (argc+1) * sizeof(char*));
   args->argc = argc;
 
@@ -169,24 +169,24 @@ append_srcpath:
 }
 
 static void
-cleanup(mrb_state *mrb, struct _args *args)
+cleanup(_state *mrb, struct _args *args)
 {
   if (args->rfp)
     fclose(args->rfp);
   if (args->srcpath)
-    mrb_free(mrb, args->srcpath);
+    _free(mrb, args->srcpath);
   if (args->argv)
-    mrb_free(mrb, args->argv);
+    _free(mrb, args->argv);
   mrdb_state_free(mrb);
-  mrb_close(mrb);
+  _close(mrb);
 }
 
-static mrb_debug_context*
-mrb_debug_context_new(mrb_state *mrb)
+static _debug_context*
+_debug_context_new(_state *mrb)
 {
-  mrb_debug_context *dbg = (mrb_debug_context*)mrb_malloc(mrb, sizeof(mrb_debug_context));
+  _debug_context *dbg = (_debug_context*)_malloc(mrb, sizeof(_debug_context));
 
-  memset(dbg, 0, sizeof(mrb_debug_context));
+  memset(dbg, 0, sizeof(_debug_context));
 
   dbg->xm = DBG_INIT;
   dbg->xphase = DBG_PHASE_BEFORE_RUN;
@@ -195,47 +195,48 @@ mrb_debug_context_new(mrb_state *mrb)
   return dbg;
 }
 
-mrb_debug_context*
-mrb_debug_context_get(mrb_state *mrb)
+_debug_context*
+_debug_context_get(_state *mrb)
 {
-  if (!_debug_context) {
-    _debug_context = mrb_debug_context_new(mrb);
+  if (!a_debug_context) {
+    a_debug_context = _debug_context_new(mrb);
   }
-  return _debug_context;
+  return a_debug_context;
 }
 
 void
-mrb_debug_context_set(mrb_debug_context *dbg)
+_debug_context_set(_debug_context *dbg)
 {
-  _debug_context = dbg;
+  a_debug_context = dbg;
 }
 
 void
-mrb_debug_context_free(mrb_state *mrb)
+_debug_context_free(_state *mrb)
 {
-  if (_debug_context) {
-    mrb_debug_delete_break_all(mrb, _debug_context);
-    mrb_free(mrb, _debug_context);
-    _debug_context = NULL;
+  if (a_debug_context) {
+    _debug_delete_break_all(mrb, a_debug_context);
+    _free(mrb, a_debug_context);
+    a_debug_context = NULL;
   }
 }
 
 static mrdb_state*
-mrdb_state_new(mrb_state *mrb)
+mrdb_state_new(_state *mrb)
 {
-  mrdb_state *mrdb = (mrdb_state*)mrb_malloc(mrb, sizeof(mrdb_state));
+  mrdb_state *mrdb = (mrdb_state*)_malloc(mrb, sizeof(mrdb_state));
 
   memset(mrdb, 0, sizeof(mrdb_state));
 
-  mrdb->dbg = mrb_debug_context_get(mrb);
-  mrdb->command = (char*)mrb_malloc(mrb, MAX_COMMAND_LINE+1);
+  
+  mrdb->dbg = _debug_context_get(mrb);
+  mrdb->command = (char*)_malloc(mrb, MAX_COMMAND_LINE+1);
   mrdb->print_no = 1;
 
   return mrdb;
 }
 
 mrdb_state*
-mrdb_state_get(mrb_state *mrb)
+mrdb_state_get(_state *mrb)
 {
   if (!_mrdb_state) {
     _mrdb_state = mrdb_state_new(mrb);
@@ -250,18 +251,18 @@ mrdb_state_set(mrdb_state *mrdb)
 }
 
 void
-mrdb_state_free(mrb_state *mrb)
+mrdb_state_free(_state *mrb)
 {
-  mrb_debug_context_free(mrb);
+  _debug_context_free(mrb);
   if (_mrdb_state) {
-    mrb_free(mrb, _mrdb_state->command);
-    mrb_free(mrb, _mrdb_state);
+    _free(mrb, _mrdb_state->command);
+    _free(mrb, _mrdb_state);
     _mrdb_state = NULL;
   }
 }
 
 static char*
-get_command(mrb_state *mrb, mrdb_state *mrdb)
+get_command(_state *mrb, mrdb_state *mrdb)
 {
   int i;
   int c;
@@ -291,7 +292,7 @@ get_command(mrb_state *mrb, mrdb_state *mrdb)
 }
 
 static char*
-pick_out_word(mrb_state *mrb, char **pp)
+pick_out_word(_state *mrb, char **pp)
 {
   char *ps;
 
@@ -321,7 +322,7 @@ pick_out_word(mrb_state *mrb, char **pp)
 }
 
 static debug_command*
-parse_command(mrb_state *mrb, mrdb_state *mrdb, char *buf)
+parse_command(_state *mrb, mrdb_state *mrdb, char *buf)
 {
   debug_command *cmd = NULL;
   char *p = buf;
@@ -396,16 +397,16 @@ parse_command(mrb_state *mrb, mrdb_state *mrdb, char *buf)
 }
 
 static void
-print_info_stopped_break(mrb_state *mrb, mrdb_state *mrdb)
+print_info_stopped_break(_state *mrb, mrdb_state *mrdb)
 {
-  mrb_debug_breakpoint bp;
+  _debug_breakpoint bp;
   int32_t ret;
   uint16_t lineno;
   const char *file;
   const char *method_name;
   const char *class_name;
 
-  ret = mrb_debug_get_break(mrb, mrdb->dbg, mrdb->dbg->stopped_bpno, &bp);
+  ret = _debug_get_break(mrb, mrdb->dbg, mrdb->dbg->stopped_bpno, &bp);
   if (ret == 0) {
     switch(bp.type) {
       case MRB_DEBUG_BPTYPE_LINE:
@@ -433,7 +434,7 @@ print_info_stopped_break(mrb_state *mrb, mrdb_state *mrdb)
 }
 
 static void
-print_info_stopped_step_next(mrb_state *mrb, mrdb_state *mrdb)
+print_info_stopped_step_next(_state *mrb, mrdb_state *mrdb)
 {
   const char* file = mrdb->dbg->prvfile;
   uint16_t lineno = mrdb->dbg->prvline;
@@ -441,18 +442,18 @@ print_info_stopped_step_next(mrb_state *mrb, mrdb_state *mrdb)
 }
 
 static void
-print_info_stopped_code(mrb_state *mrb, mrdb_state *mrdb)
+print_info_stopped_code(_state *mrb, mrdb_state *mrdb)
 {
-  char* file = mrb_debug_get_source(mrb, mrdb, mrdb->srcpath, mrdb->dbg->prvfile);
+  char* file = _debug_get_source(mrb, mrdb, mrdb->srcpath, mrdb->dbg->prvfile);
   uint16_t lineno = mrdb->dbg->prvline;
   if (file != NULL) {
-    mrb_debug_list(mrb, mrdb->dbg, file, lineno, lineno);
-    mrb_free(mrb, file);
+    _debug_list(mrb, mrdb->dbg, file, lineno, lineno);
+    _free(mrb, file);
   }
 }
 
 static void
-print_info_stopped(mrb_state *mrb, mrdb_state *mrdb)
+print_info_stopped(_state *mrb, mrdb_state *mrdb)
 {
   switch(mrdb->dbg->bm) {
     case BRK_BREAK:
@@ -470,7 +471,7 @@ print_info_stopped(mrb_state *mrb, mrdb_state *mrdb)
 }
 
 static debug_command*
-get_and_parse_command(mrb_state *mrb, mrdb_state *mrdb)
+get_and_parse_command(_state *mrb, mrdb_state *mrdb)
 {
   debug_command *cmd = NULL;
   char *p;
@@ -504,25 +505,25 @@ get_and_parse_command(mrb_state *mrb, mrdb_state *mrdb)
 }
 
 static int32_t
-check_method_breakpoint(mrb_state *mrb, mrb_irep *irep, mrb_code *pc, mrb_value *regs)
+check_method_breakpoint(_state *mrb, _irep *irep, _code *pc, _value *regs)
 {
   struct RClass* c;
-  mrb_sym sym;
+  _sym sym;
   int32_t bpno;
-  mrb_bool isCfunc;
-  struct mrb_insn_data insn;
+  _bool isCfunc;
+  struct _insn_data insn;
 
-  mrb_debug_context *dbg = mrb_debug_context_get(mrb);
+  _debug_context *dbg = _debug_context_get(mrb);
 
   isCfunc = FALSE;
   bpno = dbg->method_bpno;
   dbg->method_bpno = 0;
 
-  insn = mrb_decode_insn(pc);
+  insn = _decode_insn(pc);
   switch(insn.insn) {
     case OP_SEND:
     case OP_SENDB:
-      c = mrb_class(mrb, regs[insn.a]);
+      c = _class(mrb, regs[insn.a]);
       sym = irep->syms[insn.b];
       break;
     case OP_SUPER:
@@ -534,7 +535,7 @@ check_method_breakpoint(mrb_state *mrb, mrb_irep *irep, mrb_code *pc, mrb_value 
       break;
   }
   if (sym != 0) {
-    dbg->method_bpno = mrb_debug_check_breakpoint_method(mrb, dbg, c, sym, &isCfunc);
+    dbg->method_bpno = _debug_check_breakpoint_method(mrb, dbg, c, sym, &isCfunc);
     if (isCfunc) {
       bpno = dbg->method_bpno;
       dbg->method_bpno = 0;
@@ -545,15 +546,15 @@ check_method_breakpoint(mrb_state *mrb, mrb_irep *irep, mrb_code *pc, mrb_value 
 }
 
 static void
-mrb_code_fetch_hook(mrb_state *mrb, mrb_irep *irep, mrb_code *pc, mrb_value *regs)
+_code_fetch_hook(_state *mrb, _irep *irep, _code *pc, _value *regs)
 {
   const char *file;
   int32_t line;
   int32_t bpno;
 
-  mrb_debug_context *dbg = mrb_debug_context_get(mrb);
+  _debug_context *dbg = _debug_context_get(mrb);
 
-  mrb_assert(dbg);
+  _assert(dbg);
 
   dbg->irep = irep;
   dbg->pc   = pc;
@@ -568,8 +569,8 @@ mrb_code_fetch_hook(mrb_state *mrb, mrb_irep *irep, mrb_code *pc, mrb_value *reg
     dbg->xphase = DBG_PHASE_RUNNING;
   }
 
-  file = mrb_debug_get_filename(irep, pc - irep->iseq);
-  line = mrb_debug_get_line(irep, pc - irep->iseq);
+  file = _debug_get_filename(irep, pc - irep->iseq);
+  line = _debug_get_line(irep, pc - irep->iseq);
 
   switch (dbg->xm) {
   case DBG_STEP:
@@ -600,7 +601,7 @@ mrb_code_fetch_hook(mrb_state *mrb, mrb_irep *irep, mrb_code *pc, mrb_value *reg
       break;
     }
     if (dbg->prvfile != file || dbg->prvline != line) {
-      bpno = mrb_debug_check_breakpoint_line(mrb, dbg, file, line);
+      bpno = _debug_check_breakpoint_line(mrb, dbg, file, line);
       if (bpno > 0) {
         dbg->stopped_bpno = bpno;
         dbg->bm = BRK_BREAK;
@@ -634,7 +635,7 @@ mrb_code_fetch_hook(mrb_state *mrb, mrb_irep *irep, mrb_code *pc, mrb_value *reg
 }
 
 static mrdb_exemode
-mrb_debug_break_hook(mrb_state *mrb, mrb_debug_context *dbg)
+_debug_break_hook(_state *mrb, _debug_context *dbg)
 {
   debug_command *cmd;
   dbgcmd_state st = DBGST_CONTINUE;
@@ -644,7 +645,7 @@ mrb_debug_break_hook(mrb_state *mrb, mrb_debug_context *dbg)
 
   while (1) {
     cmd = get_and_parse_command(mrb, mrdb);
-    mrb_assert(cmd);
+    _assert(cmd);
 
     st = cmd->func(mrb, mrdb);
 
@@ -656,19 +657,19 @@ mrb_debug_break_hook(mrb_state *mrb, mrb_debug_context *dbg)
 int
 main(int argc, char **argv)
 {
-  mrb_state *mrb = mrb_open();
+  _state *mrb = _open();
   int n = -1;
   struct _args args;
-  mrb_value v;
+  _value v;
   mrdb_state *mrdb;
   mrdb_state *mrdb_backup;
-  mrb_debug_context* dbg_backup;
+  _debug_context* dbg_backup;
   debug_command *cmd;
 
  l_restart:
 
   if (mrb == NULL) {
-    fputs("Invalid mrb_state, exiting mruby\n", stderr);
+    fputs("Invalid _state, exiting mruby\n", stderr);
     return EXIT_FAILURE;
   }
 
@@ -682,7 +683,7 @@ main(int argc, char **argv)
 
   /* initialize debugger information */
   mrdb = mrdb_state_get(mrb);
-  mrb_assert(mrdb && mrdb->dbg);
+  _assert(mrdb && mrdb->dbg);
   mrdb->srcpath = args.srcpath;
 
   if (mrdb->dbg->xm == DBG_QUIT) {
@@ -695,49 +696,49 @@ main(int argc, char **argv)
   mrdb->dbg->ccnt = 1;
 
   /* setup hook functions */
-  mrb->code_fetch_hook = mrb_code_fetch_hook;
-  mrdb->dbg->break_hook = mrb_debug_break_hook;
+  mrb->code_fetch_hook = _code_fetch_hook;
+  mrdb->dbg->break_hook = _debug_break_hook;
 
   if (args.mrbfile) { /* .mrb */
-    v = mrb_load_irep_file(mrb, args.rfp);
+    v = _load_irep_file(mrb, args.rfp);
   }
   else {              /* .rb */
     mrbc_context *cc = mrbc_context_new(mrb);
     mrbc_filename(mrb, cc, args.fname);
-    v = mrb_load_file_cxt(mrb, args.rfp, cc);
+    v = _load_file_cxt(mrb, args.rfp, cc);
     mrbc_context_free(mrb, cc);
   }
-  if (mrdb->dbg->xm == DBG_QUIT && !mrb_undef_p(v) && mrb->exc) {
-    const char *classname = mrb_obj_classname(mrb, mrb_obj_value(mrb->exc));
+  if (mrdb->dbg->xm == DBG_QUIT && !_undef_p(v) && mrb->exc) {
+    const char *classname = _obj_classname(mrb, _obj_value(mrb->exc));
     if (!strcmp(classname, "DebuggerExit")) {
       cleanup(mrb, &args);
       return 0;
     }
     if (!strcmp(classname, "DebuggerRestart")) {
       mrdb_backup = mrdb_state_get(mrb);
-      dbg_backup = mrb_debug_context_get(mrb);
+      dbg_backup = _debug_context_get(mrb);
 
       mrdb_state_set(NULL);
-      mrb_debug_context_set(NULL);
+      _debug_context_set(NULL);
 
       cleanup(mrb, &args);
-      mrb = mrb_open();
+      mrb = _open();
 
       mrdb_state_set(mrdb_backup);
-      mrb_debug_context_set(dbg_backup);
+      _debug_context_set(dbg_backup);
 
       goto l_restart;
     }
   }
   puts("mruby application exited.");
   mrdb->dbg->xphase = DBG_PHASE_AFTER_RUN;
-  if (!mrb_undef_p(v)) {
+  if (!_undef_p(v)) {
     if (mrb->exc) {
-      mrb_print_error(mrb);
+      _print_error(mrb);
     }
     else {
       printf(" => ");
-      mrb_p(mrb, v);
+      _p(mrb, v);
     }
   }
 
@@ -746,7 +747,7 @@ main(int argc, char **argv)
 
   while (1) {
     cmd = get_and_parse_command(mrb, mrdb);
-    mrb_assert(cmd);
+    _assert(cmd);
 
     if (cmd->id == DBGCMD_QUIT) {
       break;

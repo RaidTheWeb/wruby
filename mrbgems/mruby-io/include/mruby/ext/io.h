@@ -9,7 +9,7 @@
 extern "C" {
 #endif
 
-struct mrb_io {
+struct _io {
   int fd;   /* file descriptor, or -1 */
   int fd2;  /* file descriptor to write if it's different from fd, or -1 */
   int pid;  /* child's pid (for pipes)  */
@@ -27,10 +27,10 @@ struct mrb_io {
 #define FMODE_CREATE               0x00000080
 #define FMODE_TRUNC                0x00000800
 
-#define E_IO_ERROR                 (mrb_class_get(mrb, "IOError"))
-#define E_EOF_ERROR                (mrb_class_get(mrb, "EOFError"))
+#define E_IO_ERROR                 (_class_get(mrb, "IOError"))
+#define E_EOF_ERROR                (_class_get(mrb, "EOFError"))
 
-mrb_value mrb_io_fileno(mrb_state *mrb, mrb_value io);
+_value _io_fileno(_state *mrb, _value io);
 
 #if defined(__cplusplus)
 } /* extern "C" { */

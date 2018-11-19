@@ -19,23 +19,23 @@ struct RException {
   struct iv_tbl *iv;
 };
 
-#define mrb_exc_ptr(v) ((struct RException*)mrb_ptr(v))
+#define _exc_ptr(v) ((struct RException*)_ptr(v))
 
-MRB_API void mrb_sys_fail(mrb_state *mrb, const char *mesg);
-MRB_API mrb_value mrb_exc_new_str(mrb_state *mrb, struct RClass* c, mrb_value str);
-#define mrb_exc_new_str_lit(mrb, c, lit) mrb_exc_new_str(mrb, c, mrb_str_new_lit(mrb, lit))
-MRB_API mrb_value mrb_make_exception(mrb_state *mrb, mrb_int argc, const mrb_value *argv);
-MRB_API mrb_value mrb_exc_backtrace(mrb_state *mrb, mrb_value exc);
-MRB_API mrb_value mrb_get_backtrace(mrb_state *mrb);
-MRB_API mrb_noreturn void mrb_no_method_error(mrb_state *mrb, mrb_sym id, mrb_value args, const char *fmt, ...);
+MRB_API void _sys_fail(_state *mrb, const char *mesg);
+MRB_API _value _exc_new_str(_state *mrb, struct RClass* c, _value str);
+#define _exc_new_str_lit(mrb, c, lit) _exc_new_str(mrb, c, _str_new_lit(mrb, lit))
+MRB_API _value _make_exception(_state *mrb, _int argc, const _value *argv);
+MRB_API _value _exc_backtrace(_state *mrb, _value exc);
+MRB_API _value _get_backtrace(_state *mrb);
+MRB_API _noreturn void _no_method_error(_state *mrb, _sym id, _value args, const char *fmt, ...);
 
 /* declaration for fail method */
-MRB_API mrb_value mrb_f_raise(mrb_state*, mrb_value);
+MRB_API _value _f_raise(_state*, _value);
 
 struct RBreak {
   MRB_OBJECT_HEADER;
   struct RProc *proc;
-  mrb_value val;
+  _value val;
 };
 
 /**
@@ -43,32 +43,32 @@ struct RBreak {
  *
  * @mrbgem mruby-error
  */
-MRB_API mrb_value mrb_protect(mrb_state *mrb, mrb_func_t body, mrb_value data, mrb_bool *state);
+MRB_API _value _protect(_state *mrb, _func_t body, _value data, _bool *state);
 
 /**
  * Ensure
  *
  * @mrbgem mruby-error
  */
-MRB_API mrb_value mrb_ensure(mrb_state *mrb, mrb_func_t body, mrb_value b_data,
-                             mrb_func_t ensure, mrb_value e_data);
+MRB_API _value _ensure(_state *mrb, _func_t body, _value b_data,
+                             _func_t ensure, _value e_data);
 
 /**
  * Rescue
  *
  * @mrbgem mruby-error
  */
-MRB_API mrb_value mrb_rescue(mrb_state *mrb, mrb_func_t body, mrb_value b_data,
-                             mrb_func_t rescue, mrb_value r_data);
+MRB_API _value _rescue(_state *mrb, _func_t body, _value b_data,
+                             _func_t rescue, _value r_data);
 
 /**
  * Rescue exception
  *
  * @mrbgem mruby-error
  */
-MRB_API mrb_value mrb_rescue_exceptions(mrb_state *mrb, mrb_func_t body, mrb_value b_data,
-                                        mrb_func_t rescue, mrb_value r_data,
-                                        mrb_int len, struct RClass **classes);
+MRB_API _value _rescue_exceptions(_state *mrb, _func_t body, _value b_data,
+                                        _func_t rescue, _value r_data,
+                                        _int len, struct RClass **classes);
 
 MRB_END_DECL
 

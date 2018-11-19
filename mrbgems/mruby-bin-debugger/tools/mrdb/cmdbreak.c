@@ -42,8 +42,8 @@
 #define LINENO_MAX_DIGIT 6
 #define BPNO_LETTER_NUM 9
 
-typedef int32_t (*all_command_func)(mrb_state *, mrb_debug_context *);
-typedef int32_t (*select_command_func)(mrb_state *, mrb_debug_context *, uint32_t);
+typedef int32_t (*all_command_func)(_state *, _debug_context *);
+typedef int32_t (*select_command_func)(_state *, _debug_context *, uint32_t);
 
 static void
 print_api_common_error(int32_t error)
@@ -85,8 +85,8 @@ parse_breakpoint_no(char* args)
   return l;
 }
 
-static mrb_bool
-exe_set_command_all(mrb_state *mrb, mrdb_state *mrdb, all_command_func func)
+static _bool
+exe_set_command_all(_state *mrb, mrdb_state *mrdb, all_command_func func)
 {
   int32_t ret = MRB_DEBUG_OK;
 
@@ -99,7 +99,7 @@ exe_set_command_all(mrb_state *mrb, mrdb_state *mrdb, all_command_func func)
 }
 
 static void
-exe_set_command_select(mrb_state *mrb, mrdb_state *mrdb, select_command_func func)
+exe_set_command_select(_state *mrb, mrdb_state *mrdb, select_command_func func)
 {
   char* ps;
   int32_t ret = MRB_DEBUG_OK;
@@ -123,7 +123,7 @@ exe_set_command_select(mrb_state *mrb, mrdb_state *mrdb, select_command_func fun
   }
 }
 
-mrb_debug_bptype
+_debug_bptype
 check_bptype(char* args)
 {
   char* ps = args;
@@ -154,7 +154,7 @@ check_bptype(char* args)
 }
 
 static void
-print_breakpoint(mrb_debug_breakpoint *bp)
+print_breakpoint(_debug_breakpoint *bp)
 {
   const char* enable_letter[] = {BREAK_INFO_MSG_DISABLE, BREAK_INFO_MSG_ENABLE};
 
@@ -175,14 +175,14 @@ print_breakpoint(mrb_debug_breakpoint *bp)
 }
 
 static void
-info_break_all(mrb_state *mrb, mrdb_state *mrdb)
+info_break_all(_state *mrb, mrdb_state *mrdb)
 {
   int32_t bpnum = 0;
   int32_t i = 0;
   int32_t ret = MRB_DEBUG_OK;
-  mrb_debug_breakpoint *bp_list;
+  _debug_breakpoint *bp_list;
 
-  bpnum = mrb_debug_get_breaknum(mrb, mrdb->dbg);
+  bpnum = _debug_get_breaknum(mrb, mrdb->dbg);
   if (bpnum < 0) {
     print_api_common_error(bpnum);
     return;
@@ -191,9 +191,9 @@ info_break_all(mrb_state *mrb, mrdb_state *mrdb)
     puts(BREAK_ERR_MSG_NOBPNO_INFOALL);
     return;
   }
-  bp_list = (mrb_debug_breakpoint*)mrb_malloc(mrb, bpnum * sizeof(mrb_debug_breakpoint));
+  bp_list = (_debug_breakpoint*)_malloc(mrb, bpnum * sizeof(_debug_breakpoint));
 
-  ret = mrb_debug_get_break_all(mrb, mrdb->dbg, (uint32_t)bpnum, bp_list);
+  ret = _debug_get_break_all(mrb, mrdb->dbg, (uint32_t)bpnum, bp_list);
   if (ret < 0) {
     print_api_common_error(ret);
     return;
@@ -203,17 +203,17 @@ info_break_all(mrb_state *mrb, mrdb_state *mrdb)
     print_breakpoint(&bp_list[i]);
   }
 
-  mrb_free(mrb, bp_list);
+  _free(mrb, bp_list);
 }
 
 static void
-info_break_select(mrb_state *mrb, mrdb_state *mrdb)
+info_break_select(_state *mrb, mrdb_state *mrdb)
 {
   int32_t ret = MRB_DEBUG_OK;
   int32_t bpno = 0;
   char* ps = mrdb->command;
-  mrb_debug_breakpoint bp;
-  mrb_bool isFirst = TRUE;
+  _debug_breakpoint bp;
+  _bool isFirst = TRUE;
   int32_t i;
 
   for(i=2; i<mrdb->wcnt; i++) {
@@ -224,7 +224,7 @@ info_break_select(mrb_state *mrb, mrdb_state *mrdb)
       break;
     }
 
-    ret = mrb_debug_get_break(mrb, mrdb->dbg, bpno, &bp);
+    ret = _debug_get_break(mrb, mrdb->dbg, bpno, &bp);
     if (ret == MRB_DEBUG_BREAK_INVALID_NO) {
       printf(BREAK_ERR_MSG_NOBPNO_INFO, bpno);
       break;
@@ -241,13 +241,13 @@ info_break_select(mrb_state *mrb, mrdb_state *mrdb)
   }
 }
 
-mrb_debug_bptype
+_debug_bptype
 parse_breakcommand(mrdb_state *mrdb, const char **file, uint32_t *line, char **cname, char **method)
 {
-  mrb_debug_context *dbg = mrdb->dbg;
+  _debug_context *dbg = mrdb->dbg;
   char *args;
   char *body;
-  mrb_debug_bptype type;
+  _debug_bptype type;
   uint32_t l;
 
   if (mrdb->wcnt <= 1) {
@@ -274,7 +274,7 @@ parse_breakcommand(mrdb_state *mrdb, const char **file, uint32_t *line, char **c
       STRTOUL(l, body);
       if (l <= 65535) {
         *line = l;
-        *file = (body == args)? mrb_debug_get_filename(dbg->irep, dbg->pc - dbg->irep->iseq): args;
+        *file = (body == args)? _debug_get_filename(dbg->irep, dbg->pc - dbg->irep->iseq): args;
       }
       else {
         puts(BREAK_ERR_MSG_RANGEOVER);
@@ -322,10 +322,10 @@ parse_breakcommand(mrdb_state *mrdb, const char **file, uint32_t *line, char **c
 }
 
 dbgcmd_state
-dbgcmd_break(mrb_state *mrb, mrdb_state *mrdb)
+dbgcmd_break(_state *mrb, mrdb_state *mrdb)
 {
-  mrb_debug_bptype type;
-  mrb_debug_context *dbg = mrdb->dbg;
+  _debug_bptype type;
+  _debug_context *dbg = mrdb->dbg;
   const char *file = NULL;
   uint32_t line = 0;
   char *cname = NULL;
@@ -335,10 +335,10 @@ dbgcmd_break(mrb_state *mrb, mrdb_state *mrdb)
   type = parse_breakcommand(mrdb, &file, &line, &cname, &method);
   switch (type) {
     case MRB_DEBUG_BPTYPE_LINE:
-      ret = mrb_debug_set_break_line(mrb, dbg, file, line);
+      ret = _debug_set_break_line(mrb, dbg, file, line);
       break;
     case MRB_DEBUG_BPTYPE_METHOD:
-      ret = mrb_debug_set_break_method(mrb, dbg, cname, method);
+      ret = _debug_set_break_method(mrb, dbg, cname, method);
       break;
     case MRB_DEBUG_BPTYPE_NONE:
     default:
@@ -385,7 +385,7 @@ dbgcmd_break(mrb_state *mrb, mrdb_state *mrdb)
 }
 
 dbgcmd_state
-dbgcmd_info_break(mrb_state *mrb, mrdb_state *mrdb)
+dbgcmd_info_break(_state *mrb, mrdb_state *mrdb)
 {
   if (mrdb->wcnt == 2) {
     info_break_all(mrb, mrdb);
@@ -398,39 +398,39 @@ dbgcmd_info_break(mrb_state *mrb, mrdb_state *mrdb)
 }
 
 dbgcmd_state
-dbgcmd_delete(mrb_state *mrb, mrdb_state *mrdb)
+dbgcmd_delete(_state *mrb, mrdb_state *mrdb)
 {
-  mrb_bool ret = FALSE;
+  _bool ret = FALSE;
 
-  ret = exe_set_command_all(mrb, mrdb, mrb_debug_delete_break_all);
+  ret = exe_set_command_all(mrb, mrdb, _debug_delete_break_all);
   if (ret != TRUE) {
-    exe_set_command_select(mrb, mrdb, mrb_debug_delete_break);
+    exe_set_command_select(mrb, mrdb, _debug_delete_break);
   }
 
   return DBGST_PROMPT;
 }
 
 dbgcmd_state
-dbgcmd_enable(mrb_state *mrb, mrdb_state *mrdb)
+dbgcmd_enable(_state *mrb, mrdb_state *mrdb)
 {
-  mrb_bool ret = FALSE;
+  _bool ret = FALSE;
 
-  ret = exe_set_command_all(mrb, mrdb, mrb_debug_enable_break_all);
+  ret = exe_set_command_all(mrb, mrdb, _debug_enable_break_all);
   if (ret != TRUE) {
-    exe_set_command_select(mrb, mrdb, mrb_debug_enable_break);
+    exe_set_command_select(mrb, mrdb, _debug_enable_break);
   }
 
   return DBGST_PROMPT;
 }
 
 dbgcmd_state
-dbgcmd_disable(mrb_state *mrb, mrdb_state *mrdb)
+dbgcmd_disable(_state *mrb, mrdb_state *mrdb)
 {
-  mrb_bool ret = FALSE;
+  _bool ret = FALSE;
 
-  ret = exe_set_command_all(mrb, mrdb, mrb_debug_disable_break_all);
+  ret = exe_set_command_all(mrb, mrdb, _debug_disable_break_all);
   if (ret != TRUE) {
-    exe_set_command_select(mrb, mrdb, mrb_debug_disable_break);
+    exe_set_command_select(mrb, mrdb, _debug_disable_break);
   }
   return DBGST_PROMPT;
 }

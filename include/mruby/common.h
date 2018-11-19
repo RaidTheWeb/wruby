@@ -35,22 +35,22 @@ MRB_BEGIN_DECL
 
 /** Declare a function that never returns. */
 #if __STDC_VERSION__ >= 201112L
-# define mrb_noreturn _Noreturn
+# define _noreturn _Noreturn
 #elif defined __GNUC__ && !defined __STRICT_ANSI__
-# define mrb_noreturn __attribute__((noreturn))
+# define _noreturn __attribute__((noreturn))
 #elif defined _MSC_VER
-# define mrb_noreturn __declspec(noreturn)
+# define _noreturn __declspec(noreturn)
 #else
-# define mrb_noreturn
+# define _noreturn
 #endif
 
 /** Mark a function as deprecated. */
 #if defined __GNUC__ && !defined __STRICT_ANSI__
-# define mrb_deprecated __attribute__((deprecated))
+# define _deprecated __attribute__((deprecated))
 #elif defined _MSC_VER
-# define mrb_deprecated __declspec(deprecated)
+# define _deprecated __declspec(deprecated)
 #else
-# define mrb_deprecated
+# define _deprecated
 #endif
 
 /** Declare a function as always inlined. */

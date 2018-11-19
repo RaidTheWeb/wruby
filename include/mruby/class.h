@@ -21,14 +21,14 @@ struct RClass {
   struct RClass *super;
 };
 
-#define mrb_class_ptr(v)    ((struct RClass*)(mrb_ptr(v)))
+#define _class_ptr(v)    ((struct RClass*)(_ptr(v)))
 
 static inline struct RClass*
-mrb_class(mrb_state *mrb, mrb_value v)
+_class(_state *mrb, _value v)
 {
-  switch (mrb_type(v)) {
+  switch (_type(v)) {
   case MRB_TT_FALSE:
-    if (mrb_fixnum(v))
+    if (_fixnum(v))
       return mrb->false_class;
     return mrb->nil_class;
   case MRB_TT_TRUE:
@@ -46,7 +46,7 @@ mrb_class(mrb_state *mrb, mrb_value v)
   case MRB_TT_ENV:
     return NULL;
   default:
-    return mrb_obj_ptr(v)->c;
+    return _obj_ptr(v)->c;
   }
 }
 
@@ -71,26 +71,26 @@ mrb_class(mrb_state *mrb, mrb_value v)
 #define MRB_FL_CLASS_IS_INHERITED (1 << 17)
 #define MRB_INSTANCE_TT_MASK (0xFF)
 #define MRB_SET_INSTANCE_TT(c, tt) c->flags = ((c->flags & ~MRB_INSTANCE_TT_MASK) | (char)tt)
-#define MRB_INSTANCE_TT(c) (enum mrb_vtype)(c->flags & MRB_INSTANCE_TT_MASK)
+#define MRB_INSTANCE_TT(c) (enum _vtype)(c->flags & MRB_INSTANCE_TT_MASK)
 
-MRB_API struct RClass* mrb_define_class_id(mrb_state*, mrb_sym, struct RClass*);
-MRB_API struct RClass* mrb_define_module_id(mrb_state*, mrb_sym);
-MRB_API struct RClass *mrb_vm_define_class(mrb_state*, mrb_value, mrb_value, mrb_sym);
-MRB_API struct RClass *mrb_vm_define_module(mrb_state*, mrb_value, mrb_sym);
-MRB_API void mrb_define_method_raw(mrb_state*, struct RClass*, mrb_sym, mrb_method_t);
-MRB_API void mrb_define_method_id(mrb_state *mrb, struct RClass *c, mrb_sym mid, mrb_func_t func, mrb_aspec aspec);
-MRB_API void mrb_alias_method(mrb_state*, struct RClass *c, mrb_sym a, mrb_sym b);
+MRB_API struct RClass* _define_class_id(_state*, _sym, struct RClass*);
+MRB_API struct RClass* _define_module_id(_state*, _sym);
+MRB_API struct RClass *_vm_define_class(_state*, _value, _value, _sym);
+MRB_API struct RClass *_vm_define_module(_state*, _value, _sym);
+MRB_API void _define_method_raw(_state*, struct RClass*, _sym, _method_t);
+MRB_API void _define_method_id(_state *mrb, struct RClass *c, _sym mid, _func_t func, _aspec aspec);
+MRB_API void _alias_method(_state*, struct RClass *c, _sym a, _sym b);
 
-MRB_API mrb_method_t mrb_method_search_vm(mrb_state*, struct RClass**, mrb_sym);
-MRB_API mrb_method_t mrb_method_search(mrb_state*, struct RClass*, mrb_sym);
+MRB_API _method_t _method_search_vm(_state*, struct RClass**, _sym);
+MRB_API _method_t _method_search(_state*, struct RClass*, _sym);
 
-MRB_API struct RClass* mrb_class_real(struct RClass* cl);
+MRB_API struct RClass* _class_real(struct RClass* cl);
 
-void mrb_class_name_class(mrb_state*, struct RClass*, struct RClass*, mrb_sym);
-mrb_value mrb_class_find_path(mrb_state*, struct RClass*);
-void mrb_gc_mark_mt(mrb_state*, struct RClass*);
-size_t mrb_gc_mark_mt_size(mrb_state*, struct RClass*);
-void mrb_gc_free_mt(mrb_state*, struct RClass*);
+void _class_name_class(_state*, struct RClass*, struct RClass*, _sym);
+_value _class_find_path(_state*, struct RClass*);
+void _gc_mark_mt(_state*, struct RClass*);
+size_t _gc_mark_mt_size(_state*, struct RClass*);
+void _gc_free_mt(_state*, struct RClass*);
 
 MRB_END_DECL
 

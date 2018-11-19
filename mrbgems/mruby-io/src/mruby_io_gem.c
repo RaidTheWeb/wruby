@@ -1,20 +1,20 @@
 #include "mruby.h"
 
-void mrb_init_io(mrb_state *mrb);
-void mrb_init_file(mrb_state *mrb);
-void mrb_init_file_test(mrb_state *mrb);
+void _init_io(_state *mrb);
+void _init_file(_state *mrb);
+void _init_file_test(_state *mrb);
 
-#define DONE mrb_gc_arena_restore(mrb, 0)
+#define DONE _gc_arena_restore(mrb, 0)
 
 void
-mrb_mruby_io_gem_init(mrb_state* mrb)
+_mruby_io_gem_init(_state* mrb)
 {
-  mrb_init_io(mrb); DONE;
-  mrb_init_file(mrb); DONE;
-  mrb_init_file_test(mrb); DONE;
+  _init_io(mrb); DONE;
+  _init_file(mrb); DONE;
+  _init_file_test(mrb); DONE;
 }
 
 void
-mrb_mruby_io_gem_final(mrb_state* mrb)
+_mruby_io_gem_final(_state* mrb)
 {
 }

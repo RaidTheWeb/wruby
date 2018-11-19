@@ -1,20 +1,20 @@
 #include <mruby.h>
 #include <stdio.h>
 
-static mrb_value
-mrb_c_method(mrb_state *mrb, mrb_value self)
+static _value
+_c_method(_state *mrb, _value self)
 {
   puts("A C Extension");
   return self;
 }
 
 void
-mrb_c_extension_example_gem_init(mrb_state* mrb) {
-  struct RClass *class_cextension = mrb_define_module(mrb, "CExtension");
-  mrb_define_class_method(mrb, class_cextension, "c_method", mrb_c_method, MRB_ARGS_NONE());
+_c_extension_example_gem_init(_state* mrb) {
+  struct RClass *class_cextension = _define_module(mrb, "CExtension");
+  _define_class_method(mrb, class_cextension, "c_method", _c_method, MRB_ARGS_NONE());
 }
 
 void
-mrb_c_extension_example_gem_final(mrb_state* mrb) {
+_c_extension_example_gem_final(_state* mrb) {
   /* finalizer */
 }

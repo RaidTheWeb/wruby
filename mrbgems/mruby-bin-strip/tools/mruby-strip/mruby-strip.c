@@ -9,7 +9,7 @@ struct strip_args {
   int argc_start;
   int argc;
   char **argv;
-  mrb_bool lvar;
+  _bool lvar;
 };
 
 static void
@@ -56,14 +56,14 @@ parse_args(int argc, char **argv, struct strip_args *args)
 }
 
 static int
-strip(mrb_state *mrb, struct strip_args *args)
+strip(_state *mrb, struct strip_args *args)
 {
   int i;
 
   for (i = args->argc_start; i < args->argc; ++i) {
     char *filename;
     FILE *rfile;
-    mrb_irep *irep;
+    _irep *irep;
     FILE *wfile;
     int dump_result;
 
@@ -74,7 +74,7 @@ strip(mrb_state *mrb, struct strip_args *args)
       return EXIT_FAILURE;
     }
 
-    irep = mrb_read_irep_file(mrb, rfile);
+    irep = _read_irep_file(mrb, rfile);
     fclose(rfile);
     if (irep == NULL) {
       fprintf(stderr, "can't read irep file %s\n", filename);
@@ -83,21 +83,21 @@ strip(mrb_state *mrb, struct strip_args *args)
 
     /* clear lv if --lvar is enabled */
     if (args->lvar) {
-      mrb_irep_remove_lv(mrb, irep);
+      _irep_remove_lv(mrb, irep);
     }
 
     wfile = fopen(filename, "wb");
     if (wfile == NULL) {
       fprintf(stderr, "can't open file for writing %s\n", filename);
-      mrb_irep_decref(mrb, irep);
+      _irep_decref(mrb, irep);
       return EXIT_FAILURE;
     }
 
     /* debug flag must always be false */
-    dump_result = mrb_dump_irep_binary(mrb, irep, FALSE, wfile);
+    dump_result = _dump_irep_binary(mrb, irep, FALSE, wfile);
 
     fclose(wfile);
-    mrb_irep_decref(mrb, irep);
+    _irep_decref(mrb, irep);
 
     if (dump_result != MRB_DUMP_OK) {
       fprintf(stderr, "error occurred during dumping %s\n", filename);
@@ -112,7 +112,7 @@ main(int argc, char **argv)
 {
   struct strip_args args;
   int args_result;
-  mrb_state *mrb;
+  _state *mrb;
   int ret;
 
   if (argc <= 1) {
@@ -126,14 +126,14 @@ main(int argc, char **argv)
     print_usage(argv[0]);
     return EXIT_FAILURE;
   }
-  mrb = mrb_open_core(mrb_default_allocf, NULL);
+  mrb = _open_core(_default_allocf, NULL);
   if (mrb == NULL) {
-    fputs("Invalid mrb_state, exiting mruby-strip\n", stderr);
+    fputs("Invalid _state, exiting mruby-strip\n", stderr);
     return EXIT_FAILURE;
   }
 
   ret = strip(mrb, &args);
 
-  mrb_close(mrb);
+  _close(mrb);
   return ret;
 }

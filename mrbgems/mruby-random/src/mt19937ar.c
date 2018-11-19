@@ -48,7 +48,7 @@ static unsigned long mt[N]; /* the array for the state vector  */
 static int mti=N+1; /* mti==N+1 means mt[N] is not initialized */
 #endif /* dead_code */
 
-void mrb_random_init_genrand(mt_state *t, unsigned long s)
+void _random_init_genrand(mt_state *t, unsigned long s)
 {
     t->mt[0]= s & 0xffffffffUL;
     for (t->mti=1; t->mti<N; t->mti++) {
@@ -57,7 +57,7 @@ void mrb_random_init_genrand(mt_state *t, unsigned long s)
     }
 }
 
-unsigned long mrb_random_genrand_int32(mt_state *t)
+unsigned long _random_genrand_int32(mt_state *t)
 {
     unsigned long y;
     static const unsigned long mag01[2]={0x0UL, MATRIX_A};
@@ -67,7 +67,7 @@ unsigned long mrb_random_genrand_int32(mt_state *t)
         int kk;
 
         if (t->mti == N+1)   /* if init_genrand() has not been called, */
-            mrb_random_init_genrand(t, 5489UL); /* a default initial seed is used */
+            _random_init_genrand(t, 5489UL); /* a default initial seed is used */
 
         for (kk=0;kk<N-M;kk++) {
             y = (t->mt[kk]&UPPER_MASK)|(t->mt[kk+1]&LOWER_MASK);
@@ -96,9 +96,9 @@ unsigned long mrb_random_genrand_int32(mt_state *t)
     return y;
 }
 
-double mrb_random_genrand_real1(mt_state *t)
+double _random_genrand_real1(mt_state *t)
 {
-    mrb_random_genrand_int32(t);
+    _random_genrand_int32(t);
     t->gen.double_ =  t->gen.int_*(1.0/4294967295.0);
     return t->gen.double_;
     /* divided by 2^32-1 */

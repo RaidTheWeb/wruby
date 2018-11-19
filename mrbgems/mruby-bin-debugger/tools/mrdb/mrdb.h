@@ -75,41 +75,41 @@ typedef enum {
   MRB_DEBUG_BPTYPE_NONE,
   MRB_DEBUG_BPTYPE_LINE,
   MRB_DEBUG_BPTYPE_METHOD,
-} mrb_debug_bptype;
+} _debug_bptype;
 
-struct mrb_irep;
+struct _irep;
 struct mrbc_context;
-struct mrb_debug_context;
+struct _debug_context;
 
-typedef struct mrb_debug_linepoint {
+typedef struct _debug_linepoint {
   const char *file;
   uint16_t lineno;
-} mrb_debug_linepoint;
+} _debug_linepoint;
 
-typedef struct mrb_debug_methodpoint {
+typedef struct _debug_methodpoint {
   const char *class_name;
   const char *method_name;
-} mrb_debug_methodpoint;
+} _debug_methodpoint;
 
-typedef struct mrb_debug_breakpoint {
+typedef struct _debug_breakpoint {
   uint32_t bpno;
   uint8_t enable;
-  mrb_debug_bptype type;
+  _debug_bptype type;
   union point {
-    mrb_debug_linepoint linepoint;
-    mrb_debug_methodpoint methodpoint;
+    _debug_linepoint linepoint;
+    _debug_methodpoint methodpoint;
   } point;
-} mrb_debug_breakpoint;
+} _debug_breakpoint;
 
-typedef struct mrb_debug_context {
-  struct mrb_irep *root_irep;
-  struct mrb_irep *irep;
-  mrb_code *pc;
-  mrb_value *regs;
+typedef struct _debug_context {
+  struct _irep *root_irep;
+  struct _irep *irep;
+  _code *pc;
+  _value *regs;
 
   const char *prvfile;
   int32_t prvline;
-  mrb_callinfo *prvci;
+  _callinfo *prvci;
 
   mrdb_exemode xm;
   mrdb_exephase xphase;
@@ -119,16 +119,16 @@ typedef struct mrb_debug_context {
   uint16_t ccnt;
   uint16_t scnt;
 
-  mrb_debug_breakpoint bp[MAX_BREAKPOINT];
+  _debug_breakpoint bp[MAX_BREAKPOINT];
   uint32_t bpnum;
   int32_t next_bpno;
   int32_t method_bpno;
   int32_t stopped_bpno;
-  mrb_bool isCfunc;
+  _bool isCfunc;
 
-  mrdb_exemode (*break_hook)(mrb_state *mrb, struct mrb_debug_context *dbg);
+  mrdb_exemode (*break_hook)(_state *mrb, struct _debug_context *dbg);
 
-} mrb_debug_context;
+} _debug_context;
 
 typedef struct mrdb_state {
   char *command;
@@ -138,28 +138,31 @@ typedef struct mrdb_state {
   const char *srcpath;
   uint32_t print_no;
 
-  mrb_debug_context *dbg;
+  _debug_context *dbg;
 } mrdb_state;
 
-typedef dbgcmd_state (*debug_command_func)(mrb_state*, mrdb_state*);
+typedef dbgcmd_state (*debug_command_func)(_state*, mrdb_state*);
 
 /* cmdrun.c */
-dbgcmd_state dbgcmd_run(mrb_state*, mrdb_state*);
-dbgcmd_state dbgcmd_continue(mrb_state*, mrdb_state*);
-dbgcmd_state dbgcmd_step(mrb_state*, mrdb_state*);
-dbgcmd_state dbgcmd_next(mrb_state*, mrdb_state*);
+dbgcmd_state dbgcmd_run(_state*, mrdb_state*);
+dbgcmd_state dbgcmd_continue(_state*, mrdb_state*);
+dbgcmd_state dbgcmd_step(_state*, mrdb_state*);
+dbgcmd_state dbgcmd_next(_state*, mrdb_state*);
 /* cmdbreak.c */
-dbgcmd_state dbgcmd_break(mrb_state*, mrdb_state*);
-dbgcmd_state dbgcmd_info_break(mrb_state*, mrdb_state*);
-dbgcmd_state dbgcmd_delete(mrb_state*, mrdb_state*);
-dbgcmd_state dbgcmd_enable(mrb_state*, mrdb_state*);
-dbgcmd_state dbgcmd_disable(mrb_state*, mrdb_state*);
+dbgcmd_state dbgcmd_break(_state*, mrdb_state*);
+dbgcmd_state dbgcmd_info_break(_state*, mrdb_state*);
+dbgcmd_state dbgcmd_delete(_state*, mrdb_state*);
+dbgcmd_state dbgcmd_enable(_state*, mrdb_state*);
+dbgcmd_state dbgcmd_disable(_state*, mrdb_state*);
 /* cmdprint.c */
-dbgcmd_state dbgcmd_print(mrb_state*, mrdb_state*);
-dbgcmd_state dbgcmd_eval(mrb_state*, mrdb_state*);
+dbgcmd_state dbgcmd_print(_state*, mrdb_state*);
+dbgcmd_state dbgcmd_eval(_state*, mrdb_state*);
 /* cmdmisc.c */
-dbgcmd_state dbgcmd_list(mrb_state*, mrdb_state*);
-dbgcmd_state dbgcmd_help(mrb_state*, mrdb_state*);
-dbgcmd_state dbgcmd_quit(mrb_state*, mrdb_state*);
+dbgcmd_state dbgcmd_list(_state*, mrdb_state*);
+dbgcmd_state dbgcmd_help(_state*, mrdb_state*);
+dbgcmd_state dbgcmd_quit(_state*, mrdb_state*);
 
 #endif
+
+
+void _debug_context_set(_debug_context *dbg);

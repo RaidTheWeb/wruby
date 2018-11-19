@@ -13,19 +13,19 @@
 
 #ifndef MRB_WITHOUT_FLOAT
 /* a function to get hash value of a float number */
-mrb_int mrb_float_id(mrb_float f);
+_int _float_id(_float f);
 #endif
 
 /* return non zero to break the loop */
-typedef int (sg_foreach_func)(mrb_state *mrb,mrb_value key, mrb_value val, void *data);
+typedef int (sg_foreach_func)(_state *mrb,_value key, _value val, void *data);
 
 #ifndef MRB_SG_SEGMENT_SIZE
 #define MRB_SG_SEGMENT_SIZE 5
 #endif
 
 struct segkv {
-  mrb_value key;
-  mrb_value val;
+  _value key;
+  _value val;
 };
 
 typedef struct segment {
@@ -43,23 +43,23 @@ typedef struct segindex {
 typedef struct seglist {
   segment *rootseg;
   segment *lastseg;
-  mrb_int size;
-  mrb_int last_len;
+  _int size;
+  _int last_len;
   segindex *index;
 } seglist;
 
 static /* inline */ size_t
-sg_hash_func(mrb_state *mrb, seglist *t, mrb_value key)
+sg_hash_func(_state *mrb, seglist *t, _value key)
 {
-  enum mrb_vtype tt = mrb_type(key);
-  mrb_value hv;
+  enum _vtype tt = _type(key);
+  _value hv;
   size_t h;
   segindex *index = t->index;
   size_t capa = index ? index->capa : 0;
 
   switch (tt) {
   case MRB_TT_STRING:
-    h = mrb_str_hash(mrb, key);
+    h = _str_hash(mrb, key);
     break;
 
   case MRB_TT_TRUE:
@@ -69,40 +69,40 @@ sg_hash_func(mrb_state *mrb, seglist *t, mrb_value key)
 #ifndef MRB_WITHOUT_FLOAT
   case MRB_TT_FLOAT:
 #endif
-    h = (size_t)mrb_obj_id(key);
+    h = (size_t)_obj_id(key);
     break;
 
   default:
-    hv = mrb_funcall(mrb, key, "hash", 0);
-    h = (size_t)t ^ (size_t)mrb_fixnum(hv);
+    hv = _funcall(mrb, key, "hash", 0);
+    h = (size_t)t ^ (size_t)_fixnum(hv);
     break;
   }
   if (index && (index != t->index || capa != index->capa)) {
-    mrb_raise(mrb, E_RUNTIME_ERROR, "hash modified");
+    _raise(mrb, E_RUNTIME_ERROR, "hash modified");
   }
   return ((h)^((h)<<2)^((h)>>2));
 }
 
-static inline mrb_bool
-sg_hash_equal(mrb_state *mrb, seglist *t, mrb_value a, mrb_value b)
+static inline _bool
+sg_hash_equal(_state *mrb, seglist *t, _value a, _value b)
 {
-  enum mrb_vtype tt = mrb_type(a);
+  enum _vtype tt = _type(a);
 
   switch (tt) {
   case MRB_TT_STRING:
-    return mrb_str_equal(mrb, a, b);
+    return _str_equal(mrb, a, b);
 
   case MRB_TT_SYMBOL:
-    if (mrb_type(b) != MRB_TT_SYMBOL) return FALSE;
-    return mrb_symbol(a) == mrb_symbol(b);
+    if (_type(b) != MRB_TT_SYMBOL) return FALSE;
+    return _symbol(a) == _symbol(b);
 
   case MRB_TT_FIXNUM:
-    switch (mrb_type(b)) {
+    switch (_type(b)) {
     case MRB_TT_FIXNUM:
-      return mrb_fixnum(a) == mrb_fixnum(b);
+      return _fixnum(a) == _fixnum(b);
 #ifndef MRB_WITHOUT_FLOAT
     case MRB_TT_FLOAT:
-      return (mrb_float)mrb_fixnum(a) == mrb_float(b);
+      return (_float)_fixnum(a) == _float(b);
 #endif
     default:
       return FALSE;
@@ -110,11 +110,11 @@ sg_hash_equal(mrb_state *mrb, seglist *t, mrb_value a, mrb_value b)
 
 #ifndef MRB_WITHOUT_FLOAT
   case MRB_TT_FLOAT:
-    switch (mrb_type(b)) {
+    switch (_type(b)) {
     case MRB_TT_FIXNUM:
-      return mrb_float(a) == (mrb_float)mrb_fixnum(b);
+      return _float(a) == (_float)_fixnum(b);
     case MRB_TT_FLOAT:
-      return mrb_float(a) == mrb_float(b);
+      return _float(a) == _float(b);
     default:
       return FALSE;
     }
@@ -124,9 +124,9 @@ sg_hash_equal(mrb_state *mrb, seglist *t, mrb_value a, mrb_value b)
     {
       segindex *index = t->index;
       size_t capa = index ? index->capa : 0;
-      mrb_bool eql = mrb_eql(mrb, a, b);
+      _bool eql = _eql(mrb, a, b);
       if (index && (index != t->index || capa != index->capa)) {
-        mrb_raise(mrb, E_RUNTIME_ERROR, "hash modified");
+        _raise(mrb, E_RUNTIME_ERROR, "hash modified");
       }
       return eql;
     }
@@ -135,11 +135,11 @@ sg_hash_equal(mrb_state *mrb, seglist *t, mrb_value a, mrb_value b)
 
 /* Creates the instance variable table. */
 static seglist*
-sg_new(mrb_state *mrb)
+sg_new(_state *mrb)
 {
   seglist *t;
 
-  t = (seglist*)mrb_malloc(mrb, sizeof(seglist));
+  t = (seglist*)_malloc(mrb, sizeof(seglist));
   t->size = 0;
   t->rootseg =  NULL;
   t->lastseg =  NULL;
@@ -167,7 +167,7 @@ sg_new(mrb_state *mrb)
 
 /* Build index for the segment list */
 static void
-sg_index(mrb_state *mrb, seglist *t)
+sg_index(_state *mrb, seglist *t)
 {
   size_t size = (size_t)t->size;
   size_t mask;
@@ -178,7 +178,7 @@ sg_index(mrb_state *mrb, seglist *t)
   if (size < MRB_SG_SEGMENT_SIZE) {
     if (index) {
     failed:
-      mrb_free(mrb, index);
+      _free(mrb, index);
       t->index = NULL;
     }
     return;
@@ -189,7 +189,7 @@ sg_index(mrb_state *mrb, seglist *t)
   }
   power2(size);
   if (!index || index->capa < size) {
-    index = (segindex*)mrb_realloc_simple(mrb, index, sizeof(segindex)+sizeof(struct segkv*)*size);
+    index = (segindex*)_realloc_simple(mrb, index, sizeof(segindex)+sizeof(struct segkv*)*size);
     if (index == NULL) goto failed;
     t->index = index;
   }
@@ -204,14 +204,14 @@ sg_index(mrb_state *mrb, seglist *t)
   seg = t->rootseg;
   while (seg) {
     for (i=0; i<MRB_SG_SEGMENT_SIZE; i++) {
-      mrb_value key;
+      _value key;
       size_t k, step = 0;
 
       if (!seg->next && i >= (size_t)t->last_len) {
         return;
       }
       key = seg->e[i].key;
-      if (mrb_undef_p(key)) continue;
+      if (_undef_p(key)) continue;
       k = sg_hash_func(mrb, t, key) & mask;
       while (index->table[k]) {
         k = (k+(++step)) & mask;
@@ -224,13 +224,13 @@ sg_index(mrb_state *mrb, seglist *t)
 
 /* Compacts the segment list removing deleted entries. */
 static void
-sg_compact(mrb_state *mrb, seglist *t)
+sg_compact(_state *mrb, seglist *t)
 {
   segment *seg;
-  mrb_int i;
+  _int i;
   segment *seg2 = NULL;
-  mrb_int i2;
-  mrb_int size = 0;
+  _int i2;
+  _int size = 0;
 
   if (t == NULL) return;
   seg = t->rootseg;
@@ -240,12 +240,12 @@ sg_compact(mrb_state *mrb, seglist *t)
   }
   while (seg) {
     for (i=0; i<MRB_SG_SEGMENT_SIZE; i++) {
-      mrb_value k = seg->e[i].key;
+      _value k = seg->e[i].key;
 
       if (!seg->next && i >= t->last_len) {
         goto exit;
       }
-      if (mrb_undef_p(k)) {     /* found delete key */
+      if (_undef_p(k)) {     /* found delete key */
         if (seg2 == NULL) {
           seg2 = seg;
           i2 = i;
@@ -274,7 +274,7 @@ sg_compact(mrb_state *mrb, seglist *t)
     t->lastseg = seg2;
     while (seg) {
       seg2 = seg->next;
-      mrb_free(mrb, seg);
+      _free(mrb, seg);
       seg = seg2;
     }
   }
@@ -285,7 +285,7 @@ sg_compact(mrb_state *mrb, seglist *t)
 
 /* Set the value for the key in the indexed segment list. */
 static void
-sg_index_put(mrb_state *mrb, seglist *t, mrb_value key, mrb_value val)
+sg_index_put(_state *mrb, seglist *t, _value key, _value val)
 {
   segindex *index = t->index;
   size_t k, sp, step = 0, mask;
@@ -300,8 +300,8 @@ sg_index_put(mrb_state *mrb, seglist *t, mrb_value key, mrb_value val)
   sp = index->capa;
   k = sg_hash_func(mrb, t, key) & mask;
   while (index->table[k]) {
-    mrb_value key2 = index->table[k]->key;
-    if (mrb_undef_p(key2)) {
+    _value key2 = index->table[k]->key;
+    if (_undef_p(key2)) {
       if (sp == index->capa) sp = k;
     }
     else if (sg_hash_equal(mrb, t, key, key2)) {
@@ -320,7 +320,7 @@ sg_index_put(mrb_state *mrb, seglist *t, mrb_value key, mrb_value val)
     index->table[k] = &seg->e[t->last_len++];
   }
   else {                        /* append a new segment */
-    seg->next = (segment*)mrb_malloc(mrb, sizeof(segment));
+    seg->next = (segment*)_malloc(mrb, sizeof(segment));
     seg = seg->next;
     seg->next = NULL;
     t->lastseg = seg;
@@ -335,10 +335,10 @@ sg_index_put(mrb_state *mrb, seglist *t, mrb_value key, mrb_value val)
 
 /* Set the value for the key in the segment list. */
 static void
-sg_put(mrb_state *mrb, seglist *t, mrb_value key, mrb_value val)
+sg_put(_state *mrb, seglist *t, _value key, _value val)
 {
   segment *seg;
-  mrb_int i, deleted = 0;
+  _int i, deleted = 0;
 
   if (t == NULL) return;
   if (t->index) {
@@ -348,7 +348,7 @@ sg_put(mrb_state *mrb, seglist *t, mrb_value key, mrb_value val)
   seg = t->rootseg;
   while (seg) {
     for (i=0; i<MRB_SG_SEGMENT_SIZE; i++) {
-      mrb_value k = seg->e[i].key;
+      _value k = seg->e[i].key;
       /* Found room in last segment after last_len */
       if (!seg->next && i >= t->last_len) {
         seg->e[i].key = key;
@@ -357,7 +357,7 @@ sg_put(mrb_state *mrb, seglist *t, mrb_value key, mrb_value val)
         t->size++;
         return;
       }
-      if (mrb_undef_p(k)) {
+      if (_undef_p(k)) {
         deleted++;
         continue;
       }
@@ -375,7 +375,7 @@ sg_put(mrb_state *mrb, seglist *t, mrb_value key, mrb_value val)
   }
   t->size++;
 
-  seg = (segment*)mrb_malloc(mrb, sizeof(segment));
+  seg = (segment*)_malloc(mrb, sizeof(segment));
   seg->next = NULL;
   seg->e[0].key = key;
   seg->e[0].val = val;
@@ -393,8 +393,8 @@ sg_put(mrb_state *mrb, seglist *t, mrb_value key, mrb_value val)
 }
 
 /* Get a value for a key from the indexed segment list. */
-static mrb_bool
-sg_index_get(mrb_state *mrb, seglist *t, mrb_value key, mrb_value *vp)
+static _bool
+sg_index_get(_state *mrb, seglist *t, _value key, _value *vp)
 {
   segindex *index = t->index;
   size_t mask = SG_MASK(index);
@@ -402,8 +402,8 @@ sg_index_get(mrb_state *mrb, seglist *t, mrb_value key, mrb_value *vp)
   size_t step = 0;
 
   while (index->table[k]) {
-    mrb_value key2 = index->table[k]->key;
-    if (!mrb_undef_p(key2) && sg_hash_equal(mrb, t, key, key2)) {
+    _value key2 = index->table[k]->key;
+    if (!_undef_p(key2) && sg_hash_equal(mrb, t, key, key2)) {
       if (vp) *vp = index->table[k]->val;
       return TRUE;
     }
@@ -413,11 +413,11 @@ sg_index_get(mrb_state *mrb, seglist *t, mrb_value key, mrb_value *vp)
 }
 
 /* Get a value for a key from the segment list. */
-static mrb_bool
-sg_get(mrb_state *mrb, seglist *t, mrb_value key, mrb_value *vp)
+static _bool
+sg_get(_state *mrb, seglist *t, _value key, _value *vp)
 {
   segment *seg;
-  mrb_int i;
+  _int i;
 
   if (t == NULL) return FALSE;
   if (t->index) {
@@ -427,12 +427,12 @@ sg_get(mrb_state *mrb, seglist *t, mrb_value key, mrb_value *vp)
   seg = t->rootseg;
   while (seg) {
     for (i=0; i<MRB_SG_SEGMENT_SIZE; i++) {
-      mrb_value k = seg->e[i].key;
+      _value k = seg->e[i].key;
 
       if (!seg->next && i >= t->last_len) {
         return FALSE;
       }
-      if (mrb_undef_p(k)) continue;
+      if (_undef_p(k)) continue;
       if (sg_hash_equal(mrb, t, k, key)) {
         if (vp) *vp = seg->e[i].val;
         return TRUE;
@@ -445,26 +445,26 @@ sg_get(mrb_state *mrb, seglist *t, mrb_value key, mrb_value *vp)
 
 /* Deletes the value for the symbol from the instance variable table. */
 /* Deletion is done by overwriting keys by `undef`. */
-static mrb_bool
-sg_del(mrb_state *mrb, seglist *t, mrb_value key, mrb_value *vp)
+static _bool
+sg_del(_state *mrb, seglist *t, _value key, _value *vp)
 {
   segment *seg;
-  mrb_int i;
+  _int i;
 
   if (t == NULL) return FALSE;
   seg = t->rootseg;
   while (seg) {
     for (i=0; i<MRB_SG_SEGMENT_SIZE; i++) {
-      mrb_value key2;
+      _value key2;
 
       if (!seg->next && i >= t->last_len) {
         /* not found */
         return FALSE;
       }
       key2 = seg->e[i].key;
-      if (!mrb_undef_p(key2) && sg_hash_equal(mrb, t, key, key2)) {
+      if (!_undef_p(key2) && sg_hash_equal(mrb, t, key, key2)) {
         if (vp) *vp = seg->e[i].val;
-        seg->e[i].key = mrb_undef_value();
+        seg->e[i].key = _undef_value();
         t->size--;
         return TRUE;
       }
@@ -476,10 +476,10 @@ sg_del(mrb_state *mrb, seglist *t, mrb_value key, mrb_value *vp)
 
 /* Iterates over the instance variable table. */
 static void
-sg_foreach(mrb_state *mrb, seglist *t, sg_foreach_func *func, void *p)
+sg_foreach(_state *mrb, seglist *t, sg_foreach_func *func, void *p)
 {
   segment *seg;
-  mrb_int i;
+  _int i;
 
   if (t == NULL) return;
   if (t->index && t->index->size-(size_t)t->size > MRB_SG_SEGMENT_SIZE) {
@@ -492,7 +492,7 @@ sg_foreach(mrb_state *mrb, seglist *t, sg_foreach_func *func, void *p)
       if (!seg->next && i >= t->last_len) {
         return;
       }
-      if (mrb_undef_p(seg->e[i].key)) continue;
+      if (_undef_p(seg->e[i].key)) continue;
       if ((*func)(mrb, seg->e[i].key, seg->e[i].val, p) != 0)
         return;
     }
@@ -501,8 +501,8 @@ sg_foreach(mrb_state *mrb, seglist *t, sg_foreach_func *func, void *p)
 }
 
 /* Get the size of the instance variable table. */
-static mrb_int
-sg_size(mrb_state *mrb, seglist *t)
+static _int
+sg_size(_state *mrb, seglist *t)
 {
   if (t == NULL) return 0;
   return t->size;
@@ -510,19 +510,19 @@ sg_size(mrb_state *mrb, seglist *t)
 
 /* Copy the instance variable table. */
 static seglist*
-sg_copy(mrb_state *mrb, seglist *t)
+sg_copy(_state *mrb, seglist *t)
 {
   segment *seg;
   seglist *t2;
-  mrb_int i;
+  _int i;
 
   seg = t->rootseg;
   t2 = sg_new(mrb);
 
   while (seg != NULL) {
     for (i=0; i<MRB_SG_SEGMENT_SIZE; i++) {
-      mrb_value key = seg->e[i].key;
-      mrb_value val = seg->e[i].val;
+      _value key = seg->e[i].key;
+      _value val = seg->e[i].val;
 
       if ((seg->next == NULL) && (i >= t->last_len)) {
         return t2;
@@ -536,7 +536,7 @@ sg_copy(mrb_state *mrb, seglist *t)
 
 /* Free memory of the instance variable table. */
 static void
-sg_free(mrb_state *mrb, seglist *t)
+sg_free(_state *mrb, seglist *t)
 {
   segment *seg;
 
@@ -545,20 +545,20 @@ sg_free(mrb_state *mrb, seglist *t)
   while (seg) {
     segment *p = seg;
     seg = seg->next;
-    mrb_free(mrb, p);
+    _free(mrb, p);
   }
-  if (t->index) mrb_free(mrb, t->index);
-  mrb_free(mrb, t);
+  if (t->index) _free(mrb, t->index);
+  _free(mrb, t);
 }
 
-static void mrb_hash_modify(mrb_state *mrb, mrb_value hash);
+static void _hash_modify(_state *mrb, _value hash);
 
-static inline mrb_value
-ht_key(mrb_state *mrb, mrb_value key)
+static inline _value
+ht_key(_state *mrb, _value key)
 {
-  if (mrb_string_p(key) && !MRB_FROZEN_P(mrb_str_ptr(key))) {
-    key = mrb_str_dup(mrb, key);
-    MRB_SET_FROZEN_FLAG(mrb_str_ptr(key));
+  if (_string_p(key) && !MRB_FROZEN_P(_str_ptr(key))) {
+    key = _str_dup(mrb, key);
+    MRB_SET_FROZEN_FLAG(_str_ptr(key));
   }
   return key;
 }
@@ -566,75 +566,75 @@ ht_key(mrb_state *mrb, mrb_value key)
 #define KEY(key) ht_key(mrb, key)
 
 static int
-hash_mark_i(mrb_state *mrb, mrb_value key, mrb_value val, void *p)
+hash_mark_i(_state *mrb, _value key, _value val, void *p)
 {
-  mrb_gc_mark_value(mrb, key);
-  mrb_gc_mark_value(mrb, val);
+  _gc_mark_value(mrb, key);
+  _gc_mark_value(mrb, val);
   return 0;
 }
 
 void
-mrb_gc_mark_hash(mrb_state *mrb, struct RHash *hash)
+_gc_mark_hash(_state *mrb, struct RHash *hash)
 {
   sg_foreach(mrb, hash->ht, hash_mark_i, NULL);
 }
 
 size_t
-mrb_gc_mark_hash_size(mrb_state *mrb, struct RHash *hash)
+_gc_mark_hash_size(_state *mrb, struct RHash *hash)
 {
   if (!hash->ht) return 0;
   return sg_size(mrb, hash->ht)*2;
 }
 
 void
-mrb_gc_free_hash(mrb_state *mrb, struct RHash *hash)
+_gc_free_hash(_state *mrb, struct RHash *hash)
 {
   sg_free(mrb, hash->ht);
 }
 
-MRB_API mrb_value
-mrb_hash_new(mrb_state *mrb)
+MRB_API _value
+_hash_new(_state *mrb)
 {
   struct RHash *h;
 
-  h = (struct RHash*)mrb_obj_alloc(mrb, MRB_TT_HASH, mrb->hash_class);
+  h = (struct RHash*)_obj_alloc(mrb, MRB_TT_HASH, mrb->hash_class);
   h->ht = 0;
   h->iv = 0;
-  return mrb_obj_value(h);
+  return _obj_value(h);
 }
 
-MRB_API mrb_value
-mrb_hash_new_capa(mrb_state *mrb, mrb_int capa)
+MRB_API _value
+_hash_new_capa(_state *mrb, _int capa)
 {
   struct RHash *h;
 
-  h = (struct RHash*)mrb_obj_alloc(mrb, MRB_TT_HASH, mrb->hash_class);
+  h = (struct RHash*)_obj_alloc(mrb, MRB_TT_HASH, mrb->hash_class);
   /* preallocate segment list */
   h->ht = sg_new(mrb);
   /* capacity ignored */
   h->iv = 0;
-  return mrb_obj_value(h);
+  return _obj_value(h);
 }
 
-static mrb_value mrb_hash_default(mrb_state *mrb, mrb_value hash);
-static mrb_value hash_default(mrb_state *mrb, mrb_value hash, mrb_value key);
+static _value _hash_default(_state *mrb, _value hash);
+static _value hash_default(_state *mrb, _value hash, _value key);
 
-static mrb_value
-mrb_hash_init_copy(mrb_state *mrb, mrb_value self)
+static _value
+_hash_init_copy(_state *mrb, _value self)
 {
-  mrb_value orig;
+  _value orig;
   struct RHash* copy;
   seglist *orig_h;
-  mrb_value ifnone, vret;
+  _value ifnone, vret;
 
-  mrb_get_args(mrb, "o", &orig);
-  if (mrb_obj_equal(mrb, self, orig)) return self;
-  if ((mrb_type(self) != mrb_type(orig)) || (mrb_obj_class(mrb, self) != mrb_obj_class(mrb, orig))) {
-      mrb_raise(mrb, E_TYPE_ERROR, "initialize_copy should take same class object");
+  _get_args(mrb, "o", &orig);
+  if (_obj_equal(mrb, self, orig)) return self;
+  if ((_type(self) != _type(orig)) || (_obj_class(mrb, self) != _obj_class(mrb, orig))) {
+      _raise(mrb, E_TYPE_ERROR, "initialize_copy should take same class object");
   }
 
   orig_h = RHASH_TBL(self);
-  copy = (struct RHash*)mrb_obj_alloc(mrb, MRB_TT_HASH, mrb->hash_class);
+  copy = (struct RHash*)_obj_alloc(mrb, MRB_TT_HASH, mrb->hash_class);
   copy->ht = sg_copy(mrb, orig_h);
 
   if (MRB_RHASH_DEFAULT_P(self)) {
@@ -643,25 +643,25 @@ mrb_hash_init_copy(mrb_state *mrb, mrb_value self)
   if (MRB_RHASH_PROCDEFAULT_P(self)) {
     copy->flags |= MRB_HASH_PROC_DEFAULT;
   }
-  vret = mrb_obj_value(copy);
+  vret = _obj_value(copy);
   ifnone = RHASH_IFNONE(self);
-  if (!mrb_nil_p(ifnone)) {
-      mrb_iv_set(mrb, vret, mrb_intern_lit(mrb, "ifnone"), ifnone);
+  if (!_nil_p(ifnone)) {
+      _iv_set(mrb, vret, _intern_lit(mrb, "ifnone"), ifnone);
   }
   return vret;
 }
 
 static int
-check_kdict_i(mrb_state *mrb, mrb_value key, mrb_value val, void *data)
+check_kdict_i(_state *mrb, _value key, _value val, void *data)
 {
-  if (!mrb_symbol_p(key)) {
-    mrb_raise(mrb, E_ARGUMENT_ERROR, "keyword argument hash with non symbol keys");
+  if (!_symbol_p(key)) {
+    _raise(mrb, E_ARGUMENT_ERROR, "keyword argument hash with non symbol keys");
   }
   return 0;
 }
 
 void
-mrb_hash_check_kdict(mrb_state *mrb, mrb_value self)
+_hash_check_kdict(_state *mrb, _value self)
 {
   seglist *sg;
 
@@ -670,40 +670,40 @@ mrb_hash_check_kdict(mrb_state *mrb, mrb_value self)
   sg_foreach(mrb, sg, check_kdict_i, NULL);
 }
 
-MRB_API mrb_value
-mrb_hash_dup(mrb_state *mrb, mrb_value self)
+MRB_API _value
+_hash_dup(_state *mrb, _value self)
 {
   struct RHash* copy;
   seglist *orig_h;
 
   orig_h = RHASH_TBL(self);
-  copy = (struct RHash*)mrb_obj_alloc(mrb, MRB_TT_HASH, mrb->hash_class);
+  copy = (struct RHash*)_obj_alloc(mrb, MRB_TT_HASH, mrb->hash_class);
   copy->ht = orig_h ? sg_copy(mrb, orig_h) : NULL;
-  return mrb_obj_value(copy);
+  return _obj_value(copy);
 }
 
-MRB_API mrb_value
-mrb_hash_get(mrb_state *mrb, mrb_value hash, mrb_value key)
+MRB_API _value
+_hash_get(_state *mrb, _value hash, _value key)
 {
-  mrb_value val;
-  mrb_sym mid;
+  _value val;
+  _sym mid;
 
   if (sg_get(mrb, RHASH_TBL(hash), key, &val)) {
     return val;
   }
 
-  mid = mrb_intern_lit(mrb, "default");
-  if (mrb_func_basic_p(mrb, hash, mid, mrb_hash_default)) {
+  mid = _intern_lit(mrb, "default");
+  if (_func_basic_p(mrb, hash, mid, _hash_default)) {
     return hash_default(mrb, hash, key);
   }
-  /* xxx mrb_funcall_tailcall(mrb, hash, "default", 1, key); */
-  return mrb_funcall_argv(mrb, hash, mid, 1, &key);
+  /* xxx _funcall_tailcall(mrb, hash, "default", 1, key); */
+  return _funcall_argv(mrb, hash, mid, 1, &key);
 }
 
-MRB_API mrb_value
-mrb_hash_fetch(mrb_state *mrb, mrb_value hash, mrb_value key, mrb_value def)
+MRB_API _value
+_hash_fetch(_state *mrb, _value hash, _value key, _value def)
 {
-  mrb_value val;
+  _value val;
 
   if (sg_get(mrb, RHASH_TBL(hash), key, &val)) {
     return val;
@@ -713,34 +713,34 @@ mrb_hash_fetch(mrb_state *mrb, mrb_value hash, mrb_value key, mrb_value def)
 }
 
 MRB_API void
-mrb_hash_set(mrb_state *mrb, mrb_value hash, mrb_value key, mrb_value val)
+_hash_set(_state *mrb, _value hash, _value key, _value val)
 {
-  mrb_hash_modify(mrb, hash);
+  _hash_modify(mrb, hash);
 
   key = KEY(key);
   sg_put(mrb, RHASH_TBL(hash), key, val);
-  mrb_field_write_barrier_value(mrb, (struct RBasic*)RHASH(hash), key);
-  mrb_field_write_barrier_value(mrb, (struct RBasic*)RHASH(hash), val);
+  _field_write_barrier_value(mrb, (struct RBasic*)RHASH(hash), key);
+  _field_write_barrier_value(mrb, (struct RBasic*)RHASH(hash), val);
   return;
 }
 
-MRB_API mrb_value
-mrb_ensure_hash_type(mrb_state *mrb, mrb_value hash)
+MRB_API _value
+_ensure_hash_type(_state *mrb, _value hash)
 {
-  return mrb_convert_type(mrb, hash, MRB_TT_HASH, "Hash", "to_hash");
+  return _convert_type(mrb, hash, MRB_TT_HASH, "Hash", "to_hash");
 }
 
-MRB_API mrb_value
-mrb_check_hash_type(mrb_state *mrb, mrb_value hash)
+MRB_API _value
+_check_hash_type(_state *mrb, _value hash)
 {
-  return mrb_check_convert_type(mrb, hash, MRB_TT_HASH, "Hash", "to_hash");
+  return _check_convert_type(mrb, hash, MRB_TT_HASH, "Hash", "to_hash");
 }
 
 static void
-mrb_hash_modify(mrb_state *mrb, mrb_value hash)
+_hash_modify(_state *mrb, _value hash)
 {
-  if (MRB_FROZEN_P(mrb_hash_ptr(hash))) {
-    mrb_raise(mrb, E_FROZEN_ERROR, "can't modify frozen hash");
+  if (MRB_FROZEN_P(_hash_ptr(hash))) {
+    _raise(mrb, E_FROZEN_ERROR, "can't modify frozen hash");
   }
 
   if (!RHASH_TBL(hash)) {
@@ -784,25 +784,25 @@ mrb_hash_modify(mrb_state *mrb, mrb_value hash)
  *
  */
 
-static mrb_value
-mrb_hash_init(mrb_state *mrb, mrb_value hash)
+static _value
+_hash_init(_state *mrb, _value hash)
 {
-  mrb_value block, ifnone;
-  mrb_bool ifnone_p;
+  _value block, ifnone;
+  _bool ifnone_p;
 
-  ifnone = mrb_nil_value();
-  mrb_get_args(mrb, "&|o?", &block, &ifnone, &ifnone_p);
-  mrb_hash_modify(mrb, hash);
-  if (!mrb_nil_p(block)) {
+  ifnone = _nil_value();
+  _get_args(mrb, "&|o?", &block, &ifnone, &ifnone_p);
+  _hash_modify(mrb, hash);
+  if (!_nil_p(block)) {
     if (ifnone_p) {
-      mrb_raise(mrb, E_ARGUMENT_ERROR, "wrong number of arguments");
+      _raise(mrb, E_ARGUMENT_ERROR, "wrong number of arguments");
     }
     RHASH(hash)->flags |= MRB_HASH_PROC_DEFAULT;
     ifnone = block;
   }
-  if (!mrb_nil_p(ifnone)) {
+  if (!_nil_p(ifnone)) {
     RHASH(hash)->flags |= MRB_HASH_DEFAULT;
-    mrb_iv_set(mrb, hash, mrb_intern_lit(mrb, "ifnone"), ifnone);
+    _iv_set(mrb, hash, _intern_lit(mrb, "ifnone"), ifnone);
   }
   return hash;
 }
@@ -821,27 +821,27 @@ mrb_hash_init(mrb_state *mrb, mrb_value hash)
  *     h["c"]   #=> nil
  *
  */
-static mrb_value
-mrb_hash_aget(mrb_state *mrb, mrb_value self)
+static _value
+_hash_aget(_state *mrb, _value self)
 {
-  mrb_value key;
+  _value key;
 
-  mrb_get_args(mrb, "o", &key);
-  return mrb_hash_get(mrb, self, key);
+  _get_args(mrb, "o", &key);
+  return _hash_get(mrb, self, key);
 }
 
-static mrb_value
-hash_default(mrb_state *mrb, mrb_value hash, mrb_value key)
+static _value
+hash_default(_state *mrb, _value hash, _value key)
 {
   if (MRB_RHASH_DEFAULT_P(hash)) {
     if (MRB_RHASH_PROCDEFAULT_P(hash)) {
-      return mrb_funcall(mrb, RHASH_PROCDEFAULT(hash), "call", 2, hash, key);
+      return _funcall(mrb, RHASH_PROCDEFAULT(hash), "call", 2, hash, key);
     }
     else {
       return RHASH_IFNONE(hash);
     }
   }
-  return mrb_nil_value();
+  return _nil_value();
 }
 
 /* 15.2.13.4.5  */
@@ -866,23 +866,23 @@ hash_default(mrb_state *mrb, mrb_value hash, mrb_value key)
  *     h.default(2)                            #=> 20
  */
 
-static mrb_value
-mrb_hash_default(mrb_state *mrb, mrb_value hash)
+static _value
+_hash_default(_state *mrb, _value hash)
 {
-  mrb_value key;
-  mrb_bool given;
+  _value key;
+  _bool given;
 
-  mrb_get_args(mrb, "|o?", &key, &given);
+  _get_args(mrb, "|o?", &key, &given);
   if (MRB_RHASH_DEFAULT_P(hash)) {
     if (MRB_RHASH_PROCDEFAULT_P(hash)) {
-      if (!given) return mrb_nil_value();
-      return mrb_funcall(mrb, RHASH_PROCDEFAULT(hash), "call", 2, hash, key);
+      if (!given) return _nil_value();
+      return _funcall(mrb, RHASH_PROCDEFAULT(hash), "call", 2, hash, key);
     }
     else {
       return RHASH_IFNONE(hash);
     }
   }
-  return mrb_nil_value();
+  return _nil_value();
 }
 
 /* 15.2.13.4.6  */
@@ -906,16 +906,16 @@ mrb_hash_default(mrb_state *mrb, mrb_value hash)
  *     h["cat"]   #=> #<Proc:0x401b3948@-:6>
  */
 
-static mrb_value
-mrb_hash_set_default(mrb_state *mrb, mrb_value hash)
+static _value
+_hash_set_default(_state *mrb, _value hash)
 {
-  mrb_value ifnone;
+  _value ifnone;
 
-  mrb_get_args(mrb, "o", &ifnone);
-  mrb_hash_modify(mrb, hash);
-  mrb_iv_set(mrb, hash, mrb_intern_lit(mrb, "ifnone"), ifnone);
+  _get_args(mrb, "o", &ifnone);
+  _hash_modify(mrb, hash);
+  _iv_set(mrb, hash, _intern_lit(mrb, "ifnone"), ifnone);
   RHASH(hash)->flags &= ~MRB_HASH_PROC_DEFAULT;
-  if (!mrb_nil_p(ifnone)) {
+  if (!_nil_p(ifnone)) {
     RHASH(hash)->flags |= MRB_HASH_DEFAULT;
   }
   else {
@@ -940,13 +940,13 @@ mrb_hash_set_default(mrb_state *mrb, mrb_value hash)
  */
 
 
-static mrb_value
-mrb_hash_default_proc(mrb_state *mrb, mrb_value hash)
+static _value
+_hash_default_proc(_state *mrb, _value hash)
 {
   if (MRB_RHASH_PROCDEFAULT_P(hash)) {
     return RHASH_PROCDEFAULT(hash);
   }
-  return mrb_nil_value();
+  return _nil_value();
 }
 
 /*
@@ -962,15 +962,15 @@ mrb_hash_default_proc(mrb_state *mrb, mrb_value hash)
  *     h["cat"]   #=> "catcat"
  */
 
-static mrb_value
-mrb_hash_set_default_proc(mrb_state *mrb, mrb_value hash)
+static _value
+_hash_set_default_proc(_state *mrb, _value hash)
 {
-  mrb_value ifnone;
+  _value ifnone;
 
-  mrb_get_args(mrb, "o", &ifnone);
-  mrb_hash_modify(mrb, hash);
-  mrb_iv_set(mrb, hash, mrb_intern_lit(mrb, "ifnone"), ifnone);
-  if (!mrb_nil_p(ifnone)) {
+  _get_args(mrb, "o", &ifnone);
+  _hash_modify(mrb, hash);
+  _iv_set(mrb, hash, _intern_lit(mrb, "ifnone"), ifnone);
+  if (!_nil_p(ifnone)) {
     RHASH(hash)->flags |= MRB_HASH_PROC_DEFAULT;
     RHASH(hash)->flags |= MRB_HASH_DEFAULT;
   }
@@ -982,50 +982,50 @@ mrb_hash_set_default_proc(mrb_state *mrb, mrb_value hash)
   return ifnone;
 }
 
-MRB_API mrb_value
-mrb_hash_delete_key(mrb_state *mrb, mrb_value hash, mrb_value key)
+MRB_API _value
+_hash_delete_key(_state *mrb, _value hash, _value key)
 {
   seglist *sg = RHASH_TBL(hash);
-  mrb_value del_val;
+  _value del_val;
 
   if (sg_del(mrb, sg, key, &del_val)) {
     return del_val;
   }
 
   /* not found */
-  return mrb_nil_value();
+  return _nil_value();
 }
 
-static mrb_value
-mrb_hash_delete(mrb_state *mrb, mrb_value self)
+static _value
+_hash_delete(_state *mrb, _value self)
 {
-  mrb_value key;
+  _value key;
 
-  mrb_get_args(mrb, "o", &key);
-  mrb_hash_modify(mrb, self);
-  return mrb_hash_delete_key(mrb, self, key);
+  _get_args(mrb, "o", &key);
+  _hash_modify(mrb, self);
+  return _hash_delete_key(mrb, self, key);
 }
 
 /* find first element in segment list, and remove it. */
 static void
-sg_shift(mrb_state *mrb, seglist *t, mrb_value *kp, mrb_value *vp)
+sg_shift(_state *mrb, seglist *t, _value *kp, _value *vp)
 {
   segment *seg = t->rootseg;
-  mrb_int i;
+  _int i;
 
   while (seg) {
     for (i=0; i<MRB_SG_SEGMENT_SIZE; i++) {
-      mrb_value key;
+      _value key;
 
       if (!seg->next && i >= t->last_len) {
         return;
       }
       key = seg->e[i].key;
-      if (mrb_undef_p(key)) continue;
+      if (_undef_p(key)) continue;
       *kp = key;
       *vp = seg->e[i].val;
       /* delete element */
-      seg->e[i].key = mrb_undef_value();
+      seg->e[i].key = _undef_value();
       t->size--;
       return;
     }
@@ -1047,28 +1047,28 @@ sg_shift(mrb_state *mrb, seglist *t, mrb_value *kp, mrb_value *vp)
  *      h         #=> {2=>"b", 3=>"c"}
  */
 
-static mrb_value
-mrb_hash_shift(mrb_state *mrb, mrb_value hash)
+static _value
+_hash_shift(_state *mrb, _value hash)
 {
   seglist *sg = RHASH_TBL(hash);
 
-  mrb_hash_modify(mrb, hash);
+  _hash_modify(mrb, hash);
   if (sg && sg_size(mrb, sg) > 0) {
-    mrb_value del_key, del_val;
+    _value del_key, del_val;
 
     sg_shift(mrb, sg, &del_key, &del_val);
-    return mrb_assoc_new(mrb, del_key, del_val);
+    return _assoc_new(mrb, del_key, del_val);
   }
 
   if (MRB_RHASH_DEFAULT_P(hash)) {
     if (MRB_RHASH_PROCDEFAULT_P(hash)) {
-      return mrb_funcall(mrb, RHASH_PROCDEFAULT(hash), "call", 2, hash, mrb_nil_value());
+      return _funcall(mrb, RHASH_PROCDEFAULT(hash), "call", 2, hash, _nil_value());
     }
     else {
       return RHASH_IFNONE(hash);
     }
   }
-  return mrb_nil_value();
+  return _nil_value();
 }
 
 /* 15.2.13.4.4  */
@@ -1083,12 +1083,12 @@ mrb_hash_shift(mrb_state *mrb, mrb_value hash)
  *
  */
 
-MRB_API mrb_value
-mrb_hash_clear(mrb_state *mrb, mrb_value hash)
+MRB_API _value
+_hash_clear(_state *mrb, _value hash)
 {
   seglist *sg = RHASH_TBL(hash);
 
-  mrb_hash_modify(mrb, hash);
+  _hash_modify(mrb, hash);
   if (sg) {
     sg_free(mrb, sg);
     RHASH_TBL(hash) = NULL;
@@ -1115,13 +1115,13 @@ mrb_hash_clear(mrb_state *mrb, mrb_value hash)
  *      h   #=> {"a"=>9, "b"=>200, "c"=>4}
  *
  */
-static mrb_value
-mrb_hash_aset(mrb_state *mrb, mrb_value self)
+static _value
+_hash_aset(_state *mrb, _value self)
 {
-  mrb_value key, val;
+  _value key, val;
 
-  mrb_get_args(mrb, "oo", &key, &val);
-  mrb_hash_set(mrb, self, key, val);
+  _get_args(mrb, "oo", &key, &val);
+  _hash_set(mrb, self, key, val);
   return val;
 }
 
@@ -1139,17 +1139,17 @@ mrb_hash_aset(mrb_state *mrb, mrb_value self)
  *     h.delete("a")   #=> 200
  *     h.length        #=> 3
  */
-static mrb_value
-mrb_hash_size_m(mrb_state *mrb, mrb_value self)
+static _value
+_hash_size_m(_state *mrb, _value self)
 {
   seglist *sg = RHASH_TBL(self);
 
-  if (!sg) return mrb_fixnum_value(0);
-  return mrb_fixnum_value(sg_size(mrb, sg));
+  if (!sg) return _fixnum_value(0);
+  return _fixnum_value(sg_size(mrb, sg));
 }
 
-MRB_API mrb_bool
-mrb_hash_empty_p(mrb_state *mrb, mrb_value self)
+MRB_API _bool
+_hash_empty_p(_state *mrb, _value self)
 {
   seglist *sg = RHASH_TBL(self);
 
@@ -1167,10 +1167,10 @@ mrb_hash_empty_p(mrb_state *mrb, mrb_value self)
  *     {}.empty?   #=> true
  *
  */
-static mrb_value
-mrb_hash_empty_m(mrb_state *mrb, mrb_value self)
+static _value
+_hash_empty_m(_state *mrb, _value self)
 {
-  return mrb_bool_value(mrb_hash_empty_p(mrb, self));
+  return _bool_value(_hash_empty_p(mrb, self));
 }
 
 /* 15.2.13.4.29 (x)*/
@@ -1181,16 +1181,16 @@ mrb_hash_empty_m(mrb_state *mrb, mrb_value self)
  * Returns +self+.
  */
 
-static mrb_value
-mrb_hash_to_hash(mrb_state *mrb, mrb_value hash)
+static _value
+_hash_to_hash(_state *mrb, _value hash)
 {
   return hash;
 }
 
 static int
-hash_keys_i(mrb_state *mrb, mrb_value key, mrb_value val, void *p)
+hash_keys_i(_state *mrb, _value key, _value val, void *p)
 {
-  mrb_ary_push(mrb, *(mrb_value*)p, key);
+  _ary_push(mrb, *(_value*)p, key);
   return 0;
 }
 
@@ -1207,24 +1207,24 @@ hash_keys_i(mrb_state *mrb, mrb_value key, mrb_value val, void *p)
  *
  */
 
-MRB_API mrb_value
-mrb_hash_keys(mrb_state *mrb, mrb_value hash)
+MRB_API _value
+_hash_keys(_state *mrb, _value hash)
 {
   seglist *sg = RHASH_TBL(hash);
   size_t size;
-  mrb_value ary;
+  _value ary;
 
   if (!sg || (size = sg_size(mrb, sg)) == 0)
-    return mrb_ary_new(mrb);
-  ary = mrb_ary_new_capa(mrb, size);
+    return _ary_new(mrb);
+  ary = _ary_new_capa(mrb, size);
   sg_foreach(mrb, sg, hash_keys_i, (void*)&ary);
   return ary;
 }
 
 static int
-hash_vals_i(mrb_state *mrb, mrb_value key, mrb_value val, void *p)
+hash_vals_i(_state *mrb, _value key, _value val, void *p)
 {
-  mrb_ary_push(mrb, *(mrb_value*)p, val);
+  _ary_push(mrb, *(_value*)p, val);
   return 0;
 }
 
@@ -1241,16 +1241,16 @@ hash_vals_i(mrb_state *mrb, mrb_value key, mrb_value val, void *p)
  *
  */
 
-MRB_API mrb_value
-mrb_hash_values(mrb_state *mrb, mrb_value hash)
+MRB_API _value
+_hash_values(_state *mrb, _value hash)
 {
   seglist *sg = RHASH_TBL(hash);
   size_t size;
-  mrb_value ary;
+  _value ary;
 
   if (!sg || (size = sg_size(mrb, sg)) == 0)
-    return mrb_ary_new(mrb);
-  ary = mrb_ary_new_capa(mrb, size);
+    return _ary_new(mrb);
+  ary = _ary_new_capa(mrb, size);
   sg_foreach(mrb, sg, hash_vals_i, (void*)&ary);
   return ary;
 }
@@ -1274,8 +1274,8 @@ mrb_hash_values(mrb_state *mrb, mrb_value hash)
  *
  */
 
-MRB_API mrb_bool
-mrb_hash_key_p(mrb_state *mrb, mrb_value hash, mrb_value key)
+MRB_API _bool
+_hash_key_p(_state *mrb, _value hash, _value key)
 {
   seglist *sg;
 
@@ -1286,28 +1286,28 @@ mrb_hash_key_p(mrb_state *mrb, mrb_value hash, mrb_value key)
   return FALSE;
 }
 
-static mrb_value
-mrb_hash_has_key(mrb_state *mrb, mrb_value hash)
+static _value
+_hash_has_key(_state *mrb, _value hash)
 {
-  mrb_value key;
-  mrb_bool key_p;
+  _value key;
+  _bool key_p;
 
-  mrb_get_args(mrb, "o", &key);
-  key_p = mrb_hash_key_p(mrb, hash, key);
-  return mrb_bool_value(key_p);
+  _get_args(mrb, "o", &key);
+  key_p = _hash_key_p(mrb, hash, key);
+  return _bool_value(key_p);
 }
 
 struct has_v_arg {
-  mrb_bool found;
-  mrb_value val;
+  _bool found;
+  _value val;
 };
 
 static int
-hash_has_value_i(mrb_state *mrb, mrb_value key, mrb_value val, void *p)
+hash_has_value_i(_state *mrb, _value key, _value val, void *p)
 {
   struct has_v_arg *arg = (struct has_v_arg*)p;
   
-  if (mrb_equal(mrb, arg->val, val)) {
+  if (_equal(mrb, arg->val, val)) {
     arg->found = TRUE;
     return 1;
   }
@@ -1329,21 +1329,21 @@ hash_has_value_i(mrb_state *mrb, mrb_value key, mrb_value val, void *p)
  *     h.has_value?(999)   #=> false
  */
 
-static mrb_value
-mrb_hash_has_value(mrb_state *mrb, mrb_value hash)
+static _value
+_hash_has_value(_state *mrb, _value hash)
 {
-  mrb_value val;
+  _value val;
   struct has_v_arg arg;
   
-  mrb_get_args(mrb, "o", &val);
+  _get_args(mrb, "o", &val);
   arg.found = FALSE;
   arg.val = val;
   sg_foreach(mrb, RHASH_TBL(hash), hash_has_value_i, &arg);
-  return mrb_bool_value(arg.found);
+  return _bool_value(arg.found);
 }
 
 static int
-merge_i(mrb_state *mrb, mrb_value key, mrb_value val, void *data)
+merge_i(_state *mrb, _value key, _value val, void *data)
 {
   seglist *h1 = (seglist*)data;
 
@@ -1352,12 +1352,12 @@ merge_i(mrb_state *mrb, mrb_value key, mrb_value val, void *data)
 }
 
 MRB_API void
-mrb_hash_merge(mrb_state *mrb, mrb_value hash1, mrb_value hash2)
+_hash_merge(_state *mrb, _value hash1, _value hash2)
 {
   seglist *h1, *h2;
 
-  mrb_hash_modify(mrb, hash1);
-  hash2 = mrb_ensure_hash_type(mrb, hash2);
+  _hash_modify(mrb, hash1);
+  hash2 = _ensure_hash_type(mrb, hash2);
   h1 = RHASH_TBL(hash1);
   h2 = RHASH_TBL(hash2);
 
@@ -1367,7 +1367,7 @@ mrb_hash_merge(mrb_state *mrb, mrb_value hash1, mrb_value hash2)
     return;
   }
   sg_foreach(mrb, h2, merge_i, h1);
-  mrb_write_barrier(mrb, (struct RBasic*)RHASH(hash1));
+  _write_barrier(mrb, (struct RBasic*)RHASH(hash1));
   return;
 }
 
@@ -1384,45 +1384,45 @@ mrb_hash_merge(mrb_state *mrb, mrb_value hash1, mrb_value hash2)
  *     h.rehash   #=> {"AA"=>"b"}
  *     h["AA"]    #=> "b"
  */
-static mrb_value
-mrb_hash_rehash(mrb_state *mrb, mrb_value self)
+static _value
+_hash_rehash(_state *mrb, _value self)
 {
   sg_compact(mrb, RHASH_TBL(self));
   return self;
 }
 
 void
-mrb_init_hash(mrb_state *mrb)
+_init_hash(_state *mrb)
 {
   struct RClass *h;
 
-  mrb->hash_class = h = mrb_define_class(mrb, "Hash", mrb->object_class);              /* 15.2.13 */
+  mrb->hash_class = h = _define_class(mrb, "Hash", mrb->object_class);              /* 15.2.13 */
   MRB_SET_INSTANCE_TT(h, MRB_TT_HASH);
 
-  mrb_define_method(mrb, h, "initialize_copy", mrb_hash_init_copy,   MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, h, "[]",              mrb_hash_aget,        MRB_ARGS_REQ(1)); /* 15.2.13.4.2  */
-  mrb_define_method(mrb, h, "[]=",             mrb_hash_aset,        MRB_ARGS_REQ(2)); /* 15.2.13.4.3  */
-  mrb_define_method(mrb, h, "clear",           mrb_hash_clear,       MRB_ARGS_NONE()); /* 15.2.13.4.4  */
-  mrb_define_method(mrb, h, "default",         mrb_hash_default,     MRB_ARGS_ANY());  /* 15.2.13.4.5  */
-  mrb_define_method(mrb, h, "default=",        mrb_hash_set_default, MRB_ARGS_REQ(1)); /* 15.2.13.4.6  */
-  mrb_define_method(mrb, h, "default_proc",    mrb_hash_default_proc,MRB_ARGS_NONE()); /* 15.2.13.4.7  */
-  mrb_define_method(mrb, h, "default_proc=",   mrb_hash_set_default_proc,MRB_ARGS_REQ(1)); /* 15.2.13.4.7  */
-  mrb_define_method(mrb, h, "__delete",        mrb_hash_delete,      MRB_ARGS_REQ(1)); /* core of 15.2.13.4.8  */
-  mrb_define_method(mrb, h, "empty?",          mrb_hash_empty_m,     MRB_ARGS_NONE()); /* 15.2.13.4.12 */
-  mrb_define_method(mrb, h, "has_key?",        mrb_hash_has_key,     MRB_ARGS_REQ(1)); /* 15.2.13.4.13 */
-  mrb_define_method(mrb, h, "has_value?",      mrb_hash_has_value,   MRB_ARGS_REQ(1)); /* 15.2.13.4.14 */
-  mrb_define_method(mrb, h, "include?",        mrb_hash_has_key,     MRB_ARGS_REQ(1)); /* 15.2.13.4.15 */
-  mrb_define_method(mrb, h, "initialize",      mrb_hash_init,        MRB_ARGS_OPT(1)); /* 15.2.13.4.16 */
-  mrb_define_method(mrb, h, "key?",            mrb_hash_has_key,     MRB_ARGS_REQ(1)); /* 15.2.13.4.18 */
-  mrb_define_method(mrb, h, "keys",            mrb_hash_keys,        MRB_ARGS_NONE()); /* 15.2.13.4.19 */
-  mrb_define_method(mrb, h, "length",          mrb_hash_size_m,      MRB_ARGS_NONE()); /* 15.2.13.4.20 */
-  mrb_define_method(mrb, h, "member?",         mrb_hash_has_key,     MRB_ARGS_REQ(1)); /* 15.2.13.4.21 */
-  mrb_define_method(mrb, h, "shift",           mrb_hash_shift,       MRB_ARGS_NONE()); /* 15.2.13.4.24 */
-  mrb_define_method(mrb, h, "size",            mrb_hash_size_m,      MRB_ARGS_NONE()); /* 15.2.13.4.25 */
-  mrb_define_method(mrb, h, "store",           mrb_hash_aset,        MRB_ARGS_REQ(2)); /* 15.2.13.4.26 */
-  mrb_define_method(mrb, h, "value?",          mrb_hash_has_value,   MRB_ARGS_REQ(1)); /* 15.2.13.4.27 */
-  mrb_define_method(mrb, h, "values",          mrb_hash_values,      MRB_ARGS_NONE()); /* 15.2.13.4.28 */
-  mrb_define_method(mrb, h, "rehash",          mrb_hash_rehash,      MRB_ARGS_NONE());
+  _define_method(mrb, h, "initialize_copy", _hash_init_copy,   MRB_ARGS_REQ(1));
+  _define_method(mrb, h, "[]",              _hash_aget,        MRB_ARGS_REQ(1)); /* 15.2.13.4.2  */
+  _define_method(mrb, h, "[]=",             _hash_aset,        MRB_ARGS_REQ(2)); /* 15.2.13.4.3  */
+  _define_method(mrb, h, "clear",           _hash_clear,       MRB_ARGS_NONE()); /* 15.2.13.4.4  */
+  _define_method(mrb, h, "default",         _hash_default,     MRB_ARGS_ANY());  /* 15.2.13.4.5  */
+  _define_method(mrb, h, "default=",        _hash_set_default, MRB_ARGS_REQ(1)); /* 15.2.13.4.6  */
+  _define_method(mrb, h, "default_proc",    _hash_default_proc,MRB_ARGS_NONE()); /* 15.2.13.4.7  */
+  _define_method(mrb, h, "default_proc=",   _hash_set_default_proc,MRB_ARGS_REQ(1)); /* 15.2.13.4.7  */
+  _define_method(mrb, h, "__delete",        _hash_delete,      MRB_ARGS_REQ(1)); /* core of 15.2.13.4.8  */
+  _define_method(mrb, h, "empty?",          _hash_empty_m,     MRB_ARGS_NONE()); /* 15.2.13.4.12 */
+  _define_method(mrb, h, "has_key?",        _hash_has_key,     MRB_ARGS_REQ(1)); /* 15.2.13.4.13 */
+  _define_method(mrb, h, "has_value?",      _hash_has_value,   MRB_ARGS_REQ(1)); /* 15.2.13.4.14 */
+  _define_method(mrb, h, "include?",        _hash_has_key,     MRB_ARGS_REQ(1)); /* 15.2.13.4.15 */
+  _define_method(mrb, h, "initialize",      _hash_init,        MRB_ARGS_OPT(1)); /* 15.2.13.4.16 */
+  _define_method(mrb, h, "key?",            _hash_has_key,     MRB_ARGS_REQ(1)); /* 15.2.13.4.18 */
+  _define_method(mrb, h, "keys",            _hash_keys,        MRB_ARGS_NONE()); /* 15.2.13.4.19 */
+  _define_method(mrb, h, "length",          _hash_size_m,      MRB_ARGS_NONE()); /* 15.2.13.4.20 */
+  _define_method(mrb, h, "member?",         _hash_has_key,     MRB_ARGS_REQ(1)); /* 15.2.13.4.21 */
+  _define_method(mrb, h, "shift",           _hash_shift,       MRB_ARGS_NONE()); /* 15.2.13.4.24 */
+  _define_method(mrb, h, "size",            _hash_size_m,      MRB_ARGS_NONE()); /* 15.2.13.4.25 */
+  _define_method(mrb, h, "store",           _hash_aset,        MRB_ARGS_REQ(2)); /* 15.2.13.4.26 */
+  _define_method(mrb, h, "value?",          _hash_has_value,   MRB_ARGS_REQ(1)); /* 15.2.13.4.27 */
+  _define_method(mrb, h, "values",          _hash_values,      MRB_ARGS_NONE()); /* 15.2.13.4.28 */
+  _define_method(mrb, h, "rehash",          _hash_rehash,      MRB_ARGS_NONE());
 
-  mrb_define_method(mrb, h, "to_hash",         mrb_hash_to_hash,     MRB_ARGS_NONE()); /* 15.2.13.4.29 (x)*/
+  _define_method(mrb, h, "to_hash",         _hash_to_hash,     MRB_ARGS_NONE()); /* 15.2.13.4.29 (x)*/
 }

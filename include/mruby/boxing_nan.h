@@ -1,5 +1,5 @@
 /*
-** mruby/boxing_nan.h - nan boxing mrb_value definition
+** mruby/boxing_nan.h - nan boxing _value definition
 **
 ** See Copyright Notice in mruby.h
 */
@@ -34,35 +34,35 @@
  *   int   : 1111111111110001 0000000000000000 IIIIIIIIIIIIIIII IIIIIIIIIIIIIIII
  *   sym   : 1111111111110001 0100000000000000 SSSSSSSSSSSSSSSS SSSSSSSSSSSSSSSS
  * In order to get enough bit size to save TT, all pointers are shifted 2 bits
- * in the right direction. Also, TTTTTT is the mrb_vtype + 1;
+ * in the right direction. Also, TTTTTT is the _vtype + 1;
  */
-typedef struct mrb_value {
+typedef struct _value {
   union {
-    mrb_float f;
+    _float f;
     union {
       void *p;
       struct {
         MRB_ENDIAN_LOHI(
           uint32_t ttt;
           ,union {
-            mrb_int i;
-            mrb_sym sym;
+            _int i;
+            _sym sym;
           };
         )
       };
     } value;
   };
-} mrb_value;
+} _value;
 
-#define mrb_float_pool(mrb,f) mrb_float_value(mrb,f)
+#define _float_pool(mrb,f) _float_value(mrb,f)
 
-#define mrb_tt(o)       ((enum mrb_vtype)(((o).value.ttt & 0xfc000)>>14)-1)
-#define mrb_type(o)     (enum mrb_vtype)((uint32_t)0xfff00000 < (o).value.ttt ? mrb_tt(o) : MRB_TT_FLOAT)
-#define mrb_ptr(o)      ((void*)((((uintptr_t)0x3fffffffffff)&((uintptr_t)((o).value.p)))<<2))
-#define mrb_float(o)    (o).f
-#define mrb_cptr(o)     mrb_ptr(o)
-#define mrb_fixnum(o)   (o).value.i
-#define mrb_symbol(o)   (o).value.sym
+#define _tt(o)       ((enum _vtype)(((o).value.ttt & 0xfc000)>>14)-1)
+#define _type(o)     (enum _vtype)((uint32_t)0xfff00000 < (o).value.ttt ? _tt(o) : MRB_TT_FLOAT)
+#define _ptr(o)      ((void*)((((uintptr_t)0x3fffffffffff)&((uintptr_t)((o).value.p)))<<2))
+#define _float(o)    (o).f
+#define _cptr(o)     _ptr(o)
+#define _fixnum(o)   (o).value.i
+#define _symbol(o)   (o).value.sym
 
 #ifdef MRB_64BIT
 #define BOXNAN_SHIFT_LONG_POINTER(v) (((uintptr_t)(v)>>34)&0x3fff)

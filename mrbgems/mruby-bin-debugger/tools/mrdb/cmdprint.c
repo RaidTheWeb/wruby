@@ -14,11 +14,11 @@
 #include "apiprint.h"
 
 dbgcmd_state
-dbgcmd_print(mrb_state *mrb, mrdb_state *mrdb)
+dbgcmd_print(_state *mrb, mrdb_state *mrdb)
 {
-  mrb_value expr;
-  mrb_value result;
-  mrb_value s;
+  _value expr;
+  _value result;
+  _value s;
   uint8_t wcnt;
   int ai;
 
@@ -27,32 +27,32 @@ dbgcmd_print(mrb_state *mrb, mrdb_state *mrdb)
     return DBGST_PROMPT;
   }
 
-  ai = mrb_gc_arena_save(mrb);
+  ai = _gc_arena_save(mrb);
 
   /* eval expr */
-  expr = mrb_str_new_cstr(mrb, NULL);
+  expr = _str_new_cstr(mrb, NULL);
   for (wcnt=1; wcnt<mrdb->wcnt; wcnt++) {
-    expr = mrb_str_cat_lit(mrb, expr, " ");
-    expr = mrb_str_cat_cstr(mrb, expr, mrdb->words[wcnt]);
+    expr = _str_cat_lit(mrb, expr, " ");
+    expr = _str_cat_cstr(mrb, expr, mrdb->words[wcnt]);
   }
 
-  result = mrb_debug_eval(mrb, mrdb->dbg, RSTRING_PTR(expr), RSTRING_LEN(expr), NULL);
+  result = _debug_eval(mrb, mrdb->dbg, RSTRING_PTR(expr), RSTRING_LEN(expr), NULL);
 
   /* $print_no = result */
-  s = mrb_str_cat_lit(mrb, result, "\0");
+  s = _str_cat_lit(mrb, result, "\0");
   printf("$%lu = %s\n", (unsigned long)mrdb->print_no++, RSTRING_PTR(s));
 
   if (mrdb->print_no == 0) {
     mrdb->print_no = 1;
   }
 
-  mrb_gc_arena_restore(mrb, ai);
+  _gc_arena_restore(mrb, ai);
 
   return DBGST_PROMPT;
 }
 
 dbgcmd_state
-dbgcmd_eval(mrb_state *mrb, mrdb_state *mrdb)
+dbgcmd_eval(_state *mrb, mrdb_state *mrdb)
 {
   return dbgcmd_print(mrb, mrdb);
 }

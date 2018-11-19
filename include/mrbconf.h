@@ -41,10 +41,10 @@
 /* you might need to specify --falign-functions=n (where n>1) */
 //#define MRB_METHOD_TABLE_INLINE
 
-/* add -DMRB_INT16 to use 16bit integer for mrb_int; conflict with MRB_INT64 */
+/* add -DMRB_INT16 to use 16bit integer for _int; conflict with MRB_INT64 */
 //#define MRB_INT16
 
-/* add -DMRB_INT64 to use 64bit integer for mrb_int; conflict with MRB_INT16 */
+/* add -DMRB_INT64 to use 64bit integer for _int; conflict with MRB_INT16 */
 //#define MRB_INT64
 
 /* if no specific integer type is chosen */
@@ -58,19 +58,19 @@
 # endif
 #endif
 
-/* represent mrb_value in boxed double; conflict with MRB_USE_FLOAT and MRB_WITHOUT_FLOAT */
+/* represent _value in boxed double; conflict with MRB_USE_FLOAT and MRB_WITHOUT_FLOAT */
 //#define MRB_NAN_BOXING
 
 /* define on big endian machines; used by MRB_NAN_BOXING */
 //#define MRB_ENDIAN_BIG
 
-/* represent mrb_value as a word (natural unit of data for the processor) */
+/* represent _value as a word (natural unit of data for the processor) */
 //#define MRB_WORD_BOXING
 
 /* string class to handle UTF-8 encoding */
 //#define MRB_UTF8_STRING
 
-/* argv max size in mrb_funcall */
+/* argv max size in _funcall */
 //#define MRB_FUNCALL_ARGC_MAX 16
 
 /* number of object per heap page */

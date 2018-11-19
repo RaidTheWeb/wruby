@@ -43,13 +43,13 @@ typedef struct {
     double double_;
   } gen;
 
-  mrb_int seed;
-  mrb_bool has_seed : 1;
+  _int seed;
+  _bool has_seed : 1;
 } mt_state;
 
-void mrb_random_init_genrand(mt_state *, unsigned long);
-unsigned long mrb_random_genrand_int32(mt_state *);
-double mrb_random_genrand_real1(mt_state *t);
+void _random_init_genrand(mt_state *, unsigned long);
+unsigned long _random_genrand_int32(mt_state *);
+double _random_genrand_real1(mt_state *t);
 
 /* initializes mt[N] with a seed */
 void init_genrand(unsigned long s);

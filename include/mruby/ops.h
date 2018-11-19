@@ -14,17 +14,17 @@ operation code    operands      semantics
 OPCODE(NOP,        Z)        /* no operation */
 OPCODE(MOVE,       BB)       /* R(a) = R(b) */
 OPCODE(LOADL,      BB)       /* R(a) = Pool(b) */
-OPCODE(LOADI,      BB)       /* R(a) = mrb_int(b) */
-OPCODE(LOADINEG,   BB)       /* R(a) = mrb_int(-b) */
-OPCODE(LOADI__1,   B)        /* R(a) = mrb_int(-1) */
-OPCODE(LOADI_0,    B)        /* R(a) = mrb_int(0) */
-OPCODE(LOADI_1,    B)        /* R(a) = mrb_int(1) */
-OPCODE(LOADI_2,    B)        /* R(a) = mrb_int(2) */
-OPCODE(LOADI_3,    B)        /* R(a) = mrb_int(3) */
-OPCODE(LOADI_4,    B)        /* R(a) = mrb_int(4) */
-OPCODE(LOADI_5,    B)        /* R(a) = mrb_int(5) */
-OPCODE(LOADI_6,    B)        /* R(a) = mrb_int(6) */
-OPCODE(LOADI_7,    B)        /* R(a) = mrb_int(7) */
+OPCODE(LOADI,      BB)       /* R(a) = _int(b) */
+OPCODE(LOADINEG,   BB)       /* R(a) = _int(-b) */
+OPCODE(LOADI__1,   B)        /* R(a) = _int(-1) */
+OPCODE(LOADI_0,    B)        /* R(a) = _int(0) */
+OPCODE(LOADI_1,    B)        /* R(a) = _int(1) */
+OPCODE(LOADI_2,    B)        /* R(a) = _int(2) */
+OPCODE(LOADI_3,    B)        /* R(a) = _int(3) */
+OPCODE(LOADI_4,    B)        /* R(a) = _int(4) */
+OPCODE(LOADI_5,    B)        /* R(a) = _int(5) */
+OPCODE(LOADI_6,    B)        /* R(a) = _int(6) */
+OPCODE(LOADI_7,    B)        /* R(a) = _int(7) */
 OPCODE(LOADSYM,    BB)       /* R(a) = Syms(b) */
 OPCODE(LOADNIL,    B)        /* R(a) = nil */
 OPCODE(LOADSELF,   B)        /* R(a) = self */
@@ -71,7 +71,7 @@ OPCODE(RETURN_BLK, B)        /* return R(a) (in-block return) */
 OPCODE(BREAK,      B)        /* break R(a) */
 OPCODE(BLKPUSH,    BS)       /* R(a) = block (16=m5:r1:m5:d1:lv4) */
 OPCODE(ADD,        B)        /* R(a) = R(a)+R(a+1) */
-OPCODE(ADDI,       BB)       /* R(a) = R(a)+mrb_int(c)  */
+OPCODE(ADDI,       BB)       /* R(a) = R(a)+_int(c)  */
 OPCODE(SUB,        B)        /* R(a) = R(a)-R(a+1) */
 OPCODE(SUBI,       BB)       /* R(a) = R(a)-C */
 OPCODE(MUL,        B)        /* R(a) = R(a)*R(a+1) */

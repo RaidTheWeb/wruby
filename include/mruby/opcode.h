@@ -7,7 +7,7 @@
 #ifndef MRUBY_OPCODE_H
 #define MRUBY_OPCODE_H
 
-enum mrb_insn {
+enum _insn {
 #define OPCODE(x,_) OP_ ## x,
 #include "mruby/ops.h"
 #undef OPCODE

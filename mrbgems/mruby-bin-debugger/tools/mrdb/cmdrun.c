@@ -7,9 +7,9 @@
 #include "mrdb.h"
 
 dbgcmd_state
-dbgcmd_run(mrb_state *mrb, mrdb_state *mrdb)
+dbgcmd_run(_state *mrb, mrdb_state *mrdb)
 {
-  mrb_debug_context *dbg = mrdb->dbg;
+  _debug_context *dbg = mrdb->dbg;
 
   if (dbg->xm == DBG_INIT){
     dbg->xm = DBG_RUN;
@@ -19,8 +19,8 @@ dbgcmd_run(mrb_state *mrb, mrdb_state *mrdb)
     if (dbg->xphase == DBG_PHASE_RUNNING){
       struct RClass *exc;
       puts("Start it from the beginning.");
-      exc = mrb_define_class(mrb, "DebuggerRestart", mrb_class_get(mrb, "Exception"));
-      mrb_raise(mrb, exc, "Restart mrdb.");
+      exc = _define_class(mrb, "DebuggerRestart", _class_get(mrb, "Exception"));
+      _raise(mrb, exc, "Restart mrdb.");
     }
   }
 
@@ -28,9 +28,9 @@ dbgcmd_run(mrb_state *mrb, mrdb_state *mrdb)
 }
 
 dbgcmd_state
-dbgcmd_continue(mrb_state *mrb, mrdb_state *mrdb)
+dbgcmd_continue(_state *mrb, mrdb_state *mrdb)
 {
-  mrb_debug_context *dbg = mrdb->dbg;
+  _debug_context *dbg = mrdb->dbg;
   int ccnt = 1;
 
   if (mrdb->wcnt > 1){
@@ -49,14 +49,14 @@ dbgcmd_continue(mrb_state *mrb, mrdb_state *mrdb)
 }
 
 dbgcmd_state
-dbgcmd_step(mrb_state *mrb, mrdb_state *mrdb)
+dbgcmd_step(_state *mrb, mrdb_state *mrdb)
 {
   mrdb->dbg->xm = DBG_STEP;
   return DBGST_CONTINUE;
 }
 
 dbgcmd_state
-dbgcmd_next(mrb_state *mrb, mrdb_state *mrdb)
+dbgcmd_next(_state *mrb, mrdb_state *mrdb)
 {
   mrdb->dbg->xm = DBG_NEXT;
   mrdb->dbg->prvci = mrb->c->ci;

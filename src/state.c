@@ -1,5 +1,5 @@
 /*
-** state.c - mrb_state open/close functions
+** state.c - _state open/close functions
 **
 ** See Copyright Notice in mruby.h
 */
@@ -13,39 +13,39 @@
 #include <mruby/string.h>
 #include <mruby/class.h>
 
-void mrb_init_core(mrb_state*);
-void mrb_init_mrbgems(mrb_state*);
+void _init_core(_state*);
+void _init_mrbgems(_state*);
 
-void mrb_gc_init(mrb_state*, mrb_gc *gc);
-void mrb_gc_destroy(mrb_state*, mrb_gc *gc);
+void _gc_init(_state*, _gc *gc);
+void _gc_destroy(_state*, _gc *gc);
 
-MRB_API mrb_state*
-mrb_open_core(mrb_allocf f, void *ud)
+MRB_API _state*
+_open_core(_allocf f, void *ud)
 {
-  static const mrb_state mrb_state_zero = { 0 };
-  static const struct mrb_context mrb_context_zero = { 0 };
-  mrb_state *mrb;
+  static const _state _state_zero = { 0 };
+  static const struct _context _context_zero = { 0 };
+  _state *mrb;
 
-  mrb = (mrb_state *)(f)(NULL, NULL, sizeof(mrb_state), ud);
+  mrb = (_state *)(f)(NULL, NULL, sizeof(_state), ud);
   if (mrb == NULL) return NULL;
 
-  *mrb = mrb_state_zero;
+  *mrb = _state_zero;
   mrb->allocf_ud = ud;
   mrb->allocf = f;
   mrb->atexit_stack_len = 0;
 
-  mrb_gc_init(mrb, &mrb->gc);
-  mrb->c = (struct mrb_context*)mrb_malloc(mrb, sizeof(struct mrb_context));
-  *mrb->c = mrb_context_zero;
+  _gc_init(mrb, &mrb->gc);
+  mrb->c = (struct _context*)_malloc(mrb, sizeof(struct _context));
+  *mrb->c = _context_zero;
   mrb->root_c = mrb->c;
 
-  mrb_init_core(mrb);
+  _init_core(mrb);
 
   return mrb;
 }
 
 void*
-mrb_default_allocf(mrb_state *mrb, void *p, size_t size, void *ud)
+_default_allocf(_state *mrb, void *p, size_t size, void *ud)
 {
   if (size == 0) {
     free(p);
@@ -62,18 +62,18 @@ struct alloca_header {
 };
 
 MRB_API void*
-mrb_alloca(mrb_state *mrb, size_t size)
+_alloca(_state *mrb, size_t size)
 {
   struct alloca_header *p;
 
-  p = (struct alloca_header*) mrb_malloc(mrb, sizeof(struct alloca_header)+size);
+  p = (struct alloca_header*) _malloc(mrb, sizeof(struct alloca_header)+size);
   p->next = mrb->mems;
   mrb->mems = p;
   return (void*)p->buf;
 }
 
 static void
-mrb_alloca_free(mrb_state *mrb)
+_alloca_free(_state *mrb)
 {
   struct alloca_header *p;
   struct alloca_header *tmp;
@@ -84,107 +84,107 @@ mrb_alloca_free(mrb_state *mrb)
   while (p) {
     tmp = p;
     p = p->next;
-    mrb_free(mrb, tmp);
+    _free(mrb, tmp);
   }
 }
 
-MRB_API mrb_state*
-mrb_open(void)
+MRB_API _state*
+_open(void)
 {
-  mrb_state *mrb = mrb_open_allocf(mrb_default_allocf, NULL);
+  _state *mrb = _open_allocf(_default_allocf, NULL);
 
   return mrb;
 }
 
-MRB_API mrb_state*
-mrb_open_allocf(mrb_allocf f, void *ud)
+MRB_API _state*
+_open_allocf(_allocf f, void *ud)
 {
-  mrb_state *mrb = mrb_open_core(f, ud);
+  _state *mrb = _open_core(f, ud);
 
   if (mrb == NULL) {
     return NULL;
   }
 
 #ifndef DISABLE_GEMS
-  mrb_init_mrbgems(mrb);
-  mrb_gc_arena_restore(mrb, 0);
+//  _init_mrbgems(mrb);
+  _gc_arena_restore(mrb, 0);
 #endif
   return mrb;
 }
 
-void mrb_free_symtbl(mrb_state *mrb);
+void _free_symtbl(_state *mrb);
 
 void
-mrb_irep_incref(mrb_state *mrb, mrb_irep *irep)
+_irep_incref(_state *mrb, _irep *irep)
 {
   irep->refcnt++;
 }
 
 void
-mrb_irep_decref(mrb_state *mrb, mrb_irep *irep)
+_irep_decref(_state *mrb, _irep *irep)
 {
   irep->refcnt--;
   if (irep->refcnt == 0) {
-    mrb_irep_free(mrb, irep);
+    _irep_free(mrb, irep);
   }
 }
 
 void
-mrb_irep_cutref(mrb_state *mrb, mrb_irep *irep)
+_irep_cutref(_state *mrb, _irep *irep)
 {
-  mrb_irep *tmp;
+  _irep *tmp;
   int i;
 
   for (i=0; i<irep->rlen; i++) {
     tmp = irep->reps[i];
     irep->reps[i] = NULL;
-    if (tmp) mrb_irep_decref(mrb, tmp);
+    if (tmp) _irep_decref(mrb, tmp);
   }
 }
 
 void
-mrb_irep_free(mrb_state *mrb, mrb_irep *irep)
+_irep_free(_state *mrb, _irep *irep)
 {
   int i;
 
   if (!(irep->flags & MRB_ISEQ_NO_FREE))
-    mrb_free(mrb, irep->iseq);
+    _free(mrb, irep->iseq);
   if (irep->pool) for (i=0; i<irep->plen; i++) {
-    if (mrb_type(irep->pool[i]) == MRB_TT_STRING) {
-      mrb_gc_free_str(mrb, RSTRING(irep->pool[i]));
-      mrb_free(mrb, mrb_obj_ptr(irep->pool[i]));
+    if (_type(irep->pool[i]) == MRB_TT_STRING) {
+      _gc_free_str(mrb, RSTRING(irep->pool[i]));
+      _free(mrb, _obj_ptr(irep->pool[i]));
     }
 #if defined(MRB_WORD_BOXING) && !defined(MRB_WITHOUT_FLOAT)
-    else if (mrb_type(irep->pool[i]) == MRB_TT_FLOAT) {
-      mrb_free(mrb, mrb_obj_ptr(irep->pool[i]));
+    else if (_type(irep->pool[i]) == MRB_TT_FLOAT) {
+      _free(mrb, _obj_ptr(irep->pool[i]));
     }
 #endif
   }
-  mrb_free(mrb, irep->pool);
-  mrb_free(mrb, irep->syms);
+  _free(mrb, irep->pool);
+  _free(mrb, irep->syms);
   for (i=0; i<irep->rlen; i++) {
     if (irep->reps[i])
-      mrb_irep_decref(mrb, irep->reps[i]);
+      _irep_decref(mrb, irep->reps[i]);
   }
-  mrb_free(mrb, irep->reps);
-  mrb_free(mrb, irep->lv);
+  _free(mrb, irep->reps);
+  _free(mrb, irep->lv);
   if (irep->own_filename) {
-    mrb_free(mrb, (void *)irep->filename);
+    _free(mrb, (void *)irep->filename);
   }
-  mrb_free(mrb, irep->lines);
-  mrb_debug_info_free(mrb, irep->debug_info);
-  mrb_free(mrb, irep);
+  _free(mrb, irep->lines);
+  _debug_info_free(mrb, irep->debug_info);
+  _free(mrb, irep);
 }
 
-mrb_value
-mrb_str_pool(mrb_state *mrb, mrb_value str)
+_value
+_str_pool(_state *mrb, _value str)
 {
-  struct RString *s = mrb_str_ptr(str);
+  struct RString *s = _str_ptr(str);
   struct RString *ns;
   char *ptr;
-  mrb_int len;
+  _int len;
 
-  ns = (struct RString *)mrb_malloc(mrb, sizeof(struct RString));
+  ns = (struct RString *)_malloc(mrb, sizeof(struct RString));
   ns->tt = MRB_TT_STRING;
   ns->c = mrb->string_class;
 
@@ -214,7 +214,7 @@ mrb_str_pool(mrb_state *mrb, mrb_value str)
       ns->as.ary[len] = '\0';
     }
     else {
-      ns->as.heap.ptr = (char *)mrb_malloc(mrb, (size_t)len+1);
+      ns->as.heap.ptr = (char *)_malloc(mrb, (size_t)len+1);
       ns->as.heap.len = len;
       ns->as.heap.aux.capa = len;
       if (ptr) {
@@ -225,81 +225,81 @@ mrb_str_pool(mrb_state *mrb, mrb_value str)
   }
   RSTR_SET_POOL_FLAG(ns);
   MRB_SET_FROZEN_FLAG(ns);
-  return mrb_obj_value(ns);
+  return _obj_value(ns);
 }
 
-void mrb_free_backtrace(mrb_state *mrb);
+void _free_backtrace(_state *mrb);
 
 MRB_API void
-mrb_free_context(mrb_state *mrb, struct mrb_context *c)
+_free_context(_state *mrb, struct _context *c)
 {
   if (!c) return;
-  mrb_free(mrb, c->stbase);
-  mrb_free(mrb, c->cibase);
-  mrb_free(mrb, c->rescue);
-  mrb_free(mrb, c->ensure);
-  mrb_free(mrb, c);
+  _free(mrb, c->stbase);
+  _free(mrb, c->cibase);
+  _free(mrb, c->rescue);
+  _free(mrb, c->ensure);
+  _free(mrb, c);
 }
 
 MRB_API void
-mrb_close(mrb_state *mrb)
+_close(_state *mrb)
 {
   if (!mrb) return;
   if (mrb->atexit_stack_len > 0) {
-    mrb_int i;
+    _int i;
     for (i = mrb->atexit_stack_len; i > 0; --i) {
       mrb->atexit_stack[i - 1](mrb);
     }
 #ifndef MRB_FIXED_STATE_ATEXIT_STACK
-    mrb_free(mrb, mrb->atexit_stack);
+    _free(mrb, mrb->atexit_stack);
 #endif
   }
 
   /* free */
-  mrb_gc_free_gv(mrb);
-  mrb_free_context(mrb, mrb->root_c);
-  mrb_free_symtbl(mrb);
-  mrb_alloca_free(mrb);
-  mrb_gc_destroy(mrb, &mrb->gc);
-  mrb_free(mrb, mrb);
+  _gc_free_gv(mrb);
+  _free_context(mrb, mrb->root_c);
+  _free_symtbl(mrb);
+  _alloca_free(mrb);
+  _gc_destroy(mrb, &mrb->gc);
+  _free(mrb, mrb);
 }
 
-MRB_API mrb_irep*
-mrb_add_irep(mrb_state *mrb)
+MRB_API _irep*
+_add_irep(_state *mrb)
 {
-  static const mrb_irep mrb_irep_zero = { 0 };
-  mrb_irep *irep;
+  static const _irep _irep_zero = { 0 };
+  _irep *irep;
 
-  irep = (mrb_irep *)mrb_malloc(mrb, sizeof(mrb_irep));
-  *irep = mrb_irep_zero;
+  irep = (_irep *)_malloc(mrb, sizeof(_irep));
+  *irep = _irep_zero;
   irep->refcnt = 1;
   irep->own_filename = FALSE;
 
   return irep;
 }
 
-MRB_API mrb_value
-mrb_top_self(mrb_state *mrb)
+MRB_API _value
+_top_self(_state *mrb)
 {
-  return mrb_obj_value(mrb->top_self);
+  return _obj_value(mrb->top_self);
 }
 
 MRB_API void
-mrb_state_atexit(mrb_state *mrb, mrb_atexit_func f)
+_state_atexit(_state *mrb, _atexit_func f)
 {
 #ifdef MRB_FIXED_STATE_ATEXIT_STACK
   if (mrb->atexit_stack_len + 1 > MRB_FIXED_STATE_ATEXIT_STACK_SIZE) {
-    mrb_raise(mrb, E_RUNTIME_ERROR, "exceeded fixed state atexit stack limit");
+    _raise(mrb, E_RUNTIME_ERROR, "exceeded fixed state atexit stack limit");
   }
 #else
   size_t stack_size;
 
-  stack_size = sizeof(mrb_atexit_func) * (mrb->atexit_stack_len + 1);
+  stack_size = sizeof(_atexit_func) * (mrb->atexit_stack_len + 1);
   if (mrb->atexit_stack_len == 0) {
-    mrb->atexit_stack = (mrb_atexit_func*)mrb_malloc(mrb, stack_size);
+    mrb->atexit_stack = (_atexit_func*)_malloc(mrb, stack_size);
   }
   else {
-    mrb->atexit_stack = (mrb_atexit_func*)mrb_realloc(mrb, mrb->atexit_stack, stack_size);
+    mrb->atexit_stack = (_atexit_func*)_realloc(mrb, mrb->atexit_stack, stack_size);
   }
 #endif
 

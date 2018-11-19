@@ -6,300 +6,300 @@
 #include "mruby/string.h"
 
 static struct RObject *
-method_object_alloc(mrb_state *mrb, struct RClass *mclass)
+method_object_alloc(_state *mrb, struct RClass *mclass)
 {
-  return (struct RObject*)mrb_obj_alloc(mrb, MRB_TT_OBJECT, mclass);
+  return (struct RObject*)_obj_alloc(mrb, MRB_TT_OBJECT, mclass);
 }
 
-static mrb_value
-unbound_method_bind(mrb_state *mrb, mrb_value self)
+static _value
+unbound_method_bind(_state *mrb, _value self)
 {
   struct RObject *me;
-  mrb_value owner = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@owner"));
-  mrb_value name = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@name"));
-  mrb_value proc = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "proc"));
-  mrb_value klass = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@klass"));
-  mrb_value recv;
+  _value owner = _iv_get(mrb, self, _intern_lit(mrb, "@owner"));
+  _value name = _iv_get(mrb, self, _intern_lit(mrb, "@name"));
+  _value proc = _iv_get(mrb, self, _intern_lit(mrb, "proc"));
+  _value klass = _iv_get(mrb, self, _intern_lit(mrb, "@klass"));
+  _value recv;
 
-  mrb_get_args(mrb, "o", &recv);
+  _get_args(mrb, "o", &recv);
 
-  if (mrb_type(owner) != MRB_TT_MODULE &&
-      mrb_class_ptr(owner) != mrb_obj_class(mrb, recv) &&
-      !mrb_obj_is_kind_of(mrb, recv, mrb_class_ptr(owner))) {
-        if (mrb_type(owner) == MRB_TT_SCLASS) {
-          mrb_raise(mrb, E_TYPE_ERROR, "singleton method called for a different object");
+  if (_type(owner) != MRB_TT_MODULE &&
+      _class_ptr(owner) != _obj_class(mrb, recv) &&
+      !_obj_is_kind_of(mrb, recv, _class_ptr(owner))) {
+        if (_type(owner) == MRB_TT_SCLASS) {
+          _raise(mrb, E_TYPE_ERROR, "singleton method called for a different object");
         } else {
-          const char *s = mrb_class_name(mrb, mrb_class_ptr(owner));
-          mrb_raisef(mrb, E_TYPE_ERROR, "bind argument must be an instance of %S", mrb_str_new_static(mrb, s, strlen(s)));
+          const char *s = _class_name(mrb, _class_ptr(owner));
+          _raisef(mrb, E_TYPE_ERROR, "bind argument must be an instance of %S", _str_new_static(mrb, s, strlen(s)));
         }
   }
-  me = method_object_alloc(mrb, mrb_class_get(mrb, "Method"));
-  mrb_obj_iv_set(mrb, me, mrb_intern_lit(mrb, "@owner"), owner);
-  mrb_obj_iv_set(mrb, me, mrb_intern_lit(mrb, "@recv"), recv);
-  mrb_obj_iv_set(mrb, me, mrb_intern_lit(mrb, "@name"), name);
-  mrb_obj_iv_set(mrb, me, mrb_intern_lit(mrb, "proc"), proc);
-  mrb_obj_iv_set(mrb, me, mrb_intern_lit(mrb, "@klass"), klass);
+  me = method_object_alloc(mrb, _class_get(mrb, "Method"));
+  _obj_iv_set(mrb, me, _intern_lit(mrb, "@owner"), owner);
+  _obj_iv_set(mrb, me, _intern_lit(mrb, "@recv"), recv);
+  _obj_iv_set(mrb, me, _intern_lit(mrb, "@name"), name);
+  _obj_iv_set(mrb, me, _intern_lit(mrb, "proc"), proc);
+  _obj_iv_set(mrb, me, _intern_lit(mrb, "@klass"), klass);
 
-  return mrb_obj_value(me);
+  return _obj_value(me);
 }
 
-#define IV_GET(value, name) mrb_iv_get(mrb, value, mrb_intern_lit(mrb, name))
-static mrb_value
-method_eql(mrb_state *mrb, mrb_value self)
+#define IV_GET(value, name) _iv_get(mrb, value, _intern_lit(mrb, name))
+static _value
+method_eql(_state *mrb, _value self)
 {
-  mrb_value other, receiver, orig_proc, other_proc;
+  _value other, receiver, orig_proc, other_proc;
   struct RClass *owner, *klass;
   struct RProc *orig_rproc, *other_rproc;
 
-  mrb_get_args(mrb, "o", &other);
-  if (!mrb_obj_is_instance_of(mrb, other, mrb_class(mrb, self)))
-    return mrb_false_value();
+  _get_args(mrb, "o", &other);
+  if (!_obj_is_instance_of(mrb, other, _class(mrb, self)))
+    return _false_value();
 
-  if (mrb_class(mrb, self) != mrb_class(mrb, other))
-    return mrb_false_value();
+  if (_class(mrb, self) != _class(mrb, other))
+    return _false_value();
 
-  klass = mrb_class_ptr(IV_GET(self, "@klass"));
-  if (klass != mrb_class_ptr(IV_GET(other, "@klass")))
-    return mrb_false_value();
+  klass = _class_ptr(IV_GET(self, "@klass"));
+  if (klass != _class_ptr(IV_GET(other, "@klass")))
+    return _false_value();
 
-  owner = mrb_class_ptr(IV_GET(self, "@owner"));
-  if (owner != mrb_class_ptr(IV_GET(other, "@owner")))
-    return mrb_false_value();
+  owner = _class_ptr(IV_GET(self, "@owner"));
+  if (owner != _class_ptr(IV_GET(other, "@owner")))
+    return _false_value();
 
   receiver = IV_GET(self, "@recv");
-  if (!mrb_obj_equal(mrb, receiver, IV_GET(other, "@recv")))
-    return mrb_false_value();
+  if (!_obj_equal(mrb, receiver, IV_GET(other, "@recv")))
+    return _false_value();
 
   orig_proc = IV_GET(self, "proc");
   other_proc = IV_GET(other, "proc");
-  if (mrb_nil_p(orig_proc) && mrb_nil_p(other_proc)) {
-    if (mrb_symbol(IV_GET(self, "@name")) == mrb_symbol(IV_GET(other, "@name")))
-      return mrb_true_value();
+  if (_nil_p(orig_proc) && _nil_p(other_proc)) {
+    if (_symbol(IV_GET(self, "@name")) == _symbol(IV_GET(other, "@name")))
+      return _true_value();
     else
-      return mrb_false_value();
+      return _false_value();
   }
 
-  if (mrb_nil_p(orig_proc))
-    return mrb_false_value();
-  if (mrb_nil_p(other_proc))
-    return mrb_false_value();
+  if (_nil_p(orig_proc))
+    return _false_value();
+  if (_nil_p(other_proc))
+    return _false_value();
 
-  orig_rproc = mrb_proc_ptr(orig_proc);
-  other_rproc = mrb_proc_ptr(other_proc);
+  orig_rproc = _proc_ptr(orig_proc);
+  other_rproc = _proc_ptr(other_proc);
   if (MRB_PROC_CFUNC_P(orig_rproc)) {
     if (!MRB_PROC_CFUNC_P(other_rproc))
-      return mrb_false_value();
+      return _false_value();
     if (orig_rproc->body.func != other_rproc->body.func)
-      return mrb_false_value();
+      return _false_value();
   }
   else {
     if (MRB_PROC_CFUNC_P(other_rproc))
-      return mrb_false_value();
+      return _false_value();
     if (orig_rproc->body.irep != other_rproc->body.irep)
-      return mrb_false_value();
+      return _false_value();
   }
 
-  return mrb_true_value();
+  return _true_value();
 }
 
 #undef IV_GET
 
-static mrb_value
-method_call(mrb_state *mrb, mrb_value self)
+static _value
+method_call(_state *mrb, _value self)
 {
-  mrb_value proc = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "proc"));
-  mrb_value name = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@name"));
-  mrb_value recv = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@recv"));
-  struct RClass *owner = mrb_class_ptr(mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@owner")));
-  mrb_int argc;
-  mrb_value *argv, ret, block;
-  mrb_sym orig_mid;
+  _value proc = _iv_get(mrb, self, _intern_lit(mrb, "proc"));
+  _value name = _iv_get(mrb, self, _intern_lit(mrb, "@name"));
+  _value recv = _iv_get(mrb, self, _intern_lit(mrb, "@recv"));
+  struct RClass *owner = _class_ptr(_iv_get(mrb, self, _intern_lit(mrb, "@owner")));
+  _int argc;
+  _value *argv, ret, block;
+  _sym orig_mid;
 
-  mrb_get_args(mrb, "*&", &argv, &argc, &block);
+  _get_args(mrb, "*&", &argv, &argc, &block);
   orig_mid = mrb->c->ci->mid;
-  mrb->c->ci->mid = mrb_symbol(name);
-  if (mrb_nil_p(proc)) {
-    mrb_value missing_argv = mrb_ary_new_from_values(mrb, argc, argv);
-    mrb_ary_unshift(mrb, missing_argv, name);
-    ret = mrb_funcall_argv(mrb, recv, mrb_intern_lit(mrb, "method_missing"), argc + 1, RARRAY_PTR(missing_argv));
+  mrb->c->ci->mid = _symbol(name);
+  if (_nil_p(proc)) {
+    _value missing_argv = _ary_new_from_values(mrb, argc, argv);
+    _ary_unshift(mrb, missing_argv, name);
+    ret = _funcall_argv(mrb, recv, _intern_lit(mrb, "method_missing"), argc + 1, RARRAY_PTR(missing_argv));
   }
-  else if (!mrb_nil_p(block)) {
+  else if (!_nil_p(block)) {
     /*
-      workaround since `mrb_yield_with_class` does not support passing block as parameter
+      workaround since `_yield_with_class` does not support passing block as parameter
       need new API that initializes `mrb->c->stack[argc+1]` with block passed by argument
     */
-    ret = mrb_funcall_with_block(mrb, recv, mrb_symbol(name), argc, argv, block);
+    ret = _funcall_with_block(mrb, recv, _symbol(name), argc, argv, block);
   }
   else {
-    ret = mrb_yield_with_class(mrb, proc, argc, argv, recv, owner);
+    ret = _yield_with_class(mrb, proc, argc, argv, recv, owner);
   }
   mrb->c->ci->mid = orig_mid;
   return ret;
 }
 
-static mrb_value
-method_unbind(mrb_state *mrb, mrb_value self)
+static _value
+method_unbind(_state *mrb, _value self)
 {
   struct RObject *ume;
-  mrb_value owner = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@owner"));
-  mrb_value name = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@name"));
-  mrb_value proc = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "proc"));
-  mrb_value klass = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@klass"));
+  _value owner = _iv_get(mrb, self, _intern_lit(mrb, "@owner"));
+  _value name = _iv_get(mrb, self, _intern_lit(mrb, "@name"));
+  _value proc = _iv_get(mrb, self, _intern_lit(mrb, "proc"));
+  _value klass = _iv_get(mrb, self, _intern_lit(mrb, "@klass"));
 
-  ume = method_object_alloc(mrb, mrb_class_get(mrb, "UnboundMethod"));
-  mrb_obj_iv_set(mrb, ume, mrb_intern_lit(mrb, "@owner"), owner);
-  mrb_obj_iv_set(mrb, ume, mrb_intern_lit(mrb, "@recv"), mrb_nil_value());
-  mrb_obj_iv_set(mrb, ume, mrb_intern_lit(mrb, "@name"), name);
-  mrb_obj_iv_set(mrb, ume, mrb_intern_lit(mrb, "proc"), proc);
-  mrb_obj_iv_set(mrb, ume, mrb_intern_lit(mrb, "@klass"), klass);
+  ume = method_object_alloc(mrb, _class_get(mrb, "UnboundMethod"));
+  _obj_iv_set(mrb, ume, _intern_lit(mrb, "@owner"), owner);
+  _obj_iv_set(mrb, ume, _intern_lit(mrb, "@recv"), _nil_value());
+  _obj_iv_set(mrb, ume, _intern_lit(mrb, "@name"), name);
+  _obj_iv_set(mrb, ume, _intern_lit(mrb, "proc"), proc);
+  _obj_iv_set(mrb, ume, _intern_lit(mrb, "@klass"), klass);
 
-  return mrb_obj_value(ume);
+  return _obj_value(ume);
 }
 
 static struct RProc *
-method_search_vm(mrb_state *mrb, struct RClass **cp, mrb_sym mid)
+method_search_vm(_state *mrb, struct RClass **cp, _sym mid)
 {
-  mrb_method_t m = mrb_method_search_vm(mrb, cp, mid);
+  _method_t m = _method_search_vm(mrb, cp, mid);
   if (MRB_METHOD_UNDEF_P(m))
     return NULL;
   if (MRB_METHOD_PROC_P(m))
     return MRB_METHOD_PROC(m);
-  return mrb_proc_new_cfunc(mrb, MRB_METHOD_FUNC(m));
+  return _proc_new_cfunc(mrb, MRB_METHOD_FUNC(m));
 }
 
-static mrb_value
-method_super_method(mrb_state *mrb, mrb_value self)
+static _value
+method_super_method(_state *mrb, _value self)
 {
-  mrb_value recv = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@recv"));
-  mrb_value klass = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@klass"));
-  mrb_value owner = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@owner"));
-  mrb_value name = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@name"));
+  _value recv = _iv_get(mrb, self, _intern_lit(mrb, "@recv"));
+  _value klass = _iv_get(mrb, self, _intern_lit(mrb, "@klass"));
+  _value owner = _iv_get(mrb, self, _intern_lit(mrb, "@owner"));
+  _value name = _iv_get(mrb, self, _intern_lit(mrb, "@name"));
   struct RClass *super, *rklass;
   struct RProc *proc;
   struct RObject *me;
 
-  switch (mrb_type(klass)) {
+  switch (_type(klass)) {
     case MRB_TT_SCLASS:
-      super = mrb_class_ptr(klass)->super->super;
+      super = _class_ptr(klass)->super->super;
       break;
     case MRB_TT_ICLASS:
-      super = mrb_class_ptr(klass)->super;
+      super = _class_ptr(klass)->super;
       break;
     default:
-      super = mrb_class_ptr(owner)->super;
+      super = _class_ptr(owner)->super;
       break;
   }
 
-  proc = method_search_vm(mrb, &super, mrb_symbol(name));
+  proc = method_search_vm(mrb, &super, _symbol(name));
   if (!proc)
-    return mrb_nil_value();
+    return _nil_value();
 
   rklass = super;
   while (super->tt == MRB_TT_ICLASS)
     super = super->c;
 
-  me = method_object_alloc(mrb, mrb_obj_class(mrb, self));
-  mrb_obj_iv_set(mrb, me, mrb_intern_lit(mrb, "@owner"), mrb_obj_value(super));
-  mrb_obj_iv_set(mrb, me, mrb_intern_lit(mrb, "@recv"), recv);
-  mrb_obj_iv_set(mrb, me, mrb_intern_lit(mrb, "@name"), name);
-  mrb_obj_iv_set(mrb, me, mrb_intern_lit(mrb, "proc"), mrb_obj_value(proc));
-  mrb_obj_iv_set(mrb, me, mrb_intern_lit(mrb, "@klass"), mrb_obj_value(rklass));
+  me = method_object_alloc(mrb, _obj_class(mrb, self));
+  _obj_iv_set(mrb, me, _intern_lit(mrb, "@owner"), _obj_value(super));
+  _obj_iv_set(mrb, me, _intern_lit(mrb, "@recv"), recv);
+  _obj_iv_set(mrb, me, _intern_lit(mrb, "@name"), name);
+  _obj_iv_set(mrb, me, _intern_lit(mrb, "proc"), _obj_value(proc));
+  _obj_iv_set(mrb, me, _intern_lit(mrb, "@klass"), _obj_value(rklass));
 
-  return mrb_obj_value(me);
+  return _obj_value(me);
 }
 
-static mrb_value
-method_arity(mrb_state *mrb, mrb_value self)
+static _value
+method_arity(_state *mrb, _value self)
 {
-  mrb_value proc = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "proc"));
+  _value proc = _iv_get(mrb, self, _intern_lit(mrb, "proc"));
   struct RProc *rproc;
   struct RClass *orig;
-  mrb_value ret;
+  _value ret;
 
-  if (mrb_nil_p(proc))
-    return mrb_fixnum_value(-1);
+  if (_nil_p(proc))
+    return _fixnum_value(-1);
 
-  rproc = mrb_proc_ptr(proc);
+  rproc = _proc_ptr(proc);
   orig = rproc->c;
   rproc->c = mrb->proc_class;
-  ret = mrb_funcall(mrb, proc, "arity", 0);
+  ret = _funcall(mrb, proc, "arity", 0);
   rproc->c = orig;
   return ret;
 }
 
-static mrb_value
-method_source_location(mrb_state *mrb, mrb_value self)
+static _value
+method_source_location(_state *mrb, _value self)
 {
-  mrb_value proc = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "proc"));
+  _value proc = _iv_get(mrb, self, _intern_lit(mrb, "proc"));
   struct RProc *rproc;
   struct RClass *orig;
-  mrb_value ret;
+  _value ret;
 
-  if (mrb_nil_p(proc))
-    return mrb_nil_value();
+  if (_nil_p(proc))
+    return _nil_value();
 
-  rproc = mrb_proc_ptr(proc);
+  rproc = _proc_ptr(proc);
   orig = rproc->c;
   rproc->c = mrb->proc_class;
-  ret = mrb_funcall(mrb, proc, "source_location", 0);
+  ret = _funcall(mrb, proc, "source_location", 0);
   rproc->c = orig;
   return ret;
 }
 
-static mrb_value
-method_parameters(mrb_state *mrb, mrb_value self)
+static _value
+method_parameters(_state *mrb, _value self)
 {
-  mrb_value proc = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "proc"));
+  _value proc = _iv_get(mrb, self, _intern_lit(mrb, "proc"));
   struct RProc *rproc;
   struct RClass *orig;
-  mrb_value ret;
+  _value ret;
 
-  if (mrb_nil_p(proc)) {
-    mrb_value rest = mrb_symbol_value(mrb_intern_lit(mrb, "rest"));
-    mrb_value arest = mrb_ary_new_from_values(mrb, 1, &rest);
-    return mrb_ary_new_from_values(mrb, 1, &arest);
+  if (_nil_p(proc)) {
+    _value rest = _symbol_value(_intern_lit(mrb, "rest"));
+    _value arest = _ary_new_from_values(mrb, 1, &rest);
+    return _ary_new_from_values(mrb, 1, &arest);
   }
 
-  rproc = mrb_proc_ptr(proc);
+  rproc = _proc_ptr(proc);
   orig = rproc->c;
   rproc->c = mrb->proc_class;
-  ret = mrb_funcall(mrb, proc, "parameters", 0);
+  ret = _funcall(mrb, proc, "parameters", 0);
   rproc->c = orig;
   return ret;
 }
 
-static mrb_value
-method_to_s(mrb_state *mrb, mrb_value self)
+static _value
+method_to_s(_state *mrb, _value self)
 {
-  mrb_value owner = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@owner"));
-  mrb_value klass = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@klass"));
-  mrb_value name = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@name"));
-  mrb_value str = mrb_str_new_lit(mrb, "#<");
+  _value owner = _iv_get(mrb, self, _intern_lit(mrb, "@owner"));
+  _value klass = _iv_get(mrb, self, _intern_lit(mrb, "@klass"));
+  _value name = _iv_get(mrb, self, _intern_lit(mrb, "@name"));
+  _value str = _str_new_lit(mrb, "#<");
   struct RClass *rklass;
 
-  mrb_str_cat_cstr(mrb, str, mrb_obj_classname(mrb, self));
-  mrb_str_cat_lit(mrb, str, ": ");
-  rklass = mrb_class_ptr(klass);
-  if (mrb_class_ptr(owner) == rklass) {
-    mrb_str_cat_str(mrb, str, mrb_funcall(mrb, owner, "to_s", 0));
-    mrb_str_cat_lit(mrb, str, "#");
-    mrb_str_cat_str(mrb, str, mrb_funcall(mrb, name, "to_s", 0));
+  _str_cat_cstr(mrb, str, _obj_classname(mrb, self));
+  _str_cat_lit(mrb, str, ": ");
+  rklass = _class_ptr(klass);
+  if (_class_ptr(owner) == rklass) {
+    _str_cat_str(mrb, str, _funcall(mrb, owner, "to_s", 0));
+    _str_cat_lit(mrb, str, "#");
+    _str_cat_str(mrb, str, _funcall(mrb, name, "to_s", 0));
   }
   else {
-    mrb_str_cat_cstr(mrb, str, mrb_class_name(mrb, rklass));
-    mrb_str_cat_lit(mrb, str, "(");
-    mrb_str_cat_str(mrb, str, mrb_funcall(mrb, owner, "to_s", 0));
-    mrb_str_cat_lit(mrb, str, ")#");
-    mrb_str_cat_str(mrb, str, mrb_funcall(mrb, name, "to_s", 0));
+    _str_cat_cstr(mrb, str, _class_name(mrb, rklass));
+    _str_cat_lit(mrb, str, "(");
+    _str_cat_str(mrb, str, _funcall(mrb, owner, "to_s", 0));
+    _str_cat_lit(mrb, str, ")#");
+    _str_cat_str(mrb, str, _funcall(mrb, name, "to_s", 0));
   }
-  mrb_str_cat_lit(mrb, str, ">");
+  _str_cat_lit(mrb, str, ">");
   return str;
 }
 
 static void
-mrb_search_method_owner(mrb_state *mrb, struct RClass *c, mrb_value obj, mrb_sym name, struct RClass **owner, struct RProc **proc, mrb_bool unbound)
+_search_method_owner(_state *mrb, struct RClass *c, _value obj, _sym name, struct RClass **owner, struct RProc **proc, _bool unbound)
 {
-  mrb_value ret;
+  _value ret;
   const char *s;
 
   *owner = c;
@@ -308,11 +308,11 @@ mrb_search_method_owner(mrb_state *mrb, struct RClass *c, mrb_value obj, mrb_sym
     if (unbound) {
       goto name_error;
     }
-    if (!mrb_respond_to(mrb, obj, mrb_intern_lit(mrb, "respond_to_missing?"))) {
+    if (!_respond_to(mrb, obj, _intern_lit(mrb, "respond_to_missing?"))) {
       goto name_error;
     }
-    ret = mrb_funcall(mrb, obj, "respond_to_missing?", 2, mrb_symbol_value(name), mrb_true_value());
-    if (!mrb_test(ret)) {
+    ret = _funcall(mrb, obj, "respond_to_missing?", 2, _symbol_value(name), _true_value());
+    if (!_test(ret)) {
       goto name_error;
     }
     *owner = c;
@@ -324,95 +324,95 @@ mrb_search_method_owner(mrb_state *mrb, struct RClass *c, mrb_value obj, mrb_sym
   return;
 
 name_error:
-  s = mrb_class_name(mrb, c);
-  mrb_raisef(
+  s = _class_name(mrb, c);
+  _raisef(
     mrb, E_NAME_ERROR,
     "undefined method `%S' for class `%S'",
-    mrb_sym2str(mrb, name),
-    mrb_str_new_static(mrb, s, strlen(s))
+    _sym2str(mrb, name),
+    _str_new_static(mrb, s, strlen(s))
   );
 }
 
-static mrb_value
-mrb_kernel_method(mrb_state *mrb, mrb_value self)
+static _value
+_kernel_method(_state *mrb, _value self)
 {
   struct RClass *owner;
   struct RProc *proc;
   struct RObject *me;
-  mrb_sym name;
+  _sym name;
 
-  mrb_get_args(mrb, "n", &name);
+  _get_args(mrb, "n", &name);
 
-  mrb_search_method_owner(mrb, mrb_class(mrb, self), self, name, &owner, &proc, FALSE);
+  _search_method_owner(mrb, _class(mrb, self), self, name, &owner, &proc, FALSE);
 
-  me = method_object_alloc(mrb, mrb_class_get(mrb, "Method"));
-  mrb_obj_iv_set(mrb, me, mrb_intern_lit(mrb, "@owner"), mrb_obj_value(owner));
-  mrb_obj_iv_set(mrb, me, mrb_intern_lit(mrb, "@recv"), self);
-  mrb_obj_iv_set(mrb, me, mrb_intern_lit(mrb, "@name"), mrb_symbol_value(name));
-  mrb_obj_iv_set(mrb, me, mrb_intern_lit(mrb, "proc"), proc ? mrb_obj_value(proc) : mrb_nil_value());
-  mrb_obj_iv_set(mrb, me, mrb_intern_lit(mrb, "@klass"), mrb_obj_value(mrb_class(mrb, self)));
+  me = method_object_alloc(mrb, _class_get(mrb, "Method"));
+  _obj_iv_set(mrb, me, _intern_lit(mrb, "@owner"), _obj_value(owner));
+  _obj_iv_set(mrb, me, _intern_lit(mrb, "@recv"), self);
+  _obj_iv_set(mrb, me, _intern_lit(mrb, "@name"), _symbol_value(name));
+  _obj_iv_set(mrb, me, _intern_lit(mrb, "proc"), proc ? _obj_value(proc) : _nil_value());
+  _obj_iv_set(mrb, me, _intern_lit(mrb, "@klass"), _obj_value(_class(mrb, self)));
 
-  return mrb_obj_value(me);
+  return _obj_value(me);
 }
 
-static mrb_value
-mrb_module_instance_method(mrb_state *mrb, mrb_value self)
+static _value
+_module_instance_method(_state *mrb, _value self)
 {
   struct RClass *owner;
   struct RProc *proc;
   struct RObject *ume;
-  mrb_sym name;
+  _sym name;
 
-  mrb_get_args(mrb, "n", &name);
+  _get_args(mrb, "n", &name);
 
-  mrb_search_method_owner(mrb, mrb_class_ptr(self), self, name, &owner, &proc, TRUE);
+  _search_method_owner(mrb, _class_ptr(self), self, name, &owner, &proc, TRUE);
 
-  ume = method_object_alloc(mrb, mrb_class_get(mrb, "UnboundMethod"));
-  mrb_obj_iv_set(mrb, ume, mrb_intern_lit(mrb, "@owner"), mrb_obj_value(owner));
-  mrb_obj_iv_set(mrb, ume, mrb_intern_lit(mrb, "@recv"), mrb_nil_value());
-  mrb_obj_iv_set(mrb, ume, mrb_intern_lit(mrb, "@name"), mrb_symbol_value(name));
-  mrb_obj_iv_set(mrb, ume, mrb_intern_lit(mrb, "proc"), proc ? mrb_obj_value(proc) : mrb_nil_value());
-  mrb_obj_iv_set(mrb, ume, mrb_intern_lit(mrb, "@klass"), self);
+  ume = method_object_alloc(mrb, _class_get(mrb, "UnboundMethod"));
+  _obj_iv_set(mrb, ume, _intern_lit(mrb, "@owner"), _obj_value(owner));
+  _obj_iv_set(mrb, ume, _intern_lit(mrb, "@recv"), _nil_value());
+  _obj_iv_set(mrb, ume, _intern_lit(mrb, "@name"), _symbol_value(name));
+  _obj_iv_set(mrb, ume, _intern_lit(mrb, "proc"), proc ? _obj_value(proc) : _nil_value());
+  _obj_iv_set(mrb, ume, _intern_lit(mrb, "@klass"), self);
 
-  return mrb_obj_value(ume);
+  return _obj_value(ume);
 }
 
 void
-mrb_mruby_method_gem_init(mrb_state* mrb)
+_mruby_method_gem_init(_state* mrb)
 {
-  struct RClass *unbound_method = mrb_define_class(mrb, "UnboundMethod", mrb->object_class);
-  struct RClass *method = mrb_define_class(mrb, "Method", mrb->object_class);
+  struct RClass *unbound_method = _define_class(mrb, "UnboundMethod", mrb->object_class);
+  struct RClass *method = _define_class(mrb, "Method", mrb->object_class);
 
-  mrb_undef_class_method(mrb, unbound_method, "new");
-  mrb_define_method(mrb, unbound_method, "bind", unbound_method_bind, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, unbound_method, "super_method", method_super_method, MRB_ARGS_NONE());
-  mrb_define_method(mrb, unbound_method, "==", method_eql, MRB_ARGS_REQ(1));
-  mrb_define_alias(mrb,  unbound_method, "eql?", "==");
-  mrb_define_method(mrb, unbound_method, "to_s", method_to_s, MRB_ARGS_NONE());
-  mrb_define_method(mrb, unbound_method, "inspect", method_to_s, MRB_ARGS_NONE());
-  mrb_define_method(mrb, unbound_method, "arity", method_arity, MRB_ARGS_NONE());
-  mrb_define_method(mrb, unbound_method, "source_location", method_source_location, MRB_ARGS_NONE());
-  mrb_define_method(mrb, unbound_method, "parameters", method_parameters, MRB_ARGS_NONE());
+  _undef_class_method(mrb, unbound_method, "new");
+  _define_method(mrb, unbound_method, "bind", unbound_method_bind, MRB_ARGS_REQ(1));
+  _define_method(mrb, unbound_method, "super_method", method_super_method, MRB_ARGS_NONE());
+  _define_method(mrb, unbound_method, "==", method_eql, MRB_ARGS_REQ(1));
+  _define_alias(mrb,  unbound_method, "eql?", "==");
+  _define_method(mrb, unbound_method, "to_s", method_to_s, MRB_ARGS_NONE());
+  _define_method(mrb, unbound_method, "inspect", method_to_s, MRB_ARGS_NONE());
+  _define_method(mrb, unbound_method, "arity", method_arity, MRB_ARGS_NONE());
+  _define_method(mrb, unbound_method, "source_location", method_source_location, MRB_ARGS_NONE());
+  _define_method(mrb, unbound_method, "parameters", method_parameters, MRB_ARGS_NONE());
 
-  mrb_undef_class_method(mrb, method, "new");
-  mrb_define_method(mrb, method, "==", method_eql, MRB_ARGS_REQ(1));
-  mrb_define_alias(mrb,  method, "eql?", "==");
-  mrb_define_method(mrb, method, "to_s", method_to_s, MRB_ARGS_NONE());
-  mrb_define_method(mrb, method, "inspect", method_to_s, MRB_ARGS_NONE());
-  mrb_define_method(mrb, method, "call", method_call, MRB_ARGS_ANY());
-  mrb_define_alias(mrb,  method, "[]", "call");
-  mrb_define_method(mrb, method, "unbind", method_unbind, MRB_ARGS_NONE());
-  mrb_define_method(mrb, method, "super_method", method_super_method, MRB_ARGS_NONE());
-  mrb_define_method(mrb, method, "arity", method_arity, MRB_ARGS_NONE());
-  mrb_define_method(mrb, method, "source_location", method_source_location, MRB_ARGS_NONE());
-  mrb_define_method(mrb, method, "parameters", method_parameters, MRB_ARGS_NONE());
+  _undef_class_method(mrb, method, "new");
+  _define_method(mrb, method, "==", method_eql, MRB_ARGS_REQ(1));
+  _define_alias(mrb,  method, "eql?", "==");
+  _define_method(mrb, method, "to_s", method_to_s, MRB_ARGS_NONE());
+  _define_method(mrb, method, "inspect", method_to_s, MRB_ARGS_NONE());
+  _define_method(mrb, method, "call", method_call, MRB_ARGS_ANY());
+  _define_alias(mrb,  method, "[]", "call");
+  _define_method(mrb, method, "unbind", method_unbind, MRB_ARGS_NONE());
+  _define_method(mrb, method, "super_method", method_super_method, MRB_ARGS_NONE());
+  _define_method(mrb, method, "arity", method_arity, MRB_ARGS_NONE());
+  _define_method(mrb, method, "source_location", method_source_location, MRB_ARGS_NONE());
+  _define_method(mrb, method, "parameters", method_parameters, MRB_ARGS_NONE());
 
-  mrb_define_method(mrb, mrb->kernel_module, "method", mrb_kernel_method, MRB_ARGS_REQ(1));
+  _define_method(mrb, mrb->kernel_module, "method", _kernel_method, MRB_ARGS_REQ(1));
 
-  mrb_define_method(mrb, mrb->module_class, "instance_method", mrb_module_instance_method, MRB_ARGS_REQ(1));
+  _define_method(mrb, mrb->module_class, "instance_method", _module_instance_method, MRB_ARGS_REQ(1));
 }
 
 void
-mrb_mruby_method_gem_final(mrb_state* mrb)
+_mruby_method_gem_final(_state* mrb)
 {
 }

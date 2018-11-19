@@ -2,17 +2,17 @@
 #include "mruby/class.h"
 #include "mruby/string.h"
 
-static mrb_value
-mrb_mod_name(mrb_state *mrb, mrb_value self)
+static _value
+_mod_name(_state *mrb, _value self)
 {
-  mrb_value name = mrb_class_path(mrb, mrb_class_ptr(self));
-  return mrb_nil_p(name)? name : mrb_str_dup(mrb, name);
+  _value name = _class_path(mrb, _class_ptr(self));
+  return _nil_p(name)? name : _str_dup(mrb, name);
 }
 
-static mrb_value
-mrb_mod_singleton_class_p(mrb_state *mrb, mrb_value self)
+static _value
+_mod_singleton_class_p(_state *mrb, _value self)
 {
-  return mrb_bool_value(mrb_type(self) == MRB_TT_SCLASS);
+  return _bool_value(_type(self) == MRB_TT_SCLASS);
 }
 
 /*
@@ -34,35 +34,35 @@ mrb_mod_singleton_class_p(mrb_state *mrb, mrb_value self)
  *     puts Thing.new.hello()
  */
 
-static mrb_value
-mrb_mod_module_exec(mrb_state *mrb, mrb_value self)
+static _value
+_mod_module_exec(_state *mrb, _value self)
 {
-  const mrb_value *argv;
-  mrb_int argc;
-  mrb_value blk;
+  const _value *argv;
+  _int argc;
+  _value blk;
 
-  mrb_get_args(mrb, "*&", &argv, &argc, &blk);
+  _get_args(mrb, "*&", &argv, &argc, &blk);
 
-  if (mrb_nil_p(blk)) {
-    mrb_raise(mrb, E_ARGUMENT_ERROR, "no block given");
+  if (_nil_p(blk)) {
+    _raise(mrb, E_ARGUMENT_ERROR, "no block given");
   }
 
-  mrb->c->ci->target_class = mrb_class_ptr(self);
-  return mrb_yield_cont(mrb, blk, self, argc, argv);
+  mrb->c->ci->target_class = _class_ptr(self);
+  return _yield_cont(mrb, blk, self, argc, argv);
 }
 
 void
-mrb_mruby_class_ext_gem_init(mrb_state *mrb)
+_mruby_class_ext_gem_init(_state *mrb)
 {
   struct RClass *mod = mrb->module_class;
 
-  mrb_define_method(mrb, mod, "name", mrb_mod_name, MRB_ARGS_NONE());
-  mrb_define_method(mrb, mod, "singleton_class?", mrb_mod_singleton_class_p, MRB_ARGS_NONE());
-  mrb_define_method(mrb, mod, "module_exec", mrb_mod_module_exec, MRB_ARGS_ANY()|MRB_ARGS_BLOCK());
-  mrb_define_method(mrb, mod, "class_exec", mrb_mod_module_exec, MRB_ARGS_ANY()|MRB_ARGS_BLOCK());
+  _define_method(mrb, mod, "name", _mod_name, MRB_ARGS_NONE());
+  _define_method(mrb, mod, "singleton_class?", _mod_singleton_class_p, MRB_ARGS_NONE());
+  _define_method(mrb, mod, "module_exec", _mod_module_exec, MRB_ARGS_ANY()|MRB_ARGS_BLOCK());
+  _define_method(mrb, mod, "class_exec", _mod_module_exec, MRB_ARGS_ANY()|MRB_ARGS_BLOCK());
 }
 
 void
-mrb_mruby_class_ext_gem_final(mrb_state *mrb)
+_mruby_class_ext_gem_final(_state *mrb)
 {
 }

@@ -3,21 +3,21 @@
 #include <mruby/string.h>
 #include <mruby/istruct.h>
 
-static mrb_value
-istruct_test_initialize(mrb_state *mrb, mrb_value self)
+static _value
+istruct_test_initialize(_state *mrb, _value self)
 {
-  char *string = (char*)mrb_istruct_ptr(self);
-  mrb_int size = mrb_istruct_size();
-  mrb_value object;
-  mrb_get_args(mrb, "o", &object);
+  char *string = (char*)_istruct_ptr(self);
+  _int size = _istruct_size();
+  _value object;
+  _get_args(mrb, "o", &object);
 
-  if (mrb_float_p(object)) {
+  if (_float_p(object)) {
     strncpy(string, "float", size-1);
   }
-  else if (mrb_fixnum_p(object)) {
+  else if (_fixnum_p(object)) {
     strncpy(string, "fixnum", size-1);
   }
-  else if (mrb_string_p(object)) {
+  else if (_string_p(object)) {
     strncpy(string, "string", size-1);
   }
   else {
@@ -28,56 +28,56 @@ istruct_test_initialize(mrb_state *mrb, mrb_value self)
   return self;
 }
 
-static mrb_value
-istruct_test_to_s(mrb_state *mrb, mrb_value self)
+static _value
+istruct_test_to_s(_state *mrb, _value self)
 {
-  return mrb_str_new_cstr(mrb, (const char*)mrb_istruct_ptr(self));
+  return _str_new_cstr(mrb, (const char*)_istruct_ptr(self));
 }
 
-static mrb_value
-istruct_test_length(mrb_state *mrb, mrb_value self)
+static _value
+istruct_test_length(_state *mrb, _value self)
 {
-  return mrb_fixnum_value(mrb_istruct_size());
+  return _fixnum_value(_istruct_size());
 }
 
-static mrb_value
-istruct_test_test_receive(mrb_state *mrb, mrb_value self)
+static _value
+istruct_test_test_receive(_state *mrb, _value self)
 {
-  mrb_value object;
-  mrb_get_args(mrb, "o", &object);
-  if (mrb_obj_class(mrb, object) != mrb_class_get(mrb, "InlineStructTest"))
+  _value object;
+  _get_args(mrb, "o", &object);
+  if (_obj_class(mrb, object) != _class_get(mrb, "InlineStructTest"))
   {
-    mrb_raise(mrb, E_TYPE_ERROR, "Expected InlineStructTest");
+    _raise(mrb, E_TYPE_ERROR, "Expected InlineStructTest");
   }
-  return mrb_bool_value(((char*)mrb_istruct_ptr(object))[0] == 's');
+  return _bool_value(((char*)_istruct_ptr(object))[0] == 's');
 }
 
-static mrb_value
-istruct_test_test_receive_direct(mrb_state *mrb, mrb_value self)
+static _value
+istruct_test_test_receive_direct(_state *mrb, _value self)
 {
   char *ptr;
-  mrb_get_args(mrb, "I", &ptr);
-  return mrb_bool_value(ptr[0] == 's');
+  _get_args(mrb, "I", &ptr);
+  return _bool_value(ptr[0] == 's');
 }
 
-static mrb_value
-istruct_test_mutate(mrb_state *mrb, mrb_value self)
+static _value
+istruct_test_mutate(_state *mrb, _value self)
 {
-  char *ptr = (char*)mrb_istruct_ptr(self);
+  char *ptr = (char*)_istruct_ptr(self);
   memcpy(ptr, "mutate", 6);
-  return mrb_nil_value();
+  return _nil_value();
 }
 
-void mrb_mruby_inline_struct_gem_test(mrb_state *mrb)
+void _mruby_inline_struct_gem_test(_state *mrb)
 {
   struct RClass *cls;
 
-  cls = mrb_define_class(mrb, "InlineStructTest", mrb->object_class);
+  cls = _define_class(mrb, "InlineStructTest", mrb->object_class);
   MRB_SET_INSTANCE_TT(cls, MRB_TT_ISTRUCT);
-  mrb_define_method(mrb, cls, "initialize", istruct_test_initialize, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, cls, "to_s", istruct_test_to_s, MRB_ARGS_NONE());
-  mrb_define_method(mrb, cls, "mutate", istruct_test_mutate, MRB_ARGS_NONE());
-  mrb_define_class_method(mrb, cls, "length", istruct_test_length, MRB_ARGS_NONE());
-  mrb_define_class_method(mrb, cls, "test_receive", istruct_test_test_receive, MRB_ARGS_REQ(1));
-  mrb_define_class_method(mrb, cls, "test_receive_direct", istruct_test_test_receive_direct, MRB_ARGS_REQ(1));
+  _define_method(mrb, cls, "initialize", istruct_test_initialize, MRB_ARGS_REQ(1));
+  _define_method(mrb, cls, "to_s", istruct_test_to_s, MRB_ARGS_NONE());
+  _define_method(mrb, cls, "mutate", istruct_test_mutate, MRB_ARGS_NONE());
+  _define_class_method(mrb, cls, "length", istruct_test_length, MRB_ARGS_NONE());
+  _define_class_method(mrb, cls, "test_receive", istruct_test_test_receive, MRB_ARGS_REQ(1));
+  _define_class_method(mrb, cls, "test_receive_direct", istruct_test_test_receive_direct, MRB_ARGS_REQ(1));
 }

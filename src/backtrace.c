@@ -18,15 +18,15 @@
 struct backtrace_location {
   int lineno;
   const char *filename;
-  mrb_sym method_id;
+  _sym method_id;
 };
 
-typedef void (*each_backtrace_func)(mrb_state*, struct backtrace_location*, void*);
+typedef void (*each_backtrace_func)(_state*, struct backtrace_location*, void*);
 
-static const mrb_data_type bt_type = { "Backtrace", mrb_free };
+static const _data_type bt_type = { "Backtrace", _free };
 
 static void
-each_backtrace(mrb_state *mrb, ptrdiff_t ciidx, mrb_code *pc0, each_backtrace_func func, void *data)
+each_backtrace(_state *mrb, ptrdiff_t ciidx, _code *pc0, each_backtrace_func func, void *data)
 {
   ptrdiff_t i, j;
 
@@ -35,9 +35,9 @@ each_backtrace(mrb_state *mrb, ptrdiff_t ciidx, mrb_code *pc0, each_backtrace_fu
 
   for (i=ciidx, j=0; i >= 0; i--,j++) {
     struct backtrace_location loc;
-    mrb_callinfo *ci;
-    mrb_irep *irep;
-    mrb_code *pc;
+    _callinfo *ci;
+    _irep *irep;
+    _code *pc;
 
     ci = &mrb->c->cibase[i];
 
@@ -57,8 +57,8 @@ each_backtrace(mrb_state *mrb, ptrdiff_t ciidx, mrb_code *pc0, each_backtrace_fu
     else {
       pc = pc0;
     }
-    loc.filename = mrb_debug_get_filename(irep, pc - irep->iseq);
-    loc.lineno = mrb_debug_get_line(irep, pc - irep->iseq);
+    loc.filename = _debug_get_filename(irep, pc - irep->iseq);
+    loc.lineno = _debug_get_line(irep, pc - irep->iseq);
 
     if (loc.lineno == -1) continue;
 
@@ -74,22 +74,22 @@ each_backtrace(mrb_state *mrb, ptrdiff_t ciidx, mrb_code *pc0, each_backtrace_fu
 #ifndef MRB_DISABLE_STDIO
 
 static void
-print_backtrace(mrb_state *mrb, mrb_value backtrace)
+print_backtrace(_state *mrb, _value backtrace)
 {
   int i;
-  mrb_int n;
+  _int n;
   FILE *stream = stderr;
 
-  if (!mrb_array_p(backtrace)) return;
+  if (!_array_p(backtrace)) return;
 
   n = RARRAY_LEN(backtrace) - 1;
   if (n == 0) return;
 
   fprintf(stream, "trace (most recent call last):\n");
   for (i=0; i<n; i++) {
-    mrb_value entry = RARRAY_PTR(backtrace)[n-i-1];
+    _value entry = RARRAY_PTR(backtrace)[n-i-1];
 
-    if (mrb_string_p(entry)) {
+    if (_string_p(entry)) {
       fprintf(stream, "\t[%d] %.*s\n", i, (int)RSTRING_LEN(entry), RSTRING_PTR(entry));
     }
   }
@@ -110,16 +110,16 @@ packed_bt_len(struct backtrace_location *bt, int n)
 }
 
 static void
-print_packed_backtrace(mrb_state *mrb, mrb_value packed)
+print_packed_backtrace(_state *mrb, _value packed)
 {
   FILE *stream = stderr;
   struct backtrace_location *bt;
   int n, i;
-  int ai = mrb_gc_arena_save(mrb);
+  int ai = _gc_arena_save(mrb);
 
-  bt = (struct backtrace_location*)mrb_data_check_get_ptr(mrb, packed, &bt_type);
+  bt = (struct backtrace_location*)_data_check_get_ptr(mrb, packed, &bt_type);
   if (bt == NULL) return;
-  n = (mrb_int)RDATA(packed)->flags;
+  n = (_int)RDATA(packed)->flags;
 
   if (packed_bt_len(bt, n) == 0) return;
   fprintf(stream, "trace (most recent call last):\n");
@@ -130,31 +130,31 @@ print_packed_backtrace(mrb_state *mrb, mrb_value packed)
     if (entry->method_id != 0) {
       const char *method_name;
 
-      method_name = mrb_sym2name(mrb, entry->method_id);
+      method_name = _sym2name(mrb, entry->method_id);
       fprintf(stream, ":in %s", method_name);
-      mrb_gc_arena_restore(mrb, ai);
+      _gc_arena_restore(mrb, ai);
     }
     fprintf(stream, "\n");
   }
 }
 
-/* mrb_print_backtrace
+/* _print_backtrace
 
    function to retrieve backtrace information from the last exception.
 */
 
 MRB_API void
-mrb_print_backtrace(mrb_state *mrb)
+_print_backtrace(_state *mrb)
 {
-  mrb_value backtrace;
+  _value backtrace;
 
   if (!mrb->exc) {
     return;
   }
 
-  backtrace = mrb_obj_iv_get(mrb, mrb->exc, mrb_intern_lit(mrb, "backtrace"));
-  if (mrb_nil_p(backtrace)) return;
-  if (mrb_array_p(backtrace)) {
+  backtrace = _obj_iv_get(mrb, mrb->exc, _intern_lit(mrb, "backtrace"));
+  if (_nil_p(backtrace)) return;
+  if (_array_p(backtrace)) {
     print_backtrace(mrb, backtrace);
   }
   else {
@@ -164,14 +164,14 @@ mrb_print_backtrace(mrb_state *mrb)
 #else
 
 MRB_API void
-mrb_print_backtrace(mrb_state *mrb)
+_print_backtrace(_state *mrb)
 {
 }
 
 #endif
 
 static void
-count_backtrace_i(mrb_state *mrb,
+count_backtrace_i(_state *mrb,
                  struct backtrace_location *loc,
                  void *data)
 {
@@ -182,7 +182,7 @@ count_backtrace_i(mrb_state *mrb,
 }
 
 static void
-pack_backtrace_i(mrb_state *mrb,
+pack_backtrace_i(_state *mrb,
                  struct backtrace_location *loc,
                  void *data)
 {
@@ -194,8 +194,8 @@ pack_backtrace_i(mrb_state *mrb,
   *pptr = ptr+1;
 }
 
-static mrb_value
-packed_backtrace(mrb_state *mrb)
+static _value
+packed_backtrace(_state *mrb)
 {
   struct RData *backtrace;
   ptrdiff_t ciidx = mrb->c->ci - mrb->c->cibase;
@@ -205,82 +205,82 @@ packed_backtrace(mrb_state *mrb)
 
   each_backtrace(mrb, ciidx, mrb->c->ci->pc, count_backtrace_i, &len);
   size = len * sizeof(struct backtrace_location);
-  ptr = mrb_malloc(mrb, size);
+  ptr = _malloc(mrb, size);
   if (ptr) memset(ptr, 0, size);
-  backtrace = mrb_data_object_alloc(mrb, NULL, ptr, &bt_type);
+  backtrace = _data_object_alloc(mrb, NULL, ptr, &bt_type);
   backtrace->flags = (unsigned int)len;
   each_backtrace(mrb, ciidx, mrb->c->ci->pc, pack_backtrace_i, &ptr);
-  return mrb_obj_value(backtrace);
+  return _obj_value(backtrace);
 }
 
 void
-mrb_keep_backtrace(mrb_state *mrb, mrb_value exc)
+_keep_backtrace(_state *mrb, _value exc)
 {
-  mrb_sym sym = mrb_intern_lit(mrb, "backtrace");
-  mrb_value backtrace;
+  _sym sym = _intern_lit(mrb, "backtrace");
+  _value backtrace;
   int ai;
 
-  if (mrb_iv_defined(mrb, exc, sym)) return;
-  ai = mrb_gc_arena_save(mrb);
+  if (_iv_defined(mrb, exc, sym)) return;
+  ai = _gc_arena_save(mrb);
   backtrace = packed_backtrace(mrb);
-  mrb_iv_set(mrb, exc, sym, backtrace);
-  mrb_gc_arena_restore(mrb, ai);
+  _iv_set(mrb, exc, sym, backtrace);
+  _gc_arena_restore(mrb, ai);
 }
 
-mrb_value
-mrb_unpack_backtrace(mrb_state *mrb, mrb_value backtrace)
+_value
+_unpack_backtrace(_state *mrb, _value backtrace)
 {
   struct backtrace_location *bt;
-  mrb_int n, i;
+  _int n, i;
   int ai;
 
-  if (mrb_nil_p(backtrace)) {
+  if (_nil_p(backtrace)) {
   empty_backtrace:
-    return mrb_ary_new_capa(mrb, 0);
+    return _ary_new_capa(mrb, 0);
   }
-  if (mrb_array_p(backtrace)) return backtrace;
-  bt = (struct backtrace_location*)mrb_data_check_get_ptr(mrb, backtrace, &bt_type);
+  if (_array_p(backtrace)) return backtrace;
+  bt = (struct backtrace_location*)_data_check_get_ptr(mrb, backtrace, &bt_type);
   if (bt == NULL) goto empty_backtrace;
-  n = (mrb_int)RDATA(backtrace)->flags;
-  backtrace = mrb_ary_new_capa(mrb, n);
-  ai = mrb_gc_arena_save(mrb);
+  n = (_int)RDATA(backtrace)->flags;
+  backtrace = _ary_new_capa(mrb, n);
+  ai = _gc_arena_save(mrb);
   for (i = 0; i < n; i++) {
     struct backtrace_location *entry = &bt[i];
-    mrb_value btline;
+    _value btline;
 
     if (entry->filename == NULL) continue;
-    btline = mrb_format(mrb, "%S:%S",
-                              mrb_str_new_cstr(mrb, entry->filename),
-                              mrb_fixnum_value(entry->lineno));
+    btline = _format(mrb, "%S:%S",
+                              _str_new_cstr(mrb, entry->filename),
+                              _fixnum_value(entry->lineno));
     if (entry->method_id != 0) {
-      mrb_str_cat_lit(mrb, btline, ":in ");
-      mrb_str_cat_cstr(mrb, btline, mrb_sym2name(mrb, entry->method_id));
+      _str_cat_lit(mrb, btline, ":in ");
+      _str_cat_cstr(mrb, btline, _sym2name(mrb, entry->method_id));
     }
-    mrb_ary_push(mrb, backtrace, btline);
-    mrb_gc_arena_restore(mrb, ai);
+    _ary_push(mrb, backtrace, btline);
+    _gc_arena_restore(mrb, ai);
   }
 
   return backtrace;
 }
 
-MRB_API mrb_value
-mrb_exc_backtrace(mrb_state *mrb, mrb_value exc)
+MRB_API _value
+_exc_backtrace(_state *mrb, _value exc)
 {
-  mrb_sym attr_name;
-  mrb_value backtrace;
+  _sym attr_name;
+  _value backtrace;
 
-  attr_name = mrb_intern_lit(mrb, "backtrace");
-  backtrace = mrb_iv_get(mrb, exc, attr_name);
-  if (mrb_nil_p(backtrace) || mrb_array_p(backtrace)) {
+  attr_name = _intern_lit(mrb, "backtrace");
+  backtrace = _iv_get(mrb, exc, attr_name);
+  if (_nil_p(backtrace) || _array_p(backtrace)) {
     return backtrace;
   }
-  backtrace = mrb_unpack_backtrace(mrb, backtrace);
-  mrb_iv_set(mrb, exc, attr_name, backtrace);
+  backtrace = _unpack_backtrace(mrb, backtrace);
+  _iv_set(mrb, exc, attr_name, backtrace);
   return backtrace;
 }
 
-MRB_API mrb_value
-mrb_get_backtrace(mrb_state *mrb)
+MRB_API _value
+_get_backtrace(_state *mrb)
 {
-  return mrb_unpack_backtrace(mrb, packed_backtrace(mrb));
+  return _unpack_backtrace(mrb, packed_backtrace(mrb));
 }

@@ -21,12 +21,12 @@ struct RHash {
   struct seglist *ht;
 };
 
-#define mrb_hash_ptr(v)    ((struct RHash*)(mrb_ptr(v)))
-#define mrb_hash_value(p)  mrb_obj_value((void*)(p))
+#define _hash_ptr(v)    ((struct RHash*)(_ptr(v)))
+#define _hash_value(p)  _obj_value((void*)(p))
 
-MRB_API mrb_value mrb_hash_new_capa(mrb_state*, mrb_int);
-MRB_API mrb_value mrb_ensure_hash_type(mrb_state *mrb, mrb_value hash);
-MRB_API mrb_value mrb_check_hash_type(mrb_state *mrb, mrb_value hash);
+MRB_API _value _hash_new_capa(_state*, _int);
+MRB_API _value _ensure_hash_type(_state *mrb, _value hash);
+MRB_API _value _check_hash_type(_state *mrb, _value hash);
 
 /*
  * Initializes a new hash.
@@ -38,7 +38,7 @@ MRB_API mrb_value mrb_check_hash_type(mrb_state *mrb, mrb_value hash);
  * @param mrb The mruby state reference.
  * @return The initialized hash.
  */
-MRB_API mrb_value mrb_hash_new(mrb_state *mrb);
+MRB_API _value _hash_new(_state *mrb);
 
 /*
  * Sets a keys and values to hashes.
@@ -53,7 +53,7 @@ MRB_API mrb_value mrb_hash_new(mrb_state *mrb);
  * @param val The value to set.
  * @return The value.
  */
-MRB_API void mrb_hash_set(mrb_state *mrb, mrb_value hash, mrb_value key, mrb_value val);
+MRB_API void _hash_set(_state *mrb, _value hash, _value key, _value val);
 
 /*
  * Gets a value from a key. If the key is not found, the default of the
@@ -68,7 +68,7 @@ MRB_API void mrb_hash_set(mrb_state *mrb, mrb_value hash, mrb_value key, mrb_val
  * @param key The key to get.
  * @return The found value.
  */
-MRB_API mrb_value mrb_hash_get(mrb_state *mrb, mrb_value hash, mrb_value key);
+MRB_API _value _hash_get(_state *mrb, _value hash, _value key);
 
 /*
  * Gets a value from a key. If the key is not found, the default parameter is
@@ -84,7 +84,7 @@ MRB_API mrb_value mrb_hash_get(mrb_state *mrb, mrb_value hash, mrb_value key);
  * @param def The default value.
  * @return The found value.
  */
-MRB_API mrb_value mrb_hash_fetch(mrb_state *mrb, mrb_value hash, mrb_value key, mrb_value def);
+MRB_API _value _hash_fetch(_state *mrb, _value hash, _value key, _value def);
 
 /*
  * Deletes hash key and value pair.
@@ -98,7 +98,7 @@ MRB_API mrb_value mrb_hash_fetch(mrb_state *mrb, mrb_value hash, mrb_value key, 
  * @param key The key to delete.
  * @return The deleted value.
  */
-MRB_API mrb_value mrb_hash_delete_key(mrb_state *mrb, mrb_value hash, mrb_value key);
+MRB_API _value _hash_delete_key(_state *mrb, _value hash, _value key);
 
 /*
  * Gets an array of keys.
@@ -111,7 +111,7 @@ MRB_API mrb_value mrb_hash_delete_key(mrb_state *mrb, mrb_value hash, mrb_value 
  * @param hash The target hash.
  * @return An array with the keys of the hash.
  */
-MRB_API mrb_value mrb_hash_keys(mrb_state *mrb, mrb_value hash);
+MRB_API _value _hash_keys(_state *mrb, _value hash);
 /*
  * Check if the hash has the key.
  *
@@ -124,7 +124,7 @@ MRB_API mrb_value mrb_hash_keys(mrb_state *mrb, mrb_value hash);
  * @param key The key to check existence.
  * @return True if the hash has the key
  */
-MRB_API mrb_bool mrb_hash_key_p(mrb_state *mrb, mrb_value hash, mrb_value key);
+MRB_API _bool _hash_key_p(_state *mrb, _value hash, _value key);
 
 /*
  * Check if the hash is empty
@@ -137,7 +137,7 @@ MRB_API mrb_bool mrb_hash_key_p(mrb_state *mrb, mrb_value hash, mrb_value key);
  * @param self The target hash.
  * @return True if the hash is empty, false otherwise.
  */
-MRB_API mrb_bool mrb_hash_empty_p(mrb_state *mrb, mrb_value self);
+MRB_API _bool _hash_empty_p(_state *mrb, _value self);
 
 /*
  * Gets an array of values.
@@ -150,7 +150,7 @@ MRB_API mrb_bool mrb_hash_empty_p(mrb_state *mrb, mrb_value self);
  * @param hash The target hash.
  * @return An array with the values of the hash.
  */
-MRB_API mrb_value mrb_hash_values(mrb_state *mrb, mrb_value hash);
+MRB_API _value _hash_values(_state *mrb, _value hash);
 
 /*
  * Clears the hash.
@@ -163,7 +163,7 @@ MRB_API mrb_value mrb_hash_values(mrb_state *mrb, mrb_value hash);
  * @param hash The target hash.
  * @return The hash
  */
-MRB_API mrb_value mrb_hash_clear(mrb_state *mrb, mrb_value hash);
+MRB_API _value _hash_clear(_state *mrb, _value hash);
 
 /*
  * Copies the hash.
@@ -173,7 +173,7 @@ MRB_API mrb_value mrb_hash_clear(mrb_state *mrb, mrb_value hash);
  * @param hash The target hash.
  * @return The copy of the hash
  */
-MRB_API mrb_value mrb_hash_dup(mrb_state *mrb, mrb_value hash);
+MRB_API _value _hash_dup(_state *mrb, _value hash);
 
 /*
  * Merges two hashes. The first hash will be modified by the
@@ -183,21 +183,21 @@ MRB_API mrb_value mrb_hash_dup(mrb_state *mrb, mrb_value hash);
  * @param hash1 The target hash.
  * @param hash2 Updating hash
  */
-MRB_API void mrb_hash_merge(mrb_state *mrb, mrb_value hash1, mrb_value hash2);
+MRB_API void _hash_merge(_state *mrb, _value hash1, _value hash2);
 
 /* declaration of struct kh_ht */
 /* be careful when you touch the internal */
 typedef struct {
-  mrb_value v;
-  mrb_int n;
-} mrb_hash_value;
+  _value v;
+  _int n;
+} _hash_value;
 
-KHASH_DECLARE(ht, mrb_value, mrb_hash_value, TRUE)
+KHASH_DECLARE(ht, _value, _hash_value, TRUE)
 
 /* RHASH_TBL allocates st_table if not available. */
-#define RHASH(obj)   ((struct RHash*)(mrb_ptr(obj)))
+#define RHASH(obj)   ((struct RHash*)(_ptr(obj)))
 #define RHASH_TBL(h)          (RHASH(h)->ht)
-#define RHASH_IFNONE(h)       mrb_iv_get(mrb, (h), mrb_intern_lit(mrb, "ifnone"))
+#define RHASH_IFNONE(h)       _iv_get(mrb, (h), _intern_lit(mrb, "ifnone"))
 #define RHASH_PROCDEFAULT(h)  RHASH_IFNONE(h)
 
 #define MRB_HASH_DEFAULT      1
@@ -206,9 +206,9 @@ KHASH_DECLARE(ht, mrb_value, mrb_hash_value, TRUE)
 #define MRB_RHASH_PROCDEFAULT_P(h) (RHASH(h)->flags & MRB_HASH_PROC_DEFAULT)
 
 /* GC functions */
-void mrb_gc_mark_hash(mrb_state*, struct RHash*);
-size_t mrb_gc_mark_hash_size(mrb_state*, struct RHash*);
-void mrb_gc_free_hash(mrb_state*, struct RHash*);
+void _gc_mark_hash(_state*, struct RHash*);
+size_t _gc_mark_hash_size(_state*, struct RHash*);
+void _gc_free_hash(_state*, struct RHash*);
 
 MRB_END_DECL
 

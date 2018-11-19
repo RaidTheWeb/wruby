@@ -32,8 +32,8 @@
 #pragma warning(disable : 4200)
 #endif
 
-struct mrb_pool_page {
-  struct mrb_pool_page *next;
+struct _pool_page {
+  struct _pool_page *next;
   size_t offset;
   size_t len;
   void *last;
@@ -44,16 +44,16 @@ struct mrb_pool_page {
 #pragma warning(pop)
 #endif
 
-struct mrb_pool {
-  mrb_state *mrb;
-  struct mrb_pool_page *pages;
+struct _pool {
+  _state *mrb;
+  struct _pool_page *pages;
 };
 
 #undef TEST_POOL
 #ifdef TEST_POOL
 
-#define mrb_malloc_simple(m,s) malloc(s)
-#define mrb_free(m,p) free(p)
+#define _malloc_simple(m,s) malloc(s)
+#define _free(m,p) free(p)
 #endif
 
 #ifdef POOL_ALIGNMENT
@@ -62,10 +62,10 @@ struct mrb_pool {
 #  define ALIGN_PADDING(x) (0)
 #endif
 
-MRB_API mrb_pool*
-mrb_pool_open(mrb_state *mrb)
+MRB_API _pool*
+_pool_open(_state *mrb)
 {
-  mrb_pool *pool = (mrb_pool *)mrb_malloc_simple(mrb, sizeof(mrb_pool));
+  _pool *pool = (_pool *)_malloc_simple(mrb, sizeof(_pool));
 
   if (pool) {
     pool->mrb = mrb;
@@ -76,28 +76,28 @@ mrb_pool_open(mrb_state *mrb)
 }
 
 MRB_API void
-mrb_pool_close(mrb_pool *pool)
+_pool_close(_pool *pool)
 {
-  struct mrb_pool_page *page, *tmp;
+  struct _pool_page *page, *tmp;
 
   if (!pool) return;
   page = pool->pages;
   while (page) {
     tmp = page;
     page = page->next;
-    mrb_free(pool->mrb, tmp);
+    _free(pool->mrb, tmp);
   }
-  mrb_free(pool->mrb, pool);
+  _free(pool->mrb, pool);
 }
 
-static struct mrb_pool_page*
-page_alloc(mrb_pool *pool, size_t len)
+static struct _pool_page*
+page_alloc(_pool *pool, size_t len)
 {
-  struct mrb_pool_page *page;
+  struct _pool_page *page;
 
   if (len < POOL_PAGE_SIZE)
     len = POOL_PAGE_SIZE;
-  page = (struct mrb_pool_page *)mrb_malloc_simple(pool->mrb, sizeof(struct mrb_pool_page)+len);
+  page = (struct _pool_page *)_malloc_simple(pool->mrb, sizeof(struct _pool_page)+len);
   if (page) {
     page->offset = 0;
     page->len = len;
@@ -107,9 +107,9 @@ page_alloc(mrb_pool *pool, size_t len)
 }
 
 MRB_API void*
-mrb_pool_alloc(mrb_pool *pool, size_t len)
+_pool_alloc(_pool *pool, size_t len)
 {
-  struct mrb_pool_page *page;
+  struct _pool_page *page;
   size_t n;
 
   if (!pool) return NULL;
@@ -134,10 +134,10 @@ mrb_pool_alloc(mrb_pool *pool, size_t len)
   return page->last;
 }
 
-MRB_API mrb_bool
-mrb_pool_can_realloc(mrb_pool *pool, void *p, size_t len)
+MRB_API _bool
+_pool_can_realloc(_pool *pool, void *p, size_t len)
 {
-  struct mrb_pool_page *page;
+  struct _pool_page *page;
 
   if (!pool) return FALSE;
   len += ALIGN_PADDING(len);
@@ -156,9 +156,9 @@ mrb_pool_can_realloc(mrb_pool *pool, void *p, size_t len)
 }
 
 MRB_API void*
-mrb_pool_realloc(mrb_pool *pool, void *p, size_t oldlen, size_t newlen)
+_pool_realloc(_pool *pool, void *p, size_t oldlen, size_t newlen)
 {
-  struct mrb_pool_page *page;
+  struct _pool_page *page;
   void *np;
 
   if (!pool) return NULL;
@@ -180,7 +180,7 @@ mrb_pool_realloc(mrb_pool *pool, void *p, size_t oldlen, size_t newlen)
     }
     page = page->next;
   }
-  np = mrb_pool_alloc(pool, newlen);
+  np = _pool_alloc(pool, newlen);
   if (np == NULL) {
     return NULL;
   }
@@ -193,17 +193,17 @@ int
 main(void)
 {
   int i, len = 250;
-  mrb_pool *pool;
+  _pool *pool;
   void *p;
 
-  pool = mrb_pool_open(NULL);
-  p = mrb_pool_alloc(pool, len);
+  pool = _pool_open(NULL);
+  p = _pool_alloc(pool, len);
   for (i=1; i<20; i++) {
-    printf("%p (len=%d) %ud\n", p, len, mrb_pool_can_realloc(pool, p, len*2));
-    p = mrb_pool_realloc(pool, p, len, len*2);
+    printf("%p (len=%d) %ud\n", p, len, _pool_can_realloc(pool, p, len*2));
+    p = _pool_realloc(pool, p, len, len*2);
     len *= 2;
   }
-  mrb_pool_close(pool);
+  _pool_close(pool);
   return 0;
 }
 #endif

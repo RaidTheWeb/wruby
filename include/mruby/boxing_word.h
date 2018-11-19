@@ -1,5 +1,5 @@
 /*
-** mruby/boxing_word.h - word boxing mrb_value definition
+** mruby/boxing_word.h - word boxing _value definition
 **
 ** See Copyright Notice in mruby.h
 */
@@ -18,7 +18,7 @@
 #ifndef MRB_WITHOUT_FLOAT
 struct RFloat {
   MRB_OBJECT_HEADER;
-  mrb_float f;
+  _float f;
 };
 #endif
 
@@ -34,7 +34,7 @@ struct RCptr {
 #define MRB_TT_HAS_BASIC MRB_TT_FLOAT
 #endif
 
-enum mrb_special_consts {
+enum _special_consts {
   MRB_Qnil    = 0,
   MRB_Qfalse  = 2,
   MRB_Qtrue   = 4,
@@ -46,23 +46,23 @@ enum mrb_special_consts {
 #define MRB_SPECIAL_SHIFT 8
 
 #if defined(MRB_64BIT)
-#define MRB_SYMBOL_BITSIZE  (sizeof(mrb_sym) * CHAR_BIT)
+#define MRB_SYMBOL_BITSIZE  (sizeof(_sym) * CHAR_BIT)
 #define MRB_SYMBOL_MAX      UINT32_MAX
 #else
-#define MRB_SYMBOL_BITSIZE  (sizeof(mrb_sym) * CHAR_BIT - MRB_SPECIAL_SHIFT)
+#define MRB_SYMBOL_BITSIZE  (sizeof(_sym) * CHAR_BIT - MRB_SPECIAL_SHIFT)
 #define MRB_SYMBOL_MAX      (UINT32_MAX >> MRB_SPECIAL_SHIFT)
 #endif
 
-typedef union mrb_value {
+typedef union _value {
   union {
     void *p;
     struct {
       unsigned int i_flag : MRB_FIXNUM_SHIFT;
-      mrb_int i : (MRB_INT_BIT - MRB_FIXNUM_SHIFT);
+      _int i : (MRB_INT_BIT - MRB_FIXNUM_SHIFT);
     };
     struct {
       unsigned int sym_flag : MRB_SPECIAL_SHIFT;
-      mrb_sym sym : MRB_SYMBOL_BITSIZE;
+      _sym sym : MRB_SYMBOL_BITSIZE;
     };
     struct RBasic *bp;
 #ifndef MRB_WITHOUT_FLOAT
@@ -71,28 +71,28 @@ typedef union mrb_value {
     struct RCptr *vp;
   } value;
   unsigned long w;
-} mrb_value;
+} _value;
 
-MRB_API mrb_value mrb_word_boxing_cptr_value(struct mrb_state*, void*);
+MRB_API _value _word_boxing_cptr_value(struct _state*, void*);
 #ifndef MRB_WITHOUT_FLOAT
-MRB_API mrb_value mrb_word_boxing_float_value(struct mrb_state*, mrb_float);
-MRB_API mrb_value mrb_word_boxing_float_pool(struct mrb_state*, mrb_float);
+MRB_API _value _word_boxing_float_value(struct _state*, _float);
+MRB_API _value _word_boxing_float_pool(struct _state*, _float);
 #endif
 
 #ifndef MRB_WITHOUT_FLOAT
-#define mrb_float_pool(mrb,f) mrb_word_boxing_float_pool(mrb,f)
+#define _float_pool(mrb,f) _word_boxing_float_pool(mrb,f)
 #endif
 
-#define mrb_ptr(o)     (o).value.p
-#define mrb_cptr(o)    (o).value.vp->p
+#define _ptr(o)     (o).value.p
+#define _cptr(o)    (o).value.vp->p
 #ifndef MRB_WITHOUT_FLOAT
-#define mrb_float(o)   (o).value.fp->f
+#define _float(o)   (o).value.fp->f
 #endif
-#define mrb_fixnum(o)  ((mrb_int)(o).value.i)
-#define mrb_symbol(o)  (o).value.sym
+#define _fixnum(o)  ((_int)(o).value.i)
+#define _symbol(o)  (o).value.sym
 
-static inline enum mrb_vtype
-mrb_type(mrb_value o)
+static inline enum _vtype
+_type(_value o)
 {
   switch (o.w) {
   case MRB_Qfalse:
@@ -112,10 +112,10 @@ mrb_type(mrb_value o)
   return o.value.bp->tt;
 }
 
-#define mrb_bool(o)    ((o).w != MRB_Qnil && (o).w != MRB_Qfalse)
-#define mrb_fixnum_p(o) ((o).value.i_flag == MRB_FIXNUM_FLAG)
-#define mrb_undef_p(o) ((o).w == MRB_Qundef)
-#define mrb_nil_p(o)  ((o).w == MRB_Qnil)
+#define _bool(o)    ((o).w != MRB_Qnil && (o).w != MRB_Qfalse)
+#define _fixnum_p(o) ((o).value.i_flag == MRB_FIXNUM_FLAG)
+#define _undef_p(o) ((o).w == MRB_Qundef)
+#define _nil_p(o)  ((o).w == MRB_Qnil)
 
 #define BOXWORD_SET_VALUE(o, ttt, attr, v) do { \
   switch (ttt) {\
@@ -129,9 +129,9 @@ mrb_type(mrb_value o)
 } while (0)
 
 #ifndef MRB_WITHOUT_FLOAT
-#define SET_FLOAT_VALUE(mrb,r,v) r = mrb_word_boxing_float_value(mrb, v)
+#define SET_FLOAT_VALUE(mrb,r,v) r = _word_boxing_float_value(mrb, v)
 #endif
-#define SET_CPTR_VALUE(mrb,r,v) r = mrb_word_boxing_cptr_value(mrb, v)
+#define SET_CPTR_VALUE(mrb,r,v) r = _word_boxing_cptr_value(mrb, v)
 #define SET_NIL_VALUE(r) BOXWORD_SET_VALUE(r, MRB_TT_FALSE, value.i, 0)
 #define SET_FALSE_VALUE(r) BOXWORD_SET_VALUE(r, MRB_TT_FALSE, value.i, 1)
 #define SET_TRUE_VALUE(r) BOXWORD_SET_VALUE(r, MRB_TT_TRUE, value.i, 1)

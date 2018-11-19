@@ -22,14 +22,14 @@ typedef struct symbol_name {
  *                                     :Tms, :getwd, :$=, :ThreadGroup,
  *                                     :wait2, :$>]
  */
-static mrb_value
-mrb_sym_all_symbols(mrb_state *mrb, mrb_value self)
+static _value
+_sym_all_symbols(_state *mrb, _value self)
 {
-  mrb_sym i, lim;
-  mrb_value ary = mrb_ary_new_capa(mrb, mrb->symidx);
+  _sym i, lim;
+  _value ary = _ary_new_capa(mrb, mrb->symidx);
 
   for (i=1, lim=mrb->symidx+1; i<lim; i++) {
-    mrb_ary_push(mrb, ary, mrb_symbol_value(i));
+    _ary_push(mrb, ary, _symbol_value(i));
   }
 
   return ary;
@@ -41,24 +41,24 @@ mrb_sym_all_symbols(mrb_state *mrb, mrb_value self)
  *
  * Same as <code>sym.to_s.length</code>.
  */
-static mrb_value
-mrb_sym_length(mrb_state *mrb, mrb_value self)
+static _value
+_sym_length(_state *mrb, _value self)
 {
-  mrb_int len;
-  mrb_sym2name_len(mrb, mrb_symbol(self), &len);
-  return mrb_fixnum_value(len);
+  _int len;
+  _sym2name_len(mrb, _symbol(self), &len);
+  return _fixnum_value(len);
 }
 
 void
-mrb_mruby_symbol_ext_gem_init(mrb_state* mrb)
+_mruby_symbol_ext_gem_init(_state* mrb)
 {
   struct RClass *s = mrb->symbol_class;
-  mrb_define_class_method(mrb, s, "all_symbols", mrb_sym_all_symbols, MRB_ARGS_NONE());
-  mrb_define_method(mrb, s, "length", mrb_sym_length, MRB_ARGS_NONE());
-  mrb_define_method(mrb, s, "size", mrb_sym_length, MRB_ARGS_NONE());
+  _define_class_method(mrb, s, "all_symbols", _sym_all_symbols, MRB_ARGS_NONE());
+  _define_method(mrb, s, "length", _sym_length, MRB_ARGS_NONE());
+  _define_method(mrb, s, "size", _sym_length, MRB_ARGS_NONE());
 }
 
 void
-mrb_mruby_symbol_ext_gem_final(mrb_state* mrb)
+_mruby_symbol_ext_gem_final(_state* mrb)
 {
 }

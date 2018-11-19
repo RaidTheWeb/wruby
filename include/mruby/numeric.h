@@ -19,27 +19,27 @@ MRB_BEGIN_DECL
 #define TYPED_POSFIXABLE(f,t) ((f) <= (t)MRB_INT_MAX)
 #define TYPED_NEGFIXABLE(f,t) ((f) >= (t)MRB_INT_MIN)
 #define TYPED_FIXABLE(f,t) (TYPED_POSFIXABLE(f,t) && TYPED_NEGFIXABLE(f,t))
-#define POSFIXABLE(f) TYPED_POSFIXABLE(f,mrb_int)
-#define NEGFIXABLE(f) TYPED_NEGFIXABLE(f,mrb_int)
-#define FIXABLE(f) TYPED_FIXABLE(f,mrb_int)
+#define POSFIXABLE(f) TYPED_POSFIXABLE(f,_int)
+#define NEGFIXABLE(f) TYPED_NEGFIXABLE(f,_int)
+#define FIXABLE(f) TYPED_FIXABLE(f,_int)
 #ifndef MRB_WITHOUT_FLOAT
 #define FIXABLE_FLOAT(f) TYPED_FIXABLE(f,double)
 #endif
 
 #ifndef MRB_WITHOUT_FLOAT
-MRB_API mrb_value mrb_flo_to_fixnum(mrb_state *mrb, mrb_value val);
+MRB_API _value _flo_to_fixnum(_state *mrb, _value val);
 #endif
-MRB_API mrb_value mrb_fixnum_to_str(mrb_state *mrb, mrb_value x, mrb_int base);
+MRB_API _value _fixnum_to_str(_state *mrb, _value x, _int base);
 /* ArgumentError if format string doesn't match /%(\.[0-9]+)?[aAeEfFgG]/ */
 #ifndef MRB_WITHOUT_FLOAT
-MRB_API mrb_value mrb_float_to_str(mrb_state *mrb, mrb_value x, const char *fmt);
-MRB_API mrb_float mrb_to_flo(mrb_state *mrb, mrb_value x);
+MRB_API _value _float_to_str(_state *mrb, _value x, const char *fmt);
+MRB_API _float _to_flo(_state *mrb, _value x);
 #endif
 
-mrb_value mrb_fixnum_plus(mrb_state *mrb, mrb_value x, mrb_value y);
-mrb_value mrb_fixnum_minus(mrb_state *mrb, mrb_value x, mrb_value y);
-mrb_value mrb_fixnum_mul(mrb_state *mrb, mrb_value x, mrb_value y);
-mrb_value mrb_num_div(mrb_state *mrb, mrb_value x, mrb_value y);
+_value _fixnum_plus(_state *mrb, _value x, _value y);
+_value _fixnum_minus(_state *mrb, _value x, _value y);
+_value _fixnum_mul(_state *mrb, _value x, _value y);
+_value _num_div(_state *mrb, _value x, _value y);
 
 #ifndef __has_builtin
   #define __has_builtin(x) 0
@@ -72,20 +72,20 @@ mrb_value mrb_num_div(mrb_state *mrb, mrb_value x, mrb_value y);
 # define WBCHK(x) !FIXABLE(x)
 #endif
 
-static inline mrb_bool
-mrb_int_add_overflow(mrb_int augend, mrb_int addend, mrb_int *sum)
+static inline _bool
+_int_add_overflow(_int augend, _int addend, _int *sum)
 {
   return __builtin_add_overflow(augend, addend, sum) || WBCHK(*sum);
 }
 
-static inline mrb_bool
-mrb_int_sub_overflow(mrb_int minuend, mrb_int subtrahend, mrb_int *difference)
+static inline _bool
+_int_sub_overflow(_int minuend, _int subtrahend, _int *difference)
 {
   return __builtin_sub_overflow(minuend, subtrahend, difference) || WBCHK(*difference);
 }
 
-static inline mrb_bool
-mrb_int_mul_overflow(mrb_int multiplier, mrb_int multiplicand, mrb_int *product)
+static inline _bool
+_int_mul_overflow(_int multiplier, _int multiplicand, _int *product)
 {
   return __builtin_mul_overflow(multiplier, multiplicand, product) || WBCHK(*product);
 }
@@ -96,36 +96,36 @@ mrb_int_mul_overflow(mrb_int multiplier, mrb_int multiplicand, mrb_int *product)
 
 #define MRB_UINT_MAKE2(n) uint ## n ## _t
 #define MRB_UINT_MAKE(n) MRB_UINT_MAKE2(n)
-#define mrb_uint MRB_UINT_MAKE(MRB_INT_BIT)
+#define _uint MRB_UINT_MAKE(MRB_INT_BIT)
 
-#define MRB_INT_OVERFLOW_MASK ((mrb_uint)1 << (MRB_INT_BIT - 1 - MRB_FIXNUM_SHIFT))
+#define MRB_INT_OVERFLOW_MASK ((_uint)1 << (MRB_INT_BIT - 1 - MRB_FIXNUM_SHIFT))
 
-static inline mrb_bool
-mrb_int_add_overflow(mrb_int augend, mrb_int addend, mrb_int *sum)
+static inline _bool
+_int_add_overflow(_int augend, _int addend, _int *sum)
 {
-  mrb_uint x = (mrb_uint)augend;
-  mrb_uint y = (mrb_uint)addend;
-  mrb_uint z = (mrb_uint)(x + y);
-  *sum = (mrb_int)z;
+  _uint x = (_uint)augend;
+  _uint y = (_uint)addend;
+  _uint z = (_uint)(x + y);
+  *sum = (_int)z;
   return !!(((x ^ z) & (y ^ z)) & MRB_INT_OVERFLOW_MASK);
 }
 
-static inline mrb_bool
-mrb_int_sub_overflow(mrb_int minuend, mrb_int subtrahend, mrb_int *difference)
+static inline _bool
+_int_sub_overflow(_int minuend, _int subtrahend, _int *difference)
 {
-  mrb_uint x = (mrb_uint)minuend;
-  mrb_uint y = (mrb_uint)subtrahend;
-  mrb_uint z = (mrb_uint)(x - y);
-  *difference = (mrb_int)z;
+  _uint x = (_uint)minuend;
+  _uint y = (_uint)subtrahend;
+  _uint z = (_uint)(x - y);
+  *difference = (_int)z;
   return !!(((x ^ z) & (~y ^ z)) & MRB_INT_OVERFLOW_MASK);
 }
 
-static inline mrb_bool
-mrb_int_mul_overflow(mrb_int multiplier, mrb_int multiplicand, mrb_int *product)
+static inline _bool
+_int_mul_overflow(_int multiplier, _int multiplicand, _int *product)
 {
 #if MRB_INT_BIT == 32
   int64_t n = (int64_t)multiplier * multiplicand;
-  *product = (mrb_int)n;
+  *product = (_int)n;
   return !FIXABLE(n);
 #else
   if (multiplier > 0) {
@@ -150,7 +150,7 @@ mrb_int_mul_overflow(mrb_int multiplier, mrb_int multiplicand, mrb_int *product)
 }
 
 #undef MRB_INT_OVERFLOW_MASK
-#undef mrb_uint
+#undef _uint
 #undef MRB_UINT_MAKE
 #undef MRB_UINT_MAKE2
 

@@ -14,20 +14,20 @@
  */
 MRB_BEGIN_DECL
 
-typedef struct mrb_range_edges {
-  mrb_value beg;
-  mrb_value end;
-} mrb_range_edges;
+typedef struct _range_edges {
+  _value beg;
+  _value end;
+} _range_edges;
 
 struct RRange {
   MRB_OBJECT_HEADER;
-  mrb_range_edges *edges;
-  mrb_bool excl : 1;
+  _range_edges *edges;
+  _bool excl : 1;
 };
 
-MRB_API struct RRange* mrb_range_ptr(mrb_state *mrb, mrb_value v);
-#define mrb_range_raw_ptr(v) ((struct RRange*)mrb_ptr(v))
-#define mrb_range_value(p)  mrb_obj_value((void*)(p))
+MRB_API struct RRange* _range_ptr(_state *mrb, _value v);
+#define _range_raw_ptr(v) ((struct RRange*)_ptr(v))
+#define _range_value(p)  _obj_value((void*)(p))
 
 /*
  * Initializes a Range.
@@ -39,10 +39,10 @@ MRB_API struct RRange* mrb_range_ptr(mrb_state *mrb, mrb_value v);
  * @param end the ending value.
  * @param exclude represents the inclusion or exclusion of the last value.
  */
-MRB_API mrb_value mrb_range_new(mrb_state *mrb, mrb_value start, mrb_value end, mrb_bool exclude);
+MRB_API _value _range_new(_state *mrb, _value start, _value end, _bool exclude);
 
-MRB_API mrb_int mrb_range_beg_len(mrb_state *mrb, mrb_value range, mrb_int *begp, mrb_int *lenp, mrb_int len, mrb_bool trunc);
-mrb_value mrb_get_values_at(mrb_state *mrb, mrb_value obj, mrb_int olen, mrb_int argc, const mrb_value *argv, mrb_value (*func)(mrb_state*, mrb_value, mrb_int));
+MRB_API _int _range_beg_len(_state *mrb, _value range, _int *begp, _int *lenp, _int len, _bool trunc);
+_value _get_values_at(_state *mrb, _value obj, _int olen, _int argc, const _value *argv, _value (*func)(_state*, _value, _int));
 
 MRB_END_DECL
 

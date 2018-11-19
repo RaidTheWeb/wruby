@@ -1,5 +1,5 @@
 /* ANSI-C code produced by gperf version 3.0.4 */
-/* Command-line: gperf -L ANSI-C -C -p -j1 -i 1 -g -o -t -N mrb_reserved_word -k'1,3,$' /home/matz/work/mruby/mrbgems/mruby-compiler/core/keywords  */
+/* Command-line: gperf -L ANSI-C -C -p -j1 -i 1 -g -o -t -N _reserved_word -k'1,3,$' /home/matz/work/mruby/mrbgems/mruby-compiler/core/keywords  */
 
 #if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
       && ('%' == 37) && ('&' == 38) && ('\'' == 39) && ('(' == 40) \
@@ -30,10 +30,10 @@
 
 #line 1 "/home/matz/work/mruby/mrbgems/mruby-compiler/core/keywords"
 
-struct kwtable {const char *name; int id[2]; enum mrb_lex_state_enum state;};
-const struct kwtable *mrb_reserved_word(const char *, unsigned int);
+struct kwtable {const char *name; int id[2]; enum _lex_state_enum state;};
+const struct kwtable *_reserved_word(const char *, unsigned int);
 static const struct kwtable *reserved_word(const char *, unsigned int);
-#define mrb_reserved_word(str, len) reserved_word(str, len)
+#define _reserved_word(str, len) reserved_word(str, len)
 #line 8 "/home/matz/work/mruby/mrbgems/mruby-compiler/core/keywords"
 struct kwtable;
 
@@ -105,7 +105,7 @@ __attribute__ ((__gnu_inline__))
 #endif
 #endif
 const struct kwtable *
-mrb_reserved_word (const char *str, unsigned int len)
+_reserved_word (const char *str, unsigned int len)
 {
   static const struct kwtable wordlist[] =
     {
