@@ -25,8 +25,8 @@ MRuby::Build.new do |conf|
   # include the default GEMs
   conf.gembox 'default'
   
-	conf.gem :github => 'mattn/mruby-onig-regexp'
-	conf.gem :github => 'mattn/mruby-require'
+	# conf.gem :github => 'mattn/mruby-onig-regexp'
+	# conf.gem :github => 'mattn/mruby-require'
   
 
   # C compiler settings
