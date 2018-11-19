@@ -5,15 +5,15 @@
 #include <mruby/string.h>
 #include <mruby/debug.h>
 
-static _value
-_proc_lambda(_state *mrb, _value self)
+static value
+_proc_lambda(state *mrb, value self)
 {
   struct RProc *p = _proc_ptr(self);
   return _bool_value(MRB_PROC_STRICT_P(p));
 }
 
-static _value
-_proc_source_location(_state *mrb, _value self)
+static value
+_proc_source_location(state *mrb, value self)
 {
   struct RProc *p = _proc_ptr(self);
 
@@ -33,11 +33,11 @@ _proc_source_location(_state *mrb, _value self)
   }
 }
 
-static _value
-_proc_inspect(_state *mrb, _value self)
+static value
+_proc_inspect(state *mrb, value self)
 {
   struct RProc *p = _proc_ptr(self);
-  _value str = _str_new_lit(mrb, "#<Proc:");
+  value str = _str_new_lit(mrb, "#<Proc:");
   _str_concat(mrb, str, _ptr_to_str(mrb, _cptr(self)));
 
   if (!MRB_PROC_CFUNC_P(p)) {
@@ -67,10 +67,10 @@ _proc_inspect(_state *mrb, _value self)
   return str;
 }
 
-static _value
-_kernel_proc(_state *mrb, _value self)
+static value
+_kernel_proc(state *mrb, value self)
 {
-  _value blk;
+  value blk;
 
   _get_args(mrb, "&", &blk);
   if (_nil_p(blk)) {
@@ -90,8 +90,8 @@ _kernel_proc(_state *mrb, _value self)
  *    prc.parameters  #=> [[:req, :x], [:opt, :y], [:rest, :other]]
  */
 
-static _value
-_proc_parameters(_state *mrb, _value self)
+static value
+_proc_parameters(state *mrb, value self)
 {
   struct parameters_type {
     int size;
@@ -107,7 +107,7 @@ _proc_parameters(_state *mrb, _value self)
   const struct RProc *proc = _proc_ptr(self);
   const struct _irep *irep = proc->body.irep;
   _aspec aspec;
-  _value sname, parameters;
+  value sname, parameters;
   int i, j;
   int max = -1;
 
@@ -144,7 +144,7 @@ _proc_parameters(_state *mrb, _value self)
     if (p->size <= 0) continue;
     sname = _symbol_value(_intern_cstr(mrb, p->name));
     for (j = 0; j < p->size; i++, j++) {
-      _value a;
+      value a;
 
       a = _ary_new(mrb);
       _ary_push(mrb, a, sname);
@@ -166,7 +166,7 @@ _proc_parameters(_state *mrb, _value self)
 }
 
 void
-_mruby_proc_ext_gem_init(_state* mrb)
+_mruby_proc_ext_gem_init(state* mrb)
 {
   struct RClass *p = mrb->proc_class;
   _define_method(mrb, p, "lambda?",         _proc_lambda,          MRB_ARGS_NONE());
@@ -180,6 +180,6 @@ _mruby_proc_ext_gem_init(_state* mrb)
 }
 
 void
-_mruby_proc_ext_gem_final(_state* mrb)
+_mruby_proc_ext_gem_final(state* mrb)
 {
 }

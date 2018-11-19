@@ -14,11 +14,11 @@
 #include "apiprint.h"
 
 dbgcmd_state
-dbgcmd_print(_state *mrb, mrdb_state *mrdb)
+dbgcmd_print(state *mrb, mrdb_state *mrdb)
 {
-  _value expr;
-  _value result;
-  _value s;
+  value expr;
+  value result;
+  value s;
   uint8_t wcnt;
   int ai;
 
@@ -52,7 +52,7 @@ dbgcmd_print(_state *mrb, mrdb_state *mrdb)
 }
 
 dbgcmd_state
-dbgcmd_eval(_state *mrb, mrdb_state *mrdb)
+dbgcmd_eval(state *mrb, mrdb_state *mrdb)
 {
   return dbgcmd_print(mrb, mrdb);
 }

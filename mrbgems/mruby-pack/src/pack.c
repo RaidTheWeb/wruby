@@ -17,7 +17,7 @@
 #include <string.h>
 
 struct tmpl {
-  _value str;
+  value str;
   int idx;
 };
 
@@ -103,8 +103,8 @@ make_base64_dec_tab(void)
   base64_dec_tab['='] = PACK_BASE64_PADDING;
 }
 
-static _value
-str_len_ensure(_state *mrb, _value str, _int len)
+static value
+str_len_ensure(state *mrb, value str, _int len)
 {
   _int n = RSTRING_LEN(str);
   if (len < 0) {
@@ -121,7 +121,7 @@ str_len_ensure(_state *mrb, _value str, _int len)
 
 
 static int
-pack_c(_state *mrb, _value o, _value str, _int sidx, unsigned int flags)
+pack_c(state *mrb, value o, value str, _int sidx, unsigned int flags)
 {
   str = str_len_ensure(mrb, str, sidx + 1);
   RSTRING_PTR(str)[sidx] = (char)_fixnum(o);
@@ -129,7 +129,7 @@ pack_c(_state *mrb, _value o, _value str, _int sidx, unsigned int flags)
 }
 
 static int
-unpack_c(_state *mrb, const void *src, int srclen, _value ary, unsigned int flags)
+unpack_c(state *mrb, const void *src, int srclen, value ary, unsigned int flags)
 {
   if (flags & PACK_FLAG_SIGNED)
     _ary_push(mrb, ary, _fixnum_value(*(signed char *)src));
@@ -139,7 +139,7 @@ unpack_c(_state *mrb, const void *src, int srclen, _value ary, unsigned int flag
 }
 
 static int
-pack_s(_state *mrb, _value o, _value str, _int sidx, unsigned int flags)
+pack_s(state *mrb, value o, value str, _int sidx, unsigned int flags)
 {
   uint16_t n;
 
@@ -156,7 +156,7 @@ pack_s(_state *mrb, _value o, _value str, _int sidx, unsigned int flags)
 }
 
 static int
-unpack_s(_state *mrb, const unsigned char *src, int srclen, _value ary, unsigned int flags)
+unpack_s(state *mrb, const unsigned char *src, int srclen, value ary, unsigned int flags)
 {
   int n;
 
@@ -173,7 +173,7 @@ unpack_s(_state *mrb, const unsigned char *src, int srclen, _value ary, unsigned
 }
 
 static int
-pack_l(_state *mrb, _value o, _value str, _int sidx, unsigned int flags)
+pack_l(state *mrb, value o, value str, _int sidx, unsigned int flags)
 {
   uint32_t n;
 
@@ -194,7 +194,7 @@ pack_l(_state *mrb, _value o, _value str, _int sidx, unsigned int flags)
 }
 
 static int
-unpack_l(_state *mrb, const unsigned char *src, int srclen, _value ary, unsigned int flags)
+unpack_l(state *mrb, const unsigned char *src, int srclen, value ary, unsigned int flags)
 {
 #ifndef MRB_INT64
   char msg[60];
@@ -236,7 +236,7 @@ unpack_l(_state *mrb, const unsigned char *src, int srclen, _value ary, unsigned
 }
 
 static int
-pack_q(_state *mrb, _value o, _value str, _int sidx, unsigned int flags)
+pack_q(state *mrb, value o, value str, _int sidx, unsigned int flags)
 {
   uint64_t n;
 
@@ -265,7 +265,7 @@ pack_q(_state *mrb, _value o, _value str, _int sidx, unsigned int flags)
 }
 
 static int
-unpack_q(_state *mrb, const unsigned char *src, int srclen, _value ary, unsigned int flags)
+unpack_q(state *mrb, const unsigned char *src, int srclen, value ary, unsigned int flags)
 {
   char msg[60];
   uint64_t ull;
@@ -304,7 +304,7 @@ unpack_q(_state *mrb, const unsigned char *src, int srclen, _value ary, unsigned
 
 #ifndef MRB_WITHOUT_FLOAT
 static int
-pack_double(_state *mrb, _value o, _value str, _int sidx, unsigned int flags)
+pack_double(state *mrb, value o, value str, _int sidx, unsigned int flags)
 {
   int i;
   double d;
@@ -334,7 +334,7 @@ pack_double(_state *mrb, _value o, _value str, _int sidx, unsigned int flags)
 }
 
 static int
-unpack_double(_state *mrb, const unsigned char * src, int srclen, _value ary, unsigned int flags)
+unpack_double(state *mrb, const unsigned char * src, int srclen, value ary, unsigned int flags)
 {
   int i;
   double d;
@@ -363,7 +363,7 @@ unpack_double(_state *mrb, const unsigned char * src, int srclen, _value ary, un
 }
 
 static int
-pack_float(_state *mrb, _value o, _value str, _int sidx, unsigned int flags)
+pack_float(state *mrb, value o, value str, _int sidx, unsigned int flags)
 {
   int i;
   float f;
@@ -393,7 +393,7 @@ pack_float(_state *mrb, _value o, _value str, _int sidx, unsigned int flags)
 }
 
 static int
-unpack_float(_state *mrb, const unsigned char * src, int srclen, _value ary, unsigned int flags)
+unpack_float(state *mrb, const unsigned char * src, int srclen, value ary, unsigned int flags)
 {
   int i;
   float f;
@@ -423,7 +423,7 @@ unpack_float(_state *mrb, const unsigned char * src, int srclen, _value ary, uns
 #endif
 
 static int
-pack_utf8(_state *mrb, _value o, _value str, _int sidx, long count, unsigned int flags)
+pack_utf8(state *mrb, value o, value str, _int sidx, long count, unsigned int flags)
 {
   char utf8[4];
   int len = 0;
@@ -484,7 +484,7 @@ static const unsigned long utf8_limits[] = {
 };
 
 static unsigned long
-utf8_to_uv(_state *mrb, const char *p, long *lenp)
+utf8_to_uv(state *mrb, const char *p, long *lenp)
 {
   int c = *p++ & 0xff;
   unsigned long uv = c;
@@ -534,7 +534,7 @@ utf8_to_uv(_state *mrb, const char *p, long *lenp)
 }
 
 static int
-unpack_utf8(_state *mrb, const unsigned char * src, int srclen, _value ary, unsigned int flags)
+unpack_utf8(state *mrb, const unsigned char * src, int srclen, value ary, unsigned int flags)
 {
   unsigned long uv;
   long lenp = srclen;
@@ -548,7 +548,7 @@ unpack_utf8(_state *mrb, const unsigned char * src, int srclen, _value ary, unsi
 }
 
 static int
-pack_a(_state *mrb, _value src, _value dst, _int didx, long count, unsigned int flags)
+pack_a(state *mrb, value src, value dst, _int didx, long count, unsigned int flags)
 {
   _int copylen, slen, padlen;
   char *dptr, *dptr0, pad, *sptr;
@@ -586,9 +586,9 @@ pack_a(_state *mrb, _value src, _value dst, _int didx, long count, unsigned int 
 }
 
 static int
-unpack_a(_state *mrb, const void *src, int slen, _value ary, long count, unsigned int flags)
+unpack_a(state *mrb, const void *src, int slen, value ary, long count, unsigned int flags)
 {
-  _value dst;
+  value dst;
   const char *cp, *sptr;
   int copylen;
 
@@ -620,7 +620,7 @@ unpack_a(_state *mrb, const void *src, int slen, _value ary, long count, unsigne
 
 
 static int
-pack_h(_state *mrb, _value src, _value dst, _int didx, long count, unsigned int flags)
+pack_h(state *mrb, value src, value dst, _int didx, long count, unsigned int flags)
 {
   unsigned int a, ashift, b, bshift;
   long slen;
@@ -664,9 +664,9 @@ pack_h(_state *mrb, _value src, _value dst, _int didx, long count, unsigned int 
 }
 
 static int
-unpack_h(_state *mrb, const void *src, int slen, _value ary, int count, unsigned int flags)
+unpack_h(state *mrb, const void *src, int slen, value ary, int count, unsigned int flags)
 {
-  _value dst;
+  value dst;
   int a, ashift, b, bshift;
   const char *sptr, *sptr0;
   char *dptr, *dptr0;
@@ -712,7 +712,7 @@ unpack_h(_state *mrb, const void *src, int slen, _value ary, int count, unsigned
 
 
 static int
-pack_m(_state *mrb, _value src, _value dst, _int didx, long count, unsigned int flags)
+pack_m(state *mrb, value src, value dst, _int didx, long count, unsigned int flags)
 {
   _int dstlen;
   unsigned long l;
@@ -778,9 +778,9 @@ pack_m(_state *mrb, _value src, _value dst, _int didx, long count, unsigned int 
 }
 
 static int
-unpack_m(_state *mrb, const void *src, int slen, _value ary, unsigned int flags)
+unpack_m(state *mrb, const void *src, int slen, value ary, unsigned int flags)
 {
-  _value dst;
+  value dst;
   int dlen;
   unsigned long l;
   int i, padding;
@@ -834,7 +834,7 @@ done:
 }
 
 static int
-pack_x(_state *mrb, _value src, _value dst, _int didx, long count, unsigned int flags)
+pack_x(state *mrb, value src, value dst, _int didx, long count, unsigned int flags)
 {
   long i;
 
@@ -846,7 +846,7 @@ pack_x(_state *mrb, _value src, _value dst, _int didx, long count, unsigned int 
   return count;
 }
 static int
-unpack_x(_state *mrb, const void *src, int slen, _value ary, int count, unsigned int flags)
+unpack_x(state *mrb, const void *src, int slen, value ary, int count, unsigned int flags)
 {
   if (count < 0) return slen;
   if (slen < count) {
@@ -856,7 +856,7 @@ unpack_x(_state *mrb, const void *src, int slen, _value ary, int count, unsigned
 }
 
 static void
-prepare_tmpl(_state *mrb, struct tmpl *tmpl)
+prepare_tmpl(state *mrb, struct tmpl *tmpl)
 {
   _get_args(mrb, "S", &tmpl->str);
   tmpl->idx = 0;
@@ -869,7 +869,7 @@ has_tmpl(const struct tmpl *tmpl)
 }
 
 static void
-read_tmpl(_state *mrb, struct tmpl *tmpl, int *dirp, int *typep, int *sizep, int *countp, unsigned int *flagsp)
+read_tmpl(state *mrb, struct tmpl *tmpl, int *dirp, int *typep, int *sizep, int *countp, unsigned int *flagsp)
 {
   _int t, tlen;
   int ch, dir, type, size = 0;
@@ -1092,10 +1092,10 @@ alias:
   *flagsp = flags;
 }
 
-static _value
-_pack_pack(_state *mrb, _value ary)
+static value
+_pack_pack(state *mrb, value ary)
 {
-  _value o, result;
+  value o, result;
   _int aidx;
   struct tmpl tmpl;
   int count;
@@ -1190,10 +1190,10 @@ _pack_pack(_state *mrb, _value ary)
   return result;
 }
 
-static _value
-pack_unpack(_state *mrb, _value str, int single)
+static value
+pack_unpack(state *mrb, value str, int single)
 {
-  _value result;
+  value result;
   struct tmpl tmpl;
   int count;
   unsigned int flags;
@@ -1280,20 +1280,20 @@ pack_unpack(_state *mrb, _value str, int single)
   return result;
 }
 
-static _value
-_pack_unpack(_state *mrb, _value str)
+static value
+_pack_unpack(state *mrb, value str)
 {
   return pack_unpack(mrb, str, 0);
 }
 
-static _value
-_pack_unpack1(_state *mrb, _value str)
+static value
+_pack_unpack1(state *mrb, value str)
 {
   return pack_unpack(mrb, str, 1);
 }
 
 void
-_mruby_pack_gem_init(_state *mrb)
+_mruby_pack_gem_init(state *mrb)
 {
   littleendian = check_little_endian();
   make_base64_dec_tab();
@@ -1304,6 +1304,6 @@ _mruby_pack_gem_init(_state *mrb)
 }
 
 void
-_mruby_pack_gem_final(_state *mrb)
+_mruby_pack_gem_final(state *mrb)
 {
 }

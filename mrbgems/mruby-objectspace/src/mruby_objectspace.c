@@ -10,7 +10,7 @@ struct os_count_struct {
 };
 
 static int
-os_count_object_type(_state *mrb, struct RBasic *obj, void *data)
+os_count_object_type(state *mrb, struct RBasic *obj, void *data)
 {
   struct os_count_struct *obj_count;
   obj_count = (struct os_count_struct*)data;
@@ -46,12 +46,12 @@ os_count_object_type(_state *mrb, struct RBasic *obj, void *data)
  *
  */
 
-static _value
-os_count_objects(_state *mrb, _value self)
+static value
+os_count_objects(state *mrb, value self)
 {
   struct os_count_struct obj_count = { 0 };
   _int i;
-  _value hash;
+  value hash;
 
   if (_get_args(mrb, "|H", &hash) == 0) {
     hash = _hash_new(mrb);
@@ -67,7 +67,7 @@ os_count_objects(_state *mrb, _value self)
   _hash_set(mrb, hash, _symbol_value(_intern_lit(mrb, "FREE")), _fixnum_value(obj_count.freed));
 
   for (i = MRB_TT_FALSE; i < MRB_TT_MAXDEFINE; i++) {
-    _value type;
+    value type;
     switch (i) {
 #define COUNT_TYPE(t) case (MRB_T ## t): type = _symbol_value(_intern_lit(mrb, #t)); break;
       COUNT_TYPE(T_FALSE);
@@ -105,13 +105,13 @@ os_count_objects(_state *mrb, _value self)
 }
 
 struct os_each_object_data {
-  _value block;
+  value block;
   struct RClass *target_module;
   _int count;
 };
 
 static int
-os_each_object_cb(_state *mrb, struct RBasic *obj, void *ud)
+os_each_object_cb(state *mrb, struct RBasic *obj, void *ud)
 {
   struct os_each_object_data *d = (struct os_each_object_data*)ud;
 
@@ -156,10 +156,10 @@ os_each_object_cb(_state *mrb, struct RBasic *obj, void *ud)
  *
  */
 
-static _value
-os_each_object(_state *mrb, _value self)
+static value
+os_each_object(state *mrb, value self)
 {
-  _value cls = _nil_value();
+  value cls = _nil_value();
   struct os_each_object_data d;
   _get_args(mrb, "&|C", &d.block, &cls);
 
@@ -174,7 +174,7 @@ os_each_object(_state *mrb, _value self)
 }
 
 void
-_mruby_objectspace_gem_init(_state *mrb)
+_mruby_objectspace_gem_init(state *mrb)
 {
   struct RClass *os = _define_module(mrb, "ObjectSpace");
   _define_class_method(mrb, os, "count_objects", os_count_objects, MRB_ARGS_OPT(1));
@@ -182,6 +182,6 @@ _mruby_objectspace_gem_init(_state *mrb)
 }
 
 void
-_mruby_objectspace_gem_final(_state *mrb)
+_mruby_objectspace_gem_final(state *mrb)
 {
 }

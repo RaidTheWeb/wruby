@@ -1,4 +1,4 @@
-# How to use `mrb_gc_arena_save()`/`mrb_gc_arena_restore()`/`mrb_gc_protect()`
+# How to use `_gc_arena_save()`/`_gc_arena_restore()`/`_gc_protect()`
 
 _This is an English translation of [Matz's blog post][matz blog post]
 written in Japanese._
@@ -72,20 +72,20 @@ With the build time configuration, you can limit the maximum size of
 arena (e.g., 100).  Then if you create many objects, arena overflows,
 thus you will get an "arena overflow error".
 
-To workaround these problems, we have `mrb_gc_arena_save()` and
-`mrb_gc_arena_restore()` functions.
+To workaround these problems, we have `_gc_arena_save()` and
+`_gc_arena_restore()` functions.
 
-`int mrb_gc_arena_save(mrb)` returns the current position of the stack
-top of GC arena, and `void mrb_gc_arena_restore(mrb, idx)` sets the
+`int _gc_arena_save(mrb)` returns the current position of the stack
+top of GC arena, and `void _gc_arena_restore(mrb, idx)` sets the
 stack top position to back to given `idx`.
 
 We can use them like this:
 
 ```c
-int arena_idx = mrb_gc_arena_save(mrb);
+int arena_idx = _gc_arena_save(mrb);
 
 // ...create objects...
-mrb_gc_arena_restore(mrb, arena_idx);
+_gc_arena_restore(mrb, arena_idx);
 
 ```
 
@@ -96,45 +96,45 @@ avoid creating arena overflow bugs.
 Let's take a real example.  Here is the source code of `Array#inspect`:
 
 ```c
-static mrb_value
-inspect_ary(mrb_state *mrb, mrb_value ary, mrb_value list)
+static value
+inspect_ary(state *mrb, value ary, value list)
 {
-  mrb_int i;
-  mrb_value s, arystr;
+  _int i;
+  value s, arystr;
   char head[] = { '[' };
   char sep[] = { ',', ' ' };
   char tail[] = { ']' };
 
   /* check recursive */
   for(i=0; i<RARRAY_LEN(list); i++) {
-    if (mrb_obj_equal(mrb, ary, RARRAY_PTR(list)[i])) {
-      return mrb_str_new(mrb, "[...]", 5);
+    if (_obj_equal(mrb, ary, RARRAY_PTR(list)[i])) {
+      return _str_new(mrb, "[...]", 5);
     }
   }
 
-  mrb_ary_push(mrb, list, ary);
+  _ary_push(mrb, list, ary);
 
-  arystr = mrb_str_new_capa(mrb, 64);
-  mrb_str_cat(mrb, arystr, head, sizeof(head));
+  arystr = _str_new_capa(mrb, 64);
+  _str_cat(mrb, arystr, head, sizeof(head));
 
   for(i=0; i<RARRAY_LEN(ary); i++) {
-    int ai = mrb_gc_arena_save(mrb);
+    int ai = _gc_arena_save(mrb);
 
     if (i > 0) {
-      mrb_str_cat(mrb, arystr, sep, sizeof(sep));
+      _str_cat(mrb, arystr, sep, sizeof(sep));
     }
-    if (mrb_array_p(RARRAY_PTR(ary)[i])) {
+    if (_array_p(RARRAY_PTR(ary)[i])) {
       s = inspect_ary(mrb, RARRAY_PTR(ary)[i], list);
     }
     else {
-      s = mrb_inspect(mrb, RARRAY_PTR(ary)[i]);
+      s = _inspect(mrb, RARRAY_PTR(ary)[i]);
     }
-    mrb_str_cat(mrb, arystr, RSTRING_PTR(s), RSTRING_LEN(s));
-    mrb_gc_arena_restore(mrb, ai);
+    _str_cat(mrb, arystr, RSTRING_PTR(s), RSTRING_LEN(s));
+    _gc_arena_restore(mrb, ai);
   }
 
-  mrb_str_cat(mrb, arystr, tail, sizeof(tail));
-  mrb_ary_pop(mrb, list);
+  _str_cat(mrb, arystr, tail, sizeof(tail));
+  _ary_pop(mrb, list);
 
   return arystr;
 }
@@ -152,26 +152,26 @@ these temporal objects into GC arena.
 Therefore, in order to keep the arena size small; the `ary_inspect()` function
 will do the following:
 
-* save the position of the stack top using `mrb_gc_arena_save()`.
+* save the position of the stack top using `_gc_arena_save()`.
 * get `inspect` representation of each element.
 * append it to the constructing entire `inspect` representation of array.
-* restore stack top position using `mrb_gc_arena_restore()`.
+* restore stack top position using `_gc_arena_restore()`.
 
 Please note that the final `inspect` representation of entire array
-was created before the call of `mrb_gc_arena_restore()`.  Otherwise,
+was created before the call of `_gc_arena_restore()`.  Otherwise,
 required temporal object may be deleted by GC.
 
 We may have a usecase where after creating many temporal objects, we'd
 like to keep some of them.  In this case, we cannot use the same idea
 in `ary_inspect()` like appending objects to existing one.
-Instead, after `mrb_gc_arena_restore()`, we must re-register the objects we
-want to keep in the arena using `mrb_gc_protect(mrb, obj)`.
-Use `mrb_gc_protect()` with caution because it could also lead to an "arena
+Instead, after `_gc_arena_restore()`, we must re-register the objects we
+want to keep in the arena using `_gc_protect(mrb, obj)`.
+Use `_gc_protect()` with caution because it could also lead to an "arena
 overflow error".
 
-We must also mention that when `mrb_funcall` is called in top level, the return
-value is also registered to GC arena, so repeated use of `mrb_funcall` may
+We must also mention that when `_funcall` is called in top level, the return
+value is also registered to GC arena, so repeated use of `_funcall` may
 eventually lead to an "arena overflow error".
 
-Use `mrb_gc_arena_save()` and `mrb_gc_arena_restore()` or possible use of
-`mrb_gc_protect()` to workaround this.
+Use `_gc_arena_save()` and `_gc_arena_restore()` or possible use of
+`_gc_protect()` to workaround this.

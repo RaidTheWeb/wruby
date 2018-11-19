@@ -22,11 +22,11 @@ typedef struct symbol_name {
  *                                     :Tms, :getwd, :$=, :ThreadGroup,
  *                                     :wait2, :$>]
  */
-static _value
-_sym_all_symbols(_state *mrb, _value self)
+static value
+_sym_all_symbols(state *mrb, value self)
 {
   _sym i, lim;
-  _value ary = _ary_new_capa(mrb, mrb->symidx);
+  value ary = _ary_new_capa(mrb, mrb->symidx);
 
   for (i=1, lim=mrb->symidx+1; i<lim; i++) {
     _ary_push(mrb, ary, _symbol_value(i));
@@ -41,8 +41,8 @@ _sym_all_symbols(_state *mrb, _value self)
  *
  * Same as <code>sym.to_s.length</code>.
  */
-static _value
-_sym_length(_state *mrb, _value self)
+static value
+_sym_length(state *mrb, value self)
 {
   _int len;
   _sym2name_len(mrb, _symbol(self), &len);
@@ -50,7 +50,7 @@ _sym_length(_state *mrb, _value self)
 }
 
 void
-_mruby_symbol_ext_gem_init(_state* mrb)
+_mruby_symbol_ext_gem_init(state* mrb)
 {
   struct RClass *s = mrb->symbol_class;
   _define_class_method(mrb, s, "all_symbols", _sym_all_symbols, MRB_ARGS_NONE());
@@ -59,6 +59,6 @@ _mruby_symbol_ext_gem_init(_state* mrb)
 }
 
 void
-_mruby_symbol_ext_gem_final(_state* mrb)
+_mruby_symbol_ext_gem_final(state* mrb)
 {
 }

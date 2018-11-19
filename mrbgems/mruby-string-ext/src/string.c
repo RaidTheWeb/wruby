@@ -5,8 +5,8 @@
 #include <mruby/string.h>
 #include <mruby/range.h>
 
-static _value
-_str_getbyte(_state *mrb, _value str)
+static value
+_str_getbyte(state *mrb, value str)
 {
   _int pos;
   _get_args(mrb, "i", &pos);
@@ -19,8 +19,8 @@ _str_getbyte(_state *mrb, _value str)
   return _fixnum_value((unsigned char)RSTRING_PTR(str)[pos]);
 }
 
-static _value
-_str_setbyte(_state *mrb, _value str)
+static value
+_str_setbyte(state *mrb, value str)
 {
   _int pos, byte;
   _int len;
@@ -39,10 +39,10 @@ _str_setbyte(_state *mrb, _value str)
   return _fixnum_value((unsigned char)byte);
 }
 
-static _value
-_str_byteslice(_state *mrb, _value str)
+static value
+_str_byteslice(state *mrb, value str)
 {
-  _value a1;
+  value a1;
   _int len;
 
   if (_get_argc(mrb) == 2) {
@@ -90,8 +90,8 @@ _str_byteslice(_state *mrb, _value str)
  *  place, returning <i>str</i>, or <code>nil</code> if no changes were made.
  *  Note: case conversion is effective only in ASCII region.
  */
-static _value
-_str_swapcase_bang(_state *mrb, _value str)
+static value
+_str_swapcase_bang(state *mrb, value str)
 {
   char *p, *pend;
   int modify = 0;
@@ -127,17 +127,17 @@ _str_swapcase_bang(_state *mrb, _value str)
  *     "Hello".swapcase          #=> "hELLO"
  *     "cYbEr_PuNk11".swapcase   #=> "CyBeR_pUnK11"
  */
-static _value
-_str_swapcase(_state *mrb, _value self)
+static value
+_str_swapcase(state *mrb, value self)
 {
-  _value str;
+  value str;
 
   str = _str_dup(mrb, self);
   _str_swapcase_bang(mrb, str);
   return str;
 }
 
-static _value _fixnum_chr(_state *mrb, _value num);
+static value _fixnum_chr(state *mrb, value num);
 
 /*
  *  call-seq:
@@ -154,10 +154,10 @@ static _value _fixnum_chr(_state *mrb, _value num);
  *     a << "world"   #=> "hello world"
  *     a.concat(33)   #=> "hello world!"
  */
-static _value
-_str_concat_m(_state *mrb, _value self)
+static value
+_str_concat_m(state *mrb, value self)
 {
-  _value str;
+  value str;
 
   _get_args(mrb, "o", &str);
   if (_fixnum_p(str))
@@ -181,10 +181,10 @@ _str_concat_m(_state *mrb, _value self)
  *    "hello".start_with?("heaven", "paradise") #=> false
  *    "h".start_with?("heaven", "hell")         #=> false
  */
-static _value
-_str_start_with(_state *mrb, _value self)
+static value
+_str_start_with(state *mrb, value self)
 {
-  _value *argv, sub;
+  value *argv, sub;
   _int argc, i;
   _get_args(mrb, "*", &argv, &argc);
 
@@ -210,10 +210,10 @@ _str_start_with(_state *mrb, _value self)
  *
  *  Returns true if +str+ ends with one of the +suffixes+ given.
  */
-static _value
-_str_end_with(_state *mrb, _value self)
+static value
+_str_end_with(state *mrb, value self)
 {
-  _value *argv, sub;
+  value *argv, sub;
   _int argc, i;
   _get_args(mrb, "*", &argv, &argc);
 
@@ -264,7 +264,7 @@ struct tr_pattern {
 #define STATIC_TR_PATTERN { 0 }
 
 static inline void
-tr_free_pattern(_state *mrb, struct tr_pattern *pat)
+tr_free_pattern(state *mrb, struct tr_pattern *pat)
 {
   while (pat) {
     struct tr_pattern *p = pat->next;
@@ -276,7 +276,7 @@ tr_free_pattern(_state *mrb, struct tr_pattern *pat)
 }
 
 static struct tr_pattern*
-tr_parse_pattern(_state *mrb, struct tr_pattern *ret, const _value v_pattern, _bool flag_reverse_enable)
+tr_parse_pattern(state *mrb, struct tr_pattern *ret, const value v_pattern, _bool flag_reverse_enable)
 {
   const char *pattern = RSTRING_PTR(v_pattern);
   _int pattern_length = RSTRING_LEN(v_pattern);
@@ -416,7 +416,7 @@ tr_get_character(const struct tr_pattern *pat, const char *pat_str, _int n_th)
 }
 
 static _bool
-str_tr(_state *mrb, _value str, _value p1, _value p2, _bool squeeze)
+str_tr(state *mrb, value str, value p1, value p2, _bool squeeze)
 {
   struct tr_pattern pat = STATIC_TR_PATTERN;
   struct tr_pattern rep_storage = STATIC_TR_PATTERN;
@@ -507,11 +507,11 @@ str_tr(_state *mrb, _value str, _value p1, _value p2, _bool squeeze)
  *
  *  Note: conversion is effective only in ASCII region.
  */
-static _value
-_str_tr(_state *mrb, _value str)
+static value
+_str_tr(state *mrb, value str)
 {
-  _value dup;
-  _value p1, p2;
+  value dup;
+  value p1, p2;
 
   _get_args(mrb, "SS", &p1, &p2);
   dup = _str_dup(mrb, str);
@@ -526,10 +526,10 @@ _str_tr(_state *mrb, _value str)
  * Translates str in place, using the same rules as String#tr.
  * Returns str, or nil if no changes were made.
  */
-static _value
-_str_tr_bang(_state *mrb, _value str)
+static value
+_str_tr_bang(state *mrb, value str)
 {
-  _value p1, p2;
+  value p1, p2;
 
   _get_args(mrb, "SS", &p1, &p2);
   if (str_tr(mrb, str, p1, p2, FALSE)) {
@@ -549,11 +549,11 @@ _str_tr_bang(_state *mrb, _value str)
  *  "hello".tr_s('el', '*')    #=> "h*o"
  *  "hello".tr_s('el', 'hx')   #=> "hhxo"
  */
-static _value
-_str_tr_s(_state *mrb, _value str)
+static value
+_str_tr_s(state *mrb, value str)
 {
-  _value dup;
-  _value p1, p2;
+  value dup;
+  value p1, p2;
 
   _get_args(mrb, "SS", &p1, &p2);
   dup = _str_dup(mrb, str);
@@ -568,10 +568,10 @@ _str_tr_s(_state *mrb, _value str)
  * Performs String#tr_s processing on str in place, returning
  * str, or nil if no changes were made.
  */
-static _value
-_str_tr_s_bang(_state *mrb, _value str)
+static value
+_str_tr_s_bang(state *mrb, value str)
 {
-  _value p1, p2;
+  value p1, p2;
 
   _get_args(mrb, "SS", &p1, &p2);
   if (str_tr(mrb, str, p1, p2, TRUE)) {
@@ -581,7 +581,7 @@ _str_tr_s_bang(_state *mrb, _value str)
 }
 
 static _bool
-str_squeeze(_state *mrb, _value str, _value v_pat)
+str_squeeze(state *mrb, value str, value v_pat)
 {
   struct tr_pattern pat_storage = STATIC_TR_PATTERN;
   struct tr_pattern *pat = NULL;
@@ -643,11 +643,11 @@ str_squeeze(_state *mrb, _value str, _value v_pat)
  *  "  now   is  the".squeeze(" ")         #=> " now is the"
  *  "putters shoot balls".squeeze("m-z")   #=> "puters shot balls"
  */
-static _value
-_str_squeeze(_state *mrb, _value str)
+static value
+_str_squeeze(state *mrb, value str)
 {
-  _value pat = _nil_value();
-  _value dup;
+  value pat = _nil_value();
+  value dup;
 
   _get_args(mrb, "|S", &pat);
   dup = _str_dup(mrb, str);
@@ -662,10 +662,10 @@ _str_squeeze(_state *mrb, _value str)
  * Squeezes str in place, returning either str, or nil if no
  * changes were made.
  */
-static _value
-_str_squeeze_bang(_state *mrb, _value str)
+static value
+_str_squeeze_bang(state *mrb, value str)
 {
-  _value pat = _nil_value();
+  value pat = _nil_value();
 
   _get_args(mrb, "|S", &pat);
   if (str_squeeze(mrb, str, pat)) {
@@ -675,7 +675,7 @@ _str_squeeze_bang(_state *mrb, _value str)
 }
 
 static _bool
-str_delete(_state *mrb, _value str, _value v_pat)
+str_delete(state *mrb, value str, value v_pat)
 {
   struct tr_pattern pat = STATIC_TR_PATTERN;
   _int i, j;
@@ -705,11 +705,11 @@ str_delete(_state *mrb, _value str, _value v_pat)
   return flag_changed;
 }
 
-static _value
-_str_delete(_state *mrb, _value str)
+static value
+_str_delete(state *mrb, value str)
 {
-  _value pat;
-  _value dup;
+  value pat;
+  value dup;
 
   _get_args(mrb, "S", &pat);
   dup = _str_dup(mrb, str);
@@ -717,10 +717,10 @@ _str_delete(_state *mrb, _value str)
   return dup;
 }
 
-static _value
-_str_delete_bang(_state *mrb, _value str)
+static value
+_str_delete_bang(state *mrb, value str)
 {
-  _value pat;
+  value pat;
 
   _get_args(mrb, "S", &pat);
   if (str_delete(mrb, str, pat)) {
@@ -740,10 +740,10 @@ _str_delete_bang(_state *mrb, _value str)
  * be used to escape ^ or - and is otherwise ignored unless it appears at
  * the end of a sequence or the end of a other_str.
  */
-static _value
-_str_count(_state *mrb, _value str)
+static value
+_str_count(state *mrb, value str)
 {
-  _value v_pat = _nil_value();
+  value v_pat = _nil_value();
   _int i;
   char *s;
   _int len;
@@ -763,14 +763,14 @@ _str_count(_state *mrb, _value str)
   return _fixnum_value(count);
 }
 
-static _value
-_str_hex(_state *mrb, _value self)
+static value
+_str_hex(state *mrb, value self)
 {
   return _str_to_inum(mrb, self, 16, FALSE);
 }
 
-static _value
-_str_oct(_state *mrb, _value self)
+static value
+_str_oct(state *mrb, value self)
 {
   return _str_to_inum(mrb, self, 8, FALSE);
 }
@@ -784,14 +784,14 @@ _str_oct(_state *mrb, _value self)
  *     a = "abcde"
  *     a.chr    #=> "a"
  */
-static _value
-_str_chr(_state *mrb, _value self)
+static value
+_str_chr(state *mrb, value self)
 {
   return _str_substr(mrb, self, 0, 1);
 }
 
-static _value
-_fixnum_chr(_state *mrb, _value num)
+static value
+_fixnum_chr(state *mrb, value num)
 {
   _int cp = _fixnum(num);
 #ifdef MRB_UTF8_STRING
@@ -844,10 +844,10 @@ _fixnum_chr(_state *mrb, _value num)
  *     a = "abc"
  *     a.succ    #=> "abd"
  */
-static _value
-_str_succ_bang(_state *mrb, _value self)
+static value
+_str_succ_bang(state *mrb, value self)
 {
-  _value result;
+  value result;
   unsigned char *p, *e, *b, *t;
   const char *prepend;
   struct RString *s = _str_ptr(self);
@@ -922,10 +922,10 @@ _str_succ_bang(_state *mrb, _value self)
   return self;
 }
 
-static _value
-_str_succ(_state *mrb, _value self)
+static value
+_str_succ(state *mrb, value self)
 {
-  _value str;
+  value str;
 
   str = _str_dup(mrb, self);
   _str_succ_bang(mrb, str);
@@ -981,16 +981,16 @@ utf8code(unsigned char* p)
   return p[0];
 }
 
-static _value
-_str_ord(_state* mrb, _value str)
+static value
+_str_ord(state* mrb, value str)
 {
   if (RSTRING_LEN(str) == 0)
     _raise(mrb, E_ARGUMENT_ERROR, "empty string");
   return _fixnum_value(utf8code((unsigned char*) RSTRING_PTR(str)));
 }
 #else
-static _value
-_str_ord(_state* mrb, _value str)
+static value
+_str_ord(state* mrb, value str)
 {
   if (RSTRING_LEN(str) == 0)
     _raise(mrb, E_ARGUMENT_ERROR, "empty string");
@@ -1008,8 +1008,8 @@ _str_ord(_state* mrb, _value str)
  *     "hello".delete_prefix!("hel") #=> "lo"
  *     "hello".delete_prefix!("llo") #=> nil
  */
-static _value
-_str_del_prefix_bang(_state *mrb, _value self)
+static value
+_str_del_prefix_bang(state *mrb, value self)
 {
   _int plen, slen;
   char *ptr, *s;
@@ -1041,8 +1041,8 @@ _str_del_prefix_bang(_state *mrb, _value self)
  *     "hello".delete_prefix("hel") #=> "lo"
  *     "hello".delete_prefix("llo") #=> "hello"
  */
-static _value
-_str_del_prefix(_state *mrb, _value self)
+static value
+_str_del_prefix(state *mrb, value self)
 {
   _int plen, slen;
   char *ptr;
@@ -1065,8 +1065,8 @@ _str_del_prefix(_state *mrb, _value self)
  *     "hello".delete_suffix!("llo") #=> "he"
  *     "hello".delete_suffix!("hel") #=> nil
  */
-static _value
-_str_del_suffix_bang(_state *mrb, _value self)
+static value
+_str_del_suffix_bang(state *mrb, value self)
 {
   _int plen, slen;
   char *ptr, *s;
@@ -1096,8 +1096,8 @@ _str_del_suffix_bang(_state *mrb, _value self)
  *     "hello".delete_suffix("hel") #=> "lo"
  *     "hello".delete_suffix("llo") #=> "hello"
  */
-static _value
-_str_del_suffix(_state *mrb, _value self)
+static value
+_str_del_suffix(state *mrb, value self)
 {
   _int plen, slen;
   char *ptr;
@@ -1110,10 +1110,10 @@ _str_del_suffix(_state *mrb, _value self)
   return _str_substr(mrb, self, 0, slen-plen);
 }
 
-static _value
-_str_lines(_state *mrb, _value self)
+static value
+_str_lines(state *mrb, value self)
 {
-  _value result;
+  value result;
   int ai;
   _int len;
   char *b = RSTRING_PTR(self);
@@ -1136,7 +1136,7 @@ _str_lines(_state *mrb, _value self)
 }
 
 void
-_mruby_string_ext_gem_init(_state* mrb)
+_mruby_string_ext_gem_init(state* mrb)
 {
   struct RClass * s = mrb->string_class;
 
@@ -1177,6 +1177,6 @@ _mruby_string_ext_gem_init(_state* mrb)
 }
 
 void
-_mruby_string_ext_gem_final(_state* mrb)
+_mruby_string_ext_gem_final(state* mrb)
 {
 }

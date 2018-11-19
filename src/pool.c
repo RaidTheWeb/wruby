@@ -45,7 +45,7 @@ struct _pool_page {
 #endif
 
 struct _pool {
-  _state *mrb;
+  state *mrb;
   struct _pool_page *pages;
 };
 
@@ -63,7 +63,7 @@ struct _pool {
 #endif
 
 MRB_API _pool*
-_pool_open(_state *mrb)
+_pool_open(state *mrb)
 {
   _pool *pool = (_pool *)_malloc_simple(mrb, sizeof(_pool));
 

@@ -48,7 +48,7 @@ usage(const char *name)
 }
 
 static char *
-get_outfilename(_state *mrb, char *infile, const char *ext)
+get_outfilename(state *mrb, char *infile, const char *ext)
 {
   size_t infilelen;
   size_t extlen;
@@ -69,7 +69,7 @@ get_outfilename(_state *mrb, char *infile, const char *ext)
 }
 
 static int
-parse_args(_state *mrb, int argc, char **argv, struct mrbc_args *args)
+parse_args(state *mrb, int argc, char **argv, struct mrbc_args *args)
 {
   char *outfile = NULL;
   static const struct mrbc_args args_zero = { 0 };
@@ -165,7 +165,7 @@ parse_args(_state *mrb, int argc, char **argv, struct mrbc_args *args)
 }
 
 static void
-cleanup(_state *mrb, struct mrbc_args *args)
+cleanup(state *mrb, struct mrbc_args *args)
 {
   _free(mrb, (void*)args->outfile);
   _close(mrb);
@@ -193,11 +193,11 @@ partial_hook(struct _parser_state *p)
   return 0;
 }
 
-static _value
-load_file(_state *mrb, struct mrbc_args *args)
+static value
+load_file(state *mrb, struct mrbc_args *args)
 {
   mrbc_context *c;
-  _value result;
+  value result;
   char *input = args->argv[args->idx];
   FILE *infile;
   _bool need_close = FALSE;
@@ -233,7 +233,7 @@ load_file(_state *mrb, struct mrbc_args *args)
 }
 
 static int
-dump_file(_state *mrb, FILE *wfp, const char *outfile, struct RProc *proc, struct mrbc_args *args)
+dump_file(state *mrb, FILE *wfp, const char *outfile, struct RProc *proc, struct mrbc_args *args)
 {
   int n = MRB_DUMP_OK;
   _irep *irep = proc->body.irep;
@@ -259,14 +259,14 @@ dump_file(_state *mrb, FILE *wfp, const char *outfile, struct RProc *proc, struc
 int
 main(int argc, char **argv)
 {
-  _state *mrb = _open();
+  state *mrb = _open();
   int n, result;
   struct mrbc_args args;
   FILE *wfp;
-  _value load;
+  value load;
 
   if (mrb == NULL) {
-    fputs("Invalid _state, exiting mrbc\n", stderr);
+    fputs("Invalid state, exiting mrbc\n", stderr);
     return EXIT_FAILURE;
   }
 
@@ -328,18 +328,18 @@ main(int argc, char **argv)
 }
 
 void
-_init_mrblib(_state *mrb)
+_init_mrblib(state *mrb)
 {
 }
 
 #ifndef DISABLE_GEMS
 void
-_init_mrbgems(_state *mrb)
+_init_mrbgems(state *mrb)
 {
 }
 
 void
-_final_mrbgems(_state *mrb)
+_final_mrbgems(state *mrb)
 {
 }
 #endif

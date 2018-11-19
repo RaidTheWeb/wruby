@@ -8,13 +8,13 @@
 #include <mruby/proc.h>
 
 /* internal method `__update_hash(oldhash, index, itemhash)` */
-static _value
-enum_update_hash(_state *mrb, _value self)
+static value
+enum_update_hash(state *mrb, value self)
 {
   _int hash;
   _int index;
   _int hv;
-  _value item_hash;
+  value item_hash;
 
   _get_args(mrb, "iio", &hash, &index, &item_hash);
   if (_fixnum_p(item_hash)) {
@@ -36,7 +36,7 @@ enum_update_hash(_state *mrb, _value self)
 }
 
 void
-_init_enumerable(_state *mrb)
+_init_enumerable(state *mrb)
 {
   struct RClass *enumerable;
   enumerable = _define_module(mrb, "Enumerable");  /* 15.3.2 */

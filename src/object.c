@@ -11,7 +11,7 @@
 #include <mruby/class.h>
 
 MRB_API _bool
-_obj_eq(_state *mrb, _value v1, _value v2)
+_obj_eq(state *mrb, value v1, value v2)
 {
   if (_type(v1) != _type(v2)) return FALSE;
   switch (_type(v1)) {
@@ -35,16 +35,16 @@ _obj_eq(_state *mrb, _value v1, _value v2)
 }
 
 MRB_API _bool
-_obj_equal(_state *mrb, _value v1, _value v2)
+_obj_equal(state *mrb, value v1, value v2)
 {
   /* temporary definition */
   return _obj_eq(mrb, v1, v2);
 }
 
 MRB_API _bool
-_equal(_state *mrb, _value obj1, _value obj2)
+_equal(state *mrb, value obj1, value obj2)
 {
-  _value result;
+  value result;
 
   if (_obj_eq(mrb, obj1, obj2)) return TRUE;
   result = _funcall(mrb, obj1, "==", 1, obj2);
@@ -66,8 +66,8 @@ _equal(_state *mrb, _value obj1, _value obj2)
  * Only the object <i>nil</i> responds <code>true</code> to <code>nil?</code>.
  */
 
-static _value
-_true(_state *mrb, _value obj)
+static value
+_true(state *mrb, value obj)
 {
   return _true_value();
 }
@@ -80,14 +80,14 @@ _true(_state *mrb, _value obj)
  *  Always returns the empty string.
  */
 
-static _value
-nil_to_s(_state *mrb, _value obj)
+static value
+nil_to_s(state *mrb, value obj)
 {
   return _str_new(mrb, 0, 0);
 }
 
-static _value
-nil_inspect(_state *mrb, _value obj)
+static value
+nil_inspect(state *mrb, value obj)
 {
   return _str_new_lit(mrb, "nil");
 }
@@ -110,8 +110,8 @@ nil_inspect(_state *mrb, _value obj)
  *  <code>nil</code> or <code>false</code>, <code>true</code> otherwise.
  */
 
-static _value
-true_and(_state *mrb, _value obj)
+static value
+true_and(state *mrb, value obj)
 {
   _bool obj2;
 
@@ -130,8 +130,8 @@ true_and(_state *mrb, _value obj)
  *  otherwise.
  */
 
-static _value
-true_xor(_state *mrb, _value obj)
+static value
+true_xor(state *mrb, value obj)
 {
   _bool obj2;
 
@@ -147,8 +147,8 @@ true_xor(_state *mrb, _value obj)
  * The string representation of <code>true</code> is "true".
  */
 
-static _value
-true_to_s(_state *mrb, _value obj)
+static value
+true_to_s(state *mrb, value obj)
 {
   return _str_new_lit(mrb, "true");
 }
@@ -170,8 +170,8 @@ true_to_s(_state *mrb, _value obj)
  *     or
  */
 
-static _value
-true_or(_state *mrb, _value obj)
+static value
+true_or(state *mrb, value obj)
 {
   return _true_value();
 }
@@ -198,8 +198,8 @@ true_or(_state *mrb, _value obj)
  *  short-circuit evaluation in this case.
  */
 
-static _value
-false_and(_state *mrb, _value obj)
+static value
+false_and(state *mrb, value obj)
 {
   return _false_value();
 }
@@ -217,8 +217,8 @@ false_and(_state *mrb, _value obj)
  *
  */
 
-static _value
-false_xor(_state *mrb, _value obj)
+static value
+false_xor(state *mrb, value obj)
 {
   _bool obj2;
 
@@ -237,8 +237,8 @@ false_xor(_state *mrb, _value obj)
  *  <code>nil</code> or <code>false</code>; <code>true</code> otherwise.
  */
 
-static _value
-false_or(_state *mrb, _value obj)
+static value
+false_or(state *mrb, value obj)
 {
   _bool obj2;
 
@@ -254,14 +254,14 @@ false_or(_state *mrb, _value obj)
  * 'nuf said...
  */
 
-static _value
-false_to_s(_state *mrb, _value obj)
+static value
+false_to_s(state *mrb, value obj)
 {
   return _str_new_lit(mrb, "false");
 }
 
 void
-_init_object(_state *mrb)
+_init_object(state *mrb)
 {
   struct RClass *n;
   struct RClass *t;
@@ -296,8 +296,8 @@ _init_object(_state *mrb)
   _define_method(mrb, f, "inspect", false_to_s,  MRB_ARGS_NONE());
 }
 
-static _value
-inspect_type(_state *mrb, _value val)
+static value
+inspect_type(state *mrb, value val)
 {
   if (_type(val) == MRB_TT_FALSE || _type(val) == MRB_TT_TRUE) {
     return _inspect(mrb, val);
@@ -307,8 +307,8 @@ inspect_type(_state *mrb, _value val)
   }
 }
 
-static _value
-convert_type(_state *mrb, _value val, const char *tname, const char *method, _bool raise)
+static value
+convert_type(state *mrb, value val, const char *tname, const char *method, _bool raise)
 {
   _sym m = 0;
 
@@ -322,10 +322,10 @@ convert_type(_state *mrb, _value val, const char *tname, const char *method, _bo
   return _funcall_argv(mrb, val, m, 0, 0);
 }
 
-MRB_API _value
-_check_to_integer(_state *mrb, _value val, const char *method)
+MRB_API value
+_check_to_integer(state *mrb, value val, const char *method)
 {
-  _value v;
+  value v;
 
   if (_fixnum_p(val)) return val;
   v = convert_type(mrb, val, "Integer", method, FALSE);
@@ -335,10 +335,10 @@ _check_to_integer(_state *mrb, _value val, const char *method)
   return v;
 }
 
-MRB_API _value
-_convert_type(_state *mrb, _value val, enum _vtype type, const char *tname, const char *method)
+MRB_API value
+_convert_type(state *mrb, value val, enum _vtype type, const char *tname, const char *method)
 {
-  _value v;
+  value v;
 
   if (_type(val) == type) return val;
   v = convert_type(mrb, val, tname, method, TRUE);
@@ -349,10 +349,10 @@ _convert_type(_state *mrb, _value val, enum _vtype type, const char *tname, cons
   return v;
 }
 
-MRB_API _value
-_check_convert_type(_state *mrb, _value val, enum _vtype type, const char *tname, const char *method)
+MRB_API value
+_check_convert_type(state *mrb, value val, enum _vtype type, const char *tname, const char *method)
 {
-  _value v;
+  value v;
 
   if (_type(val) == type && type != MRB_TT_DATA && type != MRB_TT_ISTRUCT) return val;
   v = convert_type(mrb, val, tname, method, FALSE);
@@ -392,7 +392,7 @@ static const struct types {
 };
 
 MRB_API void
-_check_type(_state *mrb, _value x, enum _vtype t)
+_check_type(state *mrb, value x, enum _vtype t)
 {
   const struct types *type = builtin_types;
   enum _vtype xt;
@@ -439,10 +439,10 @@ _check_type(_state *mrb, _value x, enum _vtype t)
  *  initial execution context of Ruby programs returns "main."
  */
 
-MRB_API _value
-_any_to_s(_state *mrb, _value obj)
+MRB_API value
+_any_to_s(state *mrb, value obj)
 {
-  _value str = _str_new_capa(mrb, 20);
+  value str = _str_new_capa(mrb, 20);
   const char *cname = _obj_classname(mrb, obj);
 
   _str_cat_lit(mrb, str, "#<");
@@ -481,7 +481,7 @@ _any_to_s(_state *mrb, _value obj)
  */
 
 MRB_API _bool
-_obj_is_kind_of(_state *mrb, _value obj, struct RClass *c)
+_obj_is_kind_of(state *mrb, value obj, struct RClass *c)
 {
   struct RClass *cl = _class(mrb, obj);
 
@@ -505,31 +505,31 @@ _obj_is_kind_of(_state *mrb, _value obj, struct RClass *c)
   return FALSE;
 }
 
-static _value
-_to_integer(_state *mrb, _value val, const char *method)
+static value
+_to_integer(state *mrb, value val, const char *method)
 {
-  _value v;
+  value v;
 
   if (_fixnum_p(val)) return val;
   v = convert_type(mrb, val, "Integer", method, TRUE);
   if (!_obj_is_kind_of(mrb, v, mrb->fixnum_class)) {
-    _value type = inspect_type(mrb, val);
+    value type = inspect_type(mrb, val);
     _raisef(mrb, E_TYPE_ERROR, "can't convert %S to Integer (%S#%S gives %S)",
                type, type, _str_new_cstr(mrb, method), inspect_type(mrb, v));
   }
   return v;
 }
 
-MRB_API _value
-_to_int(_state *mrb, _value val)
+MRB_API value
+_to_int(state *mrb, value val)
 {
   return _to_integer(mrb, val, "to_int");
 }
 
-MRB_API _value
-_convert_to_integer(_state *mrb, _value val, _int base)
+MRB_API value
+_convert_to_integer(state *mrb, value val, _int base)
 {
-  _value tmp;
+  value tmp;
 
   if (_nil_p(val)) {
     if (base != 0) goto arg_error;
@@ -575,15 +575,15 @@ arg_error:
   return tmp;
 }
 
-MRB_API _value
-_Integer(_state *mrb, _value val)
+MRB_API value
+_Integer(state *mrb, value val)
 {
   return _convert_to_integer(mrb, val, 0);
 }
 
 #ifndef MRB_WITHOUT_FLOAT
-MRB_API _value
-_Float(_state *mrb, _value val)
+MRB_API value
+_Float(state *mrb, value val)
 {
   if (_nil_p(val)) {
     _raise(mrb, E_TYPE_ERROR, "can't convert nil into Float");
@@ -604,14 +604,14 @@ _Float(_state *mrb, _value val)
 }
 #endif
 
-MRB_API _value
-_inspect(_state *mrb, _value obj)
+MRB_API value
+_inspect(state *mrb, value obj)
 {
   return _obj_as_string(mrb, _funcall(mrb, obj, "inspect", 0));
 }
 
 MRB_API _bool
-_eql(_state *mrb, _value obj1, _value obj2)
+_eql(state *mrb, value obj1, value obj2)
 {
   if (_obj_eq(mrb, obj1, obj2)) return TRUE;
   return _test(_funcall(mrb, obj1, "eql?", 1, obj2));

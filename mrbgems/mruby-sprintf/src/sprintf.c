@@ -21,7 +21,7 @@
 #define BITSPERDIG MRB_INT_BIT
 #define EXTENDSIGN(n, l) (((~0U << (n)) >> (((n)*(l)) % BITSPERDIG)) & ~(~0U << (n)))
 
-_value _str_format(_state *, _int, const _value *, _value);
+value _str_format(state *, _int, const value *, value);
 #ifndef MRB_WITHOUT_FLOAT
 static void fmt_setup(char*,size_t,int,int,_int,_int);
 #endif
@@ -72,8 +72,8 @@ sign_bits(int base, const char *p)
   return c;
 }
 
-static _value
-_fix2binstr(_state *mrb, _value x, int base)
+static value
+_fix2binstr(state *mrb, value x, int base)
 {
   char buf[66], *b = buf + sizeof buf;
   _int num = _fixnum(x);
@@ -140,7 +140,7 @@ _fix2binstr(_state *mrb, _value x, int base)
 } while (0)
 
 static void
-check_next_arg(_state *mrb, int posarg, int nextarg)
+check_next_arg(state *mrb, int posarg, int nextarg)
 {
   switch (posarg) {
   case -1:
@@ -155,7 +155,7 @@ check_next_arg(_state *mrb, int posarg, int nextarg)
 }
 
 static void
-check_pos_arg(_state *mrb, _int posarg, _int n)
+check_pos_arg(state *mrb, _int posarg, _int n)
 {
   if (posarg > 0) {
     _raisef(mrb, E_ARGUMENT_ERROR, "numbered(%S) after unnumbered(%S)",
@@ -170,7 +170,7 @@ check_pos_arg(_state *mrb, _int posarg, _int n)
 }
 
 static void
-check_name_arg(_state *mrb, int posarg, const char *name, _int len)
+check_name_arg(state *mrb, int posarg, const char *name, _int len)
 {
   if (posarg > 0) {
     _raisef(mrb, E_ARGUMENT_ERROR, "named%S after unnumbered(%S)",
@@ -210,7 +210,7 @@ check_name_arg(_state *mrb, int posarg, const char *name, _int len)
   }
 
 #define GETASTER(num) do { \
-  _value tmp_v; \
+  value tmp_v; \
   t = p++; \
   n = 0; \
   GETNUM(n, val); \
@@ -224,10 +224,10 @@ check_name_arg(_state *mrb, int posarg, const char *name, _int len)
   num = _int(mrb, tmp_v); \
 } while (0)
 
-static _value
-get_hash(_state *mrb, _value *hash, _int argc, const _value *argv)
+static value
+get_hash(state *mrb, value *hash, _int argc, const value *argv)
 {
-  _value tmp;
+  value tmp;
 
   if (!_undef_p(*hash)) return *hash;
   if (argc != 2) {
@@ -501,11 +501,11 @@ get_hash(_state *mrb, _value *hash, _int argc, const _value *argv)
  *      # => "1f"
  */
 
-_value
-_f_sprintf(_state *mrb, _value obj)
+value
+_f_sprintf(state *mrb, value obj)
 {
   _int argc;
-  _value *argv;
+  value *argv;
 
   _get_args(mrb, "*", &argv, &argc);
 
@@ -518,22 +518,22 @@ _f_sprintf(_state *mrb, _value obj)
   }
 }
 
-_value
-_str_format(_state *mrb, _int argc, const _value *argv, _value fmt)
+value
+_str_format(state *mrb, _int argc, const value *argv, value fmt)
 {
   const char *p, *end;
   char *buf;
   _int blen;
   _int bsiz;
-  _value result;
+  value result;
   _int n;
   _int width;
   _int prec;
   int nextarg = 1;
   int posarg = 0;
-  _value nextvalue;
-  _value str;
-  _value hash = _undef_value();
+  value nextvalue;
+  value str;
+  value hash = _undef_value();
 
 #define CHECK_FOR_WIDTH(f)                                                  \
   if ((f) & FWIDTH) {                                                       \
@@ -634,7 +634,7 @@ retry:
       case '{': {
         const char *start = p;
         char term = (*p == '<') ? '>' : '}';
-        _value symname;
+        value symname;
 
         for (; p < end && *p != term; )
           p++;
@@ -696,8 +696,8 @@ retry:
         break;
 
       case 'c': {
-        _value val = GETARG();
-        _value tmp;
+        value val = GETARG();
+        value tmp;
         char *c;
 
         tmp = _check_string_type(mrb, val);
@@ -743,7 +743,7 @@ retry:
       case 'p':
   format_s:
       {
-        _value arg = GETARG();
+        value arg = GETARG();
         _int len;
         _int slen;
 
@@ -793,7 +793,7 @@ retry:
       case 'b':
       case 'B':
       case 'u': {
-        _value val = GETARG();
+        value val = GETARG();
         char nbuf[68], *s;
         const char *prefix = NULL;
         int sign = 0, dots = 0;
@@ -1001,7 +1001,7 @@ retry:
       case 'E':
       case 'a':
       case 'A': {
-        _value val = GETARG();
+        value val = GETARG();
         double fval;
         _int i;
         _int need = 6;

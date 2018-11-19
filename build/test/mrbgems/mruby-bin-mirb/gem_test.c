@@ -19,8 +19,8 @@
  *   All manual changes will get lost.
  */
 extern const uint8_t mrbtest_assert_irep[];
-void _mruby_bin_mirb_gem_test(_state *mrb);
-void _init_test_driver(_state *mrb, _bool verbose);
-void _t_pass_result(_state *dst, _state *src);
-void GENERATED_TMP__mruby_bin_mirb_gem_test(_state *mrb) {
+void _mruby_bin_mirb_gem_test(state *mrb);
+void _init_test_driver(state *mrb, _bool verbose);
+void _t_pass_result(state *dst, state *src);
+void GENERATED_TMP__mruby_bin_mirb_gem_test(state *mrb) {
 }

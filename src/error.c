@@ -18,15 +18,15 @@
 #include <mruby/class.h>
 #include <mruby/throw.h>
 
-MRB_API _value
-_exc_new(_state *mrb, struct RClass *c, const char *ptr, size_t len)
+MRB_API value
+_exc_new(state *mrb, struct RClass *c, const char *ptr, size_t len)
 {
-  _value arg = _str_new(mrb, ptr, len);
+  value arg = _str_new(mrb, ptr, len);
   return _obj_new(mrb, c, 1, &arg);
 }
 
-MRB_API _value
-_exc_new_str(_state *mrb, struct RClass* c, _value str)
+MRB_API value
+_exc_new_str(state *mrb, struct RClass* c, value str)
 {
   str = _str_to_str(mrb, str);
   return _obj_new(mrb, c, 1, &str);
@@ -40,12 +40,12 @@ _exc_new_str(_state *mrb, struct RClass* c, _value str)
  *  a message.
  */
 
-static _value
-exc_initialize(_state *mrb, _value exc)
+static value
+exc_initialize(state *mrb, value exc)
 {
-  _value mesg;
+  value mesg;
   _int argc;
-  _value *argv;
+  value *argv;
 
   if (_get_args(mrb, "|o*!", &mesg, &argv, &argc) >= 1) {
     _iv_set(mrb, exc, _intern_lit(mrb, "mesg"), mesg);
@@ -66,11 +66,11 @@ exc_initialize(_state *mrb, _value exc)
  *
  */
 
-static _value
-exc_exception(_state *mrb, _value self)
+static value
+exc_exception(state *mrb, value self)
 {
-  _value exc;
-  _value a;
+  value exc;
+  value a;
   _int argc;
 
   argc = _get_args(mrb, "|o", &a);
@@ -90,10 +90,10 @@ exc_exception(_state *mrb, _value self)
  * no message is set).
  */
 
-static _value
-exc_to_s(_state *mrb, _value exc)
+static value
+exc_to_s(state *mrb, value exc)
 {
-  _value mesg = _attr_get(mrb, exc, _intern_lit(mrb, "mesg"));
+  value mesg = _attr_get(mrb, exc, _intern_lit(mrb, "mesg"));
   struct RObject *p;
 
   if (!_string_p(mesg)) {
@@ -114,8 +114,8 @@ exc_to_s(_state *mrb, _value exc)
  * Normally this returns the exception's message or name.
  */
 
-static _value
-exc_message(_state *mrb, _value exc)
+static value
+exc_message(state *mrb, value exc)
 {
   return _funcall(mrb, exc, "to_s", 0);
 }
@@ -130,10 +130,10 @@ exc_message(_state *mrb, _value exc)
  * returns message and class name.
  */
 
-static _value
-exc_inspect(_state *mrb, _value exc)
+static value
+exc_inspect(state *mrb, value exc)
 {
-  _value str, mesg, file, line;
+  value str, mesg, file, line;
   _bool append_mesg;
   const char *cname;
 
@@ -163,18 +163,18 @@ exc_inspect(_state *mrb, _value exc)
   return str;
 }
 
-void _keep_backtrace(_state *mrb, _value exc);
+void _keep_backtrace(state *mrb, value exc);
 
 static void
-set_backtrace(_state *mrb, _value exc, _value backtrace)
+set_backtrace(state *mrb, value exc, value backtrace)
 {
   if (!_array_p(backtrace)) {
   type_err:
     _raise(mrb, E_TYPE_ERROR, "backtrace must be Array of String");
   }
   else {
-    const _value *p = RARRAY_PTR(backtrace);
-    const _value *pend = p + RARRAY_LEN(backtrace);
+    const value *p = RARRAY_PTR(backtrace);
+    const value *pend = p + RARRAY_LEN(backtrace);
 
     while (p < pend) {
       if (!_string_p(*p)) goto type_err;
@@ -184,10 +184,10 @@ set_backtrace(_state *mrb, _value exc, _value backtrace)
   _iv_set(mrb, exc, _intern_lit(mrb, "backtrace"), backtrace);
 }
 
-static _value
-exc_set_backtrace(_state *mrb, _value exc)
+static value
+exc_set_backtrace(state *mrb, value exc)
 {
-  _value backtrace;
+  value backtrace;
 
   _get_args(mrb, "o", &backtrace);
   set_backtrace(mrb, exc, backtrace);
@@ -195,7 +195,7 @@ exc_set_backtrace(_state *mrb, _value exc)
 }
 
 static void
-exc_debug_info(_state *mrb, struct RObject *exc)
+exc_debug_info(state *mrb, struct RObject *exc)
 {
   _callinfo *ci = mrb->c->ci;
   _code *pc = ci->pc;
@@ -222,7 +222,7 @@ exc_debug_info(_state *mrb, struct RObject *exc)
 }
 
 void
-_exc_set(_state *mrb, _value exc)
+_exc_set(state *mrb, value exc)
 {
   if (_nil_p(exc)) {
     mrb->exc = 0;
@@ -241,7 +241,7 @@ _exc_set(_state *mrb, _value exc)
 }
 
 MRB_API _noreturn void
-_exc_raise(_state *mrb, _value exc)
+_exc_raise(state *mrb, value exc)
 {
   if (!_obj_is_kind_of(mrb, exc, mrb->eException_class)) {
     _raise(mrb, E_TYPE_ERROR, "exception object expected");
@@ -255,19 +255,19 @@ _exc_raise(_state *mrb, _value exc)
 }
 
 MRB_API _noreturn void
-_raise(_state *mrb, struct RClass *c, const char *msg)
+_raise(state *mrb, struct RClass *c, const char *msg)
 {
   _exc_raise(mrb, _exc_new_str(mrb, c, _str_new_cstr(mrb, msg)));
 }
 
-MRB_API _value
-_vformat(_state *mrb, const char *format, va_list ap)
+MRB_API value
+_vformat(state *mrb, const char *format, va_list ap)
 {
   const char *p = format;
   const char *b = p;
   ptrdiff_t size;
   int ai0 = _gc_arena_save(mrb);
-  _value ary = _ary_new_capa(mrb, 4);
+  value ary = _ary_new_capa(mrb, 4);
   int ai = _gc_arena_save(mrb);
 
   while (*p) {
@@ -275,11 +275,11 @@ _vformat(_state *mrb, const char *format, va_list ap)
 
     if (c == '%') {
       if (*p == 'S') {
-        _value val;
+        value val;
 
         size = p - b - 1;
         _ary_push(mrb, ary, _str_new(mrb, b, size));
-        val = va_arg(ap, _value);
+        val = va_arg(ap, value);
         _ary_push(mrb, ary, _obj_as_string(mrb, val));
         b = p + 1;
       }
@@ -302,7 +302,7 @@ _vformat(_state *mrb, const char *format, va_list ap)
     return _str_new_cstr(mrb, format);
   }
   else {
-    _value val;
+    value val;
 
     size = p - b;
     if (size > 0) {
@@ -315,11 +315,11 @@ _vformat(_state *mrb, const char *format, va_list ap)
   }
 }
 
-MRB_API _value
-_format(_state *mrb, const char *format, ...)
+MRB_API value
+_format(state *mrb, const char *format, ...)
 {
   va_list ap;
-  _value str;
+  value str;
 
   va_start(ap, format);
   str = _vformat(mrb, format, ap);
@@ -329,9 +329,9 @@ _format(_state *mrb, const char *format, ...)
 }
 
 static _noreturn void
-raise_va(_state *mrb, struct RClass *c, const char *fmt, va_list ap, int argc, _value *argv)
+raise_va(state *mrb, struct RClass *c, const char *fmt, va_list ap, int argc, value *argv)
 {
-  _value mesg;
+  value mesg;
 
   mesg = _vformat(mrb, fmt, ap);
   if (argv == NULL) {
@@ -344,7 +344,7 @@ raise_va(_state *mrb, struct RClass *c, const char *fmt, va_list ap, int argc, _
 }
 
 MRB_API _noreturn void
-_raisef(_state *mrb, struct RClass *c, const char *fmt, ...)
+_raisef(state *mrb, struct RClass *c, const char *fmt, ...)
 {
   va_list args;
 
@@ -354,9 +354,9 @@ _raisef(_state *mrb, struct RClass *c, const char *fmt, ...)
 }
 
 MRB_API _noreturn void
-_name_error(_state *mrb, _sym id, const char *fmt, ...)
+_name_error(state *mrb, _sym id, const char *fmt, ...)
 {
-  _value argv[2];
+  value argv[2];
   va_list args;
 
   va_start(args, fmt);
@@ -366,11 +366,11 @@ _name_error(_state *mrb, _sym id, const char *fmt, ...)
 }
 
 MRB_API void
-_warn(_state *mrb, const char *fmt, ...)
+_warn(state *mrb, const char *fmt, ...)
 {
 #ifndef MRB_DISABLE_STDIO
   va_list ap;
-  _value str;
+  value str;
 
   va_start(ap, fmt);
   str = _vformat(mrb, fmt, ap);
@@ -381,11 +381,11 @@ _warn(_state *mrb, const char *fmt, ...)
 }
 
 MRB_API _noreturn void
-_bug(_state *mrb, const char *fmt, ...)
+_bug(state *mrb, const char *fmt, ...)
 {
 #ifndef MRB_DISABLE_STDIO
   va_list ap;
-  _value str;
+  value str;
 
   va_start(ap, fmt);
   str = _vformat(mrb, fmt, ap);
@@ -396,10 +396,10 @@ _bug(_state *mrb, const char *fmt, ...)
   exit(EXIT_FAILURE);
 }
 
-MRB_API _value
-_make_exception(_state *mrb, _int argc, const _value *argv)
+MRB_API value
+_make_exception(state *mrb, _int argc, const value *argv)
 {
-  _value mesg;
+  value mesg;
   int n;
 
   mesg = _nil_value();
@@ -447,7 +447,7 @@ exception_call:
 }
 
 MRB_API void
-_sys_fail(_state *mrb, const char *mesg)
+_sys_fail(state *mrb, const char *mesg)
 {
   struct RClass *sce;
   _int no;
@@ -468,10 +468,10 @@ _sys_fail(_state *mrb, const char *mesg)
 }
 
 MRB_API _noreturn void
-_no_method_error(_state *mrb, _sym id, _value args, char const* fmt, ...)
+_no_method_error(state *mrb, _sym id, value args, char const* fmt, ...)
 {
-  _value exc;
-  _value argv[3];
+  value exc;
+  value argv[3];
   va_list ap;
 
   va_start(ap, fmt);
@@ -484,7 +484,7 @@ _no_method_error(_state *mrb, _sym id, _value args, char const* fmt, ...)
 }
 
 void
-_init_exception(_state *mrb)
+_init_exception(state *mrb)
 {
   struct RClass *exception, *script_error, *stack_error, *nomem_error;
 

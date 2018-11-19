@@ -42,8 +42,8 @@
 #define LINENO_MAX_DIGIT 6
 #define BPNO_LETTER_NUM 9
 
-typedef int32_t (*all_command_func)(_state *, _debug_context *);
-typedef int32_t (*select_command_func)(_state *, _debug_context *, uint32_t);
+typedef int32_t (*all_command_func)(state *, _debug_context *);
+typedef int32_t (*select_command_func)(state *, _debug_context *, uint32_t);
 
 static void
 print_api_common_error(int32_t error)
@@ -86,7 +86,7 @@ parse_breakpoint_no(char* args)
 }
 
 static _bool
-exe_set_command_all(_state *mrb, mrdb_state *mrdb, all_command_func func)
+exe_set_command_all(state *mrb, mrdb_state *mrdb, all_command_func func)
 {
   int32_t ret = MRB_DEBUG_OK;
 
@@ -99,7 +99,7 @@ exe_set_command_all(_state *mrb, mrdb_state *mrdb, all_command_func func)
 }
 
 static void
-exe_set_command_select(_state *mrb, mrdb_state *mrdb, select_command_func func)
+exe_set_command_select(state *mrb, mrdb_state *mrdb, select_command_func func)
 {
   char* ps;
   int32_t ret = MRB_DEBUG_OK;
@@ -175,7 +175,7 @@ print_breakpoint(_debug_breakpoint *bp)
 }
 
 static void
-info_break_all(_state *mrb, mrdb_state *mrdb)
+info_break_all(state *mrb, mrdb_state *mrdb)
 {
   int32_t bpnum = 0;
   int32_t i = 0;
@@ -207,7 +207,7 @@ info_break_all(_state *mrb, mrdb_state *mrdb)
 }
 
 static void
-info_break_select(_state *mrb, mrdb_state *mrdb)
+info_break_select(state *mrb, mrdb_state *mrdb)
 {
   int32_t ret = MRB_DEBUG_OK;
   int32_t bpno = 0;
@@ -322,7 +322,7 @@ parse_breakcommand(mrdb_state *mrdb, const char **file, uint32_t *line, char **c
 }
 
 dbgcmd_state
-dbgcmd_break(_state *mrb, mrdb_state *mrdb)
+dbgcmd_break(state *mrb, mrdb_state *mrdb)
 {
   _debug_bptype type;
   _debug_context *dbg = mrdb->dbg;
@@ -385,7 +385,7 @@ dbgcmd_break(_state *mrb, mrdb_state *mrdb)
 }
 
 dbgcmd_state
-dbgcmd_info_break(_state *mrb, mrdb_state *mrdb)
+dbgcmd_info_break(state *mrb, mrdb_state *mrdb)
 {
   if (mrdb->wcnt == 2) {
     info_break_all(mrb, mrdb);
@@ -398,7 +398,7 @@ dbgcmd_info_break(_state *mrb, mrdb_state *mrdb)
 }
 
 dbgcmd_state
-dbgcmd_delete(_state *mrb, mrdb_state *mrdb)
+dbgcmd_delete(state *mrb, mrdb_state *mrdb)
 {
   _bool ret = FALSE;
 
@@ -411,7 +411,7 @@ dbgcmd_delete(_state *mrb, mrdb_state *mrdb)
 }
 
 dbgcmd_state
-dbgcmd_enable(_state *mrb, mrdb_state *mrdb)
+dbgcmd_enable(state *mrb, mrdb_state *mrdb)
 {
   _bool ret = FALSE;
 
@@ -424,7 +424,7 @@ dbgcmd_enable(_state *mrb, mrdb_state *mrdb)
 }
 
 dbgcmd_state
-dbgcmd_disable(_state *mrb, mrdb_state *mrdb)
+dbgcmd_disable(state *mrb, mrdb_state *mrdb)
 {
   _bool ret = FALSE;
 

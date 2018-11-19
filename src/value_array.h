@@ -4,7 +4,7 @@
 #include <mruby.h>
 
 static inline void
-value_move(_value *s1, const _value *s2, size_t n)
+value_move(value *s1, const value *s2, size_t n)
 {
   if (s1 > s2 && s1 < s2 + n)
   {

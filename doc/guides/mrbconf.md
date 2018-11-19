@@ -14,19 +14,19 @@ You can use mrbconfs with following ways:
 `MRB_DISABLE_STDIO`
 * When defined `<stdio.h>` functions won't be used.
 * Some features will be disabled when this is enabled:
-  * `mrb_irep` load/dump from/to file.
+  * `_irep` load/dump from/to file.
   * Compiling mruby script from file.
   * Printing features in **src/print.c**.
 
 ## Debug macros.
 `MRB_ENABLE_DEBUG_HOOK`
 * When defined code fetch hook and debug OP hook will be enabled.
-* When using any of the hook set function pointer `code_fetch_hook` and/or `debug_op_hook` of `mrb_state`.
+* When using any of the hook set function pointer `code_fetch_hook` and/or `debug_op_hook` of `state`.
 * Fetch hook will be called before any OP.
 * Debug OP hook will be called when dispatching `OP_DEBUG`.
 
 `MRB_DEBUG`
-* When defined `mrb_assert*` macro will be defined with macros from `<assert.h>`.
+* When defined `_assert*` macro will be defined with macros from `<assert.h>`.
 * Could be enabled via `enable_debug` method of `MRuby::Build`.
 
 ## Stack configuration
@@ -47,18 +47,18 @@ You can use mrbconfs with following ways:
 ## Primitive type configuration.
 
 `MRB_USE_FLOAT`
-* When defined single precision floating point type(C type `float`) is used as `mrb_float`.
-* Else double precision floating point type(C type `double`) is used as `mrb_float`.
+* When defined single precision floating point type(C type `float`) is used as `_float`.
+* Else double precision floating point type(C type `double`) is used as `_float`.
 
 `MRB_INT16`
-* When defined `int16_t` will be defined as `mrb_int`.
+* When defined `int16_t` will be defined as `_int`.
 * Conflicts with `MRB_INT64`.
 
 `MRB_INT64`
-* When defined `int64_t` will be defined as `mrb_int`.
+* When defined `int64_t` will be defined as `_int`.
 * Conflicts with `MRB_INT16`.
 * When `MRB_INT16` or `MRB_INT64` isn't defined `int`(most of the times 32-bit integer)
-will be defined as `mrb_int`.
+will be defined as `_int`.
 
 ## Garbage collector configuration.
 
@@ -98,15 +98,15 @@ largest value of required alignment.
 ## State atexit configuration.
 
 `MRB_FIXED_STATE_ATEXIT_STACK`
-* If defined enables fixed size `mrb_state` atexit stack.
-* Raises `RuntimeError` when `mrb_state_atexit` call count to same `mrb_state` exceeds
+* If defined enables fixed size `state` atexit stack.
+* Raises `RuntimeError` when `_state_atexit` call count to same `state` exceeds
 `MRB_FIXED_STATE_ATEXIT_STACK_SIZE`'s value.
 
 `MRB_FIXED_STATE_ATEXIT_STACK_SIZE`
 * Default value is `5`.
 * If `MRB_FIXED_STATE_ATEXIT_STACK` isn't defined this macro is ignored.
 
-## `mrb_value` configuration.
+## `value` configuration.
 
 `MRB_ENDIAN_BIG`
 * If defined compiles mruby for big endian machines.
@@ -114,11 +114,11 @@ largest value of required alignment.
 * Some mrbgem use this mrbconf.
 
 `MRB_NAN_BOXING`
-* If defined represent `mrb_value` in boxed `double`.
+* If defined represent `value` in boxed `double`.
 * Conflicts with `MRB_USE_FLOAT`.
 
 `MRB_WORD_BOXING`
-* If defined represent `mrb_value` as a word.
+* If defined represent `value` as a word.
 * If defined `Float` will be a mruby object with `RBasic`.
 
 ## Instance variable configuration.
@@ -133,8 +133,8 @@ largest value of required alignment.
 
 `MRB_FUNCALL_ARGC_MAX`
 * Default value is `16`.
-* Specifies 4th argument(`argc`) max value of `mrb_funcall`.
-* Raises `ArgumentError` when the `argc` argument is bigger then this value `mrb_funcall`.
+* Specifies 4th argument(`argc`) max value of `_funcall`.
+* Raises `ArgumentError` when the `argc` argument is bigger then this value `_funcall`.
 
 `KHASH_DEFAULT_SIZE`
 * Default value is `32`.
@@ -143,4 +143,4 @@ largest value of required alignment.
 
 `MRB_STR_BUF_MIN_SIZE`
 * Default value is `128`.
-* Specifies initial capacity of `RString` created by `mrb_str_buf_new` function..
+* Specifies initial capacity of `RString` created by `_str_buf_new` function..

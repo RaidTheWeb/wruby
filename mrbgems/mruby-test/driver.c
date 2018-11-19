@@ -19,7 +19,7 @@
 #include <mruby/array.h>
 
 void
-_init_mrbtest(_state *);
+_init_mrbtest(state *);
 
 /* Print a short remark for the user */
 static void
@@ -29,18 +29,18 @@ print_hint(void)
 }
 
 static int
-check_error(_state *mrb)
+check_error(state *mrb)
 {
   /* Error check */
   /* $ko_test and $kill_test should be 0 */
-  _value ko_test = _gv_get(mrb, _intern_lit(mrb, "$ko_test"));
-  _value kill_test = _gv_get(mrb, _intern_lit(mrb, "$kill_test"));
+  value ko_test = _gv_get(mrb, _intern_lit(mrb, "$ko_test"));
+  value kill_test = _gv_get(mrb, _intern_lit(mrb, "$kill_test"));
 
   return _fixnum_p(ko_test) && _fixnum(ko_test) == 0 && _fixnum_p(kill_test) && _fixnum(kill_test) == 0;
 }
 
 static int
-eval_test(_state *mrb)
+eval_test(state *mrb)
 {
   /* evaluate the test */
   _funcall(mrb, _top_self(mrb), "report", 0);
@@ -57,7 +57,7 @@ eval_test(_state *mrb)
 }
 
 static void
-t_printstr(_state *mrb, _value obj)
+t_printstr(state *mrb, value obj)
 {
   char *s;
   _int len;
@@ -70,10 +70,10 @@ t_printstr(_state *mrb, _value obj)
   }
 }
 
-_value
-_t_printstr(_state *mrb, _value self)
+value
+_t_printstr(state *mrb, value self)
 {
-  _value argv;
+  value argv;
 
   _get_args(mrb, "o", &argv);
   t_printstr(mrb, argv);
@@ -82,7 +82,7 @@ _t_printstr(_state *mrb, _value self)
 }
 
 void
-_init_test_driver(_state *mrb, _bool verbose)
+_init_test_driver(state *mrb, _bool verbose)
 {
   struct RClass *krn, *mrbtest;
 
@@ -109,9 +109,9 @@ _init_test_driver(_state *mrb, _bool verbose)
 }
 
 void
-_t_pass_result(_state *_dst, _state *_src)
+_t_pass_result(state *_dst, state *_src)
 {
-  _value res_src;
+  value res_src;
 
   if (_src->exc) {
     _print_error(_src);
@@ -122,7 +122,7 @@ _t_pass_result(_state *_dst, _state *_src)
   do {                                                                  \
     res_src = _gv_get(_src, _intern_lit(_src, "$" #name));  \
     if (_fixnum_p(res_src)) {                                        \
-      _value res_dst = _gv_get(_dst, _intern_lit(_dst, "$" #name)); \
+      value res_dst = _gv_get(_dst, _intern_lit(_dst, "$" #name)); \
       _gv_set(_dst, _intern_lit(_dst, "$" #name), _fixnum_value(_fixnum(res_dst) + _fixnum(res_src))); \
     }                                                                   \
   } while (FALSE)                                                       \
@@ -137,9 +137,9 @@ _t_pass_result(_state *_dst, _state *_src)
 
   if (_array_p(res_src)) {
     _int i;
-    _value res_dst = _gv_get(_dst, _intern_lit(_dst, "$asserts"));
+    value res_dst = _gv_get(_dst, _intern_lit(_dst, "$asserts"));
     for (i = 0; i < RARRAY_LEN(res_src); ++i) {
-      _value val_src = RARRAY_PTR(res_src)[i];
+      value val_src = RARRAY_PTR(res_src)[i];
       _ary_push(_dst, res_dst, _str_new(_dst, RSTRING_PTR(val_src), RSTRING_LEN(val_src)));
     }
   }
@@ -148,7 +148,7 @@ _t_pass_result(_state *_dst, _state *_src)
 int
 main(int argc, char **argv)
 {
-  _state *mrb;
+  state *mrb;
   int ret;
   _bool verbose = FALSE;
 
@@ -157,7 +157,7 @@ main(int argc, char **argv)
   /* new interpreter instance */
   mrb = _open();
   if (mrb == NULL) {
-    fprintf(stderr, "Invalid _state, exiting test driver");
+    fprintf(stderr, "Invalid state, exiting test driver");
     return EXIT_FAILURE;
   }
 

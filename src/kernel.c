@@ -15,7 +15,7 @@
 #include <mruby/istruct.h>
 
 MRB_API _bool
-_func_basic_p(_state *mrb, _value obj, _sym mid, _func_t func)
+_func_basic_p(state *mrb, value obj, _sym mid, _func_t func)
 {
   struct RClass *c = _class(mrb, obj);
   _method_t m = _method_search_vm(mrb, &c, mid);
@@ -31,7 +31,7 @@ _func_basic_p(_state *mrb, _value obj, _sym mid, _func_t func)
 }
 
 static _bool
-_obj_basic_to_s_p(_state *mrb, _value obj)
+_obj_basic_to_s_p(state *mrb, value obj)
 {
   return _func_basic_p(mrb, obj, _intern_lit(mrb, "to_s"), _any_to_s);
 }
@@ -50,8 +50,8 @@ _obj_basic_to_s_p(_state *mrb, _value obj)
  *     [ 1, 2, 3..4, 'five' ].inspect   #=> "[1, 2, 3..4, \"five\"]"
  *     Time.new.inspect                 #=> "2008-03-08 19:43:39 +0900"
  */
-MRB_API _value
-_obj_inspect(_state *mrb, _value obj)
+MRB_API value
+_obj_inspect(state *mrb, value obj)
 {
   if ((_type(obj) == MRB_TT_OBJECT) && _obj_basic_to_s_p(mrb, obj)) {
     return _obj_iv_inspect(mrb, _obj_ptr(obj));
@@ -68,10 +68,10 @@ _obj_inspect(_state *mrb, _value obj)
  *  as calling  <code>#==</code>, but typically overridden by descendants
  *  to provide meaningful semantics in <code>case</code> statements.
  */
-static _value
-_equal_m(_state *mrb, _value self)
+static value
+_equal_m(state *mrb, value self)
 {
-  _value arg;
+  value arg;
 
   _get_args(mrb, "o", &arg);
   return _bool_value(_equal(mrb, self, arg));
@@ -94,8 +94,8 @@ _equal_m(_state *mrb, _value self)
  *  <code>:name</code> notation, which returns the symbol id of
  *  <code>name</code>. Replaces the deprecated <code>Object#id</code>.
  */
-_value
-_obj_id_m(_state *mrb, _value self)
+value
+_obj_id_m(state *mrb, value self)
 {
   return _fixnum_value(_obj_id(self));
 }
@@ -124,12 +124,12 @@ _obj_id_m(_state *mrb, _value self)
  *     try { "hello" }      #=> "hello"
  *     try do "hello" end   #=> "hello"
  */
-static _value
-_f_block_given_p_m(_state *mrb, _value self)
+static value
+_f_block_given_p_m(state *mrb, value self)
 {
   _callinfo *ci = &mrb->c->ci[-1];
   _callinfo *cibase = mrb->c->cibase;
-  _value *bp;
+  value *bp;
   struct RProc *p;
 
   if (ci <= cibase) {
@@ -191,14 +191,14 @@ _f_block_given_p_m(_state *mrb, _value self)
  *     1.class      #=> Fixnum
  *     self.class   #=> Object
  */
-static _value
-_obj_class_m(_state *mrb, _value self)
+static value
+_obj_class_m(state *mrb, value self)
 {
   return _obj_value(_obj_class(mrb, self));
 }
 
 static struct RClass*
-_singleton_class_clone(_state *mrb, _value obj)
+_singleton_class_clone(state *mrb, value obj)
 {
   struct RClass *klass = _basic_ptr(obj)->c;
 
@@ -233,7 +233,7 @@ _singleton_class_clone(_state *mrb, _value obj)
 }
 
 static void
-copy_class(_state *mrb, _value dst, _value src)
+copy_class(state *mrb, value dst, value src)
 {
   struct RClass *dc = _class_ptr(dst);
   struct RClass *sc = _class_ptr(src);
@@ -263,7 +263,7 @@ copy_class(_state *mrb, _value dst, _value src)
 }
 
 static void
-init_copy(_state *mrb, _value dest, _value obj)
+init_copy(state *mrb, value dest, value obj)
 {
   switch (_type(obj)) {
     case MRB_TT_ICLASS:
@@ -318,11 +318,11 @@ init_copy(_state *mrb, _value dest, _value obj)
  *
  *  Some Class(True False Nil Symbol Fixnum Float) Object  cannot clone.
  */
-MRB_API _value
-_obj_clone(_state *mrb, _value self)
+MRB_API value
+_obj_clone(state *mrb, value self)
 {
   struct RObject *p;
-  _value clone;
+  value clone;
 
   if (_immediate_p(self)) {
     _raisef(mrb, E_TYPE_ERROR, "can't clone %S", self);
@@ -359,11 +359,11 @@ _obj_clone(_state *mrb, _value self)
  *  the class.
  */
 
-MRB_API _value
-_obj_dup(_state *mrb, _value obj)
+MRB_API value
+_obj_dup(state *mrb, value obj)
 {
   struct RBasic *p;
-  _value dup;
+  value dup;
 
   if (_immediate_p(obj)) {
     _raisef(mrb, E_TYPE_ERROR, "can't dup %S", obj);
@@ -378,8 +378,8 @@ _obj_dup(_state *mrb, _value obj)
   return dup;
 }
 
-static _value
-_obj_extend(_state *mrb, _int argc, _value *argv, _value obj)
+static value
+_obj_extend(state *mrb, _int argc, value *argv, value obj)
 {
   _int i;
 
@@ -421,18 +421,18 @@ _obj_extend(_state *mrb, _int argc, _value *argv, _value obj)
  *     k.extend(Mod)   #=> #<Klass:0x401b3bc8>
  *     k.hello         #=> "Hello from Mod.\n"
  */
-static _value
-_obj_extend_m(_state *mrb, _value self)
+static value
+_obj_extend_m(state *mrb, value self)
 {
-  _value *argv;
+  value *argv;
   _int argc;
 
   _get_args(mrb, "*", &argv, &argc);
   return _obj_extend(mrb, argc, argv, self);
 }
 
-static _value
-_obj_freeze(_state *mrb, _value self)
+static value
+_obj_freeze(state *mrb, value self)
 {
   struct RBasic *b;
 
@@ -456,8 +456,8 @@ _obj_freeze(_state *mrb, _value self)
   return self;
 }
 
-static _value
-_obj_frozen(_state *mrb, _value self)
+static value
+_obj_frozen(state *mrb, value self)
 {
   struct RBasic *b;
 
@@ -492,17 +492,17 @@ _obj_frozen(_state *mrb, _value self)
  *  <code>Hash</code>. Any hash value that exceeds the capacity of a
  *  <code>Fixnum</code> will be truncated before being used.
  */
-MRB_API _value
-_obj_hash(_state *mrb, _value self)
+MRB_API value
+_obj_hash(state *mrb, value self)
 {
   return _fixnum_value(_obj_id(self));
 }
 
 /* 15.3.1.3.16 */
-static _value
-_obj_init_copy(_state *mrb, _value self)
+static value
+_obj_init_copy(state *mrb, value self)
 {
-  _value orig;
+  value orig;
 
   _get_args(mrb, "o", &orig);
   if (_obj_equal(mrb, self, orig)) return self;
@@ -514,7 +514,7 @@ _obj_init_copy(_state *mrb, _value self)
 
 
 MRB_API _bool
-_obj_is_instance_of(_state *mrb, _value obj, struct RClass* c)
+_obj_is_instance_of(state *mrb, value obj, struct RClass* c)
 {
   if (_obj_class(mrb, obj) == c) return TRUE;
   return FALSE;
@@ -528,10 +528,10 @@ _obj_is_instance_of(_state *mrb, _value obj, struct RClass* c)
  *  Returns <code>true</code> if <i>obj</i> is an instance of the given
  *  class. See also <code>Object#kind_of?</code>.
  */
-static _value
-obj_is_instance_of(_state *mrb, _value self)
+static value
+obj_is_instance_of(state *mrb, value self)
 {
-  _value arg;
+  value arg;
 
   _get_args(mrb, "C", &arg);
 
@@ -565,10 +565,10 @@ obj_is_instance_of(_state *mrb, _value self)
  *     b.kind_of? C       #=> false
  *     b.kind_of? M       #=> true
  */
-static _value
-_obj_is_kind_of_m(_state *mrb, _value self)
+static value
+_obj_is_kind_of_m(state *mrb, value self)
 {
-  _value arg;
+  value arg;
 
   _get_args(mrb, "C", &arg);
 
@@ -586,8 +586,8 @@ KHASH_DEFINE(st, _sym, char, FALSE, kh_int_hash_func, kh_int_hash_equal)
  *
  * Only the object <i>nil</i> responds <code>true</code> to <code>nil?</code>.
  */
-static _value
-_false(_state *mrb, _value self)
+static value
+_false(state *mrb, value self)
 {
   return _false_value();
 }
@@ -613,10 +613,10 @@ _false(_state *mrb, _value self)
  *     raise "Failed to create socket"
  *     raise ArgumentError, "No parameters", caller
  */
-MRB_API _value
-_f_raise(_state *mrb, _value self)
+MRB_API value
+_f_raise(state *mrb, value self)
 {
-  _value a[2], exc;
+  value a[2], exc;
   _int argc;
 
 
@@ -640,10 +640,10 @@ _f_raise(_state *mrb, _value self)
   return _nil_value();            /* not reached */
 }
 
-static _value
-_krn_class_defined(_state *mrb, _value self)
+static value
+_krn_class_defined(state *mrb, value self)
 {
-  _value str;
+  value str;
 
   _get_args(mrb, "S", &str);
   return _bool_value(_class_defined(mrb, RSTRING_PTR(str)));
@@ -672,11 +672,11 @@ _krn_class_defined(_state *mrb, _value self)
  *     d.remove   #=> 99
  *     d.var      #=> nil
  */
-static _value
-_obj_remove_instance_variable(_state *mrb, _value self)
+static value
+_obj_remove_instance_variable(state *mrb, value self)
 {
   _sym sym;
-  _value val;
+  value val;
 
   _get_args(mrb, "n", &sym);
   _iv_name_sym_check(mrb, sym);
@@ -688,7 +688,7 @@ _obj_remove_instance_variable(_state *mrb, _value self)
 }
 
 void
-_method_missing(_state *mrb, _sym name, _value self, _value args)
+_method_missing(state *mrb, _sym name, value self, value args)
 {
   _no_method_error(mrb, name, args, "undefined method '%S'", _sym2str(mrb, name));
 }
@@ -727,11 +727,11 @@ _method_missing(_state *mrb, _sym name, _value self, _value args)
  *     r.mm      #=> 2000
  */
 #ifdef MRB_DEFAULT_METHOD_MISSING
-static _value
-_obj_missing(_state *mrb, _value mod)
+static value
+_obj_missing(state *mrb, value mod)
 {
   _sym name;
-  _value *a;
+  value *a;
   _int alen;
 
   _get_args(mrb, "n*!", &name, &a, &alen);
@@ -742,7 +742,7 @@ _obj_missing(_state *mrb, _value mod)
 #endif
 
 static inline _bool
-basic_obj_respond_to(_state *mrb, _value obj, _sym id, int pub)
+basic_obj_respond_to(state *mrb, value obj, _sym id, int pub)
 {
   return _respond_to(mrb, obj, id);
 }
@@ -762,10 +762,10 @@ basic_obj_respond_to(_state *mrb, _value obj, _sym id, int pub)
  *  If the method is not defined, <code>respond_to_missing?</code>
  *  method is called and the result is returned.
  */
-static _value
-obj_respond_to(_state *mrb, _value self)
+static value
+obj_respond_to(state *mrb, value self)
 {
-  _value mid;
+  value mid;
   _sym id, rtm_id;
   _bool priv = FALSE, respond_to_p = TRUE;
 
@@ -775,7 +775,7 @@ obj_respond_to(_state *mrb, _value self)
     id = _symbol(mid);
   }
   else {
-    _value tmp;
+    value tmp;
     if (_string_p(mid)) {
       tmp = _check_intern_str(mrb, mid);
     }
@@ -802,7 +802,7 @@ obj_respond_to(_state *mrb, _value self)
   if (!respond_to_p) {
     rtm_id = _intern_lit(mrb, "respond_to_missing?");
     if (basic_obj_respond_to(mrb, self, rtm_id, !priv)) {
-      _value args[2], v;
+      value args[2], v;
       args[0] = mid;
       args[1] = _bool_value(priv);
       v = _funcall_argv(mrb, self, rtm_id, 2, args);
@@ -812,26 +812,26 @@ obj_respond_to(_state *mrb, _value self)
   return _bool_value(respond_to_p);
 }
 
-static _value
-_obj_ceqq(_state *mrb, _value self)
+static value
+_obj_ceqq(state *mrb, value self)
 {
-  _value v;
+  value v;
   _int i, len;
   _sym eqq = _intern_lit(mrb, "===");
-  _value ary = _ary_splat(mrb, self);
+  value ary = _ary_splat(mrb, self);
 
   _get_args(mrb, "o", &v);
   len = RARRAY_LEN(ary);
   for (i=0; i<len; i++) {
-    _value c = _funcall_argv(mrb, _ary_entry(ary, i), eqq, 1, &v);
+    value c = _funcall_argv(mrb, _ary_entry(ary, i), eqq, 1, &v);
     if (_test(c)) return _true_value();
   }
   return _false_value();
 }
 
-_value _obj_equal_m(_state *mrb, _value);
+value _obj_equal_m(state *mrb, value);
 void
-_init_kernel(_state *mrb)
+_init_kernel(state *mrb)
 {
   struct RClass *krn;
 

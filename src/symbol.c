@@ -20,7 +20,7 @@ typedef struct symbol_name {
 } symbol_name;
 
 static inline khint_t
-sym_hash_func(_state *mrb, _sym s)
+sym_hash_func(state *mrb, _sym s)
 {
   khint_t h = 0;
   size_t i, len = mrb->symtbl[s].len;
@@ -38,7 +38,7 @@ KHASH_DEFINE (n2s, _sym, _sym, FALSE, sym_hash_func, sym_hash_equal)
 /* ------------------------------------------------------ */
 
 static void
-sym_validate_len(_state *mrb, size_t len)
+sym_validate_len(state *mrb, size_t len)
 {
   if (len >= RITE_LV_NULL_MARK) {
     _raise(mrb, E_ARGUMENT_ERROR, "symbol length too long");
@@ -46,7 +46,7 @@ sym_validate_len(_state *mrb, size_t len)
 }
 
 static _sym
-sym_intern(_state *mrb, const char *name, size_t len, _bool lit)
+sym_intern(state *mrb, const char *name, size_t len, _bool lit)
 {
   khash_t(n2s) *h = mrb->name2sym;
   symbol_name *sname = mrb->symtbl; /* symtbl[0] for working memory */
@@ -90,31 +90,31 @@ sym_intern(_state *mrb, const char *name, size_t len, _bool lit)
 }
 
 MRB_API _sym
-_intern(_state *mrb, const char *name, size_t len)
+_intern(state *mrb, const char *name, size_t len)
 {
   return sym_intern(mrb, name, len, FALSE);
 }
 
 MRB_API _sym
-_intern_static(_state *mrb, const char *name, size_t len)
+_intern_static(state *mrb, const char *name, size_t len)
 {
   return sym_intern(mrb, name, len, TRUE);
 }
 
 MRB_API _sym
-_intern_cstr(_state *mrb, const char *name)
+_intern_cstr(state *mrb, const char *name)
 {
   return _intern(mrb, name, strlen(name));
 }
 
 MRB_API _sym
-_intern_str(_state *mrb, _value str)
+_intern_str(state *mrb, value str)
 {
   return _intern(mrb, RSTRING_PTR(str), RSTRING_LEN(str));
 }
 
-MRB_API _value
-_check_intern(_state *mrb, const char *name, size_t len)
+MRB_API value
+_check_intern(state *mrb, const char *name, size_t len)
 {
   khash_t(n2s) *h = mrb->name2sym;
   symbol_name *sname = mrb->symtbl;
@@ -131,21 +131,21 @@ _check_intern(_state *mrb, const char *name, size_t len)
   return _nil_value();
 }
 
-MRB_API _value
-_check_intern_cstr(_state *mrb, const char *name)
+MRB_API value
+_check_intern_cstr(state *mrb, const char *name)
 {
   return _check_intern(mrb, name, (_int)strlen(name));
 }
 
-MRB_API _value
-_check_intern_str(_state *mrb, _value str)
+MRB_API value
+_check_intern_str(state *mrb, value str)
 {
   return _check_intern(mrb, RSTRING_PTR(str), RSTRING_LEN(str));
 }
 
 /* lenp must be a pointer to a size_t variable */
 MRB_API const char*
-_sym2name_len(_state *mrb, _sym sym, _int *lenp)
+_sym2name_len(state *mrb, _sym sym, _int *lenp)
 {
   if (sym == 0 || mrb->symidx < sym) {
     if (lenp) *lenp = 0;
@@ -157,7 +157,7 @@ _sym2name_len(_state *mrb, _sym sym, _int *lenp)
 }
 
 void
-_free_symtbl(_state *mrb)
+_free_symtbl(state *mrb)
 {
   _sym i, lim;
 
@@ -171,7 +171,7 @@ _free_symtbl(_state *mrb)
 }
 
 void
-_init_symtbl(_state *mrb)
+_init_symtbl(state *mrb)
 {
   mrb->name2sym = kh_init(n2s, mrb);
 }
@@ -219,10 +219,10 @@ _init_symtbl(_state *mrb)
  *  symbol, returns <code>true</code>.
  */
 
-static _value
-sym_equal(_state *mrb, _value sym1)
+static value
+sym_equal(state *mrb, value sym1)
 {
-  _value sym2;
+  value sym2;
 
   _get_args(mrb, "o", &sym2);
 
@@ -240,8 +240,8 @@ sym_equal(_state *mrb, _value sym1)
  *
  *     :fred.id2name   #=> "fred"
  */
-static _value
-_sym_to_s(_state *mrb, _value sym)
+static value
+_sym_to_s(state *mrb, value sym)
 {
   _sym id = _symbol(sym);
   const char *p;
@@ -262,8 +262,8 @@ _sym_to_s(_state *mrb, _value sym)
  * in this case.
  */
 
-static _value
-sym_to_sym(_state *mrb, _value sym)
+static value
+sym_to_sym(state *mrb, value sym)
 {
   return sym;
 }
@@ -394,10 +394,10 @@ id:
   return *m ? FALSE : TRUE;
 }
 
-static _value
-sym_inspect(_state *mrb, _value sym)
+static value
+sym_inspect(state *mrb, value sym)
 {
-  _value str;
+  value str;
   const char *name;
   _int len;
   _sym id = _symbol(sym);
@@ -418,8 +418,8 @@ sym_inspect(_state *mrb, _value sym)
   return str;
 }
 
-MRB_API _value
-_sym2str(_state *mrb, _sym sym)
+MRB_API value
+_sym2str(state *mrb, _sym sym)
 {
   _int len;
   const char *name = _sym2name_len(mrb, sym, &len);
@@ -429,7 +429,7 @@ _sym2str(_state *mrb, _sym sym)
 }
 
 MRB_API const char*
-_sym2name(_state *mrb, _sym sym)
+_sym2name(state *mrb, _sym sym)
 {
   _int len;
   const char *name = _sym2name_len(mrb, sym, &len);
@@ -439,17 +439,17 @@ _sym2name(_state *mrb, _sym sym)
     return name;
   }
   else {
-    _value str = _str_dump(mrb, _str_new_static(mrb, name, len));
+    value str = _str_dump(mrb, _str_new_static(mrb, name, len));
     return RSTRING_PTR(str);
   }
 }
 
 #define lesser(a,b) (((a)>(b))?(b):(a))
 
-static _value
-sym_cmp(_state *mrb, _value s1)
+static value
+sym_cmp(state *mrb, value s1)
 {
-  _value s2;
+  value s2;
   _sym sym1, sym2;
 
   _get_args(mrb, "o", &s2);
@@ -477,7 +477,7 @@ sym_cmp(_state *mrb, _value s1)
 }
 
 void
-_init_symbol(_state *mrb)
+_init_symbol(state *mrb)
 {
   struct RClass *sym;
 

@@ -11,7 +11,7 @@
 #include <mruby/array.h>
 
 MRB_API struct RRange*
-_range_ptr(_state *mrb, _value v)
+_range_ptr(state *mrb, value v)
 {
   struct RRange *r = (struct RRange*)_ptr(v);
 
@@ -22,9 +22,9 @@ _range_ptr(_state *mrb, _value v)
 }
 
 static void
-range_check(_state *mrb, _value a, _value b)
+range_check(state *mrb, value a, value b)
 {
-  _value ans;
+  value ans;
   enum _vtype ta;
   enum _vtype tb;
 
@@ -46,8 +46,8 @@ range_check(_state *mrb, _value a, _value b)
   }
 }
 
-MRB_API _value
-_range_new(_state *mrb, _value beg, _value end, _bool excl)
+MRB_API value
+_range_new(state *mrb, value beg, value end, _bool excl)
 {
   struct RRange *r;
 
@@ -67,11 +67,10 @@ _range_new(_state *mrb, _value beg, _value end, _bool excl)
  *
  *  Returns the first object in <i>rng</i>.
  */
-_value
-_range_beg(_state *mrb, _value range)
+value
+_range_beg(state *mrb, value range)
 {
   struct RRange *r = _range_ptr(mrb, range);
-
   return r->edges->beg;
 }
 
@@ -86,8 +85,8 @@ _range_beg(_state *mrb, _value range)
  *     (1...10).end   #=> 10
  */
 
-_value
-_range_end(_state *mrb, _value range)
+value
+_range_end(state *mrb, value range)
 {
   struct RRange *r = _range_ptr(mrb, range);
 
@@ -100,8 +99,8 @@ _range_end(_state *mrb, _value range)
  *
  *  Returns <code>true</code> if <i>range</i> excludes its end value.
  */
-_value
-_range_excl(_state *mrb, _value range)
+value
+_range_excl(state *mrb, value range)
 {
   struct RRange *r = _range_ptr(mrb, range);
 
@@ -109,7 +108,7 @@ _range_excl(_state *mrb, _value range)
 }
 
 static void
-range_init(_state *mrb, _value range, _value beg, _value end, _bool exclude_end)
+range_init(state *mrb, value range, value beg, value end, _bool exclude_end)
 {
   struct RRange *r = _range_raw_ptr(range);
 
@@ -131,10 +130,10 @@ range_init(_state *mrb, _value range, _value beg, _value end, _bool exclude_end)
  *  the end object; otherwise, it will be excluded.
  */
 
-_value
-_range_initialize(_state *mrb, _value range)
+value
+_range_initialize(state *mrb, value range)
 {
-  _value beg, end;
+  value beg, end;
   _bool exclusive;
   _int n;
 
@@ -164,12 +163,12 @@ _range_initialize(_state *mrb, _value range)
  *
  */
 
-_value
-_range_eq(_state *mrb, _value range)
+value
+_range_eq(state *mrb, value range)
 {
   struct RRange *rr;
   struct RRange *ro;
-  _value obj, v1, v2;
+  value obj, v1, v2;
 
   _get_args(mrb, "o", &obj);
 
@@ -189,9 +188,9 @@ _range_eq(_state *mrb, _value range)
 }
 
 static _bool
-r_le(_state *mrb, _value a, _value b)
+r_le(state *mrb, value a, value b)
 {
-  _value r = _funcall(mrb, a, "<=>", 1, b); /* compare result */
+  value r = _funcall(mrb, a, "<=>", 1, b); /* compare result */
   /* output :a < b => -1, a = b =>  0, a > b => +1 */
 
   if (_fixnum_p(r)) {
@@ -203,18 +202,18 @@ r_le(_state *mrb, _value a, _value b)
 }
 
 static _bool
-r_gt(_state *mrb, _value a, _value b)
+r_gt(state *mrb, value a, value b)
 {
-  _value r = _funcall(mrb, a, "<=>", 1, b);
+  value r = _funcall(mrb, a, "<=>", 1, b);
   /* output :a < b => -1, a = b =>  0, a > b => +1 */
 
   return _fixnum_p(r) && _fixnum(r) == 1;
 }
 
 static _bool
-r_ge(_state *mrb, _value a, _value b)
+r_ge(state *mrb, value a, value b)
 {
-  _value r = _funcall(mrb, a, "<=>", 1, b); /* compare result */
+  value r = _funcall(mrb, a, "<=>", 1, b); /* compare result */
   /* output :a < b => -1, a = b =>  0, a > b => +1 */
 
   if (_fixnum_p(r)) {
@@ -232,12 +231,12 @@ r_ge(_state *mrb, _value a, _value b)
  *     range.include?(val) =>  true or false
  *
  */
-_value
-_range_include(_state *mrb, _value range)
+value
+_range_include(state *mrb, value range)
 {
-  _value val;
+  value val;
   struct RRange *r = _range_ptr(mrb, range);
-  _value beg, end;
+  value beg, end;
   _bool include_p;
 
   _get_args(mrb, "o", &val);
@@ -252,7 +251,7 @@ _range_include(_state *mrb, _value range)
 }
 
 MRB_API _int
-_range_beg_len(_state *mrb, _value range, _int *begp, _int *lenp, _int len, _bool trunc)
+_range_beg_len(state *mrb, value range, _int *begp, _int *lenp, _int len, _bool trunc)
 {
   _int beg, end;
   struct RRange *r;
@@ -292,10 +291,10 @@ _range_beg_len(_state *mrb, _value range, _int *begp, _int *lenp, _int len, _boo
  * Convert this range object to a printable form.
  */
 
-static _value
-range_to_s(_state *mrb, _value range)
+static value
+range_to_s(state *mrb, value range)
 {
-  _value str, str2;
+  value str, str2;
   struct RRange *r = _range_ptr(mrb, range);
 
   str  = _obj_as_string(mrb, r->edges->beg);
@@ -317,10 +316,10 @@ range_to_s(_state *mrb, _value range)
  * objects).
  */
 
-static _value
-range_inspect(_state *mrb, _value range)
+static value
+range_inspect(state *mrb, value range)
 {
-  _value str, str2;
+  value str, str2;
   struct RRange *r = _range_ptr(mrb, range);
 
   str  = _inspect(mrb, r->edges->beg);
@@ -347,10 +346,10 @@ range_inspect(_state *mrb, _value range)
  *
  */
 
-static _value
-range_eql(_state *mrb, _value range)
+static value
+range_eql(state *mrb, value range)
 {
-  _value obj;
+  value obj;
   struct RRange *r, *o;
 
   _get_args(mrb, "o", &obj);
@@ -372,10 +371,10 @@ range_eql(_state *mrb, _value range)
 }
 
 /* 15.2.14.4.15(x) */
-static _value
-range_initialize_copy(_state *mrb, _value copy)
+static value
+range_initialize_copy(state *mrb, value copy)
 {
-  _value src;
+  value src;
   struct RRange *r;
 
   _get_args(mrb, "o", &src);
@@ -391,11 +390,11 @@ range_initialize_copy(_state *mrb, _value copy)
   return copy;
 }
 
-_value
-_get_values_at(_state *mrb, _value obj, _int olen, _int argc, const _value *argv, _value (*func)(_state*, _value, _int))
+value
+_get_values_at(state *mrb, value obj, _int olen, _int argc, const value *argv, value (*func)(state*, value, _int))
 {
   _int i, j, beg, len;
-  _value result;
+  value result;
   result = _ary_new(mrb);
 
   for (i = 0; i < argc; ++i) {
@@ -421,7 +420,7 @@ _get_values_at(_state *mrb, _value obj, _int olen, _int argc, const _value *argv
 }
 
 void
-_init_range(_state *mrb)
+_init_range(state *mrb)
 {
   struct RClass *r;
 

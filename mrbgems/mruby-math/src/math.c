@@ -10,11 +10,11 @@
 #include <math.h>
 
 static void
-domain_error(_state *mrb, const char *func)
+domain_error(state *mrb, const char *func)
 {
   struct RClass *math = _module_get(mrb, "Math");
   struct RClass *domainerror = _class_get_under(mrb, math, "DomainError");
-  _value str = _str_new_cstr(mrb, func);
+  value str = _str_new_cstr(mrb, func);
   _raisef(mrb, domainerror, "Numerical argument is out of domain - %S", str);
 }
 
@@ -182,8 +182,8 @@ log2(double x)
  *  Computes the sine of <i>x</i> (expressed in radians). Returns
  *  -1..1.
  */
-static _value
-math_sin(_state *mrb, _value obj)
+static value
+math_sin(state *mrb, value obj)
 {
   _float x;
 
@@ -200,8 +200,8 @@ math_sin(_state *mrb, _value obj)
  *  Computes the cosine of <i>x</i> (expressed in radians). Returns
  *  -1..1.
  */
-static _value
-math_cos(_state *mrb, _value obj)
+static value
+math_cos(state *mrb, value obj)
 {
   _float x;
 
@@ -217,8 +217,8 @@ math_cos(_state *mrb, _value obj)
  *
  *  Returns the tangent of <i>x</i> (expressed in radians).
  */
-static _value
-math_tan(_state *mrb, _value obj)
+static value
+math_tan(state *mrb, value obj)
 {
   _float x;
 
@@ -239,8 +239,8 @@ math_tan(_state *mrb, _value obj)
  *  Computes the arc sine of <i>x</i>.
  *  @return computed value between `-(PI/2)` and `(PI/2)`.
  */
-static _value
-math_asin(_state *mrb, _value obj)
+static value
+math_asin(state *mrb, value obj)
 {
   _float x;
 
@@ -259,8 +259,8 @@ math_asin(_state *mrb, _value obj)
  *
  *  Computes the arc cosine of <i>x</i>. Returns 0..PI.
  */
-static _value
-math_acos(_state *mrb, _value obj)
+static value
+math_acos(state *mrb, value obj)
 {
   _float x;
 
@@ -279,8 +279,8 @@ math_acos(_state *mrb, _value obj)
  *
  *  Computes the arc tangent of <i>x</i>. Returns `-(PI/2) .. (PI/2)`.
  */
-static _value
-math_atan(_state *mrb, _value obj)
+static value
+math_atan(state *mrb, value obj)
 {
   _float x;
 
@@ -309,8 +309,8 @@ math_atan(_state *mrb, _value obj)
  *    Math.atan2(0.0, -1.0)  #=> 3.141592653589793
  *
  */
-static _value
-math_atan2(_state *mrb, _value obj)
+static value
+math_atan2(state *mrb, value obj)
 {
   _float x, y;
 
@@ -332,8 +332,8 @@ math_atan2(_state *mrb, _value obj)
  *  Computes the hyperbolic sine of <i>x</i> (expressed in
  *  radians).
  */
-static _value
-math_sinh(_state *mrb, _value obj)
+static value
+math_sinh(state *mrb, value obj)
 {
   _float x;
 
@@ -349,8 +349,8 @@ math_sinh(_state *mrb, _value obj)
  *
  *  Computes the hyperbolic cosine of <i>x</i> (expressed in radians).
  */
-static _value
-math_cosh(_state *mrb, _value obj)
+static value
+math_cosh(state *mrb, value obj)
 {
   _float x;
 
@@ -367,8 +367,8 @@ math_cosh(_state *mrb, _value obj)
  *  Computes the hyperbolic tangent of <i>x</i> (expressed in
  *  radians).
  */
-static _value
-math_tanh(_state *mrb, _value obj)
+static value
+math_tanh(state *mrb, value obj)
 {
   _float x;
 
@@ -389,8 +389,8 @@ math_tanh(_state *mrb, _value obj)
  *
  *  Computes the inverse hyperbolic sine of <i>x</i>.
  */
-static _value
-math_asinh(_state *mrb, _value obj)
+static value
+math_asinh(state *mrb, value obj)
 {
   _float x;
 
@@ -407,8 +407,8 @@ math_asinh(_state *mrb, _value obj)
  *
  *  Computes the inverse hyperbolic cosine of <i>x</i>.
  */
-static _value
-math_acosh(_state *mrb, _value obj)
+static value
+math_acosh(state *mrb, value obj)
 {
   _float x;
 
@@ -427,8 +427,8 @@ math_acosh(_state *mrb, _value obj)
  *
  *  Computes the inverse hyperbolic tangent of <i>x</i>.
  */
-static _value
-math_atanh(_state *mrb, _value obj)
+static value
+math_atanh(state *mrb, value obj)
 {
   _float x;
 
@@ -456,8 +456,8 @@ math_atanh(_state *mrb, _value obj)
  *    Math.exp(1.5)     #=> 4.4816890703380645
  *
  */
-static _value
-math_exp(_state *mrb, _value obj)
+static value
+math_exp(state *mrb, value obj)
 {
   _float x;
 
@@ -482,8 +482,8 @@ math_exp(_state *mrb, _value obj)
  *    Math.log(12,3)       #=> 2.2618595071429146
  *
  */
-static _value
-math_log(_state *mrb, _value obj)
+static value
+math_log(state *mrb, value obj)
 {
   _float x, base;
   _int argc;
@@ -514,8 +514,8 @@ math_log(_state *mrb, _value obj)
  *    Math.log2(65536)  #=> 16.0
  *
  */
-static _value
-math_log2(_state *mrb, _value obj)
+static value
+math_log2(state *mrb, value obj)
 {
   _float x;
 
@@ -539,8 +539,8 @@ math_log2(_state *mrb, _value obj)
  *    Math.log10(10**100) #=> 100.0
  *
  */
-static _value
-math_log10(_state *mrb, _value obj)
+static value
+math_log10(state *mrb, value obj)
 {
   _float x;
 
@@ -560,8 +560,8 @@ math_log10(_state *mrb, _value obj)
  *  Returns the square root of <i>numeric</i>.
  *
  */
-static _value
-math_sqrt(_state *mrb, _value obj)
+static value
+math_sqrt(state *mrb, value obj)
 {
   _float x;
 
@@ -606,8 +606,8 @@ math_sqrt(_state *mrb, _value obj)
  *    [9, 2.0800838230519, 9.0]
  *
  */
-static _value
-math_cbrt(_state *mrb, _value obj)
+static value
+math_cbrt(state *mrb, value obj)
 {
   _float x;
 
@@ -629,8 +629,8 @@ math_cbrt(_state *mrb, _value obj)
  *     fraction, exponent = Math.frexp(1234)   #=> [0.6025390625, 11]
  *     fraction * 2**exponent                  #=> 1234.0
  */
-static _value
-math_frexp(_state *mrb, _value obj)
+static value
+math_frexp(state *mrb, value obj)
 {
   _float x;
   int exp;
@@ -650,8 +650,8 @@ math_frexp(_state *mrb, _value obj)
  *     fraction, exponent = Math.frexp(1234)
  *     Math.ldexp(fraction, exponent)   #=> 1234.0
  */
-static _value
-math_ldexp(_state *mrb, _value obj)
+static value
+math_ldexp(state *mrb, value obj)
 {
   _float x;
   _int   i;
@@ -671,8 +671,8 @@ math_ldexp(_state *mrb, _value obj)
  *
  *     Math.hypot(3, 4)   #=> 5.0
  */
-static _value
-math_hypot(_state *mrb, _value obj)
+static value
+math_hypot(state *mrb, value obj)
 {
   _float x, y;
 
@@ -688,8 +688,8 @@ math_hypot(_state *mrb, _value obj)
  *
  *  Calculates the error function of x.
  */
-static _value
-math_erf(_state *mrb, _value obj)
+static value
+math_erf(state *mrb, value obj)
 {
   _float x;
 
@@ -706,8 +706,8 @@ math_erf(_state *mrb, _value obj)
  *
  *  Calculates the complementary error function of x.
  */
-static _value
-math_erfc(_state *mrb, _value obj)
+static value
+math_erfc(state *mrb, value obj)
 {
   _float x;
 
@@ -719,7 +719,7 @@ math_erfc(_state *mrb, _value obj)
 
 /* ------------------------------------------------------------------------*/
 void
-_mruby_math_gem_init(_state* mrb)
+_mruby_math_gem_init(state* mrb)
 {
   struct RClass *_math;
   _math = _define_module(mrb, "Math");
@@ -778,6 +778,6 @@ _mruby_math_gem_init(_state* mrb)
 }
 
 void
-_mruby_math_gem_final(_state* mrb)
+_mruby_math_gem_final(state* mrb)
 {
 }

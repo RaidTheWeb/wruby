@@ -9,9 +9,9 @@
 
 #ifdef MRB_DISABLE_STDIO
 static void
-p(_state *mrb, _value obj)
+p(state *mrb, value obj)
 {
-  _value val = _inspect(mrb, obj);
+  value val = _inspect(mrb, obj);
 
   fwrite(RSTRING_PTR(val), RSTRING_LEN(val), 1, stdout);
   putc('\n', stdout);
@@ -58,7 +58,7 @@ usage(const char *name)
 }
 
 static char *
-dup_arg_item(_state *mrb, const char *item)
+dup_arg_item(state *mrb, const char *item)
 {
   size_t buflen = strlen(item) + 1;
   char *buf = (char*)_malloc(mrb, buflen);
@@ -67,7 +67,7 @@ dup_arg_item(_state *mrb, const char *item)
 }
 
 static int
-parse_args(_state *mrb, int argc, char **argv, struct _args *args)
+parse_args(state *mrb, int argc, char **argv, struct _args *args)
 {
   char **origargv = argv;
   static const struct _args args_zero = { 0 };
@@ -183,7 +183,7 @@ append_cmdline:
 }
 
 static void
-cleanup(_state *mrb, struct _args *args)
+cleanup(state *mrb, struct _args *args)
 {
   if (args->rfp && args->rfp != stdin)
     fclose(args->rfp);
@@ -202,17 +202,17 @@ cleanup(_state *mrb, struct _args *args)
 int
 main(int argc, char **argv)
 {
-  _state *mrb = _open();
+  state *mrb = _open();
   int n = -1;
   int i;
   struct _args args;
-  _value ARGV;
+  value ARGV;
   mrbc_context *c;
-  _value v;
+  value v;
   _sym zero_sym;
 
   if (mrb == NULL) {
-    fputs("Invalid _state, exiting mruby\n", stderr);
+    fputs("Invalid state, exiting mruby\n", stderr);
     return EXIT_FAILURE;
   }
 

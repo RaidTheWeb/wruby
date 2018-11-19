@@ -18,17 +18,17 @@
 #define RSTRUCT_PTR(st) RARRAY_PTR(st)
 
 static struct RClass *
-struct_class(_state *mrb)
+struct_class(state *mrb)
 {
   return _class_get(mrb, "Struct");
 }
 
-static inline _value
-struct_ivar_get(_state *mrb, _value cls, _sym id)
+static inline value
+struct_ivar_get(state *mrb, value cls, _sym id)
 {
   struct RClass* c = _class_ptr(cls);
   struct RClass* sclass = struct_class(mrb);
-  _value ans;
+  value ans;
 
   for (;;) {
     ans = _iv_get(mrb, _obj_value(c), id);
@@ -39,10 +39,10 @@ struct_ivar_get(_state *mrb, _value cls, _sym id)
   }
 }
 
-static _value
-struct_s_members(_state *mrb, struct RClass *klass)
+static value
+struct_s_members(state *mrb, struct RClass *klass)
 {
-  _value members = struct_ivar_get(mrb, _obj_value(klass), _intern_lit(mrb, "__members__"));
+  value members = struct_ivar_get(mrb, _obj_value(klass), _intern_lit(mrb, "__members__"));
 
   if (_nil_p(members)) {
     _raise(mrb, E_TYPE_ERROR, "uninitialized struct");
@@ -53,10 +53,10 @@ struct_s_members(_state *mrb, struct RClass *klass)
   return members;
 }
 
-static _value
-struct_members(_state *mrb, _value s)
+static value
+struct_members(state *mrb, value s)
 {
-  _value members = struct_s_members(mrb, _obj_class(mrb, s));
+  value members = struct_s_members(mrb, _obj_class(mrb, s));
   if (!_array_p(s)) {
     _raise(mrb, E_TYPE_ERROR, "corrupted struct");
   }
@@ -73,10 +73,10 @@ struct_members(_state *mrb, _value s)
   return members;
 }
 
-static _value
-_struct_s_members_m(_state *mrb, _value klass)
+static value
+_struct_s_members_m(state *mrb, value klass)
 {
-  _value members, ary;
+  value members, ary;
 
   members = struct_s_members(mrb, _class_ptr(klass));
   ary = _ary_new_capa(mrb, RARRAY_LEN(members));
@@ -85,7 +85,7 @@ _struct_s_members_m(_state *mrb, _value klass)
 }
 
 static void
-_struct_modify(_state *mrb, _value strct)
+_struct_modify(state *mrb, value strct)
 {
   if (MRB_FROZEN_P(_basic_ptr(strct))) {
     _raise(mrb, E_FROZEN_ERROR, "can't modify frozen struct");
@@ -107,24 +107,24 @@ _struct_modify(_state *mrb, _value strct)
  *     joe.members   #=> [:name, :address, :zip]
  */
 
-static _value
-_struct_members(_state *mrb, _value obj)
+static value
+_struct_members(state *mrb, value obj)
 {
   return _struct_s_members_m(mrb, _obj_value(_obj_class(mrb, obj)));
 }
 
-static _value
-_struct_ref(_state *mrb, _value obj)
+static value
+_struct_ref(state *mrb, value obj)
 {
   _int i = _fixnum(_proc_cfunc_env_get(mrb, 0));
-  _value *ptr = RSTRUCT_PTR(obj);
+  value *ptr = RSTRUCT_PTR(obj);
 
   if (!ptr) return _nil_value();
   return ptr[i];
 }
 
 static _sym
-_id_attrset(_state *mrb, _sym id)
+_id_attrset(state *mrb, _sym id)
 {
   const char *name;
   char *buf;
@@ -142,12 +142,12 @@ _id_attrset(_state *mrb, _sym id)
   return mid;
 }
 
-static _value
-_struct_set_m(_state *mrb, _value obj)
+static value
+_struct_set_m(state *mrb, value obj)
 {
   _int i = _fixnum(_proc_cfunc_env_get(mrb, 0));
-  _value *ptr;
-  _value val;
+  value *ptr;
+  value val;
 
   _get_args(mrb, "o", &val);
   _struct_modify(mrb, obj);
@@ -162,23 +162,23 @@ _struct_set_m(_state *mrb, _value obj)
 }
 
 static _bool
-is_local_id(_state *mrb, const char *name)
+is_local_id(state *mrb, const char *name)
 {
   if (!name) return FALSE;
   return !ISUPPER(name[0]);
 }
 
 static _bool
-is_const_id(_state *mrb, const char *name)
+is_const_id(state *mrb, const char *name)
 {
   if (!name) return FALSE;
   return ISUPPER(name[0]);
 }
 
 static void
-make_struct_define_accessors(_state *mrb, _value members, struct RClass *c)
+make_struct_define_accessors(state *mrb, value members, struct RClass *c)
 {
-  const _value *ptr_members = RARRAY_PTR(members);
+  const value *ptr_members = RARRAY_PTR(members);
   _int i;
   _int len = RARRAY_LEN(members);
   int ai = _gc_arena_save(mrb);
@@ -189,7 +189,7 @@ make_struct_define_accessors(_state *mrb, _value members, struct RClass *c)
 
     if (is_local_id(mrb, name) || is_const_id(mrb, name)) {
       _method_t m;
-      _value at = _fixnum_value(i);
+      value at = _fixnum_value(i);
       struct RProc *aref = _proc_new_cfunc_with_env(mrb, _struct_ref, 1, &at);
       struct RProc *aset = _proc_new_cfunc_with_env(mrb, _struct_set_m, 1, &at);
       MRB_METHOD_FROM_PROC(m, aref);
@@ -201,10 +201,10 @@ make_struct_define_accessors(_state *mrb, _value members, struct RClass *c)
   }
 }
 
-static _value
-make_struct(_state *mrb, _value name, _value members, struct RClass *klass)
+static value
+make_struct(state *mrb, value name, value members, struct RClass *klass)
 {
-  _value nstr;
+  value nstr;
   _sym id;
   struct RClass *c;
 
@@ -270,16 +270,16 @@ make_struct(_state *mrb, _value name, _value members, struct RClass *klass)
  *     Customer = Struct.new(:name, :address)     #=> Customer
  *     Customer.new("Dave", "123 Main")           #=> #<struct Customer name="Dave", address="123 Main">
  */
-static _value
-_struct_s_def(_state *mrb, _value klass)
+static value
+_struct_s_def(state *mrb, value klass)
 {
-  _value name, rest;
-  _value *pargv;
+  value name, rest;
+  value *pargv;
   _int argcnt;
   _int i;
-  _value b, st;
+  value b, st;
   _sym id;
-  _value *argv;
+  value *argv;
   _int argc;
 
   name = _nil_value();
@@ -318,9 +318,9 @@ _struct_s_def(_state *mrb, _value klass)
 }
 
 static _int
-num_members(_state *mrb, struct RClass *klass)
+num_members(state *mrb, struct RClass *klass)
 {
-  _value members;
+  value members;
 
   members = struct_ivar_get(mrb, _obj_value(klass), _intern_lit(mrb, "__members__"));
   if (!_array_p(members)) {
@@ -332,8 +332,8 @@ num_members(_state *mrb, struct RClass *klass)
 /* 15.2.18.4.8  */
 /*
  */
-static _value
-_struct_initialize_withArg(_state *mrb, _int argc, _value *argv, _value self)
+static value
+_struct_initialize_withArg(state *mrb, _int argc, value *argv, value self)
 {
   struct RClass *klass = _obj_class(mrb, self);
   _int i, n;
@@ -352,10 +352,10 @@ _struct_initialize_withArg(_state *mrb, _int argc, _value *argv, _value self)
   return self;
 }
 
-static _value
-_struct_initialize(_state *mrb, _value self)
+static value
+_struct_initialize(state *mrb, value self)
 {
-  _value *argv;
+  value *argv;
   _int argc;
 
   _get_args(mrb, "*!", &argv, &argc);
@@ -364,10 +364,10 @@ _struct_initialize(_state *mrb, _value self)
 
 /* 15.2.18.4.9  */
 /* :nodoc: */
-static _value
-_struct_init_copy(_state *mrb, _value copy)
+static value
+_struct_init_copy(state *mrb, value copy)
 {
-  _value s;
+  value s;
 
   _get_args(mrb, "o", &s);
 
@@ -382,11 +382,11 @@ _struct_init_copy(_state *mrb, _value copy)
   return copy;
 }
 
-static _value
-struct_aref_sym(_state *mrb, _value obj, _sym id)
+static value
+struct_aref_sym(state *mrb, value obj, _sym id)
 {
-  _value members, *ptr;
-  const _value *ptr_members;
+  value members, *ptr;
+  const value *ptr_members;
   _int i, len;
 
   members = struct_members(mrb, obj);
@@ -394,7 +394,7 @@ struct_aref_sym(_state *mrb, _value obj, _sym id)
   len = RARRAY_LEN(members);
   ptr = RSTRUCT_PTR(obj);
   for (i=0; i<len; i++) {
-    _value slot = ptr_members[i];
+    value slot = ptr_members[i];
     if (_symbol_p(slot) && _symbol(slot) == id) {
       return ptr[i];
     }
@@ -403,8 +403,8 @@ struct_aref_sym(_state *mrb, _value obj, _sym id)
   return _nil_value();       /* not reached */
 }
 
-static _value
-struct_aref_int(_state *mrb, _value s, _int i)
+static value
+struct_aref_int(state *mrb, value s, _int i)
 {
   if (i < 0) i = RSTRUCT_LEN(s) + i;
   if (i < 0)
@@ -437,14 +437,14 @@ struct_aref_int(_state *mrb, _value s, _int i)
  *     joe[:name]    #=> "Joe Smith"
  *     joe[0]        #=> "Joe Smith"
  */
-static _value
-_struct_aref(_state *mrb, _value s)
+static value
+_struct_aref(state *mrb, value s)
 {
-  _value idx;
+  value idx;
 
   _get_args(mrb, "o", &idx);
   if (_string_p(idx)) {
-    _value sym = _check_intern_str(mrb, idx);
+    value sym = _check_intern_str(mrb, idx);
 
     if (_nil_p(sym)) {
       _name_error(mrb, _intern_str(mrb, idx), "no member '%S' in struct", idx);
@@ -457,11 +457,11 @@ _struct_aref(_state *mrb, _value s)
   return struct_aref_int(mrb, s, _int(mrb, idx));
 }
 
-static _value
-_struct_aset_sym(_state *mrb, _value s, _sym id, _value val)
+static value
+_struct_aset_sym(state *mrb, value s, _sym id, value val)
 {
-  _value members, *ptr;
-  const _value *ptr_members;
+  value members, *ptr;
+  const value *ptr_members;
   _int i, len;
 
   members = struct_members(mrb, s);
@@ -501,17 +501,17 @@ _struct_aset_sym(_state *mrb, _value s, _sym id, _value val)
  *     joe.zip    #=> "90210"
  */
 
-static _value
-_struct_aset(_state *mrb, _value s)
+static value
+_struct_aset(state *mrb, value s)
 {
   _int i;
-  _value idx;
-  _value val;
+  value idx;
+  value val;
 
   _get_args(mrb, "oo", &idx, &val);
 
   if (_string_p(idx)) {
-    _value sym = _check_intern_str(mrb, idx);
+    value sym = _check_intern_str(mrb, idx);
 
     if (_nil_p(sym)) {
       _name_error(mrb, _intern_str(mrb, idx), "no member '%S' in struct", idx);
@@ -556,11 +556,11 @@ _struct_aset(_state *mrb, _value s)
  *     joe == jane    #=> false
  */
 
-static _value
-_struct_equal(_state *mrb, _value s)
+static value
+_struct_equal(state *mrb, value s)
 {
-  _value s2;
-  _value *ptr, *ptr2;
+  value s2;
+  value *ptr, *ptr2;
   _int i, len;
 
   _get_args(mrb, "o", &s2);
@@ -593,11 +593,11 @@ _struct_equal(_state *mrb, _value s)
  * Two structures are equal if they are the same object, or if all their
  * fields are equal (using <code>eql?</code>).
  */
-static _value
-_struct_eql(_state *mrb, _value s)
+static value
+_struct_eql(state *mrb, value s)
 {
-  _value s2;
-  _value *ptr, *ptr2;
+  value s2;
+  value *ptr, *ptr2;
   _int i, len;
 
   _get_args(mrb, "o", &s2);
@@ -629,8 +629,8 @@ _struct_eql(_state *mrb, _value s)
  *
  * Returns number of struct members.
  */
-static _value
-_struct_len(_state *mrb, _value self)
+static value
+_struct_len(state *mrb, value self)
 {
   return _fixnum_value(RSTRUCT_LEN(self));
 }
@@ -642,8 +642,8 @@ _struct_len(_state *mrb, _value self)
  *
  * Create an array from struct values.
  */
-static _value
-_struct_to_a(_state *mrb, _value self)
+static value
+_struct_to_a(state *mrb, value self)
 {
   return _ary_new_from_values(mrb, RSTRUCT_LEN(self), RSTRUCT_PTR(self));
 }
@@ -654,10 +654,10 @@ _struct_to_a(_state *mrb, _value self)
  *
  * Create a hash from member names and struct values.
  */
-static _value
-_struct_to_h(_state *mrb, _value self)
+static value
+_struct_to_h(state *mrb, value self)
 {
-  _value members, ret;
+  value members, ret;
   _int i;
 
   members = struct_members(mrb, self);
@@ -670,11 +670,11 @@ _struct_to_h(_state *mrb, _value self)
   return ret;
 }
 
-static _value
-_struct_values_at(_state *mrb, _value self)
+static value
+_struct_values_at(state *mrb, value self)
 {
   _int argc;
-  _value *argv;
+  value *argv;
 
   _get_args(mrb, "*", &argv, &argc);
 
@@ -697,7 +697,7 @@ _struct_values_at(_state *mrb, _value self)
  *  <code>Symbol</code> (such as <code>:name</code>).
  */
 void
-_mruby_struct_gem_init(_state* mrb)
+_mruby_struct_gem_init(state* mrb)
 {
   struct RClass *st;
   st = _define_class(mrb, "Struct",  mrb->object_class);
@@ -722,6 +722,6 @@ _mruby_struct_gem_init(_state* mrb)
 }
 
 void
-_mruby_struct_gem_final(_state* mrb)
+_mruby_struct_gem_final(state* mrb)
 {
 }

@@ -36,7 +36,7 @@ with `"`, either `OP_EXT1` or `OP_EXT2` or `OP_EXT2` can be prefixed.
 |OP_NOP           | -           |                 
 |OP_MOVE"         |BB           |R(a) = R(b)      
 |OP_LOADL"        |BB           |R(a) = Pool(b)   
-|OP_LOADI"        |BsB          |R(a) = mrb_int(b)
+|OP_LOADI"        |BsB          |R(a) = _int(b)
 |OP_LOADI_0'      |B            |R(a) = 0
 |OP_LOADI_1'      |B            |R(a) = 1
 |OP_LOADI_2'      |B            |R(a) = 2
@@ -85,7 +85,7 @@ with `"`, either `OP_EXT1` or `OP_EXT2` or `OP_EXT2` can be prefixed.
 |OP_BREAK'        |B            |break R(a)
 |OP_BLKPUSH'      |BS           |R(a) = block (16=5:1:5:1:4)
 |OP_ADD"          |BB           |R(a) = R(a)+R(a+1)
-|OP_ADDI"         |BBB          |R(a) = R(a)+mrb_int(c)
+|OP_ADDI"         |BBB          |R(a) = R(a)+_int(c)
 |OP_SUB"          |BB           |R(a) = R(a)-R(a+1)
 |OP_SUBI"         |BB           |R(a) = R(a)-C
 |OP_MUL"          |BB           |R(a) = R(a)*R(a+1)

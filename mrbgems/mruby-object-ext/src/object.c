@@ -10,8 +10,8 @@
  *  Always returns an empty array.
  */
 
-static _value
-nil_to_a(_state *mrb, _value obj)
+static value
+nil_to_a(state *mrb, value obj)
 {
   return _ary_new(mrb);
 }
@@ -24,8 +24,8 @@ nil_to_a(_state *mrb, _value obj)
  *  Always returns zero.
  */
 
-static _value
-nil_to_f(_state *mrb, _value obj)
+static value
+nil_to_f(state *mrb, value obj)
 {
   return _float_value(mrb, 0.0);
 }
@@ -38,8 +38,8 @@ nil_to_f(_state *mrb, _value obj)
  *  Always returns zero.
  */
 
-static _value
-nil_to_i(_state *mrb, _value obj)
+static value
+nil_to_i(state *mrb, value obj)
 {
   return _fixnum_value(0);
 }
@@ -62,12 +62,12 @@ nil_to_i(_state *mrb, _value obj)
  *     k.instance_exec(5) {|x| @secret+x }   #=> 104
  */
 
-static _value
-_obj_instance_exec(_state *mrb, _value self)
+static value
+_obj_instance_exec(state *mrb, value self)
 {
-  const _value *argv;
+  const value *argv;
   _int argc;
-  _value blk;
+  value blk;
   struct RClass *c;
 
   _get_args(mrb, "*&", &argv, &argc, &blk);
@@ -93,7 +93,7 @@ _obj_instance_exec(_state *mrb, _value self)
 }
 
 void
-_mruby_object_ext_gem_init(_state* mrb)
+_mruby_object_ext_gem_init(state* mrb)
 {
   struct RClass * n = mrb->nil_class;
 
@@ -107,6 +107,6 @@ _mruby_object_ext_gem_init(_state* mrb)
 }
 
 void
-_mruby_object_ext_gem_final(_state* mrb)
+_mruby_object_ext_gem_final(state* mrb)
 {
 }

@@ -24,7 +24,7 @@ typedef struct _data_type {
   const char *struct_name;
 
   /** data type release function pointer */
-  void (*dfree)(_state *mrb, void*);
+  void (*dfree)(state *mrb, void*);
 } _data_type;
 
 struct RData {
@@ -34,7 +34,7 @@ struct RData {
   void *data;
 };
 
-MRB_API struct RData *_data_object_alloc(_state *mrb, struct RClass* klass, void *datap, const _data_type *type);
+MRB_API struct RData *_data_object_alloc(state *mrb, struct RClass* klass, void *datap, const _data_type *type);
 
 #define Data_Wrap_Struct(mrb,klass,type,ptr)\
   _data_object_alloc(mrb,klass,ptr,type)
@@ -48,10 +48,10 @@ MRB_API struct RData *_data_object_alloc(_state *mrb, struct RClass* klass, void
 #define RDATA(obj)         ((struct RData *)(_ptr(obj)))
 #define DATA_PTR(d)        (RDATA(d)->data)
 #define DATA_TYPE(d)       (RDATA(d)->type)
-MRB_API void _data_check_type(_state *mrb, _value, const _data_type*);
-MRB_API void *_data_get_ptr(_state *mrb, _value, const _data_type*);
+MRB_API void _data_check_type(state *mrb, value, const _data_type*);
+MRB_API void *_data_get_ptr(state *mrb, value, const _data_type*);
 #define DATA_GET_PTR(mrb,obj,dtype,type) (type*)_data_get_ptr(mrb,obj,dtype)
-MRB_API void *_data_check_get_ptr(_state *mrb, _value, const _data_type*);
+MRB_API void *_data_check_get_ptr(state *mrb, value, const _data_type*);
 #define DATA_CHECK_GET_PTR(mrb,obj,dtype,type) (type*)_data_check_get_ptr(mrb,obj,dtype)
 
 /* obsolete functions and macros */
@@ -63,7 +63,7 @@ MRB_API void *_data_check_get_ptr(_state *mrb, _value, const _data_type*);
 } while (0)
 
 static inline void
-_data_init(_value v, void *ptr, const _data_type *type)
+_data_init(value v, void *ptr, const _data_type *type)
 {
   _assert(_type(v) == MRB_TT_DATA);
   DATA_PTR(v) = ptr;

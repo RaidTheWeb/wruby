@@ -1,5 +1,5 @@
 /*
-** mruby/boxing_nan.h - nan boxing _value definition
+** mruby/boxing_nan.h - nan boxing value definition
 **
 ** See Copyright Notice in mruby.h
 */
@@ -36,7 +36,7 @@
  * In order to get enough bit size to save TT, all pointers are shifted 2 bits
  * in the right direction. Also, TTTTTT is the _vtype + 1;
  */
-typedef struct _value {
+typedef struct value {
   union {
     _float f;
     union {
@@ -52,7 +52,7 @@ typedef struct _value {
       };
     } value;
   };
-} _value;
+} value;
 
 #define _float_pool(mrb,f) _float_value(mrb,f)
 

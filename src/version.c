@@ -2,9 +2,9 @@
 #include <mruby/variable.h>
 
 void
-_init_version(_state* mrb)
+_init_version(state* mrb)
 {
-  _value mruby_version = _str_new_lit(mrb, MRUBY_VERSION);
+  value mruby_version = _str_new_lit(mrb, MRUBY_VERSION);
 
   _define_global_const(mrb, "RUBY_VERSION", _str_new_lit(mrb, MRUBY_RUBY_VERSION));
   _define_global_const(mrb, "RUBY_ENGINE", _str_new_lit(mrb, MRUBY_RUBY_ENGINE));

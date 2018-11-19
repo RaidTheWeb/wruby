@@ -19,10 +19,10 @@
  *   h.values_at("cow", "cat")  #=> ["bovine", "feline"]
  */
 
-static _value
-hash_values_at(_state *mrb, _value hash)
+static value
+hash_values_at(state *mrb, value hash)
 {
-  _value *argv, result;
+  value *argv, result;
   _int argc, i;
   int ai;
 
@@ -46,10 +46,10 @@ hash_values_at(_state *mrb, _value hash)
  *     h.slice(:a)           #=> {:a=>100}
  *     h.slice(:b, :c, :d)   #=> {:b=>200, :c=>300}
  */
-static _value
-hash_slice(_state *mrb, _value hash)
+static value
+hash_slice(state *mrb, value hash)
 {
-  _value *argv, result;
+  value *argv, result;
   _int argc, i;
 
   _get_args(mrb, "*", &argv, &argc);
@@ -58,8 +58,8 @@ hash_slice(_state *mrb, _value hash)
   }
   result = _hash_new_capa(mrb, argc);
   for (i = 0; i < argc; i++) {
-    _value key = argv[i];
-    _value val;
+    value key = argv[i];
+    value val;
 
     val = _hash_fetch(mrb, hash, key, _undef_value());
     if (!_undef_p(val)) {
@@ -70,7 +70,7 @@ hash_slice(_state *mrb, _value hash)
 }
 
 void
-_mruby_hash_ext_gem_init(_state *mrb)
+_mruby_hash_ext_gem_init(state *mrb)
 {
   struct RClass *h;
 
@@ -80,6 +80,6 @@ _mruby_hash_ext_gem_init(_state *mrb)
 }
 
 void
-_mruby_hash_ext_gem_final(_state *mrb)
+_mruby_hash_ext_gem_final(state *mrb)
 {
 }

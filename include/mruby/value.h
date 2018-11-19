@@ -16,7 +16,7 @@ MRB_BEGIN_DECL
 
 typedef uint32_t _sym;
 typedef uint8_t _bool;
-struct _state;
+struct state;
 
 #if defined(MRB_INT16) && defined(MRB_INT64)
 # error "You can't define MRB_INT16 and MRB_INT64 at the same time."
@@ -136,7 +136,7 @@ enum _vtype {
  * @see mruby/boxing_word.h Word representation
  * @see mruby/boxing_nan.h Boxed double representation
  */
-typedef void _value;
+typedef void value;
 
 #endif
 
@@ -170,25 +170,25 @@ typedef void _value;
 #define _cptr_p(o) (_type(o) == MRB_TT_CPTR)
 #define _exception_p(o) (_type(o) == MRB_TT_EXCEPTION)
 #define _test(o)   _bool(o)
-MRB_API _bool _regexp_p(struct _state*, _value);
+MRB_API _bool _regexp_p(struct state*, value);
 
 /*
  * Returns a float in Ruby.
  */
 #ifndef MRB_WITHOUT_FLOAT
-MRB_INLINE _value _float_value(struct _state *mrb, _float f)
+MRB_INLINE value _float_value(struct state *mrb, _float f)
 {
-  _value v;
+  value v;
   (void) mrb;
   SET_FLOAT_VALUE(mrb, v, f);
   return v;
 }
 #endif
 
-static inline _value
-_cptr_value(struct _state *mrb, void *p)
+static inline value
+_cptr_value(struct state *mrb, void *p)
 {
-  _value v;
+  value v;
   (void) mrb;
   SET_CPTR_VALUE(mrb,v,p);
   return v;
@@ -197,25 +197,25 @@ _cptr_value(struct _state *mrb, void *p)
 /*
  * Returns a fixnum in Ruby.
  */
-MRB_INLINE _value _fixnum_value(_int i)
+MRB_INLINE value _fixnum_value(_int i)
 {
-  _value v;
+  value v;
   SET_INT_VALUE(v, i);
   return v;
 }
 
-static inline _value
+static inline value
 _symbol_value(_sym i)
 {
-  _value v;
+  value v;
   SET_SYM_VALUE(v, i);
   return v;
 }
 
-static inline _value
+static inline value
 _obj_value(void *p)
 {
-  _value v;
+  value v;
   SET_OBJ_VALUE(v, (struct RBasic*)p);
   _assert(p == _ptr(v));
   _assert(((struct RBasic*)p)->tt == _type(v));
@@ -224,14 +224,14 @@ _obj_value(void *p)
 
 
 /*
- * Get a nil _value object.
+ * Get a nil value object.
  *
  * @return
- *      nil _value object reference.
+ *      nil value object reference.
  */
-MRB_INLINE _value _nil_value(void)
+MRB_INLINE value _nil_value(void)
 {
-  _value v;
+  value v;
   SET_NIL_VALUE(v);
   return v;
 }
@@ -239,9 +239,9 @@ MRB_INLINE _value _nil_value(void)
 /*
  * Returns false in Ruby.
  */
-MRB_INLINE _value _false_value(void)
+MRB_INLINE value _false_value(void)
 {
-  _value v;
+  value v;
   SET_FALSE_VALUE(v);
   return v;
 }
@@ -249,25 +249,25 @@ MRB_INLINE _value _false_value(void)
 /*
  * Returns true in Ruby.
  */
-MRB_INLINE _value _true_value(void)
+MRB_INLINE value _true_value(void)
 {
-  _value v;
+  value v;
   SET_TRUE_VALUE(v);
   return v;
 }
 
-static inline _value
+static inline value
 _bool_value(_bool boolean)
 {
-  _value v;
+  value v;
   SET_BOOL_VALUE(v, boolean);
   return v;
 }
 
-static inline _value
+static inline value
 _undef_value(void)
 {
-  _value v;
+  value v;
   SET_UNDEF_VALUE(v);
   return v;
 }

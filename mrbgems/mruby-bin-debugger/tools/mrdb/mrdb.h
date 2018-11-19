@@ -105,7 +105,7 @@ typedef struct _debug_context {
   struct _irep *root_irep;
   struct _irep *irep;
   _code *pc;
-  _value *regs;
+  value *regs;
 
   const char *prvfile;
   int32_t prvline;
@@ -126,7 +126,7 @@ typedef struct _debug_context {
   int32_t stopped_bpno;
   _bool isCfunc;
 
-  mrdb_exemode (*break_hook)(_state *mrb, struct _debug_context *dbg);
+  mrdb_exemode (*break_hook)(state *mrb, struct _debug_context *dbg);
 
 } _debug_context;
 
@@ -141,26 +141,26 @@ typedef struct mrdb_state {
   _debug_context *dbg;
 } mrdb_state;
 
-typedef dbgcmd_state (*debug_command_func)(_state*, mrdb_state*);
+typedef dbgcmd_state (*debug_command_func)(state*, mrdb_state*);
 
 /* cmdrun.c */
-dbgcmd_state dbgcmd_run(_state*, mrdb_state*);
-dbgcmd_state dbgcmd_continue(_state*, mrdb_state*);
-dbgcmd_state dbgcmd_step(_state*, mrdb_state*);
-dbgcmd_state dbgcmd_next(_state*, mrdb_state*);
+dbgcmd_state dbgcmd_run(state*, mrdb_state*);
+dbgcmd_state dbgcmd_continue(state*, mrdb_state*);
+dbgcmd_state dbgcmd_step(state*, mrdb_state*);
+dbgcmd_state dbgcmd_next(state*, mrdb_state*);
 /* cmdbreak.c */
-dbgcmd_state dbgcmd_break(_state*, mrdb_state*);
-dbgcmd_state dbgcmd_info_break(_state*, mrdb_state*);
-dbgcmd_state dbgcmd_delete(_state*, mrdb_state*);
-dbgcmd_state dbgcmd_enable(_state*, mrdb_state*);
-dbgcmd_state dbgcmd_disable(_state*, mrdb_state*);
+dbgcmd_state dbgcmd_break(state*, mrdb_state*);
+dbgcmd_state dbgcmd_info_break(state*, mrdb_state*);
+dbgcmd_state dbgcmd_delete(state*, mrdb_state*);
+dbgcmd_state dbgcmd_enable(state*, mrdb_state*);
+dbgcmd_state dbgcmd_disable(state*, mrdb_state*);
 /* cmdprint.c */
-dbgcmd_state dbgcmd_print(_state*, mrdb_state*);
-dbgcmd_state dbgcmd_eval(_state*, mrdb_state*);
+dbgcmd_state dbgcmd_print(state*, mrdb_state*);
+dbgcmd_state dbgcmd_eval(state*, mrdb_state*);
 /* cmdmisc.c */
-dbgcmd_state dbgcmd_list(_state*, mrdb_state*);
-dbgcmd_state dbgcmd_help(_state*, mrdb_state*);
-dbgcmd_state dbgcmd_quit(_state*, mrdb_state*);
+dbgcmd_state dbgcmd_list(state*, mrdb_state*);
+dbgcmd_state dbgcmd_help(state*, mrdb_state*);
+dbgcmd_state dbgcmd_quit(state*, mrdb_state*);
 
 #endif
 

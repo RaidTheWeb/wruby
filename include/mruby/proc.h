@@ -17,7 +17,7 @@ MRB_BEGIN_DECL
 
 struct REnv {
   MRB_OBJECT_HEADER;
-  _value *stack;
+  value *stack;
   struct _context *cxt;
   _sym mid;
 };
@@ -31,7 +31,7 @@ struct REnv {
 #define MRB_ENV_BIDX(e) (((e)->flags >> 10) & 0x3ff)
 #define MRB_ENV_SET_BIDX(e,idx) (e)->flags = (((e)->flags & ~(0x3ff<<10))|((unsigned int)(idx) & 0x3ff)<<10)
 
-void _env_unshare(_state*, struct REnv*);
+void _env_unshare(state*, struct REnv*);
 
 struct RProc {
   MRB_OBJECT_HEADER;
@@ -81,18 +81,18 @@ struct RProc {
 
 #define _proc_ptr(v)    ((struct RProc*)(_ptr(v)))
 
-struct RProc *_proc_new(_state*, _irep*);
-struct RProc *_closure_new(_state*, _irep*);
-MRB_API struct RProc *_proc_new_cfunc(_state*, _func_t);
-MRB_API struct RProc *_closure_new_cfunc(_state *mrb, _func_t func, int nlocals);
+struct RProc *_proc_new(state*, _irep*);
+struct RProc *_closure_new(state*, _irep*);
+MRB_API struct RProc *_proc_new_cfunc(state*, _func_t);
+MRB_API struct RProc *_closure_new_cfunc(state *mrb, _func_t func, int nlocals);
 void _proc_copy(struct RProc *a, struct RProc *b);
 
 /* implementation of #send method */
-_value _f_send(_state *mrb, _value self);
+value _f_send(state *mrb, value self);
 
 /* following functions are defined in mruby-proc-ext so please include it when using */
-MRB_API struct RProc *_proc_new_cfunc_with_env(_state*, _func_t, _int, const _value*);
-MRB_API _value _proc_cfunc_env_get(_state*, _int);
+MRB_API struct RProc *_proc_new_cfunc_with_env(state*, _func_t, _int, const value*);
+MRB_API value _proc_cfunc_env_get(state*, _int);
 /* old name */
 #define _cfunc_env_get(mrb, idx) _proc_cfunc_env_get(mrb, idx)
 

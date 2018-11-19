@@ -20,8 +20,8 @@ typedef enum {
   NOEX_RESPONDS  = 0x80
 } _method_flag_t;
 
-static _value
-_f_nil(_state *mrb, _value cv)
+static value
+_f_nil(state *mrb, value cv)
 {
   return _nil_value();
 }
@@ -44,8 +44,8 @@ _f_nil(_state *mrb, _value cv)
  *     fred.instance_variable_defined?("@b")   #=> true
  *     fred.instance_variable_defined?("@c")   #=> false
  */
-static _value
-_obj_ivar_defined(_state *mrb, _value self)
+static value
+_obj_ivar_defined(state *mrb, value self)
 {
   _sym sym;
 
@@ -74,8 +74,8 @@ _obj_ivar_defined(_state *mrb, _value self)
  *     fred.instance_variable_get(:@a)    #=> "cat"
  *     fred.instance_variable_get("@b")   #=> 99
  */
-static _value
-_obj_ivar_get(_state *mrb, _value self)
+static value
+_obj_ivar_get(state *mrb, value self)
 {
   _sym iv_name;
 
@@ -104,11 +104,11 @@ _obj_ivar_get(_state *mrb, _value self)
  *     fred.instance_variable_set(:@c, 'cat')   #=> "cat"
  *     fred.inspect                             #=> "#<Fred:0x401b3da8 @a=\"dog\", @b=99, @c=\"cat\">"
  */
-static _value
-_obj_ivar_set(_state *mrb, _value self)
+static value
+_obj_ivar_set(state *mrb, value self)
 {
   _sym iv_name;
-  _value val;
+  value val;
 
   _get_args(mrb, "no", &iv_name, &val);
   _iv_name_sym_check(mrb, iv_name);
@@ -128,12 +128,12 @@ _obj_ivar_set(_state *mrb, _value self)
  *  compiled binary files using `mruby-strip -l`, this
  *  method always returns an empty array.
  */
-static _value
-_local_variables(_state *mrb, _value self)
+static value
+_local_variables(state *mrb, value self)
 {
   struct RProc *proc;
   _irep *irep;
-  _value vars;
+  value vars;
   size_t i;
 
   proc = mrb->c->ci[-1].proc;
@@ -171,7 +171,7 @@ _local_variables(_state *mrb, _value self)
 KHASH_DECLARE(st, _sym, char, FALSE)
 
 static void
-method_entry_loop(_state *mrb, struct RClass* klass, khash_t(st)* set)
+method_entry_loop(state *mrb, struct RClass* klass, khash_t(st)* set)
 {
   khint_t i;
 
@@ -186,11 +186,11 @@ method_entry_loop(_state *mrb, struct RClass* klass, khash_t(st)* set)
   }
 }
 
-_value
-_class_instance_method_list(_state *mrb, _bool recur, struct RClass* klass, int obj)
+value
+_class_instance_method_list(state *mrb, _bool recur, struct RClass* klass, int obj)
 {
   khint_t i;
-  _value ary;
+  value ary;
   _bool prepended = FALSE;
   struct RClass* oldklass;
   khash_t(st)* set = kh_init(st, mrb);
@@ -224,8 +224,8 @@ _class_instance_method_list(_state *mrb, _bool recur, struct RClass* klass, int 
   return ary;
 }
 
-static _value
-_obj_methods(_state *mrb, _bool recur, _value obj, _method_flag_t flag)
+static value
+_obj_methods(state *mrb, _bool recur, value obj, _method_flag_t flag)
 {
   return _class_instance_method_list(mrb, recur, _class(mrb, obj), 0);
 }
@@ -248,8 +248,8 @@ _obj_methods(_state *mrb, _bool recur, _value obj, _method_flag_t flag)
  *                        #    :methods, :extend, :__send__, :instance_eval]
  *     k.methods.length   #=> 42
  */
-static _value
-_obj_methods_m(_state *mrb, _value self)
+static value
+_obj_methods_m(state *mrb, value self)
 {
   _bool recur = TRUE;
   _get_args(mrb, "|b", &recur);
@@ -265,8 +265,8 @@ _obj_methods_m(_state *mrb, _value self)
  *  the <i>all</i> parameter is set to <code>false</code>, only those methods
  *  in the receiver will be listed.
  */
-static _value
-_obj_private_methods(_state *mrb, _value self)
+static value
+_obj_private_methods(state *mrb, value self)
 {
   _bool recur = TRUE;
   _get_args(mrb, "|b", &recur);
@@ -282,8 +282,8 @@ _obj_private_methods(_state *mrb, _value self)
  *  the <i>all</i> parameter is set to <code>false</code>, only those methods
  *  in the receiver will be listed.
  */
-static _value
-_obj_protected_methods(_state *mrb, _value self)
+static value
+_obj_protected_methods(state *mrb, value self)
 {
   _bool recur = TRUE;
   _get_args(mrb, "|b", &recur);
@@ -299,19 +299,19 @@ _obj_protected_methods(_state *mrb, _value self)
  *  the <i>all</i> parameter is set to <code>false</code>, only those methods
  *  in the receiver will be listed.
  */
-static _value
-_obj_public_methods(_state *mrb, _value self)
+static value
+_obj_public_methods(state *mrb, value self)
 {
   _bool recur = TRUE;
   _get_args(mrb, "|b", &recur);
   return _obj_methods(mrb, recur, self, NOEX_PUBLIC); /* public attribute not define */
 }
 
-static _value
-_obj_singleton_methods(_state *mrb, _bool recur, _value obj)
+static value
+_obj_singleton_methods(state *mrb, _bool recur, value obj)
 {
   khint_t i;
-  _value ary;
+  value ary;
   struct RClass* klass;
   khash_t(st)* set = kh_init(st, mrb);
 
@@ -372,21 +372,21 @@ _obj_singleton_methods(_state *mrb, _bool recur, _value obj)
  *     a.singleton_methods(false)  #=> [:two, :one]
  *     a.singleton_methods         #=> [:two, :one, :three]
  */
-static _value
-_obj_singleton_methods_m(_state *mrb, _value self)
+static value
+_obj_singleton_methods_m(state *mrb, value self)
 {
   _bool recur = TRUE;
   _get_args(mrb, "|b", &recur);
   return _obj_singleton_methods(mrb, recur, self);
 }
 
-static _value
-mod_define_singleton_method(_state *mrb, _value self)
+static value
+mod_define_singleton_method(state *mrb, value self)
 {
   struct RProc *p;
   _method_t m;
   _sym mid;
-  _value blk = _nil_value();
+  value blk = _nil_value();
 
   _get_args(mrb, "n&", &mid, &blk);
   if (_nil_p(blk)) {
@@ -401,7 +401,7 @@ mod_define_singleton_method(_state *mrb, _value self)
 }
 
 static void
-check_cv_name_str(_state *mrb, _value str)
+check_cv_name_str(state *mrb, value str)
 {
   const char *s = RSTRING_PTR(str);
   _int len = RSTRING_LEN(str);
@@ -412,7 +412,7 @@ check_cv_name_str(_state *mrb, _value str)
 }
 
 static void
-check_cv_name_sym(_state *mrb, _sym id)
+check_cv_name_sym(state *mrb, _sym id)
 {
   check_cv_name_str(mrb, _sym2str(mrb, id));
 }
@@ -440,10 +440,10 @@ check_cv_name_sym(_state *mrb, _sym id)
  *     []
  */
 
-static _value
-_mod_remove_cvar(_state *mrb, _value mod)
+static value
+_mod_remove_cvar(state *mrb, value mod)
 {
-  _value val;
+  value val;
   _sym id;
 
   _get_args(mrb, "n", &id);
@@ -479,8 +479,8 @@ _mod_remove_cvar(_state *mrb, _value mod)
  *     Fred.class_variable_defined?(:@@bar)    #=> false
  */
 
-static _value
-_mod_cvar_defined(_state *mrb, _value mod)
+static value
+_mod_cvar_defined(state *mrb, value mod)
 {
   _sym id;
 
@@ -504,8 +504,8 @@ _mod_cvar_defined(_state *mrb, _value mod)
  *     Fred.class_variable_get(:@@foo)     #=> 99
  */
 
-static _value
-_mod_cvar_get(_state *mrb, _value mod)
+static value
+_mod_cvar_get(state *mrb, value mod)
 {
   _sym id;
 
@@ -532,10 +532,10 @@ _mod_cvar_get(_state *mrb, _value mod)
  *     Fred.new.foo                             #=> 101
  */
 
-static _value
-_mod_cvar_set(_state *mrb, _value mod)
+static value
+_mod_cvar_set(state *mrb, value mod)
 {
-  _value value;
+  value value;
   _sym id;
 
   _get_args(mrb, "no", &id, &value);
@@ -544,10 +544,10 @@ _mod_cvar_set(_state *mrb, _value mod)
   return value;
 }
 
-static _value
-_mod_included_modules(_state *mrb, _value self)
+static value
+_mod_included_modules(state *mrb, value self)
 {
-  _value result;
+  value result;
   struct RClass *c = _class_ptr(self);
   struct RClass *origin = c;
 
@@ -565,7 +565,7 @@ _mod_included_modules(_state *mrb, _value self)
   return result;
 }
 
-_value _class_instance_method_list(_state*, _bool, struct RClass*, int);
+value _class_instance_method_list(state*, _bool, struct RClass*, int);
 
 /* 15.2.2.4.33 */
 /*
@@ -595,8 +595,8 @@ _value _class_instance_method_list(_state*, _bool, struct RClass*, int);
  *     C.instance_methods(true).length   #=> 43
  */
 
-static _value
-_mod_instance_methods(_state *mrb, _value mod)
+static value
+_mod_instance_methods(state *mrb, value mod)
 {
   struct RClass *c = _class_ptr(mod);
   _bool recur = TRUE;
@@ -605,7 +605,7 @@ _mod_instance_methods(_state *mrb, _value mod)
 }
 
 static void
-remove_method(_state *mrb, _value mod, _sym mid)
+remove_method(state *mrb, value mod, _sym mid)
 {
   struct RClass *c = _class_ptr(mod);
   khash_t(mt) *h;
@@ -636,11 +636,11 @@ remove_method(_state *mrb, _value mod, _sym mid)
  *  class. For an example, see <code>Module.undef_method</code>.
  */
 
-static _value
-_mod_remove_method(_state *mrb, _value mod)
+static value
+_mod_remove_method(state *mrb, value mod)
 {
   _int argc;
-  _value *argv;
+  value *argv;
 
   _get_args(mrb, "*", &argv, &argc);
   while (argc--) {
@@ -650,18 +650,18 @@ _mod_remove_method(_state *mrb, _value mod)
   return mod;
 }
 
-static _value
-_mod_s_constants(_state *mrb, _value mod)
+static value
+_mod_s_constants(state *mrb, value mod)
 {
   _raise(mrb, E_NOTIMP_ERROR, "Module.constants not implemented");
   return _nil_value();       /* not reached */
 }
 
 /* implementation of Module.nesting */
-_value _mod_s_nesting(_state*, _value);
+value _mod_s_nesting(state*, value);
 
 void
-_mruby_metaprog_gem_init(_state* mrb)
+_mruby_metaprog_gem_init(state* mrb)
 {
   struct RClass *krn = mrb->kernel_module;
   struct RClass *mod = mrb->module_class;
@@ -697,6 +697,6 @@ _mruby_metaprog_gem_init(_state* mrb)
 }
 
 void
-_mruby_metaprog_gem_final(_state* mrb)
+_mruby_metaprog_gem_final(state* mrb)
 {
 }

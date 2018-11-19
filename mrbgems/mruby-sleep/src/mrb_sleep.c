@@ -38,8 +38,8 @@
 #include "mruby.h"
 
 /* not implemented forever sleep (called without an argument)*/
-static _value
-_f_sleep(_state *mrb, _value self)
+static value
+_f_sleep(state *mrb, value self)
 {
     time_t beg = time(0);
     time_t end;
@@ -69,8 +69,8 @@ _f_sleep(_state *mrb, _value self)
 }
 
 /* mruby special; needed for mruby without float numbers */
-static _value
-_f_usleep(_state *mrb, _value self)
+static value
+_f_usleep(state *mrb, value self)
 {
     _int usec;
 #ifdef _WIN32
@@ -123,13 +123,13 @@ _f_usleep(_state *mrb, _value self)
 }
 
 void
-_mruby_sleep_gem_init(_state *mrb)
+_mruby_sleep_gem_init(state *mrb)
 {
     _define_method(mrb, mrb->kernel_module, "sleep",   _f_sleep,   MRB_ARGS_REQ(1));
     _define_method(mrb, mrb->kernel_module, "usleep",  _f_usleep,  MRB_ARGS_REQ(1));
 }
 
 void
-_mruby_sleep_gem_final(_state *mrb)
+_mruby_sleep_gem_final(state *mrb)
 {
 }

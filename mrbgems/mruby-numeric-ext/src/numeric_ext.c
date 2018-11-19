@@ -2,7 +2,7 @@
 #include <mruby.h>
 
 static inline _int
-to_int(_value x)
+to_int(value x)
 {
   double f;
 
@@ -22,8 +22,8 @@ to_int(_value x)
  *     65.chr    #=> "A"
  *     230.chr   #=> "\xE6"
  */
-static _value
-_int_chr(_state *mrb, _value x)
+static value
+_int_chr(state *mrb, value x)
 {
   _int chr;
   char c;
@@ -43,8 +43,8 @@ _int_chr(_state *mrb, _value x)
  *
  *  Returns +true+ if all bits of <code>+int+ & +mask+</code> are 1.
  */
-static _value
-_int_allbits(_state *mrb, _value self)
+static value
+_int_allbits(state *mrb, value self)
 {
   _int n, m;
 
@@ -59,8 +59,8 @@ _int_allbits(_state *mrb, _value self)
  *
  *  Returns +true+ if any bits of <code>+int+ & +mask+</code> are 1.
  */
-static _value
-_int_anybits(_state *mrb, _value self)
+static value
+_int_anybits(state *mrb, value self)
 {
   _int n, m;
 
@@ -75,8 +75,8 @@ _int_anybits(_state *mrb, _value self)
  *
  *  Returns +true+ if no bits of <code>+int+ & +mask+</code> are 1.
  */
-static _value
-_int_nobits(_state *mrb, _value self)
+static value
+_int_nobits(state *mrb, value self)
 {
   _int n, m;
 
@@ -86,7 +86,7 @@ _int_nobits(_state *mrb, _value self)
 }
 
 void
-_mruby_numeric_ext_gem_init(_state* mrb)
+_mruby_numeric_ext_gem_init(state* mrb)
 {
   struct RClass *i = _module_get(mrb, "Integral");
 
@@ -97,6 +97,6 @@ _mruby_numeric_ext_gem_init(_state* mrb)
 }
 
 void
-_mruby_numeric_ext_gem_final(_state* mrb)
+_mruby_numeric_ext_gem_final(state* mrb)
 {
 }

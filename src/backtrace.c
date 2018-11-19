@@ -21,12 +21,12 @@ struct backtrace_location {
   _sym method_id;
 };
 
-typedef void (*each_backtrace_func)(_state*, struct backtrace_location*, void*);
+typedef void (*each_backtrace_func)(state*, struct backtrace_location*, void*);
 
 static const _data_type bt_type = { "Backtrace", _free };
 
 static void
-each_backtrace(_state *mrb, ptrdiff_t ciidx, _code *pc0, each_backtrace_func func, void *data)
+each_backtrace(state *mrb, ptrdiff_t ciidx, _code *pc0, each_backtrace_func func, void *data)
 {
   ptrdiff_t i, j;
 
@@ -74,7 +74,7 @@ each_backtrace(_state *mrb, ptrdiff_t ciidx, _code *pc0, each_backtrace_func fun
 #ifndef MRB_DISABLE_STDIO
 
 static void
-print_backtrace(_state *mrb, _value backtrace)
+print_backtrace(state *mrb, value backtrace)
 {
   int i;
   _int n;
@@ -87,7 +87,7 @@ print_backtrace(_state *mrb, _value backtrace)
 
   fprintf(stream, "trace (most recent call last):\n");
   for (i=0; i<n; i++) {
-    _value entry = RARRAY_PTR(backtrace)[n-i-1];
+    value entry = RARRAY_PTR(backtrace)[n-i-1];
 
     if (_string_p(entry)) {
       fprintf(stream, "\t[%d] %.*s\n", i, (int)RSTRING_LEN(entry), RSTRING_PTR(entry));
@@ -110,7 +110,7 @@ packed_bt_len(struct backtrace_location *bt, int n)
 }
 
 static void
-print_packed_backtrace(_state *mrb, _value packed)
+print_packed_backtrace(state *mrb, value packed)
 {
   FILE *stream = stderr;
   struct backtrace_location *bt;
@@ -144,9 +144,9 @@ print_packed_backtrace(_state *mrb, _value packed)
 */
 
 MRB_API void
-_print_backtrace(_state *mrb)
+_print_backtrace(state *mrb)
 {
-  _value backtrace;
+  value backtrace;
 
   if (!mrb->exc) {
     return;
@@ -164,14 +164,14 @@ _print_backtrace(_state *mrb)
 #else
 
 MRB_API void
-_print_backtrace(_state *mrb)
+_print_backtrace(state *mrb)
 {
 }
 
 #endif
 
 static void
-count_backtrace_i(_state *mrb,
+count_backtrace_i(state *mrb,
                  struct backtrace_location *loc,
                  void *data)
 {
@@ -182,7 +182,7 @@ count_backtrace_i(_state *mrb,
 }
 
 static void
-pack_backtrace_i(_state *mrb,
+pack_backtrace_i(state *mrb,
                  struct backtrace_location *loc,
                  void *data)
 {
@@ -194,8 +194,8 @@ pack_backtrace_i(_state *mrb,
   *pptr = ptr+1;
 }
 
-static _value
-packed_backtrace(_state *mrb)
+static value
+packed_backtrace(state *mrb)
 {
   struct RData *backtrace;
   ptrdiff_t ciidx = mrb->c->ci - mrb->c->cibase;
@@ -214,10 +214,10 @@ packed_backtrace(_state *mrb)
 }
 
 void
-_keep_backtrace(_state *mrb, _value exc)
+_keep_backtrace(state *mrb, value exc)
 {
   _sym sym = _intern_lit(mrb, "backtrace");
-  _value backtrace;
+  value backtrace;
   int ai;
 
   if (_iv_defined(mrb, exc, sym)) return;
@@ -227,8 +227,8 @@ _keep_backtrace(_state *mrb, _value exc)
   _gc_arena_restore(mrb, ai);
 }
 
-_value
-_unpack_backtrace(_state *mrb, _value backtrace)
+value
+_unpack_backtrace(state *mrb, value backtrace)
 {
   struct backtrace_location *bt;
   _int n, i;
@@ -246,7 +246,7 @@ _unpack_backtrace(_state *mrb, _value backtrace)
   ai = _gc_arena_save(mrb);
   for (i = 0; i < n; i++) {
     struct backtrace_location *entry = &bt[i];
-    _value btline;
+    value btline;
 
     if (entry->filename == NULL) continue;
     btline = _format(mrb, "%S:%S",
@@ -263,11 +263,11 @@ _unpack_backtrace(_state *mrb, _value backtrace)
   return backtrace;
 }
 
-MRB_API _value
-_exc_backtrace(_state *mrb, _value exc)
+MRB_API value
+_exc_backtrace(state *mrb, value exc)
 {
   _sym attr_name;
-  _value backtrace;
+  value backtrace;
 
   attr_name = _intern_lit(mrb, "backtrace");
   backtrace = _iv_get(mrb, exc, attr_name);
@@ -279,8 +279,8 @@ _exc_backtrace(_state *mrb, _value exc)
   return backtrace;
 }
 
-MRB_API _value
-_get_backtrace(_state *mrb)
+MRB_API value
+_get_backtrace(state *mrb)
 {
   return _unpack_backtrace(mrb, packed_backtrace(mrb));
 }

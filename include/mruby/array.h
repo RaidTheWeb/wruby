@@ -18,10 +18,10 @@ MRB_BEGIN_DECL
 typedef struct _shared_array {
   int refcnt;
   _int len;
-  _value *ptr;
+  value *ptr;
 } _shared_array;
 
-#define MRB_ARY_EMBED_LEN_MAX ((_int)(sizeof(void*)*3/sizeof(_value)))
+#define MRB_ARY_EMBED_LEN_MAX ((_int)(sizeof(void*)*3/sizeof(value)))
 struct RArray {
   MRB_OBJECT_HEADER;
   union {
@@ -31,9 +31,9 @@ struct RArray {
         _int capa;
         _shared_array *shared;
       } aux;
-      _value *ptr;
+      value *ptr;
     } heap;
-    _value embed[MRB_ARY_EMBED_LEN_MAX];
+    value embed[MRB_ARY_EMBED_LEN_MAX];
   } as;
 };
 
@@ -66,9 +66,9 @@ struct RArray {
 #define ARY_SET_SHARED_FLAG(a) ((a)->flags |= MRB_ARY_SHARED)
 #define ARY_UNSET_SHARED_FLAG(a) ((a)->flags &= ~MRB_ARY_SHARED)
 
-void _ary_decref(_state*, _shared_array*);
-MRB_API void _ary_modify(_state*, struct RArray*);
-MRB_API _value _ary_new_capa(_state*, _int);
+void _ary_decref(state*, _shared_array*);
+MRB_API void _ary_modify(state*, struct RArray*);
+MRB_API value _ary_new_capa(state*, _int);
 
 /*
  * Initializes a new array.
@@ -80,7 +80,7 @@ MRB_API _value _ary_new_capa(_state*, _int);
  * @param mrb The mruby state reference.
  * @return The initialized array.
  */
-MRB_API _value _ary_new(_state *mrb);
+MRB_API value _ary_new(state *mrb);
 
 /*
  * Initializes a new array with initial values
@@ -94,7 +94,7 @@ MRB_API _value _ary_new(_state *mrb);
  * @param vals The actual values.
  * @return The initialized array.
  */
-MRB_API _value _ary_new_from_values(_state *mrb, _int size, const _value *vals);
+MRB_API value _ary_new_from_values(state *mrb, _int size, const value *vals);
 
 /*
  * Initializes a new array with two initial values
@@ -108,7 +108,7 @@ MRB_API _value _ary_new_from_values(_state *mrb, _int size, const _value *vals);
  * @param cdr The second value.
  * @return The initialized array.
  */
-MRB_API _value _assoc_new(_state *mrb, _value car, _value cdr);
+MRB_API value _assoc_new(state *mrb, value car, value cdr);
 
 /*
  * Concatenate two arrays. The target array will be modified
@@ -120,7 +120,7 @@ MRB_API _value _assoc_new(_state *mrb, _value car, _value cdr);
  * @param self The target array.
  * @param other The array that will be concatenated to self.
  */
-MRB_API void _ary_concat(_state *mrb, _value self, _value other);
+MRB_API void _ary_concat(state *mrb, value self, value other);
 
 /*
  * Create an array from the input. It tries calling to_a on the
@@ -131,7 +131,7 @@ MRB_API void _ary_concat(_state *mrb, _value self, _value other);
  * @param value The value to change into an array.
  * @return An array representation of value.
  */
-MRB_API _value _ary_splat(_state *mrb, _value value);
+MRB_API value _ary_splat(state *mrb, value value);
 
 /*
  * Pushes value into array.
@@ -144,7 +144,7 @@ MRB_API _value _ary_splat(_state *mrb, _value value);
  * @param ary The array in which the value will be pushed
  * @param value The value to be pushed into array
  */
-MRB_API void _ary_push(_state *mrb, _value array, _value value);
+MRB_API void _ary_push(state *mrb, value array, value value);
 
 /*
  * Pops the last element from the array.
@@ -157,7 +157,7 @@ MRB_API void _ary_push(_state *mrb, _value array, _value value);
  * @param ary The array from which the value will be popped.
  * @return The popped value.
  */
-MRB_API _value _ary_pop(_state *mrb, _value ary);
+MRB_API value _ary_pop(state *mrb, value ary);
 
 /*
  * Returns a reference to an element of the array on the given index.
@@ -171,7 +171,7 @@ MRB_API _value _ary_pop(_state *mrb, _value ary);
  * @param n The array index being referenced
  * @return The referenced value.
  */
-MRB_API _value _ary_ref(_state *mrb, _value ary, _int n);
+MRB_API value _ary_ref(state *mrb, value ary, _int n);
 
 /*
  * Sets a value on an array at the given index
@@ -185,7 +185,7 @@ MRB_API _value _ary_ref(_state *mrb, _value ary, _int n);
  * @param n The array index being referenced.
  * @param val The value being setted.
  */
-MRB_API void _ary_set(_state *mrb, _value ary, _int n, _value val);
+MRB_API void _ary_set(state *mrb, value ary, _int n, value val);
 
 /*
  * Replace the array with another array
@@ -198,8 +198,8 @@ MRB_API void _ary_set(_state *mrb, _value ary, _int n, _value val);
  * @param self The target array.
  * @param other The array to replace it with.
  */
-MRB_API void _ary_replace(_state *mrb, _value self, _value other);
-MRB_API _value _check_array_type(_state *mrb, _value self);
+MRB_API void _ary_replace(state *mrb, value self, value other);
+MRB_API value _check_array_type(state *mrb, value self);
 
 /*
  * Unshift an element into the array
@@ -212,7 +212,7 @@ MRB_API _value _check_array_type(_state *mrb, _value self);
  * @param self The target array.
  * @param item The item to unshift.
  */
-MRB_API _value _ary_unshift(_state *mrb, _value self, _value item);
+MRB_API value _ary_unshift(state *mrb, value self, value item);
 
 /*
  * Get nth element in the array
@@ -224,7 +224,7 @@ MRB_API _value _ary_unshift(_state *mrb, _value self, _value item);
  * @param ary The target array.
  * @param offset The element position (negative counts from the tail).
  */
-MRB_API _value _ary_entry(_value ary, _int offset);
+MRB_API value _ary_entry(value ary, _int offset);
 
 /*
  * Shifts the first element from the array.
@@ -237,7 +237,7 @@ MRB_API _value _ary_entry(_value ary, _int offset);
  * @param self The array from which the value will be shifted.
  * @return The shifted value.
  */
-MRB_API _value _ary_shift(_state *mrb, _value self);
+MRB_API value _ary_shift(state *mrb, value self);
 
 /*
  * Removes all elements from the array
@@ -250,7 +250,7 @@ MRB_API _value _ary_shift(_state *mrb, _value self);
  * @param self The target array.
  * @return self
  */
-MRB_API _value _ary_clear(_state *mrb, _value self);
+MRB_API value _ary_clear(state *mrb, value self);
 
 /*
  * Join the array elements together in a string
@@ -263,7 +263,7 @@ MRB_API _value _ary_clear(_state *mrb, _value self);
  * @param ary The target array
  * @param sep The separater, can be NULL
  */
-MRB_API _value _ary_join(_state *mrb, _value ary, _value sep);
+MRB_API value _ary_join(state *mrb, value ary, value sep);
 
 /*
  * Update the capacity of the array
@@ -272,7 +272,7 @@ MRB_API _value _ary_join(_state *mrb, _value ary, _value sep);
  * @param ary The target array.
  * @param new_len The new capacity of the array
  */
-MRB_API _value _ary_resize(_state *mrb, _value ary, _int new_len);
+MRB_API value _ary_resize(state *mrb, value ary, _int new_len);
 
 MRB_END_DECL
 

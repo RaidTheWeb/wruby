@@ -131,7 +131,7 @@ typedef struct listcmd_parser_state {
 } listcmd_parser_state;
 
 static listcmd_parser_state*
-listcmd_parser_state_new(_state *mrb)
+listcmd_parser_state_new(state *mrb)
 {
   listcmd_parser_state *st = (listcmd_parser_state*)_malloc(mrb, sizeof(listcmd_parser_state));
   memset(st, 0, sizeof(listcmd_parser_state));
@@ -139,7 +139,7 @@ listcmd_parser_state_new(_state *mrb)
 }
 
 static void
-listcmd_parser_state_free(_state *mrb, listcmd_parser_state *st)
+listcmd_parser_state_free(state *mrb, listcmd_parser_state *st)
 {
   if (st != NULL) {
     if (st->filename != NULL) {
@@ -180,7 +180,7 @@ skip_char(char **sp, char c)
 }
 
 static _bool
-parse_lineno(_state *mrb, char **sp, listcmd_parser_state *st)
+parse_lineno(state *mrb, char **sp, listcmd_parser_state *st)
 {
   if (*sp == NULL || **sp == '\0') {
     return FALSE;
@@ -209,7 +209,7 @@ parse_lineno(_state *mrb, char **sp, listcmd_parser_state *st)
 }
 
 static _bool
-parse_filename(_state *mrb, char **sp, listcmd_parser_state *st)
+parse_filename(state *mrb, char **sp, listcmd_parser_state *st)
 {
   char *p;
   int len;
@@ -239,7 +239,7 @@ parse_filename(_state *mrb, char **sp, listcmd_parser_state *st)
 }
 
 char*
-replace_ext(_state *mrb, const char *filename, const char *ext)
+replace_ext(state *mrb, const char *filename, const char *ext)
 {
   size_t len;
   const char *p;
@@ -265,7 +265,7 @@ replace_ext(_state *mrb, const char *filename, const char *ext)
 }
 
 static _bool
-parse_listcmd_args(_state *mrb, mrdb_state *mrdb, listcmd_parser_state *st)
+parse_listcmd_args(state *mrb, mrdb_state *mrdb, listcmd_parser_state *st)
 {
   char *p;
 
@@ -402,7 +402,7 @@ show_long_help(char *cmd1, char *cmd2)
 }
 
 dbgcmd_state
-dbgcmd_list(_state *mrb, mrdb_state *mrdb)
+dbgcmd_list(state *mrb, mrdb_state *mrdb)
 {
   char *filename;
   listcmd_parser_state *st = listcmd_parser_state_new(mrb);
@@ -423,7 +423,7 @@ dbgcmd_list(_state *mrb, mrdb_state *mrdb)
 }
 
 dbgcmd_state
-dbgcmd_help(_state *mrb, mrdb_state *mrdb)
+dbgcmd_help(state *mrb, mrdb_state *mrdb)
 {
   _bool is_valid;
   int i;
@@ -456,7 +456,7 @@ dbgcmd_help(_state *mrb, mrdb_state *mrdb)
 }
 
 dbgcmd_state
-dbgcmd_quit(_state *mrb, mrdb_state *mrdb)
+dbgcmd_quit(state *mrb, mrdb_state *mrdb)
 {
   switch (mrdb->dbg->xm) {
   case DBG_RUN:

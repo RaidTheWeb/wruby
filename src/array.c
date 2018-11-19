@@ -13,11 +13,11 @@
 
 #define ARY_DEFAULT_LEN   4
 #define ARY_SHRINK_RATIO  5 /* must be larger than 2 */
-#define ARY_C_MAX_SIZE (SIZE_MAX / sizeof(_value))
+#define ARY_C_MAX_SIZE (SIZE_MAX / sizeof(value))
 #define ARY_MAX_SIZE ((_int)((ARY_C_MAX_SIZE < (size_t)MRB_INT_MAX) ? ARY_C_MAX_SIZE : MRB_INT_MAX-1))
 
 static struct RArray*
-ary_new_capa(_state *mrb, _int capa)
+ary_new_capa(state *mrb, _int capa)
 {
   struct RArray *a;
   size_t blen;
@@ -25,14 +25,14 @@ ary_new_capa(_state *mrb, _int capa)
   if (capa > ARY_MAX_SIZE) {
     _raise(mrb, E_ARGUMENT_ERROR, "array size too big");
   }
-  blen = capa * sizeof(_value);
+  blen = capa * sizeof(value);
 
   a = (struct RArray*)_obj_alloc(mrb, MRB_TT_ARRAY, mrb->array_class);
   if (capa <= MRB_ARY_EMBED_LEN_MAX) {
     ARY_SET_EMBED_LEN(a, 0);
   }
   else {
-    a->as.heap.ptr = (_value *)_malloc(mrb, blen);
+    a->as.heap.ptr = (value *)_malloc(mrb, blen);
     a->as.heap.aux.capa = capa;
     a->as.heap.len = 0;
   }
@@ -40,15 +40,15 @@ ary_new_capa(_state *mrb, _int capa)
   return a;
 }
 
-MRB_API _value
-_ary_new_capa(_state *mrb, _int capa)
+MRB_API value
+_ary_new_capa(state *mrb, _int capa)
 {
   struct RArray *a = ary_new_capa(mrb, capa);
   return _obj_value(a);
 }
 
-MRB_API _value
-_ary_new(_state *mrb)
+MRB_API value
+_ary_new(state *mrb)
 {
   return _ary_new_capa(mrb, 0);
 }
@@ -68,7 +68,7 @@ _ary_new(_state *mrb)
  *
  */
 static inline void
-array_copy(_value *dst, const _value *src, _int size)
+array_copy(value *dst, const value *src, _int size)
 {
   _int i;
 
@@ -78,7 +78,7 @@ array_copy(_value *dst, const _value *src, _int size)
 }
 
 static struct RArray*
-ary_new_from_values(_state *mrb, _int size, const _value *vals)
+ary_new_from_values(state *mrb, _int size, const value *vals)
 {
   struct RArray *a = ary_new_capa(mrb, size);
 
@@ -88,15 +88,15 @@ ary_new_from_values(_state *mrb, _int size, const _value *vals)
   return a;
 }
 
-MRB_API _value
-_ary_new_from_values(_state *mrb, _int size, const _value *vals)
+MRB_API value
+_ary_new_from_values(state *mrb, _int size, const value *vals)
 {
   struct RArray *a = ary_new_from_values(mrb, size, vals);
   return _obj_value(a);
 }
 
-MRB_API _value
-_assoc_new(_state *mrb, _value car, _value cdr)
+MRB_API value
+_assoc_new(state *mrb, value car, value cdr)
 {
   struct RArray *a;
 
@@ -108,9 +108,9 @@ _assoc_new(_state *mrb, _value car, _value cdr)
 }
 
 static void
-ary_fill_with_nil(_value *ptr, _int size)
+ary_fill_with_nil(value *ptr, _int size)
 {
-  _value nil = _nil_value();
+  value nil = _nil_value();
 
   while (size--) {
     *ptr++ = nil;
@@ -118,7 +118,7 @@ ary_fill_with_nil(_value *ptr, _int size)
 }
 
 static void
-ary_modify_check(_state *mrb, struct RArray *a)
+ary_modify_check(state *mrb, struct RArray *a)
 {
   if (MRB_FROZEN_P(a)) {
     _raise(mrb, E_FROZEN_ERROR, "can't modify frozen array");
@@ -126,7 +126,7 @@ ary_modify_check(_state *mrb, struct RArray *a)
 }
 
 static void
-ary_modify(_state *mrb, struct RArray *a)
+ary_modify(state *mrb, struct RArray *a)
 {
   ary_modify_check(mrb, a);
 
@@ -139,12 +139,12 @@ ary_modify(_state *mrb, struct RArray *a)
       _free(mrb, shared);
     }
     else {
-      _value *ptr, *p;
+      value *ptr, *p;
       _int len;
 
       p = a->as.heap.ptr;
-      len = a->as.heap.len * sizeof(_value);
-      ptr = (_value *)_malloc(mrb, len);
+      len = a->as.heap.len * sizeof(value);
+      ptr = (value *)_malloc(mrb, len);
       if (p) {
         array_copy(ptr, p, a->as.heap.len);
       }
@@ -157,23 +157,23 @@ ary_modify(_state *mrb, struct RArray *a)
 }
 
 MRB_API void
-_ary_modify(_state *mrb, struct RArray* a)
+_ary_modify(state *mrb, struct RArray* a)
 {
   _write_barrier(mrb, (struct RBasic*)a);
   ary_modify(mrb, a);
 }
 
 static void
-ary_make_shared(_state *mrb, struct RArray *a)
+ary_make_shared(state *mrb, struct RArray *a)
 {
   if (!ARY_SHARED_P(a) && !ARY_EMBED_P(a)) {
     _shared_array *shared = (_shared_array *)_malloc(mrb, sizeof(_shared_array));
-    _value *ptr = a->as.heap.ptr;
+    value *ptr = a->as.heap.ptr;
     _int len = a->as.heap.len;
 
     shared->refcnt = 1;
     if (a->as.heap.aux.capa > len) {
-      a->as.heap.ptr = shared->ptr = (_value *)_realloc(mrb, ptr, sizeof(_value)*len+1);
+      a->as.heap.ptr = shared->ptr = (value *)_realloc(mrb, ptr, sizeof(value)*len+1);
     }
     else {
       shared->ptr = ptr;
@@ -185,7 +185,7 @@ ary_make_shared(_state *mrb, struct RArray *a)
 }
 
 static void
-ary_expand_capa(_state *mrb, struct RArray *a, _int len)
+ary_expand_capa(state *mrb, struct RArray *a, _int len)
 {
   _int capa = ARY_CAPA(a);
 
@@ -210,9 +210,9 @@ ary_expand_capa(_state *mrb, struct RArray *a, _int len)
   }
 
   if (ARY_EMBED_P(a)) {
-    _value *ptr = ARY_EMBED_PTR(a);
+    value *ptr = ARY_EMBED_PTR(a);
     _int len = ARY_EMBED_LEN(a);
-    _value *expanded_ptr = (_value *)_malloc(mrb, sizeof(_value)*capa);
+    value *expanded_ptr = (value *)_malloc(mrb, sizeof(value)*capa);
 
     ARY_UNSET_EMBED_FLAG(a);
     array_copy(expanded_ptr, ptr, len);
@@ -221,7 +221,7 @@ ary_expand_capa(_state *mrb, struct RArray *a, _int len)
     a->as.heap.ptr = expanded_ptr;
   }
   else if (capa > a->as.heap.aux.capa) {
-    _value *expanded_ptr = (_value *)_realloc(mrb, a->as.heap.ptr, sizeof(_value)*capa);
+    value *expanded_ptr = (value *)_realloc(mrb, a->as.heap.ptr, sizeof(value)*capa);
 
     a->as.heap.aux.capa = capa;
     a->as.heap.ptr = expanded_ptr;
@@ -229,7 +229,7 @@ ary_expand_capa(_state *mrb, struct RArray *a, _int len)
 }
 
 static void
-ary_shrink_capa(_state *mrb, struct RArray *a)
+ary_shrink_capa(state *mrb, struct RArray *a)
 {
 
   _int capa;
@@ -250,12 +250,12 @@ ary_shrink_capa(_state *mrb, struct RArray *a)
 
   if (capa > a->as.heap.len && capa < a->as.heap.aux.capa) {
     a->as.heap.aux.capa = capa;
-    a->as.heap.ptr = (_value *)_realloc(mrb, a->as.heap.ptr, sizeof(_value)*capa);
+    a->as.heap.ptr = (value *)_realloc(mrb, a->as.heap.ptr, sizeof(value)*capa);
   }
 }
 
-MRB_API _value
-_ary_resize(_state *mrb, _value ary, _int new_len)
+MRB_API value
+_ary_resize(state *mrb, value ary, _int new_len)
 {
   _int old_len;
   struct RArray *a = _ary_ptr(ary);
@@ -276,11 +276,11 @@ _ary_resize(_state *mrb, _value ary, _int new_len)
   return ary;
 }
 
-static _value
-_ary_s_create(_state *mrb, _value klass)
+static value
+_ary_s_create(state *mrb, value klass)
 {
-  _value ary;
-  _value *vals;
+  value ary;
+  value *vals;
   _int len;
   struct RArray *a;
 
@@ -292,10 +292,10 @@ _ary_s_create(_state *mrb, _value klass)
   return ary;
 }
 
-static void ary_replace(_state*, struct RArray*, struct RArray*);
+static void ary_replace(state*, struct RArray*, struct RArray*);
 
 static void
-ary_concat(_state *mrb, struct RArray *a, struct RArray *a2)
+ary_concat(state *mrb, struct RArray *a, struct RArray *a2)
 {
   _int len;
 
@@ -318,29 +318,29 @@ ary_concat(_state *mrb, struct RArray *a, struct RArray *a2)
 }
 
 MRB_API void
-_ary_concat(_state *mrb, _value self, _value other)
+_ary_concat(state *mrb, value self, value other)
 {
   struct RArray *a2 = _ary_ptr(other);
 
   ary_concat(mrb, _ary_ptr(self), a2);
 }
 
-static _value
-_ary_concat_m(_state *mrb, _value self)
+static value
+_ary_concat_m(state *mrb, value self)
 {
-  _value ary;
+  value ary;
 
   _get_args(mrb, "A", &ary);
   _ary_concat(mrb, self, ary);
   return self;
 }
 
-static _value
-_ary_plus(_state *mrb, _value self)
+static value
+_ary_plus(state *mrb, value self)
 {
   struct RArray *a1 = _ary_ptr(self);
   struct RArray *a2;
-  _value *ptr;
+  value *ptr;
   _int blen, len1;
 
   _get_args(mrb, "a", &ptr, &blen);
@@ -359,7 +359,7 @@ _ary_plus(_state *mrb, _value self)
 #define ARY_REPLACE_SHARED_MIN 20
 
 static void
-ary_replace(_state *mrb, struct RArray *a, struct RArray *b)
+ary_replace(state *mrb, struct RArray *a, struct RArray *b)
 {
   _int len = ARY_LEN(b);
 
@@ -400,7 +400,7 @@ ary_replace(_state *mrb, struct RArray *a, struct RArray *b)
 }
 
 MRB_API void
-_ary_replace(_state *mrb, _value self, _value other)
+_ary_replace(state *mrb, value self, value other)
 {
   struct RArray *a1 = _ary_ptr(self);
   struct RArray *a2 = _ary_ptr(other);
@@ -410,10 +410,10 @@ _ary_replace(_state *mrb, _value self, _value other)
   }
 }
 
-static _value
-_ary_replace_m(_state *mrb, _value self)
+static value
+_ary_replace_m(state *mrb, value self)
 {
-  _value other;
+  value other;
 
   _get_args(mrb, "A", &other);
   _ary_replace(mrb, self, other);
@@ -421,12 +421,12 @@ _ary_replace_m(_state *mrb, _value self)
   return self;
 }
 
-static _value
-_ary_times(_state *mrb, _value self)
+static value
+_ary_times(state *mrb, value self)
 {
   struct RArray *a1 = _ary_ptr(self);
   struct RArray *a2;
-  _value *ptr;
+  value *ptr;
   _int times, len1;
 
   _get_args(mrb, "i", &times);
@@ -449,21 +449,21 @@ _ary_times(_state *mrb, _value self)
   return _obj_value(a2);
 }
 
-static _value
-_ary_reverse_bang(_state *mrb, _value self)
+static value
+_ary_reverse_bang(state *mrb, value self)
 {
   struct RArray *a = _ary_ptr(self);
   _int len = ARY_LEN(a);
 
   if (len > 1) {
-    _value *p1, *p2;
+    value *p1, *p2;
 
     ary_modify(mrb, a);
     p1 = ARY_PTR(a);
     p2 = p1 + len - 1;
 
     while (p1 < p2) {
-      _value tmp = *p1;
+      value tmp = *p1;
       *p1++ = *p2;
       *p2-- = tmp;
     }
@@ -471,14 +471,14 @@ _ary_reverse_bang(_state *mrb, _value self)
   return self;
 }
 
-static _value
-_ary_reverse(_state *mrb, _value self)
+static value
+_ary_reverse(state *mrb, value self)
 {
   struct RArray *a = _ary_ptr(self), *b = ary_new_capa(mrb, ARY_LEN(a));
   _int len = ARY_LEN(a);
 
   if (len > 0) {
-    _value *p1, *p2, *e;
+    value *p1, *p2, *e;
 
     p1 = ARY_PTR(a);
     e  = p1 + len;
@@ -492,7 +492,7 @@ _ary_reverse(_state *mrb, _value self)
 }
 
 MRB_API void
-_ary_push(_state *mrb, _value ary, _value elem)
+_ary_push(state *mrb, value ary, value elem)
 {
   struct RArray *a = _ary_ptr(ary);
   _int len = ARY_LEN(a);
@@ -505,10 +505,10 @@ _ary_push(_state *mrb, _value ary, _value elem)
   _field_write_barrier_value(mrb, (struct RBasic*)a, elem);
 }
 
-static _value
-_ary_push_m(_state *mrb, _value self)
+static value
+_ary_push_m(state *mrb, value self)
 {
-  _value *argv;
+  value *argv;
   _int len, len2, alen;
   struct RArray *a;
 
@@ -527,8 +527,8 @@ _ary_push_m(_state *mrb, _value self)
   return self;
 }
 
-MRB_API _value
-_ary_pop(_state *mrb, _value ary)
+MRB_API value
+_ary_pop(state *mrb, value ary)
 {
   struct RArray *a = _ary_ptr(ary);
   _int len = ARY_LEN(a);
@@ -541,12 +541,12 @@ _ary_pop(_state *mrb, _value ary)
 
 #define ARY_SHIFT_SHARED_MIN 10
 
-MRB_API _value
-_ary_shift(_state *mrb, _value self)
+MRB_API value
+_ary_shift(state *mrb, value self)
 {
   struct RArray *a = _ary_ptr(self);
   _int len = ARY_LEN(a);
-  _value val;
+  value val;
 
   ary_modify_check(mrb, a);
   if (len == 0) return _nil_value();
@@ -562,7 +562,7 @@ _ary_shift(_state *mrb, _value self)
     goto L_SHIFT;
   }
   else {
-    _value *ptr = ARY_PTR(a);
+    value *ptr = ARY_PTR(a);
     _int size = len;
 
     val = *ptr;
@@ -579,8 +579,8 @@ _ary_shift(_state *mrb, _value self)
    item = 0
    self.unshift item
    p self #=> [0, 1, 2, 3] */
-MRB_API _value
-_ary_unshift(_state *mrb, _value self, _value item)
+MRB_API value
+_ary_unshift(state *mrb, value self, value item)
 {
   struct RArray *a = _ary_ptr(self);
   _int len = ARY_LEN(a);
@@ -592,7 +592,7 @@ _ary_unshift(_state *mrb, _value self, _value item)
     a->as.heap.ptr[0] = item;
   }
   else {
-    _value *ptr;
+    value *ptr;
 
     ary_modify(mrb, a);
     if (ARY_CAPA(a) < len + 1)
@@ -607,11 +607,11 @@ _ary_unshift(_state *mrb, _value self, _value item)
   return self;
 }
 
-static _value
-_ary_unshift_m(_state *mrb, _value self)
+static value
+_ary_unshift_m(state *mrb, value self)
 {
   struct RArray *a = _ary_ptr(self);
-  _value *vals, *ptr;
+  value *vals, *ptr;
   _int alen, len;
 
   _get_args(mrb, "*!", &vals, &alen);
@@ -646,8 +646,8 @@ _ary_unshift_m(_state *mrb, _value self)
   return self;
 }
 
-MRB_API _value
-_ary_ref(_state *mrb, _value ary, _int n)
+MRB_API value
+_ary_ref(state *mrb, value ary, _int n)
 {
   struct RArray *a = _ary_ptr(ary);
   _int len = ARY_LEN(a);
@@ -660,7 +660,7 @@ _ary_ref(_state *mrb, _value ary, _int n)
 }
 
 MRB_API void
-_ary_set(_state *mrb, _value ary, _int n, _value val)
+_ary_set(state *mrb, value ary, _int n, value val)
 {
   struct RArray *a = _ary_ptr(ary);
   _int len = ARY_LEN(a);
@@ -685,17 +685,17 @@ _ary_set(_state *mrb, _value ary, _int n, _value val)
 }
 
 static struct RArray*
-ary_dup(_state *mrb, struct RArray *a)
+ary_dup(state *mrb, struct RArray *a)
 {
   return ary_new_from_values(mrb, ARY_LEN(a), ARY_PTR(a));
 }
 
-MRB_API _value
-_ary_splice(_state *mrb, _value ary, _int head, _int len, _value rpl)
+MRB_API value
+_ary_splice(state *mrb, value ary, _int head, _int len, value rpl)
 {
   struct RArray *a = _ary_ptr(ary);
   _int alen = ARY_LEN(a);
-  const _value *argv;
+  const value *argv;
   _int argc;
   _int tail;
 
@@ -760,7 +760,7 @@ _ary_splice(_state *mrb, _value ary, _int head, _int len, _value rpl)
     }
 
     if (len != argc) {
-      _value *ptr = ARY_PTR(a);
+      value *ptr = ARY_PTR(a);
       tail = head + len;
       value_move(ptr + head + argc, ptr + tail, alen - tail);
       ARY_SET_LEN(a, newlen);
@@ -774,7 +774,7 @@ _ary_splice(_state *mrb, _value ary, _int head, _int len, _value rpl)
 }
 
 void
-_ary_decref(_state *mrb, _shared_array *shared)
+_ary_decref(state *mrb, _shared_array *shared)
 {
   shared->refcnt--;
   if (shared->refcnt == 0) {
@@ -783,8 +783,8 @@ _ary_decref(_state *mrb, _shared_array *shared)
   }
 }
 
-static _value
-ary_subseq(_state *mrb, struct RArray *a, _int beg, _int len)
+static value
+ary_subseq(state *mrb, struct RArray *a, _int beg, _int len)
 {
   struct RArray *b;
 
@@ -803,7 +803,7 @@ ary_subseq(_state *mrb, struct RArray *a, _int beg, _int len)
 }
 
 static _int
-aget_index(_state *mrb, _value index)
+aget_index(state *mrb, value index)
 {
   if (_fixnum_p(index)) {
     return _fixnum(index);
@@ -815,7 +815,7 @@ aget_index(_state *mrb, _value index)
 #endif
   else {
     _int i, argc;
-    _value *argv;
+    value *argv;
 
     _get_args(mrb, "i*!", &i, &argv, &argc);
     return i;
@@ -849,12 +849,12 @@ aget_index(_state *mrb, _value index)
  *
  */
 
-static _value
-_ary_aget(_state *mrb, _value self)
+static value
+_ary_aget(state *mrb, value self)
 {
   struct RArray *a = _ary_ptr(self);
   _int i, len, alen;
-  _value index;
+  value index;
 
   if (_get_args(mrb, "o|i", &index, &len) == 1) {
     switch (_type(index)) {
@@ -919,10 +919,10 @@ _ary_aget(_state *mrb, _value self)
  *     a[3, 0] = "B"               #=> [1, 2, "A", "B"]
  */
 
-static _value
-_ary_aset(_state *mrb, _value self)
+static value
+_ary_aset(state *mrb, value self)
 {
-  _value v1, v2, v3;
+  value v1, v2, v3;
   _int i, len;
 
   _ary_modify(mrb, _ary_ptr(self));
@@ -947,13 +947,13 @@ _ary_aset(_state *mrb, _value self)
   return v3;
 }
 
-static _value
-_ary_delete_at(_state *mrb, _value self)
+static value
+_ary_delete_at(state *mrb, value self)
 {
   struct RArray *a = _ary_ptr(self);
   _int   index;
-  _value val;
-  _value *ptr;
+  value val;
+  value *ptr;
   _int len, alen;
 
   _get_args(mrb, "i", &index);
@@ -978,8 +978,8 @@ _ary_delete_at(_state *mrb, _value self)
   return val;
 }
 
-static _value
-_ary_first(_state *mrb, _value self)
+static value
+_ary_first(state *mrb, value self)
 {
   struct RArray *a = _ary_ptr(self);
   _int size, alen;
@@ -1000,8 +1000,8 @@ _ary_first(_state *mrb, _value self)
   return _ary_new_from_values(mrb, size, ARY_PTR(a));
 }
 
-static _value
-_ary_last(_state *mrb, _value self)
+static value
+_ary_last(state *mrb, value self)
 {
   struct RArray *a = _ary_ptr(self);
   _int n, size, alen;
@@ -1022,10 +1022,10 @@ _ary_last(_state *mrb, _value self)
   return _ary_new_from_values(mrb, size, ARY_PTR(a) + alen - size);
 }
 
-static _value
-_ary_index_m(_state *mrb, _value self)
+static value
+_ary_index_m(state *mrb, value self)
 {
-  _value obj;
+  value obj;
   _int i;
 
   _get_args(mrb, "o", &obj);
@@ -1037,10 +1037,10 @@ _ary_index_m(_state *mrb, _value self)
   return _nil_value();
 }
 
-static _value
-_ary_rindex_m(_state *mrb, _value self)
+static value
+_ary_rindex_m(state *mrb, value self)
 {
-  _value obj;
+  value obj;
   _int i, len;
 
   _get_args(mrb, "o", &obj);
@@ -1055,10 +1055,10 @@ _ary_rindex_m(_state *mrb, _value self)
   return _nil_value();
 }
 
-MRB_API _value
-_ary_splat(_state *mrb, _value v)
+MRB_API value
+_ary_splat(state *mrb, value v)
 {
-  _value a, recv_class;
+  value a, recv_class;
 
   if (_array_p(v)) {
     return v;
@@ -1087,16 +1087,16 @@ _ary_splat(_state *mrb, _value v)
   }
 }
 
-static _value
-_ary_size(_state *mrb, _value self)
+static value
+_ary_size(state *mrb, value self)
 {
   struct RArray *a = _ary_ptr(self);
 
   return _fixnum_value(ARY_LEN(a));
 }
 
-MRB_API _value
-_ary_clear(_state *mrb, _value self)
+MRB_API value
+_ary_clear(state *mrb, value self)
 {
   struct RArray *a = _ary_ptr(self);
 
@@ -1114,22 +1114,22 @@ _ary_clear(_state *mrb, _value self)
   return self;
 }
 
-static _value
-_ary_empty_p(_state *mrb, _value self)
+static value
+_ary_empty_p(state *mrb, value self)
 {
   struct RArray *a = _ary_ptr(self);
 
   return _bool_value(ARY_LEN(a) == 0);
 }
 
-MRB_API _value
-_check_array_type(_state *mrb, _value ary)
+MRB_API value
+_check_array_type(state *mrb, value ary)
 {
   return _check_convert_type(mrb, ary, MRB_TT_ARRAY, "Array", "to_ary");
 }
 
-MRB_API _value
-_ary_entry(_value ary, _int offset)
+MRB_API value
+_ary_entry(value ary, _int offset)
 {
   if (offset < 0) {
     offset += RARRAY_LEN(ary);
@@ -1140,11 +1140,11 @@ _ary_entry(_value ary, _int offset)
   return RARRAY_PTR(ary)[offset];
 }
 
-static _value
-join_ary(_state *mrb, _value ary, _value sep, _value list)
+static value
+join_ary(state *mrb, value ary, value sep, value list)
 {
   _int i;
-  _value result, val, tmp;
+  value result, val, tmp;
 
   /* check recursive */
   for (i=0; i<RARRAY_LEN(list); i++) {
@@ -1197,8 +1197,8 @@ join_ary(_state *mrb, _value ary, _value sep, _value list)
   return result;
 }
 
-MRB_API _value
-_ary_join(_state *mrb, _value ary, _value sep)
+MRB_API value
+_ary_join(state *mrb, value ary, value sep)
 {
   if (!_nil_p(sep)) {
     sep = _obj_as_string(mrb, sep);
@@ -1217,19 +1217,19 @@ _ary_join(_state *mrb, _value ary, _value sep)
  *     [ "a", "b", "c" ].join("-")   #=> "a-b-c"
  */
 
-static _value
-_ary_join_m(_state *mrb, _value ary)
+static value
+_ary_join_m(state *mrb, value ary)
 {
-  _value sep = _nil_value();
+  value sep = _nil_value();
 
   _get_args(mrb, "|S!", &sep);
   return _ary_join(mrb, ary, sep);
 }
 
-static _value
-_ary_eq(_state *mrb, _value ary1)
+static value
+_ary_eq(state *mrb, value ary1)
 {
-  _value ary2;
+  value ary2;
 
   _get_args(mrb, "o", &ary2);
   if (_obj_equal(mrb, ary1, ary2)) return _true_value();
@@ -1241,10 +1241,10 @@ _ary_eq(_state *mrb, _value ary1)
   return ary2;
 }
 
-static _value
-_ary_cmp(_state *mrb, _value ary1)
+static value
+_ary_cmp(state *mrb, value ary1)
 {
-  _value ary2;
+  value ary2;
 
   _get_args(mrb, "o", &ary2);
   if (_obj_equal(mrb, ary1, ary2)) return _fixnum_value(0);
@@ -1256,8 +1256,8 @@ _ary_cmp(_state *mrb, _value ary1)
 }
 
 /* internal method to convert multi-value to single value */
-static _value
-_ary_svalue(_state *mrb, _value ary)
+static value
+_ary_svalue(state *mrb, value ary)
 {
   _get_args(mrb, "");
   switch (RARRAY_LEN(ary)) {
@@ -1271,7 +1271,7 @@ _ary_svalue(_state *mrb, _value ary)
 }
 
 void
-_init_array(_state *mrb)
+_init_array(state *mrb)
 {
   struct RClass *a;
 

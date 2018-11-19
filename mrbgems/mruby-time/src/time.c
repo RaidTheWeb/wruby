@@ -206,7 +206,7 @@ static const struct _data_type _time_type = { "Time", _free };
 /** Updates the datetime of a _time based on it's timezone and
 seconds setting. Returns self on success, NULL of failure. */
 static struct _time*
-time_update_datetime(_state *mrb, struct _time *self)
+time_update_datetime(state *mrb, struct _time *self)
 {
   struct tm *aid;
 
@@ -228,17 +228,17 @@ time_update_datetime(_state *mrb, struct _time *self)
   return self;
 }
 
-static _value
-_time_wrap(_state *mrb, struct RClass *tc, struct _time *tm)
+static value
+_time_wrap(state *mrb, struct RClass *tc, struct _time *tm)
 {
   return _obj_value(Data_Wrap_Struct(mrb, tc, &_time_type, tm));
 }
 
-void _check_num_exact(_state *mrb, _float num);
+void _check_num_exact(state *mrb, _float num);
 
 /* Allocates a _time object and initializes it. */
 static struct _time*
-time_alloc(_state *mrb, double sec, double usec, enum mrb_timezone timezone)
+time_alloc(state *mrb, double sec, double usec, enum mrb_timezone timezone)
 {
   struct _time *tm;
   time_t tsec = 0;
@@ -284,14 +284,14 @@ time_alloc(_state *mrb, double sec, double usec, enum mrb_timezone timezone)
   return tm;
 }
 
-static _value
-_time_make(_state *mrb, struct RClass *c, double sec, double usec, enum mrb_timezone timezone)
+static value
+_time_make(state *mrb, struct RClass *c, double sec, double usec, enum mrb_timezone timezone)
 {
   return _time_wrap(mrb, c, time_alloc(mrb, sec, usec, timezone));
 }
 
 static struct _time*
-current__time(_state *mrb)
+current__time(state *mrb)
 {
   struct _time *tm;
 
@@ -337,16 +337,16 @@ current__time(_state *mrb)
 }
 
 /* Allocates a new Time object with given millis value. */
-static _value
-_time_now(_state *mrb, _value self)
+static value
+_time_now(state *mrb, value self)
 {
   return _time_wrap(mrb, _class_ptr(self), current__time(mrb));
 }
 
 /* 15.2.19.6.1 */
 /* Creates an instance of time at the given time in seconds, etc. */
-static _value
-_time_at(_state *mrb, _value self)
+static value
+_time_at(state *mrb, value self)
 {
   _float f, f2 = 0;
 
@@ -355,7 +355,7 @@ _time_at(_state *mrb, _value self)
 }
 
 static struct _time*
-time_mktime(_state *mrb, _int ayear, _int amonth, _int aday,
+time_mktime(state *mrb, _int ayear, _int amonth, _int aday,
   _int ahour, _int amin, _int asec, _int ausec,
   enum mrb_timezone timezone)
 {
@@ -393,8 +393,8 @@ time_mktime(_state *mrb, _int ayear, _int amonth, _int aday,
 
 /* 15.2.19.6.2 */
 /* Creates an instance of time at the given time in UTC. */
-static _value
-_time_gm(_state *mrb, _value self)
+static value
+_time_gm(state *mrb, value self)
 {
   _int ayear = 0, amonth = 1, aday = 1, ahour = 0, amin = 0, asec = 0, ausec = 0;
 
@@ -407,8 +407,8 @@ _time_gm(_state *mrb, _value self)
 
 /* 15.2.19.6.3 */
 /* Creates an instance of time at the given time in local time zone. */
-static _value
-_time_local(_state *mrb, _value self)
+static value
+_time_local(state *mrb, value self)
 {
   _int ayear = 0, amonth = 1, aday = 1, ahour = 0, amin = 0, asec = 0, ausec = 0;
 
@@ -419,7 +419,7 @@ _time_local(_state *mrb, _value self)
 }
 
 static struct _time*
-time_get_ptr(_state *mrb, _value time)
+time_get_ptr(state *mrb, value time)
 {
   struct _time *tm;
 
@@ -430,10 +430,10 @@ time_get_ptr(_state *mrb, _value time)
   return tm;
 }
 
-static _value
-_time_eq(_state *mrb, _value self)
+static value
+_time_eq(state *mrb, value self)
 {
-  _value other;
+  value other;
   struct _time *tm1, *tm2;
   _bool eq_p;
 
@@ -445,10 +445,10 @@ _time_eq(_state *mrb, _value self)
   return _bool_value(eq_p);
 }
 
-static _value
-_time_cmp(_state *mrb, _value self)
+static value
+_time_cmp(state *mrb, value self)
 {
-  _value other;
+  value other;
   struct _time *tm1, *tm2;
 
   _get_args(mrb, "o", &other);
@@ -471,8 +471,8 @@ _time_cmp(_state *mrb, _value self)
   return _fixnum_value(0);
 }
 
-static _value
-_time_plus(_state *mrb, _value self)
+static value
+_time_plus(state *mrb, value self)
 {
   _float f;
   struct _time *tm;
@@ -482,11 +482,11 @@ _time_plus(_state *mrb, _value self)
   return _time_make(mrb, _obj_class(mrb, self), (double)tm->sec+f, (double)tm->usec, tm->timezone);
 }
 
-static _value
-_time_minus(_state *mrb, _value self)
+static value
+_time_minus(state *mrb, value self)
 {
   _float f;
-  _value other;
+  value other;
   struct _time *tm, *tm2;
 
   _get_args(mrb, "o", &other);
@@ -505,8 +505,8 @@ _time_minus(_state *mrb, _value self)
 
 /* 15.2.19.7.30 */
 /* Returns week day number of time. */
-static _value
-_time_wday(_state *mrb, _value self)
+static value
+_time_wday(state *mrb, value self)
 {
   struct _time *tm;
 
@@ -516,8 +516,8 @@ _time_wday(_state *mrb, _value self)
 
 /* 15.2.19.7.31 */
 /* Returns year day number of time. */
-static _value
-_time_yday(_state *mrb, _value self)
+static value
+_time_yday(state *mrb, value self)
 {
   struct _time *tm;
 
@@ -527,8 +527,8 @@ _time_yday(_state *mrb, _value self)
 
 /* 15.2.19.7.32 */
 /* Returns year of time. */
-static _value
-_time_year(_state *mrb, _value self)
+static value
+_time_year(state *mrb, value self)
 {
   struct _time *tm;
 
@@ -538,8 +538,8 @@ _time_year(_state *mrb, _value self)
 
 /* 15.2.19.7.33 */
 /* Returns name of time's timezone. */
-static _value
-_time_zone(_state *mrb, _value self)
+static value
+_time_zone(state *mrb, value self)
 {
   struct _time *tm;
 
@@ -553,8 +553,8 @@ _time_zone(_state *mrb, _value self)
 
 /* 15.2.19.7.4 */
 /* Returns a string that describes the time. */
-static _value
-_time_asctime(_state *mrb, _value self)
+static value
+_time_asctime(state *mrb, value self)
 {
   struct _time *tm = time_get_ptr(mrb, self);
   struct tm *d = &tm->datetime;
@@ -583,8 +583,8 @@ _time_asctime(_state *mrb, _value self)
 
 /* 15.2.19.7.6 */
 /* Returns the day in the month of the time. */
-static _value
-_time_day(_state *mrb, _value self)
+static value
+_time_day(state *mrb, value self)
 {
   struct _time *tm;
 
@@ -595,8 +595,8 @@ _time_day(_state *mrb, _value self)
 
 /* 15.2.19.7.7 */
 /* Returns true if daylight saving was applied for this time. */
-static _value
-_time_dst_p(_state *mrb, _value self)
+static value
+_time_dst_p(state *mrb, value self)
 {
   struct _time *tm;
 
@@ -607,8 +607,8 @@ _time_dst_p(_state *mrb, _value self)
 /* 15.2.19.7.8 */
 /* 15.2.19.7.10 */
 /* Returns the Time object of the UTC(GMT) timezone. */
-static _value
-_time_getutc(_state *mrb, _value self)
+static value
+_time_getutc(state *mrb, value self)
 {
   struct _time *tm, *tm2;
 
@@ -622,8 +622,8 @@ _time_getutc(_state *mrb, _value self)
 
 /* 15.2.19.7.9 */
 /* Returns the Time object of the LOCAL timezone. */
-static _value
-_time_getlocal(_state *mrb, _value self)
+static value
+_time_getlocal(state *mrb, value self)
 {
   struct _time *tm, *tm2;
 
@@ -637,8 +637,8 @@ _time_getlocal(_state *mrb, _value self)
 
 /* 15.2.19.7.15 */
 /* Returns hour of time. */
-static _value
-_time_hour(_state *mrb, _value self)
+static value
+_time_hour(state *mrb, value self)
 {
   struct _time *tm;
 
@@ -648,8 +648,8 @@ _time_hour(_state *mrb, _value self)
 
 /* 15.2.19.7.16 */
 /* Initializes a time by setting the amount of milliseconds since the epoch.*/
-static _value
-_time_initialize(_state *mrb, _value self)
+static value
+_time_initialize(state *mrb, value self)
 {
   _int ayear = 0, amonth = 1, aday = 1, ahour = 0,
   amin = 0, asec = 0, ausec = 0;
@@ -676,10 +676,10 @@ _time_initialize(_state *mrb, _value self)
 
 /* 15.2.19.7.17(x) */
 /* Initializes a copy of this time object. */
-static _value
-_time_initialize_copy(_state *mrb, _value copy)
+static value
+_time_initialize_copy(state *mrb, value copy)
 {
-  _value src;
+  value src;
   struct _time *t1, *t2;
 
   _get_args(mrb, "o", &src);
@@ -702,8 +702,8 @@ _time_initialize_copy(_state *mrb, _value copy)
 
 /* 15.2.19.7.18 */
 /* Sets the timezone attribute of the Time object to LOCAL. */
-static _value
-_time_localtime(_state *mrb, _value self)
+static value
+_time_localtime(state *mrb, value self)
 {
   struct _time *tm;
 
@@ -715,8 +715,8 @@ _time_localtime(_state *mrb, _value self)
 
 /* 15.2.19.7.19 */
 /* Returns day of month of time. */
-static _value
-_time_mday(_state *mrb, _value self)
+static value
+_time_mday(state *mrb, value self)
 {
   struct _time *tm;
 
@@ -726,8 +726,8 @@ _time_mday(_state *mrb, _value self)
 
 /* 15.2.19.7.20 */
 /* Returns minutes of time. */
-static _value
-_time_min(_state *mrb, _value self)
+static value
+_time_min(state *mrb, value self)
 {
   struct _time *tm;
 
@@ -737,8 +737,8 @@ _time_min(_state *mrb, _value self)
 
 /* 15.2.19.7.21 and 15.2.19.7.22 */
 /* Returns month of time. */
-static _value
-_time_mon(_state *mrb, _value self)
+static value
+_time_mon(state *mrb, value self)
 {
   struct _time *tm;
 
@@ -748,8 +748,8 @@ _time_mon(_state *mrb, _value self)
 
 /* 15.2.19.7.23 */
 /* Returns seconds in minute of time. */
-static _value
-_time_sec(_state *mrb, _value self)
+static value
+_time_sec(state *mrb, value self)
 {
   struct _time *tm;
 
@@ -760,8 +760,8 @@ _time_sec(_state *mrb, _value self)
 
 /* 15.2.19.7.24 */
 /* Returns a Float with the time since the epoch in seconds. */
-static _value
-_time_to_f(_state *mrb, _value self)
+static value
+_time_to_f(state *mrb, value self)
 {
   struct _time *tm;
 
@@ -771,8 +771,8 @@ _time_to_f(_state *mrb, _value self)
 
 /* 15.2.19.7.25 */
 /* Returns a Fixnum with the time since the epoch in seconds. */
-static _value
-_time_to_i(_state *mrb, _value self)
+static value
+_time_to_i(state *mrb, value self)
 {
   struct _time *tm;
 
@@ -785,8 +785,8 @@ _time_to_i(_state *mrb, _value self)
 
 /* 15.2.19.7.26 */
 /* Returns a Float with the time since the epoch in microseconds. */
-static _value
-_time_usec(_state *mrb, _value self)
+static value
+_time_usec(state *mrb, value self)
 {
   struct _time *tm;
 
@@ -799,8 +799,8 @@ _time_usec(_state *mrb, _value self)
 
 /* 15.2.19.7.27 */
 /* Sets the timezone attribute of the Time object to UTC. */
-static _value
-_time_utc(_state *mrb, _value self)
+static value
+_time_utc(state *mrb, value self)
 {
   struct _time *tm;
 
@@ -812,8 +812,8 @@ _time_utc(_state *mrb, _value self)
 
 /* 15.2.19.7.28 */
 /* Returns true if this time is in the UTC timezone false if not. */
-static _value
-_time_utc_p(_state *mrb, _value self)
+static value
+_time_utc_p(state *mrb, value self)
 {
   struct _time *tm;
 
@@ -823,7 +823,7 @@ _time_utc_p(_state *mrb, _value self)
 
 
 void
-_mruby_time_gem_init(_state* mrb)
+_mruby_time_gem_init(state* mrb)
 {
   struct RClass *tc;
   /* ISO 15.2.19.2 */
@@ -883,6 +883,6 @@ _mruby_time_gem_init(_state* mrb)
 }
 
 void
-_mruby_time_gem_final(_state* mrb)
+_mruby_time_gem_final(state* mrb)
 {
 }

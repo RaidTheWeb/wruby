@@ -7,7 +7,7 @@
 #include "mrdb.h"
 
 dbgcmd_state
-dbgcmd_run(_state *mrb, mrdb_state *mrdb)
+dbgcmd_run(state *mrb, mrdb_state *mrdb)
 {
   _debug_context *dbg = mrdb->dbg;
 
@@ -28,7 +28,7 @@ dbgcmd_run(_state *mrb, mrdb_state *mrdb)
 }
 
 dbgcmd_state
-dbgcmd_continue(_state *mrb, mrdb_state *mrdb)
+dbgcmd_continue(state *mrb, mrdb_state *mrdb)
 {
   _debug_context *dbg = mrdb->dbg;
   int ccnt = 1;
@@ -49,14 +49,14 @@ dbgcmd_continue(_state *mrb, mrdb_state *mrdb)
 }
 
 dbgcmd_state
-dbgcmd_step(_state *mrb, mrdb_state *mrdb)
+dbgcmd_step(state *mrb, mrdb_state *mrdb)
 {
   mrdb->dbg->xm = DBG_STEP;
   return DBGST_CONTINUE;
 }
 
 dbgcmd_state
-dbgcmd_next(_state *mrb, mrdb_state *mrdb)
+dbgcmd_next(state *mrb, mrdb_state *mrdb)
 {
   mrdb->dbg->xm = DBG_NEXT;
   mrdb->dbg->prvci = mrb->c->ci;

@@ -2,17 +2,17 @@
 #include <mruby/proc.h>
 #include <mruby/class.h>
 
-static _value
-return_func_name(_state *mrb, _value self)
+static value
+return_func_name(state *mrb, value self)
 {
   return _cfunc_env_get(mrb, 0);
 }
 
-static _value
-proc_new_cfunc_with_env(_state *mrb, _value self)
+static value
+proc_new_cfunc_with_env(state *mrb, value self)
 {
   _sym n;
-  _value n_val;
+  value n_val;
   _method_t m;
   struct RProc *p;
   _get_args(mrb, "n", &n);
@@ -23,19 +23,19 @@ proc_new_cfunc_with_env(_state *mrb, _value self)
   return self;
 }
 
-static _value
-return_env(_state *mrb, _value self)
+static value
+return_env(state *mrb, value self)
 {
   _int idx;
   _get_args(mrb, "i", &idx);
   return _cfunc_env_get(mrb, idx);
 }
 
-static _value
-cfunc_env_get(_state *mrb, _value self)
+static value
+cfunc_env_get(state *mrb, value self)
 {
   _sym n;
-  _value *argv; _int argc;
+  value *argv; _int argc;
   _method_t m;
   struct RProc *p;
   _get_args(mrb, "na", &n, &argv, &argc);
@@ -45,13 +45,13 @@ cfunc_env_get(_state *mrb, _value self)
   return self;
 }
 
-static _value
-cfunc_without_env(_state *mrb, _value self)
+static value
+cfunc_without_env(state *mrb, value self)
 {
   return _cfunc_env_get(mrb, 0);
 }
 
-void _mruby_proc_ext_gem_test(_state *mrb)
+void _mruby_proc_ext_gem_test(state *mrb)
 {
   struct RClass *cls;
 

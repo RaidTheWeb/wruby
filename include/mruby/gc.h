@@ -15,13 +15,13 @@
 MRB_BEGIN_DECL
 
 
-struct _state;
+struct state;
 
 #define MRB_EACH_OBJ_OK 0
 #define MRB_EACH_OBJ_BREAK 1
-typedef int (_each_object_callback)(struct _state *mrb, struct RBasic *obj, void *data);
-void _objspace_each_objects(struct _state *mrb, _each_object_callback *callback, void *data);
-MRB_API void _free_context(struct _state *mrb, struct _context *c);
+typedef int (_each_object_callback)(struct state *mrb, struct RBasic *obj, void *data);
+void _objspace_each_objects(struct state *mrb, _each_object_callback *callback, void *data);
+MRB_API void _free_context(struct state *mrb, struct _context *c);
 
 #ifndef MRB_GC_ARENA_SIZE
 #define MRB_GC_ARENA_SIZE 100
@@ -84,7 +84,7 @@ typedef struct _gc {
 } _gc;
 
 MRB_API _bool
-_object_dead_p(struct _state *mrb, struct RBasic *object);
+_object_dead_p(struct state *mrb, struct RBasic *object);
 
 MRB_END_DECL
 

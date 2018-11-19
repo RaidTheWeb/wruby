@@ -44,7 +44,7 @@ struct loopinfo {
 };
 
 typedef struct scope {
-  _state *mrb;
+  state *mrb;
   _pool *mpool;
   struct _jmpbuf jmp;
 
@@ -82,7 +82,7 @@ typedef struct scope {
   int rlev;                     /* recursion levels */
 } codegen_scope;
 
-static codegen_scope* scope_new(_state *mrb, codegen_scope *prev, node *lv);
+static codegen_scope* scope_new(state *mrb, codegen_scope *prev, node *lv);
 static void scope_finish(codegen_scope *s);
 static struct loopinfo *loop_push(codegen_scope *s, enum looptype t);
 static void loop_break(codegen_scope *s, node *tree);
@@ -553,10 +553,10 @@ pop_n_(codegen_scope *s, int n)
 #define cursp() (s->sp)
 
 static inline int
-new_lit(codegen_scope *s, _value val)
+new_lit(codegen_scope *s, value val)
 {
   int i;
-  _value *pv;
+  value *pv;
 
   switch (_type(val)) {
   case MRB_TT_STRING:
@@ -593,7 +593,7 @@ new_lit(codegen_scope *s, _value val)
 
   if (s->irep->plen == s->pcapa) {
     s->pcapa *= 2;
-    s->irep->pool = (_value *)codegen_realloc(s, s->irep->pool, sizeof(_value)*s->pcapa);
+    s->irep->pool = (value *)codegen_realloc(s, s->irep->pool, sizeof(value)*s->pcapa);
   }
 
   pv = &s->irep->pool[s->irep->plen];
@@ -2341,8 +2341,8 @@ codegen(codegen_scope *s, node *tree, int val)
 
   case NODE_NTH_REF:
     if (val) {
-      _state *mrb = s->mrb;
-      _value str;
+      state *mrb = s->mrb;
+      value str;
       int sym;
 
       str = _format(mrb, "$%S", _fixnum_value(nint(tree)));
@@ -2901,7 +2901,7 @@ scope_add_irep(codegen_scope *s, _irep *irep)
 }
 
 static codegen_scope*
-scope_new(_state *mrb, codegen_scope *prev, node *lv)
+scope_new(state *mrb, codegen_scope *prev, node *lv)
 {
   static const codegen_scope codegen_scope_zero = { 0 };
   _pool *pool = _pool_open(mrb);
@@ -2927,7 +2927,7 @@ scope_new(_state *mrb, codegen_scope *prev, node *lv)
   p->irep->iseq = NULL;
 
   p->pcapa = 32;
-  p->irep->pool = (_value*)_malloc(mrb, sizeof(_value)*p->pcapa);
+  p->irep->pool = (value*)_malloc(mrb, sizeof(value)*p->pcapa);
   p->irep->plen = 0;
 
   p->scapa = 256;
@@ -2982,7 +2982,7 @@ scope_new(_state *mrb, codegen_scope *prev, node *lv)
 static void
 scope_finish(codegen_scope *s)
 {
-  _state *mrb = s->mrb;
+  state *mrb = s->mrb;
   _irep *irep = s->irep;
   size_t fname_len;
   char *fname;
@@ -2998,7 +2998,7 @@ scope_finish(codegen_scope *s)
       irep->lines = 0;
     }
   }
-  irep->pool = (_value*)codegen_realloc(s, irep->pool, sizeof(_value)*irep->plen);
+  irep->pool = (value*)codegen_realloc(s, irep->pool, sizeof(value)*irep->plen);
   irep->syms = (_sym*)codegen_realloc(s, irep->syms, sizeof(_sym)*irep->slen);
   irep->reps = (_irep**)codegen_realloc(s, irep->reps, sizeof(_irep*)*irep->rlen);
   if (s->filename) {
@@ -3104,7 +3104,7 @@ loop_pop(codegen_scope *s, int val)
 }
 
 static struct RProc*
-generate_code(_state *mrb, parser_state *p, int val)
+generate_code(state *mrb, parser_state *p, int val)
 {
   codegen_scope *scope = scope_new(mrb, 0, 0);
   struct RProc *proc;
@@ -3142,13 +3142,13 @@ generate_code(_state *mrb, parser_state *p, int val)
 }
 
 MRB_API struct RProc*
-_generate_code(_state *mrb, parser_state *p)
+_generate_code(state *mrb, parser_state *p)
 {
   return generate_code(mrb, p, VAL);
 }
 
 void
-_irep_remove_lv(_state *mrb, _irep *irep)
+_irep_remove_lv(state *mrb, _irep *irep)
 {
   int i;
 

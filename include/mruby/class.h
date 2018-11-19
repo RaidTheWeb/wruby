@@ -24,7 +24,7 @@ struct RClass {
 #define _class_ptr(v)    ((struct RClass*)(_ptr(v)))
 
 static inline struct RClass*
-_class(_state *mrb, _value v)
+_class(state *mrb, value v)
 {
   switch (_type(v)) {
   case MRB_TT_FALSE:
@@ -73,24 +73,24 @@ _class(_state *mrb, _value v)
 #define MRB_SET_INSTANCE_TT(c, tt) c->flags = ((c->flags & ~MRB_INSTANCE_TT_MASK) | (char)tt)
 #define MRB_INSTANCE_TT(c) (enum _vtype)(c->flags & MRB_INSTANCE_TT_MASK)
 
-MRB_API struct RClass* _define_class_id(_state*, _sym, struct RClass*);
-MRB_API struct RClass* _define_module_id(_state*, _sym);
-MRB_API struct RClass *_vm_define_class(_state*, _value, _value, _sym);
-MRB_API struct RClass *_vm_define_module(_state*, _value, _sym);
-MRB_API void _define_method_raw(_state*, struct RClass*, _sym, _method_t);
-MRB_API void _define_method_id(_state *mrb, struct RClass *c, _sym mid, _func_t func, _aspec aspec);
-MRB_API void _alias_method(_state*, struct RClass *c, _sym a, _sym b);
+MRB_API struct RClass* _define_class_id(state*, _sym, struct RClass*);
+MRB_API struct RClass* _define_module_id(state*, _sym);
+MRB_API struct RClass *_vm_define_class(state*, value, value, _sym);
+MRB_API struct RClass *_vm_define_module(state*, value, _sym);
+MRB_API void _define_method_raw(state*, struct RClass*, _sym, _method_t);
+MRB_API void _define_method_id(state *mrb, struct RClass *c, _sym mid, _func_t func, _aspec aspec);
+MRB_API void _alias_method(state*, struct RClass *c, _sym a, _sym b);
 
-MRB_API _method_t _method_search_vm(_state*, struct RClass**, _sym);
-MRB_API _method_t _method_search(_state*, struct RClass*, _sym);
+MRB_API _method_t _method_search_vm(state*, struct RClass**, _sym);
+MRB_API _method_t _method_search(state*, struct RClass*, _sym);
 
 MRB_API struct RClass* _class_real(struct RClass* cl);
 
-void _class_name_class(_state*, struct RClass*, struct RClass*, _sym);
-_value _class_find_path(_state*, struct RClass*);
-void _gc_mark_mt(_state*, struct RClass*);
-size_t _gc_mark_mt_size(_state*, struct RClass*);
-void _gc_free_mt(_state*, struct RClass*);
+void _class_name_class(state*, struct RClass*, struct RClass*, _sym);
+value _class_find_path(state*, struct RClass*);
+void _gc_mark_mt(state*, struct RClass*);
+size_t _gc_mark_mt_size(state*, struct RClass*);
+void _gc_free_mt(state*, struct RClass*);
 
 MRB_END_DECL
 

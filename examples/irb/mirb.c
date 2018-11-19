@@ -62,7 +62,7 @@
 static const char history_file_name[] = ".mirb_history";
 
 static char *
-get_history_path(_state *mrb)
+get_history_path(state *mrb)
 {
   char *path = NULL;
   const char *home = getenv("HOME");
@@ -94,9 +94,9 @@ get_history_path(_state *mrb)
 #endif
 
 static void
-p(_state *mrb, _value obj, int prompt)
+p(state *mrb, value obj, int prompt)
 {
-  _value val;
+  value val;
   char* msg;
 
   val = _funcall(mrb, obj, "inspect", 0);
@@ -249,7 +249,7 @@ usage(const char *name)
 }
 
 static char *
-dup_arg_item(_state *mrb, const char *item)
+dup_arg_item(state *mrb, const char *item)
 {
   size_t buflen = strlen(item) + 1;
   char *buf = (char*)_malloc(mrb, buflen);
@@ -258,7 +258,7 @@ dup_arg_item(_state *mrb, const char *item)
 }
 
 static int
-parse_args(_state *mrb, int argc, char **argv, struct _args *args)
+parse_args(state *mrb, int argc, char **argv, struct _args *args)
 {
   char **origargv = argv;
   static const struct _args args_zero = { 0 };
@@ -331,7 +331,7 @@ parse_args(_state *mrb, int argc, char **argv, struct _args *args)
 }
 
 static void
-cleanup(_state *mrb, struct _args *args)
+cleanup(state *mrb, struct _args *args)
 {
   if (args->rfp)
     fclose(args->rfp);
@@ -367,7 +367,7 @@ print_cmdline(int code_block_open)
 }
 #endif
 
-void _codedump_all(_state*, struct RProc*);
+void _codedump_all(state*, struct RProc*);
 
 static int
 check_keyword(const char *buf, const char *word)
@@ -423,10 +423,10 @@ main(int argc, char **argv)
 #endif
   mrbc_context *cxt;
   struct _parser_state *parser;
-  _state *mrb;
-  _value result;
+  state *mrb;
+  value result;
   struct _args args;
-  _value ARGV;
+  value ARGV;
   int n;
   int i;
   _bool code_block_open = FALSE;

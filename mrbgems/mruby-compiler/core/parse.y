@@ -48,6 +48,8 @@ static void tokadd(parser_state *p, int32_t c);
 
 typedef unsigned int stack_type;
 
+
+
 #define BITSTACK_PUSH(stack, n) ((stack) = ((stack)<<1)|((n)&1))
 #define BITSTACK_POP(stack)     ((stack) = (stack) >> 1)
 #define BITSTACK_LEXPOP(stack)  ((stack) = ((stack) >> 1) | ((stack) & 1))
@@ -5737,8 +5739,8 @@ parser_update_cxt(parser_state *p, mrbc_context *cxt)
   }
 }
 
-void _codedump_all(_state*, struct RProc*);
-void _parser_dump(_state *mrb, node *tree, int offset);
+void _codedump_all(state*, struct RProc*);
+void _parser_dump(state *mrb, node *tree, int offset);
 
 MRB_API void
 _parser_parse(parser_state *p, mrbc_context *c)
@@ -5794,7 +5796,7 @@ _parser_parse(parser_state *p, mrbc_context *c)
 }
 
 MRB_API parser_state*
-_parser_new(_state *mrb)
+_parser_new(state *mrb)
 {
   _pool *pool;
   parser_state *p;
@@ -5846,13 +5848,13 @@ _parser_free(parser_state *p) {
 }
 
 MRB_API mrbc_context*
-mrbc_context_new(_state *mrb)
+mrbc_context_new(state *mrb)
 {
   return (mrbc_context *)_calloc(mrb, 1, sizeof(mrbc_context));
 }
 
 MRB_API void
-mrbc_context_free(_state *mrb, mrbc_context *cxt)
+mrbc_context_free(state *mrb, mrbc_context *cxt)
 {
   _free(mrb, cxt->filename);
   _free(mrb, cxt->syms);
@@ -5860,7 +5862,7 @@ mrbc_context_free(_state *mrb, mrbc_context *cxt)
 }
 
 MRB_API const char*
-mrbc_filename(_state *mrb, mrbc_context *c, const char *s)
+mrbc_filename(state *mrb, mrbc_context *c, const char *s)
 {
   if (s) {
     size_t len = strlen(s);
@@ -5876,7 +5878,7 @@ mrbc_filename(_state *mrb, mrbc_context *c, const char *s)
 }
 
 MRB_API void
-mrbc_partial_hook(_state *mrb, mrbc_context *c, int (*func)(struct _parser_state*), void *data)
+mrbc_partial_hook(state *mrb, mrbc_context *c, int (*func)(struct _parser_state*), void *data)
 {
   c->partial_hook = func;
   c->partial_data = data;
@@ -5920,7 +5922,7 @@ _parser_get_filename(struct _parser_state* p, uint16_t idx) {
 
 #ifndef MRB_DISABLE_STDIO
 MRB_API parser_state*
-_parse_file(_state *mrb, FILE *f, mrbc_context *c)
+_parse_file(state *mrb, FILE *f, mrbc_context *c)
 {
   parser_state *p;
 
@@ -5935,7 +5937,7 @@ _parse_file(_state *mrb, FILE *f, mrbc_context *c)
 #endif
 
 MRB_API parser_state*
-_parse_nstring(_state *mrb, const char *s, size_t len, mrbc_context *c)
+_parse_nstring(state *mrb, const char *s, size_t len, mrbc_context *c)
 {
   parser_state *p;
 
@@ -5949,17 +5951,17 @@ _parse_nstring(_state *mrb, const char *s, size_t len, mrbc_context *c)
 }
 
 MRB_API parser_state*
-_parse_string(_state *mrb, const char *s, mrbc_context *c)
+_parse_string(state *mrb, const char *s, mrbc_context *c)
 {
   return _parse_nstring(mrb, s, strlen(s), c);
 }
 
-MRB_API _value
-_load_exec(_state *mrb, struct _parser_state *p, mrbc_context *c)
+MRB_API value
+_load_exec(state *mrb, struct _parser_state *p, mrbc_context *c)
 {
   struct RClass *target = mrb->object_class;
   struct RProc *proc;
-  _value v;
+  value v;
   unsigned int keep = 0;
 
   if (!p) {
@@ -6016,39 +6018,39 @@ _load_exec(_state *mrb, struct _parser_state *p, mrbc_context *c)
 }
 
 #ifndef MRB_DISABLE_STDIO
-MRB_API _value
-_load_file_cxt(_state *mrb, FILE *f, mrbc_context *c)
+MRB_API value
+_load_file_cxt(state *mrb, FILE *f, mrbc_context *c)
 {
   return _load_exec(mrb, _parse_file(mrb, f, c), c);
 }
 
-MRB_API _value
-_load_file(_state *mrb, FILE *f)
+MRB_API value
+_load_file(state *mrb, FILE *f)
 {
   return _load_file_cxt(mrb, f, NULL);
 }
 #endif
 
-MRB_API _value
-_load_nstring_cxt(_state *mrb, const char *s, size_t len, mrbc_context *c)
+MRB_API value
+_load_nstring_cxt(state *mrb, const char *s, size_t len, mrbc_context *c)
 {
   return _load_exec(mrb, _parse_nstring(mrb, s, len, c), c);
 }
 
-MRB_API _value
-_load_nstring(_state *mrb, const char *s, size_t len)
+MRB_API value
+_load_nstring(state *mrb, const char *s, size_t len)
 {
   return _load_nstring_cxt(mrb, s, len, NULL);
 }
 
-MRB_API _value
-_load_string_cxt(_state *mrb, const char *s, mrbc_context *c)
+MRB_API value
+_load_string_cxt(state *mrb, const char *s, mrbc_context *c)
 {
   return _load_nstring_cxt(mrb, s, strlen(s), c);
 }
 
-MRB_API _value
-_load_string(_state *mrb, const char *s)
+MRB_API value
+_load_string(state *mrb, const char *s)
 {
   return _load_string_cxt(mrb, s, NULL);
 }
@@ -6066,7 +6068,7 @@ dump_prefix(node *tree, int offset)
 }
 
 static void
-dump_recur(_state *mrb, node *tree, int offset)
+dump_recur(state *mrb, node *tree, int offset)
 {
   while (tree) {
     _parser_dump(mrb, tree->car, offset);
@@ -6075,7 +6077,7 @@ dump_recur(_state *mrb, node *tree, int offset)
 }
 
 static void
-dump_args(_state *mrb, node *n, int offset)
+dump_args(state *mrb, node *n, int offset)
 {
   if (n->car) {
     dump_prefix(n, offset+1);
@@ -6119,7 +6121,7 @@ dump_args(_state *mrb, node *n, int offset)
 #endif
 
 void
-_parser_dump(_state *mrb, node *tree, int offset)
+_parser_dump(state *mrb, node *tree, int offset)
 {
 #ifndef MRB_DISABLE_STDIO
   int nodetype;

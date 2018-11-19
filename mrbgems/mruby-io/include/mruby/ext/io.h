@@ -30,7 +30,7 @@ struct _io {
 #define E_IO_ERROR                 (_class_get(mrb, "IOError"))
 #define E_EOF_ERROR                (_class_get(mrb, "EOFError"))
 
-_value _io_fileno(_state *mrb, _value io);
+value _io_fileno(state *mrb, value io);
 
 #if defined(__cplusplus)
 } /* extern "C" { */

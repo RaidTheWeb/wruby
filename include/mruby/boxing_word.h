@@ -1,5 +1,5 @@
 /*
-** mruby/boxing_word.h - word boxing _value definition
+** mruby/boxing_word.h - word boxing value definition
 **
 ** See Copyright Notice in mruby.h
 */
@@ -53,7 +53,7 @@ enum _special_consts {
 #define MRB_SYMBOL_MAX      (UINT32_MAX >> MRB_SPECIAL_SHIFT)
 #endif
 
-typedef union _value {
+typedef union value {
   union {
     void *p;
     struct {
@@ -71,12 +71,12 @@ typedef union _value {
     struct RCptr *vp;
   } value;
   unsigned long w;
-} _value;
+} value;
 
-MRB_API _value _word_boxing_cptr_value(struct _state*, void*);
+MRB_API value _word_boxing_cptr_value(struct state*, void*);
 #ifndef MRB_WITHOUT_FLOAT
-MRB_API _value _word_boxing_float_value(struct _state*, _float);
-MRB_API _value _word_boxing_float_pool(struct _state*, _float);
+MRB_API value _word_boxing_float_value(struct state*, _float);
+MRB_API value _word_boxing_float_pool(struct state*, _float);
 #endif
 
 #ifndef MRB_WITHOUT_FLOAT
@@ -92,7 +92,7 @@ MRB_API _value _word_boxing_float_pool(struct _state*, _float);
 #define _symbol(o)  (o).value.sym
 
 static inline enum _vtype
-_type(_value o)
+_type(value o)
 {
   switch (o.w) {
   case MRB_Qfalse:

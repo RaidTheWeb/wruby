@@ -7,7 +7,7 @@
 
 #ifndef MRB_DISABLE_STDIO
 static void
-print_r(_state *mrb, _irep *irep, size_t n)
+print_r(state *mrb, _irep *irep, size_t n)
 {
   size_t i;
 
@@ -22,7 +22,7 @@ print_r(_state *mrb, _irep *irep, size_t n)
 }
 
 static void
-print_lv_a(_state *mrb, _irep *irep, uint16_t a)
+print_lv_a(state *mrb, _irep *irep, uint16_t a)
 {
   if (!irep->lv || a >= irep->nlocals || a == 0) {
     printf("\n");
@@ -34,7 +34,7 @@ print_lv_a(_state *mrb, _irep *irep, uint16_t a)
 }
 
 static void
-print_lv_ab(_state *mrb, _irep *irep, uint16_t a, uint16_t b)
+print_lv_ab(state *mrb, _irep *irep, uint16_t a, uint16_t b)
 {
   if (!irep->lv || (a >= irep->nlocals && b >= irep->nlocals) || a+b == 0) {
     printf("\n");
@@ -65,7 +65,7 @@ print_header(_irep *irep, ptrdiff_t i)
 #define CASE(insn,ops) case insn: FETCH_ ## ops (); L_ ## insn
 
 static void
-codedump(_state *mrb, _irep *irep)
+codedump(state *mrb, _irep *irep)
 {
   int ai;
   _code *pc, *pcend;
@@ -114,8 +114,8 @@ codedump(_state *mrb, _irep *irep)
       break;
     CASE(OP_LOADL, BB):
       {
-        _value v = irep->pool[b];
-        _value s = _inspect(mrb, v);
+        value v = irep->pool[b];
+        value s = _inspect(mrb, v);
         printf("OP_LOADL\tR%d\tL(%d)\t; %s", a, b, RSTRING_PTR(s));
       }
       print_lv_a(mrb, irep, a);
@@ -399,8 +399,8 @@ codedump(_state *mrb, _irep *irep)
       break;
     CASE(OP_STRING, BB):
       {
-        _value v = irep->pool[b];
-        _value s = _str_dump(mrb, _str_new(mrb, RSTRING_PTR(v), RSTRING_LEN(v)));
+        value v = irep->pool[b];
+        value s = _str_dump(mrb, _str_new(mrb, RSTRING_PTR(v), RSTRING_LEN(v)));
         printf("OP_STRING\tR%d\tL(%d)\t; %s", a, b, RSTRING_PTR(s));
       }
       print_lv_a(mrb, irep, a);
@@ -448,8 +448,8 @@ codedump(_state *mrb, _irep *irep)
       break;
     CASE(OP_ERR, B):
       {
-        _value v = irep->pool[a];
-        _value s = _str_dump(mrb, _str_new(mrb, RSTRING_PTR(v), RSTRING_LEN(v)));
+        value v = irep->pool[a];
+        value s = _str_dump(mrb, _str_new(mrb, RSTRING_PTR(v), RSTRING_LEN(v)));
         printf("OP_ERR\t%s\n", RSTRING_PTR(s));
       }
       break;
@@ -527,7 +527,7 @@ codedump(_state *mrb, _irep *irep)
 }
 
 static void
-codedump_recur(_state *mrb, _irep *irep)
+codedump_recur(state *mrb, _irep *irep)
 {
   int i;
 
@@ -539,7 +539,7 @@ codedump_recur(_state *mrb, _irep *irep)
 #endif
 
 void
-_codedump_all(_state *mrb, struct RProc *proc)
+_codedump_all(state *mrb, struct RProc *proc)
 {
 #ifndef MRB_DISABLE_STDIO
   codedump_recur(mrb, proc->body.irep);

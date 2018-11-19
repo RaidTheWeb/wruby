@@ -6,10 +6,10 @@
 
 #include <mruby.h>
 
-_value _f_sprintf(_state *mrb, _value obj); /* in sprintf.c */
+value _f_sprintf(state *mrb, value obj); /* in sprintf.c */
 
 void
-_mruby_sprintf_gem_init(_state* mrb)
+_mruby_sprintf_gem_init(state* mrb)
 {
   struct RClass *krn;
 
@@ -23,7 +23,7 @@ _mruby_sprintf_gem_init(_state* mrb)
 }
 
 void
-_mruby_sprintf_gem_final(_state* mrb)
+_mruby_sprintf_gem_final(state* mrb)
 {
   /* nothing to do. */
 }

@@ -24,11 +24,11 @@
  *     a.assoc("foo")      #=> nil
  */
 
-static _value
-_ary_assoc(_state *mrb, _value ary)
+static value
+_ary_assoc(state *mrb, value ary)
 {
   _int i;
-  _value v, k;
+  value v, k;
 
   _get_args(mrb, "o", &k);
 
@@ -55,11 +55,11 @@ _ary_assoc(_state *mrb, _value ary)
  *     a.rassoc("four")   #=> nil
  */
 
-static _value
-_ary_rassoc(_state *mrb, _value ary)
+static value
+_ary_rassoc(state *mrb, value ary)
 {
   _int i;
-  _value v, value;
+  value v, value;
 
   _get_args(mrb, "o", &value);
 
@@ -86,8 +86,8 @@ _ary_rassoc(_state *mrb, _value ary)
  *     a.at(-1)    #=> "e"
  */
 
-static _value
-_ary_at(_state *mrb, _value ary)
+static value
+_ary_at(state *mrb, value ary)
 {
   _int pos;
   _get_args(mrb, "i", &pos);
@@ -95,11 +95,11 @@ _ary_at(_state *mrb, _value ary)
   return _ary_entry(ary, pos);
 }
 
-static _value
-_ary_values_at(_state *mrb, _value self)
+static value
+_ary_values_at(state *mrb, value self)
 {
   _int argc;
-  _value *argv;
+  value *argv;
 
   _get_args(mrb, "*", &argv, &argc);
 
@@ -128,19 +128,19 @@ _ary_values_at(_state *mrb, _value self)
  *     a               #=> ["a"]
  */
 
-static _value
-_ary_slice_bang(_state *mrb, _value self)
+static value
+_ary_slice_bang(state *mrb, value self)
 {
   struct RArray *a = _ary_ptr(self);
   _int i, j, k, len, alen;
-  _value val;
-  _value *ptr;
-  _value ary;
+  value val;
+  value *ptr;
+  value ary;
 
   _ary_modify(mrb, a);
 
   if (_get_argc(mrb) == 1) {
-    _value index;
+    value index;
 
     _get_args(mrb, "o|i", &index, &len);
     switch (_type(index)) {
@@ -186,7 +186,7 @@ _ary_slice_bang(_state *mrb, _value self)
 }
 
 void
-_mruby_array_ext_gem_init(_state* mrb)
+_mruby_array_ext_gem_init(state* mrb)
 {
   struct RClass * a = mrb->array_class;
 
@@ -198,6 +198,6 @@ _mruby_array_ext_gem_init(_state* mrb)
 }
 
 void
-_mruby_array_ext_gem_final(_state* mrb)
+_mruby_array_ext_gem_final(state* mrb)
 {
 }

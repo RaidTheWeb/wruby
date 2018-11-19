@@ -6,28 +6,28 @@
 
 #include <mruby.h>
 
-void _init_symtbl(_state*);
-void _init_class(_state*);
-void _init_object(_state*);
-void _init_kernel(_state*);
-void _init_comparable(_state*);
-void _init_enumerable(_state*);
-void _init_symbol(_state*);
-void _init_string(_state*);
-void _init_exception(_state*);
-void _init_proc(_state*);
-void _init_array(_state*);
-void _init_hash(_state*);
-void _init_numeric(_state*);
-void _init_range(_state*);
-void _init_gc(_state*);
-void _init_math(_state*);
-void _init_version(_state*);
-void _init_mrblib(_state*);
+void _init_symtbl(state*);
+void _init_class(state*);
+void _init_object(state*);
+void _init_kernel(state*);
+void _init_comparable(state*);
+void _init_enumerable(state*);
+void _init_symbol(state*);
+void _init_string(state*);
+void _init_exception(state*);
+void _init_proc(state*);
+void _init_array(state*);
+void _init_hash(state*);
+void _init_numeric(state*);
+void _init_range(state*);
+void _init_gc(state*);
+void _init_math(state*);
+void _init_version(state*);
+void _init_mrblib(state*);
 
 #define DONE _gc_arena_restore(mrb, 0);
 void
-_init_core(_state *mrb)
+_init_core(state *mrb)
 {
   _init_symtbl(mrb); DONE;
 
@@ -47,5 +47,5 @@ _init_core(_state *mrb)
   _init_range(mrb); DONE;
   _init_gc(mrb); DONE;
   _init_version(mrb); DONE;
-//  _init_mrblib(mrb); DONE;
+  _init_mrblib(mrb); DONE;
 }

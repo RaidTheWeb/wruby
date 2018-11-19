@@ -14,7 +14,7 @@ static _code call_iseq[] = {
 };
 
 struct RProc*
-_proc_new(_state *mrb, _irep *irep)
+_proc_new(state *mrb, _irep *irep)
 {
   struct RProc *p;
   _callinfo *ci = mrb->c->ci;
@@ -39,7 +39,7 @@ _proc_new(_state *mrb, _irep *irep)
 }
 
 static struct REnv*
-env_new(_state *mrb, _int nlocals)
+env_new(state *mrb, _int nlocals)
 {
   struct REnv *e;
   _callinfo *ci = mrb->c->ci;
@@ -59,7 +59,7 @@ env_new(_state *mrb, _int nlocals)
 }
 
 static void
-closure_setup(_state *mrb, struct RProc *p)
+closure_setup(state *mrb, struct RProc *p)
 {
   _callinfo *ci = mrb->c->ci;
   struct RProc *up = p->upper;
@@ -86,7 +86,7 @@ closure_setup(_state *mrb, struct RProc *p)
 }
 
 struct RProc*
-_closure_new(_state *mrb, _irep *irep)
+_closure_new(state *mrb, _irep *irep)
 {
   struct RProc *p = _proc_new(mrb, irep);
 
@@ -95,7 +95,7 @@ _closure_new(_state *mrb, _irep *irep)
 }
 
 MRB_API struct RProc*
-_proc_new_cfunc(_state *mrb, _func_t func)
+_proc_new_cfunc(state *mrb, _func_t func)
 {
   struct RProc *p;
 
@@ -109,7 +109,7 @@ _proc_new_cfunc(_state *mrb, _func_t func)
 }
 
 MRB_API struct RProc*
-_proc_new_cfunc_with_env(_state *mrb, _func_t func, _int argc, const _value *argv)
+_proc_new_cfunc_with_env(state *mrb, _func_t func, _int argc, const value *argv)
 {
   struct RProc *p = _proc_new_cfunc(mrb, func);
   struct REnv *e;
@@ -119,7 +119,7 @@ _proc_new_cfunc_with_env(_state *mrb, _func_t func, _int argc, const _value *arg
   p->flags |= MRB_PROC_ENVSET;
   _field_write_barrier(mrb, (struct RBasic*)p, (struct RBasic*)e);
   MRB_ENV_UNSHARE_STACK(e);
-  e->stack = (_value*)_malloc(mrb, sizeof(_value) * argc);
+  e->stack = (value*)_malloc(mrb, sizeof(value) * argc);
   if (argv) {
     for (i = 0; i < argc; ++i) {
       e->stack[i] = argv[i];
@@ -134,13 +134,13 @@ _proc_new_cfunc_with_env(_state *mrb, _func_t func, _int argc, const _value *arg
 }
 
 MRB_API struct RProc*
-_closure_new_cfunc(_state *mrb, _func_t func, int nlocals)
+_closure_new_cfunc(state *mrb, _func_t func, int nlocals)
 {
   return _proc_new_cfunc_with_env(mrb, func, nlocals, NULL);
 }
 
-MRB_API _value
-_proc_cfunc_env_get(_state *mrb, _int idx)
+MRB_API value
+_proc_cfunc_env_get(state *mrb, _int idx)
 {
   struct RProc *p = mrb->c->ci->proc;
   struct REnv *e;
@@ -177,11 +177,11 @@ _proc_copy(struct RProc *a, struct RProc *b)
   /* a->e.target_class = a->e.target_class; */
 }
 
-static _value
-_proc_s_new(_state *mrb, _value proc_class)
+static value
+_proc_s_new(state *mrb, value proc_class)
 {
-  _value blk;
-  _value proc;
+  value blk;
+  value proc;
   struct RProc *p;
 
   _get_args(mrb, "&", &blk);
@@ -200,10 +200,10 @@ _proc_s_new(_state *mrb, _value proc_class)
   return proc;
 }
 
-static _value
-_proc_init_copy(_state *mrb, _value self)
+static value
+_proc_init_copy(state *mrb, value self)
 {
-  _value proc;
+  value proc;
 
   _get_args(mrb, "o", &proc);
   if (_type(proc) != MRB_TT_PROC) {
@@ -220,8 +220,8 @@ _proc_cfunc_p(struct RProc *p)
 }
 
 /* 15.2.17.4.2 */
-static _value
-_proc_arity(_state *mrb, _value self)
+static value
+_proc_arity(state *mrb, value self)
 {
   struct RProc *p = _proc_ptr(self);
   struct _irep *irep;
@@ -264,10 +264,10 @@ _proc_arity(_state *mrb, _value self)
  * Equivalent to <code>Proc.new</code>, except the resulting Proc objects
  * check the number of parameters passed when called.
  */
-static _value
-proc_lambda(_state *mrb, _value self)
+static value
+proc_lambda(state *mrb, value self)
 {
-  _value blk;
+  value blk;
   struct RProc *p;
 
   _get_args(mrb, "&", &blk);
@@ -288,7 +288,7 @@ proc_lambda(_state *mrb, _value self)
 }
 
 void
-_init_proc(_state *mrb)
+_init_proc(state *mrb)
 {
   struct RProc *p;
   _method_t m;

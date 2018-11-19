@@ -45,10 +45,10 @@ gem_mrblib_irep_mruby_compar_ext[] = {
 0x61,0x78,0x00,0x01,0x26,0x00,0x01,0x63,0x00,0x00,0x00,0x01,0x00,0x01,0x00,0x02,
 0x00,0x02,0x00,0x03,0x00,0x03,0x00,0x04,0x45,0x4e,0x44,0x00,0x00,0x00,0x00,0x08,
 };
-void _mruby_compar_ext_gem_init(_state *mrb);
-void _mruby_compar_ext_gem_final(_state *mrb);
+void _mruby_compar_ext_gem_init(state *mrb);
+void _mruby_compar_ext_gem_final(state *mrb);
 
-void GENERATED_TMP__mruby_compar_ext_gem_init(_state *mrb) {
+void GENERATED_TMP__mruby_compar_ext_gem_init(state *mrb) {
   int ai = _gc_arena_save(mrb);
   _load_irep(mrb, gem_mrblib_irep_mruby_compar_ext);
   if (mrb->exc) {
@@ -59,5 +59,5 @@ void GENERATED_TMP__mruby_compar_ext_gem_init(_state *mrb) {
   _gc_arena_restore(mrb, ai);
 }
 
-void GENERATED_TMP__mruby_compar_ext_gem_final(_state *mrb) {
+void GENERATED_TMP__mruby_compar_ext_gem_final(state *mrb) {
 }

@@ -36,8 +36,8 @@ mkstemp(char *p)
 
 #endif
 
-_value
-_sockettest_tmppath(_state *mrb, _value klass)
+value
+_sockettest_tmppath(state *mrb, value klass)
 {
   char name[] = "mruby-socket.XXXXXXXX";
   int fd = mkstemp(name);
@@ -53,8 +53,8 @@ _sockettest_tmppath(_state *mrb, _value klass)
   return _str_new_cstr(mrb, name);
 }
 
-_value
-_sockettest_win_p(_state *mrb, _value klass)
+value
+_sockettest_win_p(state *mrb, value klass)
 {
 #ifdef _WIN32
   return _true_value();
@@ -63,8 +63,8 @@ _sockettest_win_p(_state *mrb, _value klass)
 #endif
 }
 
-_value
-_sockettest_cygwin_p(_state *mrb, _value klass)
+value
+_sockettest_cygwin_p(state *mrb, value klass)
 {
 #if defined(__CYGWIN__) || defined(__CYGWIN32__)
   return _true_value();
@@ -74,7 +74,7 @@ _sockettest_cygwin_p(_state *mrb, _value klass)
 }
 
 void
-_mruby_socket_gem_test(_state* mrb)
+_mruby_socket_gem_test(state* mrb)
 {
   struct RClass *c = _define_module(mrb, "SocketTest");
   _define_class_method(mrb, c, "tmppath", _sockettest_tmppath, MRB_ARGS_NONE());

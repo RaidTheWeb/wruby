@@ -7,7 +7,7 @@
 #include <mruby.h>
 
 void
-_init_comparable(_state *mrb)
+_init_comparable(state *mrb)
 {
   _define_module(mrb, "Comparable");  /* 15.3.3 */
 }

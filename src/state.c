@@ -1,5 +1,5 @@
 /*
-** state.c - _state open/close functions
+** state.c - state open/close functions
 **
 ** See Copyright Notice in mruby.h
 */
@@ -13,20 +13,20 @@
 #include <mruby/string.h>
 #include <mruby/class.h>
 
-void _init_core(_state*);
-void _init_mrbgems(_state*);
+void _init_core(state*);
+void _init_mrbgems(state*);
 
-void _gc_init(_state*, _gc *gc);
-void _gc_destroy(_state*, _gc *gc);
+void _gc_init(state*, _gc *gc);
+void _gc_destroy(state*, _gc *gc);
 
-MRB_API _state*
+MRB_API state*
 _open_core(_allocf f, void *ud)
 {
-  static const _state _state_zero = { 0 };
+  static const state _state_zero = { 0 };
   static const struct _context _context_zero = { 0 };
-  _state *mrb;
+  state *mrb;
 
-  mrb = (_state *)(f)(NULL, NULL, sizeof(_state), ud);
+  mrb = (state *)(f)(NULL, NULL, sizeof(state), ud);
   if (mrb == NULL) return NULL;
 
   *mrb = _state_zero;
@@ -45,7 +45,7 @@ _open_core(_allocf f, void *ud)
 }
 
 void*
-_default_allocf(_state *mrb, void *p, size_t size, void *ud)
+_default_allocf(state *mrb, void *p, size_t size, void *ud)
 {
   if (size == 0) {
     free(p);
@@ -62,7 +62,7 @@ struct alloca_header {
 };
 
 MRB_API void*
-_alloca(_state *mrb, size_t size)
+_alloca(state *mrb, size_t size)
 {
   struct alloca_header *p;
 
@@ -73,7 +73,7 @@ _alloca(_state *mrb, size_t size)
 }
 
 static void
-_alloca_free(_state *mrb)
+_alloca_free(state *mrb)
 {
   struct alloca_header *p;
   struct alloca_header *tmp;
@@ -88,18 +88,18 @@ _alloca_free(_state *mrb)
   }
 }
 
-MRB_API _state*
+MRB_API state*
 _open(void)
 {
-  _state *mrb = _open_allocf(_default_allocf, NULL);
+  state *mrb = _open_allocf(_default_allocf, NULL);
 
   return mrb;
 }
 
-MRB_API _state*
+MRB_API state*
 _open_allocf(_allocf f, void *ud)
 {
-  _state *mrb = _open_core(f, ud);
+  state *mrb = _open_core(f, ud);
 
   if (mrb == NULL) {
     return NULL;
@@ -112,16 +112,16 @@ _open_allocf(_allocf f, void *ud)
   return mrb;
 }
 
-void _free_symtbl(_state *mrb);
+void _free_symtbl(state *mrb);
 
 void
-_irep_incref(_state *mrb, _irep *irep)
+_irep_incref(state *mrb, _irep *irep)
 {
   irep->refcnt++;
 }
 
 void
-_irep_decref(_state *mrb, _irep *irep)
+_irep_decref(state *mrb, _irep *irep)
 {
   irep->refcnt--;
   if (irep->refcnt == 0) {
@@ -130,7 +130,7 @@ _irep_decref(_state *mrb, _irep *irep)
 }
 
 void
-_irep_cutref(_state *mrb, _irep *irep)
+_irep_cutref(state *mrb, _irep *irep)
 {
   _irep *tmp;
   int i;
@@ -143,7 +143,7 @@ _irep_cutref(_state *mrb, _irep *irep)
 }
 
 void
-_irep_free(_state *mrb, _irep *irep)
+_irep_free(state *mrb, _irep *irep)
 {
   int i;
 
@@ -176,8 +176,8 @@ _irep_free(_state *mrb, _irep *irep)
   _free(mrb, irep);
 }
 
-_value
-_str_pool(_state *mrb, _value str)
+value
+_str_pool(state *mrb, value str)
 {
   struct RString *s = _str_ptr(str);
   struct RString *ns;
@@ -228,10 +228,10 @@ _str_pool(_state *mrb, _value str)
   return _obj_value(ns);
 }
 
-void _free_backtrace(_state *mrb);
+void _free_backtrace(state *mrb);
 
 MRB_API void
-_free_context(_state *mrb, struct _context *c)
+_free_context(state *mrb, struct _context *c)
 {
   if (!c) return;
   _free(mrb, c->stbase);
@@ -242,7 +242,7 @@ _free_context(_state *mrb, struct _context *c)
 }
 
 MRB_API void
-_close(_state *mrb)
+_close(state *mrb)
 {
   if (!mrb) return;
   if (mrb->atexit_stack_len > 0) {
@@ -265,7 +265,7 @@ _close(_state *mrb)
 }
 
 MRB_API _irep*
-_add_irep(_state *mrb)
+_add_irep(state *mrb)
 {
   static const _irep _irep_zero = { 0 };
   _irep *irep;
@@ -278,14 +278,14 @@ _add_irep(_state *mrb)
   return irep;
 }
 
-MRB_API _value
-_top_self(_state *mrb)
+MRB_API value
+_top_self(state *mrb)
 {
   return _obj_value(mrb->top_self);
 }
 
 MRB_API void
-_state_atexit(_state *mrb, _atexit_func f)
+_state_atexit(state *mrb, _atexit_func f)
 {
 #ifdef MRB_FIXED_STATE_ATEXIT_STACK
   if (mrb->atexit_stack_len + 1 > MRB_FIXED_STATE_ATEXIT_STACK_SIZE) {

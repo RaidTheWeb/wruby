@@ -23,7 +23,7 @@
 #endif
 #endif
 
-static size_t get_irep_record_size_1(_state *mrb, _irep *irep);
+static size_t get_irep_record_size_1(state *mrb, _irep *irep);
 
 #if UINT32_MAX > SIZE_MAX
 # error This code cannot be built on your environment.
@@ -41,7 +41,7 @@ write_padding(uint8_t *buf)
 }
 
 static size_t
-get_irep_header_size(_state *mrb)
+get_irep_header_size(state *mrb)
 {
   size_t size = 0;
 
@@ -52,7 +52,7 @@ get_irep_header_size(_state *mrb)
 }
 
 static ptrdiff_t
-write_irep_header(_state *mrb, _irep *irep, uint8_t *buf)
+write_irep_header(state *mrb, _irep *irep, uint8_t *buf)
 {
   uint8_t *cur = buf;
 
@@ -66,7 +66,7 @@ write_irep_header(_state *mrb, _irep *irep, uint8_t *buf)
 
 
 static size_t
-get_iseq_block_size(_state *mrb, _irep *irep)
+get_iseq_block_size(state *mrb, _irep *irep)
 {
   size_t size = 0;
 
@@ -78,7 +78,7 @@ get_iseq_block_size(_state *mrb, _irep *irep)
 }
 
 static ptrdiff_t
-write_iseq_block(_state *mrb, _irep *irep, uint8_t *buf, uint8_t flags)
+write_iseq_block(state *mrb, _irep *irep, uint8_t *buf, uint8_t flags)
 {
   uint8_t *cur = buf;
 
@@ -92,11 +92,11 @@ write_iseq_block(_state *mrb, _irep *irep, uint8_t *buf, uint8_t flags)
 
 
 static size_t
-get_pool_block_size(_state *mrb, _irep *irep)
+get_pool_block_size(state *mrb, _irep *irep)
 {
   int pool_no;
   size_t size = 0;
-  _value str;
+  value str;
 
   size += sizeof(uint32_t); /* plen */
   size += irep->plen * (sizeof(uint8_t) + sizeof(uint16_t)); /* len(n) */
@@ -143,12 +143,12 @@ get_pool_block_size(_state *mrb, _irep *irep)
 }
 
 static ptrdiff_t
-write_pool_block(_state *mrb, _irep *irep, uint8_t *buf)
+write_pool_block(state *mrb, _irep *irep, uint8_t *buf)
 {
   int pool_no;
   uint8_t *cur = buf;
   uint16_t len;
-  _value str;
+  value str;
   const char *char_ptr;
 
   cur += uint32_to_bin(irep->plen, cur); /* number of pool */
@@ -197,7 +197,7 @@ write_pool_block(_state *mrb, _irep *irep, uint8_t *buf)
 
 
 static size_t
-get_syms_block_size(_state *mrb, _irep *irep)
+get_syms_block_size(state *mrb, _irep *irep)
 {
   size_t size = 0;
   int sym_no;
@@ -216,7 +216,7 @@ get_syms_block_size(_state *mrb, _irep *irep)
 }
 
 static ptrdiff_t
-write_syms_block(_state *mrb, _irep *irep, uint8_t *buf)
+write_syms_block(state *mrb, _irep *irep, uint8_t *buf)
 {
   int sym_no;
   uint8_t *cur = buf;
@@ -245,7 +245,7 @@ write_syms_block(_state *mrb, _irep *irep, uint8_t *buf)
 }
 
 static size_t
-get_irep_record_size_1(_state *mrb, _irep *irep)
+get_irep_record_size_1(state *mrb, _irep *irep)
 {
   size_t size = 0;
 
@@ -257,7 +257,7 @@ get_irep_record_size_1(_state *mrb, _irep *irep)
 }
 
 static size_t
-get_irep_record_size(_state *mrb, _irep *irep)
+get_irep_record_size(state *mrb, _irep *irep)
 {
   size_t size = 0;
   int irep_no;
@@ -270,7 +270,7 @@ get_irep_record_size(_state *mrb, _irep *irep)
 }
 
 static int
-write_irep_record(_state *mrb, _irep *irep, uint8_t *bin, size_t *irep_record_size, uint8_t flags)
+write_irep_record(state *mrb, _irep *irep, uint8_t *bin, size_t *irep_record_size, uint8_t flags)
 {
   int i;
   uint8_t *src = bin;
@@ -304,7 +304,7 @@ write_irep_record(_state *mrb, _irep *irep, uint8_t *bin, size_t *irep_record_si
 }
 
 static uint32_t
-write_footer(_state *mrb, uint8_t *bin)
+write_footer(state *mrb, uint8_t *bin)
 {
   struct rite_binary_footer footer;
 
@@ -317,7 +317,7 @@ write_footer(_state *mrb, uint8_t *bin)
 
 
 static int
-write_section_irep_header(_state *mrb, size_t section_size, uint8_t *bin)
+write_section_irep_header(state *mrb, size_t section_size, uint8_t *bin)
 {
   struct rite_section_irep_header *header = (struct rite_section_irep_header*)bin;
 
@@ -331,7 +331,7 @@ write_section_irep_header(_state *mrb, size_t section_size, uint8_t *bin)
 }
 
 static int
-write_section_irep(_state *mrb, _irep *irep, uint8_t *bin, size_t *len_p, uint8_t flags)
+write_section_irep(state *mrb, _irep *irep, uint8_t *bin, size_t *len_p, uint8_t flags)
 {
   int result;
   size_t rsize = 0;
@@ -354,7 +354,7 @@ write_section_irep(_state *mrb, _irep *irep, uint8_t *bin, size_t *len_p, uint8_
 }
 
 static int
-write_section_lineno_header(_state *mrb, size_t section_size, uint8_t *bin)
+write_section_lineno_header(state *mrb, size_t section_size, uint8_t *bin)
 {
   struct rite_section_lineno_header *header = (struct rite_section_lineno_header*)bin;
 
@@ -365,7 +365,7 @@ write_section_lineno_header(_state *mrb, size_t section_size, uint8_t *bin)
 }
 
 static size_t
-get_lineno_record_size(_state *mrb, _irep *irep)
+get_lineno_record_size(state *mrb, _irep *irep)
 {
   size_t size = 0;
 
@@ -383,7 +383,7 @@ get_lineno_record_size(_state *mrb, _irep *irep)
 }
 
 static size_t
-write_lineno_record_1(_state *mrb, _irep *irep, uint8_t* bin)
+write_lineno_record_1(state *mrb, _irep *irep, uint8_t* bin)
 {
   uint8_t *cur = bin;
   int iseq_no;
@@ -427,7 +427,7 @@ write_lineno_record_1(_state *mrb, _irep *irep, uint8_t* bin)
 }
 
 static size_t
-write_lineno_record(_state *mrb, _irep *irep, uint8_t* bin)
+write_lineno_record(state *mrb, _irep *irep, uint8_t* bin)
 {
   size_t rlen, size = 0;
   int i;
@@ -444,7 +444,7 @@ write_lineno_record(_state *mrb, _irep *irep, uint8_t* bin)
 }
 
 static int
-write_section_lineno(_state *mrb, _irep *irep, uint8_t *bin)
+write_section_lineno(state *mrb, _irep *irep, uint8_t *bin)
 {
   size_t section_size = 0;
   size_t rlen = 0; /* size of irep record */
@@ -466,7 +466,7 @@ write_section_lineno(_state *mrb, _irep *irep, uint8_t *bin)
 }
 
 static size_t
-get_debug_record_size(_state *mrb, _irep *irep)
+get_debug_record_size(state *mrb, _irep *irep)
 {
   size_t ret = 0;
   uint16_t f_idx;
@@ -515,7 +515,7 @@ find_filename_index(const _sym *ary, int ary_len, _sym s)
 }
 
 static size_t
-get_filename_table_size(_state *mrb, _irep *irep, _sym **fp, uint16_t *lp)
+get_filename_table_size(state *mrb, _irep *irep, _sym **fp, uint16_t *lp)
 {
   _sym *filenames = *fp;
   size_t size = 0;
@@ -546,7 +546,7 @@ get_filename_table_size(_state *mrb, _irep *irep, _sym **fp, uint16_t *lp)
 }
 
 static size_t
-write_debug_record_1(_state *mrb, _irep *irep, uint8_t *bin, _sym const* filenames, uint16_t filenames_len)
+write_debug_record_1(state *mrb, _irep *irep, uint8_t *bin, _sym const* filenames, uint16_t filenames_len)
 {
   uint8_t *cur;
   uint16_t f_idx;
@@ -600,7 +600,7 @@ write_debug_record_1(_state *mrb, _irep *irep, uint8_t *bin, _sym const* filenam
 }
 
 static size_t
-write_debug_record(_state *mrb, _irep *irep, uint8_t *bin, _sym const* filenames, uint16_t filenames_len)
+write_debug_record(state *mrb, _irep *irep, uint8_t *bin, _sym const* filenames, uint16_t filenames_len)
 {
   size_t size, len;
   int irep_no;
@@ -618,7 +618,7 @@ write_debug_record(_state *mrb, _irep *irep, uint8_t *bin, _sym const* filenames
 }
 
 static int
-write_section_debug(_state *mrb, _irep *irep, uint8_t *cur, _sym const *filenames, uint16_t filenames_len)
+write_section_debug(state *mrb, _irep *irep, uint8_t *cur, _sym const *filenames, uint16_t filenames_len)
 {
   size_t section_size = 0;
   const uint8_t *bin = cur;
@@ -659,7 +659,7 @@ write_section_debug(_state *mrb, _irep *irep, uint8_t *cur, _sym const *filename
 }
 
 static void
-create_lv_sym_table(_state *mrb, const _irep *irep, _sym **syms, uint32_t *syms_len)
+create_lv_sym_table(state *mrb, const _irep *irep, _sym **syms, uint32_t *syms_len)
 {
   int i;
 
@@ -683,7 +683,7 @@ create_lv_sym_table(_state *mrb, const _irep *irep, _sym **syms, uint32_t *syms_
 }
 
 static int
-write_lv_sym_table(_state *mrb, uint8_t **start, _sym const *syms, uint32_t syms_len)
+write_lv_sym_table(state *mrb, uint8_t **start, _sym const *syms, uint32_t syms_len)
 {
   uint8_t *cur = *start;
   uint32_t i;
@@ -705,7 +705,7 @@ write_lv_sym_table(_state *mrb, uint8_t **start, _sym const *syms, uint32_t syms
 }
 
 static int
-write_lv_record(_state *mrb, const _irep *irep, uint8_t **start, _sym const *syms, uint32_t syms_len)
+write_lv_record(state *mrb, const _irep *irep, uint8_t **start, _sym const *syms, uint32_t syms_len)
 {
   uint8_t *cur = *start;
   int i;
@@ -734,7 +734,7 @@ write_lv_record(_state *mrb, const _irep *irep, uint8_t **start, _sym const *sym
 }
 
 static size_t
-get_lv_record_size(_state *mrb, _irep *irep)
+get_lv_record_size(state *mrb, _irep *irep)
 {
   size_t ret = 0;
   int i;
@@ -749,7 +749,7 @@ get_lv_record_size(_state *mrb, _irep *irep)
 }
 
 static size_t
-get_lv_section_size(_state *mrb, _irep *irep, _sym const *syms, uint32_t syms_len)
+get_lv_section_size(state *mrb, _irep *irep, _sym const *syms, uint32_t syms_len)
 {
   size_t ret = 0, i;
 
@@ -767,7 +767,7 @@ get_lv_section_size(_state *mrb, _irep *irep, _sym const *syms, uint32_t syms_le
 }
 
 static int
-write_section_lv(_state *mrb, _irep *irep, uint8_t *start, _sym const *syms, uint32_t const syms_len)
+write_section_lv(state *mrb, _irep *irep, uint8_t *start, _sym const *syms, uint32_t const syms_len)
 {
   uint8_t *cur = start;
   struct rite_section_lv_header *header;
@@ -802,7 +802,7 @@ lv_section_exit:
 }
 
 static int
-write_rite_binary_header(_state *mrb, size_t binary_size, uint8_t *bin, uint8_t flags)
+write_rite_binary_header(state *mrb, size_t binary_size, uint8_t *bin, uint8_t flags)
 {
   struct rite_binary_header *header = (struct rite_binary_header *)bin;
   uint16_t crc;
@@ -879,7 +879,7 @@ dump_flags(uint8_t flags, uint8_t native)
 }
 
 static int
-dump_irep(_state *mrb, _irep *irep, uint8_t flags, uint8_t **bin, size_t *bin_size)
+dump_irep(state *mrb, _irep *irep, uint8_t flags, uint8_t **bin, size_t *bin_size)
 {
   int result = MRB_DUMP_GENERAL_FAILURE;
   size_t malloc_size;
@@ -974,7 +974,7 @@ error_exit:
 }
 
 int
-_dump_irep(_state *mrb, _irep *irep, uint8_t flags, uint8_t **bin, size_t *bin_size)
+_dump_irep(state *mrb, _irep *irep, uint8_t flags, uint8_t **bin, size_t *bin_size)
 {
   return dump_irep(mrb, irep, dump_flags(flags, FLAG_BYTEORDER_NONATIVE), bin, bin_size);
 }
@@ -982,7 +982,7 @@ _dump_irep(_state *mrb, _irep *irep, uint8_t flags, uint8_t **bin, size_t *bin_s
 #ifndef MRB_DISABLE_STDIO
 
 int
-_dump_irep_binary(_state *mrb, _irep *irep, uint8_t flags, FILE* fp)
+_dump_irep_binary(state *mrb, _irep *irep, uint8_t flags, FILE* fp)
 {
   uint8_t *bin = NULL;
   size_t bin_size = 0;
@@ -1018,7 +1018,7 @@ dump_bigendian_p(uint8_t flags)
 }
 
 int
-_dump_irep_cfunc(_state *mrb, _irep *irep, uint8_t flags, FILE *fp, const char *initname)
+_dump_irep_cfunc(state *mrb, _irep *irep, uint8_t flags, FILE *fp, const char *initname)
 {
   uint8_t *bin = NULL;
   size_t bin_size = 0, bin_idx = 0;

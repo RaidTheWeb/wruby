@@ -6,11 +6,11 @@
 #include <mruby/opcode.h>
 #include <mruby/error.h>
 
-_value _exec_irep(_state *mrb, _value self, struct RProc *p);
-_value _obj_instance_eval(_state *mrb, _value self);
+value _exec_irep(state *mrb, value self, struct RProc *p);
+value _obj_instance_eval(state *mrb, value self);
 
 static struct _irep *
-get_closure_irep(_state *mrb, int level)
+get_closure_irep(state *mrb, int level)
 {
   struct RProc *proc = mrb->c->ci[-1].proc;
 
@@ -45,7 +45,7 @@ search_irep(_irep *top, int bnest, int lev, _irep *bottom)
 }
 
 static uint16_t
-search_variable(_state *mrb, _sym vsym, int bnest)
+search_variable(state *mrb, _sym vsym, int bnest)
 {
   _irep *virep;
   int level;
@@ -94,7 +94,7 @@ extern uint8_t _insn_size2[];
 extern uint8_t _insn_size3[];
 
 static void
-patch_irep(_state *mrb, _irep *irep, int bnest, _irep *top)
+patch_irep(state *mrb, _irep *irep, int bnest, _irep *top)
 {
   int i;
   uint32_t a;
@@ -217,10 +217,10 @@ patch_irep(_state *mrb, _irep *irep, int bnest, _irep *top)
   }
 }
 
-void _codedump_all(_state*, struct RProc*);
+void _codedump_all(state*, struct RProc*);
 
 static struct RProc*
-create_proc_from_string(_state *mrb, char *s, _int len, _value binding, const char *file, _int line)
+create_proc_from_string(state *mrb, char *s, _int len, value binding, const char *file, _int line)
 {
   mrbc_context *cxt;
   struct _parser_state *p;
@@ -251,7 +251,7 @@ create_proc_from_string(_state *mrb, char *s, _int len, _value binding, const ch
 
   if (0 < p->nerr) {
     /* parse error */
-    _value str;
+    value str;
 
     if (file) {
       str = _format(mrb, " file %S line %S: %S",
@@ -317,14 +317,14 @@ create_proc_from_string(_state *mrb, char *s, _int len, _value binding, const ch
   return proc;
 }
 
-static _value
-exec_irep(_state *mrb, _value self, struct RProc *proc)
+static value
+exec_irep(state *mrb, value self, struct RProc *proc)
 {
   /* no argument passed from eval() */
   mrb->c->ci->argc = 0;
   if (mrb->c->ci->acc < 0) {
     ptrdiff_t cioff = mrb->c->ci - mrb->c->cibase;
-    _value ret = _top_run(mrb, proc, self, 0);
+    value ret = _top_run(mrb, proc, self, 0);
     if (mrb->exc) {
       _exc_raise(mrb, _obj_value(mrb->exc));
     }
@@ -336,12 +336,12 @@ exec_irep(_state *mrb, _value self, struct RProc *proc)
   return _exec_irep(mrb, self, proc);
 }
 
-static _value
-f_eval(_state *mrb, _value self)
+static value
+f_eval(state *mrb, value self)
 {
   char *s;
   _int len;
-  _value binding = _nil_value();
+  value binding = _nil_value();
   char *file = NULL;
   _int line = 1;
   struct RProc *proc;
@@ -353,11 +353,11 @@ f_eval(_state *mrb, _value self)
   return exec_irep(mrb, self, proc);
 }
 
-static _value
-f_instance_eval(_state *mrb, _value self)
+static value
+f_instance_eval(state *mrb, value self)
 {
-  _value b;
-  _int argc; _value *argv;
+  value b;
+  _int argc; value *argv;
 
   _get_args(mrb, "*!&", &argv, &argc, &b);
 
@@ -366,7 +366,7 @@ f_instance_eval(_state *mrb, _value self)
     _int len;
     char *file = NULL;
     _int line = 1;
-    _value cv;
+    value cv;
     struct RProc *proc;
 
     _get_args(mrb, "s|zi", &s, &len, &file, &line);
@@ -384,13 +384,13 @@ f_instance_eval(_state *mrb, _value self)
 }
 
 void
-_mruby_eval_gem_init(_state* mrb)
+_mruby_eval_gem_init(state* mrb)
 {
   _define_module_function(mrb, mrb->kernel_module, "eval", f_eval, MRB_ARGS_ARG(1, 3));
   _define_method(mrb, mrb->kernel_module, "instance_eval", f_instance_eval, MRB_ARGS_ARG(1, 2));
 }
 
 void
-_mruby_eval_gem_final(_state* mrb)
+_mruby_eval_gem_final(state* mrb)
 {
 }

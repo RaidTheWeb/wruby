@@ -2,17 +2,17 @@
 #include <mruby/error.h>
 #include <mruby/array.h>
 
-static _value
-protect_cb(_state *mrb, _value b)
+static value
+protect_cb(state *mrb, value b)
 {
   return _yield_argv(mrb, b, 0, NULL);
 }
 
-static _value
-run_protect(_state *mrb, _value self)
+static value
+run_protect(state *mrb, value self)
 {
-  _value b;
-  _value ret[2];
+  value b;
+  value ret[2];
   _bool state;
   _get_args(mrb, "&", &b);
   ret[0] = _protect(mrb, protect_cb, b, &state);
@@ -20,26 +20,26 @@ run_protect(_state *mrb, _value self)
   return _ary_new_from_values(mrb, 2, ret);
 }
 
-static _value
-run_ensure(_state *mrb, _value self)
+static value
+run_ensure(state *mrb, value self)
 {
-  _value b, e;
+  value b, e;
   _get_args(mrb, "oo", &b, &e);
   return _ensure(mrb, protect_cb, b, protect_cb, e);
 }
 
-static _value
-run_rescue(_state *mrb, _value self)
+static value
+run_rescue(state *mrb, value self)
 {
-  _value b, r;
+  value b, r;
   _get_args(mrb, "oo", &b, &r);
   return _rescue(mrb, protect_cb, b, protect_cb, r);
 }
 
-static _value
-run_rescue_exceptions(_state *mrb, _value self)
+static value
+run_rescue_exceptions(state *mrb, value self)
 {
-  _value b, r;
+  value b, r;
   struct RClass *cls[1];
   _get_args(mrb, "oo", &b, &r);
   cls[0] = E_TYPE_ERROR;
@@ -47,7 +47,7 @@ run_rescue_exceptions(_state *mrb, _value self)
 }
 
 void
-_mruby_error_gem_test(_state *mrb)
+_mruby_error_gem_test(state *mrb)
 {
   struct RClass *cls;
 

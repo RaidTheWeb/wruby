@@ -40,10 +40,10 @@
 extern struct _data_type _io_type;
 
 static int
-_stat0(_state *mrb, _value obj, struct stat *st, int do_lstat)
+_stat0(state *mrb, value obj, struct stat *st, int do_lstat)
 {
-  _value tmp;
-  _value io_klass, str_klass;
+  value tmp;
+  value io_klass, str_klass;
 
   io_klass  = _obj_value(_class_get(mrb, "IO"));
   str_klass = _obj_value(_class_get(mrb, "String"));
@@ -78,13 +78,13 @@ _stat0(_state *mrb, _value obj, struct stat *st, int do_lstat)
 }
 
 static int
-_stat(_state *mrb, _value obj, struct stat *st)
+_stat(state *mrb, value obj, struct stat *st)
 {
   return _stat0(mrb, obj, st, 0);
 }
 
 static int
-_lstat(_state *mrb, _value obj, struct stat *st)
+_lstat(state *mrb, value obj, struct stat *st)
 {
   return _stat0(mrb, obj, st, 1);
 }
@@ -102,15 +102,15 @@ _lstat(_state *mrb, _value obj, struct stat *st)
  *    File.directory?(".")
  */
 
-_value
-_filetest_s_directory_p(_state *mrb, _value klass)
+value
+_filetest_s_directory_p(state *mrb, value klass)
 {
 #ifndef S_ISDIR
 #   define S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
 #endif
 
   struct stat st;
-  _value obj;
+  value obj;
 
   _get_args(mrb, "o", &obj);
 
@@ -129,8 +129,8 @@ _filetest_s_directory_p(_state *mrb, _value klass)
  * Returns <code>true</code> if the named file is a pipe.
  */
 
-_value
-_filetest_s_pipe_p(_state *mrb, _value klass)
+value
+_filetest_s_pipe_p(state *mrb, value klass)
 {
 #if defined(_WIN32) || defined(_WIN64)
   _raise(mrb, E_NOTIMP_ERROR, "pipe is not supported on this platform");
@@ -141,7 +141,7 @@ _filetest_s_pipe_p(_state *mrb, _value klass)
 #  endif
 
   struct stat st;
-  _value obj;
+  value obj;
 
   _get_args(mrb, "o", &obj);
 
@@ -162,8 +162,8 @@ _filetest_s_pipe_p(_state *mrb, _value klass)
  * Returns <code>true</code> if the named file is a symbolic link.
  */
 
-_value
-_filetest_s_symlink_p(_state *mrb, _value klass)
+value
+_filetest_s_symlink_p(state *mrb, value klass)
 {
 #if defined(_WIN32) || defined(_WIN64)
   _raise(mrb, E_NOTIMP_ERROR, "symlink is not supported on this platform");
@@ -184,7 +184,7 @@ _filetest_s_symlink_p(_state *mrb, _value klass)
 
 #ifdef S_ISLNK
   struct stat st;
-  _value obj;
+  value obj;
 
   _get_args(mrb, "o", &obj);
 
@@ -205,8 +205,8 @@ _filetest_s_symlink_p(_state *mrb, _value klass)
  * Returns <code>true</code> if the named file is a socket.
  */
 
-_value
-_filetest_s_socket_p(_state *mrb, _value klass)
+value
+_filetest_s_socket_p(state *mrb, value klass)
 {
 #if defined(_WIN32) || defined(_WIN64)
   _raise(mrb, E_NOTIMP_ERROR, "socket is not supported on this platform");
@@ -227,7 +227,7 @@ _filetest_s_socket_p(_state *mrb, _value klass)
 
 #ifdef S_ISSOCK
   struct stat st;
-  _value obj;
+  value obj;
 
   _get_args(mrb, "o", &obj);
 
@@ -249,11 +249,11 @@ _filetest_s_socket_p(_state *mrb, _value klass)
  * Return <code>true</code> if the named file exists.
  */
 
-_value
-_filetest_s_exist_p(_state *mrb, _value klass)
+value
+_filetest_s_exist_p(state *mrb, value klass)
 {
   struct stat st;
-  _value obj;
+  value obj;
 
   _get_args(mrb, "o", &obj);
   if (_stat(mrb, obj, &st) < 0)
@@ -270,15 +270,15 @@ _filetest_s_exist_p(_state *mrb, _value klass)
  * regular file.
  */
 
-_value
-_filetest_s_file_p(_state *mrb, _value klass)
+value
+_filetest_s_file_p(state *mrb, value klass)
 {
 #ifndef S_ISREG
 #   define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
 #endif
 
   struct stat st;
-  _value obj;
+  value obj;
 
   _get_args(mrb, "o", &obj);
 
@@ -298,11 +298,11 @@ _filetest_s_file_p(_state *mrb, _value klass)
  * a zero size.
  */
 
-_value
-_filetest_s_zero_p(_state *mrb, _value klass)
+value
+_filetest_s_zero_p(state *mrb, value klass)
 {
   struct stat st;
-  _value obj;
+  value obj;
 
   _get_args(mrb, "o", &obj);
 
@@ -323,11 +323,11 @@ _filetest_s_zero_p(_state *mrb, _value klass)
  * _file_name_ can be an IO object.
  */
 
-_value
-_filetest_s_size(_state *mrb, _value klass)
+value
+_filetest_s_size(state *mrb, value klass)
 {
   struct stat st;
-  _value obj;
+  value obj;
 
   _get_args(mrb, "o", &obj);
 
@@ -345,11 +345,11 @@ _filetest_s_size(_state *mrb, _value klass)
  * file otherwise.
  */
 
-_value
-_filetest_s_size_p(_state *mrb, _value klass)
+value
+_filetest_s_size_p(state *mrb, value klass)
 {
   struct stat st;
-  _value obj;
+  value obj;
 
   _get_args(mrb, "o", &obj);
 
@@ -362,7 +362,7 @@ _filetest_s_size_p(_state *mrb, _value klass)
 }
 
 void
-_init_file_test(_state *mrb)
+_init_file_test(state *mrb)
 {
   struct RClass *f;
 

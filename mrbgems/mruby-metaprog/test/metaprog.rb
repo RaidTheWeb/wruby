@@ -320,7 +320,7 @@ assert('alias_method and remove_method') do
     Fixnum.remove_method :to_s
 
     assert_nothing_raised do
-      # segfaults if mrb_cptr is used
+      # segfaults if _cptr is used
       1.to_s
     end
   ensure

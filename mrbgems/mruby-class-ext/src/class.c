@@ -2,15 +2,15 @@
 #include "mruby/class.h"
 #include "mruby/string.h"
 
-static _value
-_mod_name(_state *mrb, _value self)
+static value
+_mod_name(state *mrb, value self)
 {
-  _value name = _class_path(mrb, _class_ptr(self));
+  value name = _class_path(mrb, _class_ptr(self));
   return _nil_p(name)? name : _str_dup(mrb, name);
 }
 
-static _value
-_mod_singleton_class_p(_state *mrb, _value self)
+static value
+_mod_singleton_class_p(state *mrb, value self)
 {
   return _bool_value(_type(self) == MRB_TT_SCLASS);
 }
@@ -34,12 +34,12 @@ _mod_singleton_class_p(_state *mrb, _value self)
  *     puts Thing.new.hello()
  */
 
-static _value
-_mod_module_exec(_state *mrb, _value self)
+static value
+_mod_module_exec(state *mrb, value self)
 {
-  const _value *argv;
+  const value *argv;
   _int argc;
-  _value blk;
+  value blk;
 
   _get_args(mrb, "*&", &argv, &argc, &blk);
 
@@ -52,7 +52,7 @@ _mod_module_exec(_state *mrb, _value self)
 }
 
 void
-_mruby_class_ext_gem_init(_state *mrb)
+_mruby_class_ext_gem_init(state *mrb)
 {
   struct RClass *mod = mrb->module_class;
 
@@ -63,6 +63,6 @@ _mruby_class_ext_gem_init(_state *mrb)
 }
 
 void
-_mruby_class_ext_gem_final(_state *mrb)
+_mruby_class_ext_gem_final(state *mrb)
 {
 }

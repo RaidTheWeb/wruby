@@ -2,12 +2,12 @@
 #include <mruby/throw.h>
 #include <mruby/error.h>
 
-MRB_API _value
-_protect(_state *mrb, _func_t body, _value data, _bool *state)
+MRB_API value
+_protect(state *mrb, _func_t body, value data, _bool *state)
 {
   struct _jmpbuf *prev_jmp = mrb->jmp;
   struct _jmpbuf c_jmp;
-  _value result = _nil_value();
+  value result = _nil_value();
 
   if (state) { *state = FALSE; }
 
@@ -26,12 +26,12 @@ _protect(_state *mrb, _func_t body, _value data, _bool *state)
   return result;
 }
 
-MRB_API _value
-_ensure(_state *mrb, _func_t body, _value b_data, _func_t ensure, _value e_data)
+MRB_API value
+_ensure(state *mrb, _func_t body, value b_data, _func_t ensure, value e_data)
 {
   struct _jmpbuf *prev_jmp = mrb->jmp;
   struct _jmpbuf c_jmp;
-  _value result;
+  value result;
 
   MRB_TRY(&c_jmp) {
     mrb->jmp = &c_jmp;
@@ -48,20 +48,20 @@ _ensure(_state *mrb, _func_t body, _value b_data, _func_t ensure, _value e_data)
   return result;
 }
 
-MRB_API _value
-_rescue(_state *mrb, _func_t body, _value b_data,
-           _func_t rescue, _value r_data)
+MRB_API value
+_rescue(state *mrb, _func_t body, value b_data,
+           _func_t rescue, value r_data)
 {
   return _rescue_exceptions(mrb, body, b_data, rescue, r_data, 1, &mrb->eStandardError_class);
 }
 
-MRB_API _value
-_rescue_exceptions(_state *mrb, _func_t body, _value b_data, _func_t rescue, _value r_data,
+MRB_API value
+_rescue_exceptions(state *mrb, _func_t body, value b_data, _func_t rescue, value r_data,
                       _int len, struct RClass **classes)
 {
   struct _jmpbuf *prev_jmp = mrb->jmp;
   struct _jmpbuf c_jmp;
-  _value result;
+  value result;
   _bool error_matched = FALSE;
   _int i;
 
@@ -90,11 +90,11 @@ _rescue_exceptions(_state *mrb, _func_t body, _value b_data, _func_t rescue, _va
 }
 
 void
-_mruby_error_gem_init(_state *mrb)
+_mruby_error_gem_init(state *mrb)
 {
 }
 
 void
-_mruby_error_gem_final(_state *mrb)
+_mruby_error_gem_final(state *mrb)
 {
 }

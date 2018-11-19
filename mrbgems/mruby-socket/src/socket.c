@@ -112,11 +112,11 @@ static int inet_pton(int af, const char *src, void *dst)
 
 #endif
 
-static _value
-_addrinfo_getaddrinfo(_state *mrb, _value klass)
+static value
+_addrinfo_getaddrinfo(state *mrb, value klass)
 {
   struct addrinfo hints, *res0, *res;
-  _value ai, ary, family, lastai, nodename, protocol, sa, service, socktype;
+  value ai, ary, family, lastai, nodename, protocol, sa, service, socktype;
   _int flags;
   int arena_idx, error;
   const char *hostname = NULL, *servname = NULL;
@@ -186,11 +186,11 @@ _addrinfo_getaddrinfo(_state *mrb, _value klass)
   return ary;
 }
 
-static _value
-_addrinfo_getnameinfo(_state *mrb, _value self)
+static value
+_addrinfo_getnameinfo(state *mrb, value self)
 {
   _int flags;
-  _value ary, host, sastr, serv;
+  value ary, host, sastr, serv;
   int error;
 
   flags = 0;
@@ -215,10 +215,10 @@ _addrinfo_getnameinfo(_state *mrb, _value self)
 }
 
 #ifndef _WIN32
-static _value
-_addrinfo_unix_path(_state *mrb, _value self)
+static value
+_addrinfo_unix_path(state *mrb, value self)
 {
-  _value sastr;
+  value sastr;
 
   sastr = _iv_get(mrb, self, _intern_lit(mrb, "@sockaddr"));
   if (((struct sockaddr *)RSTRING_PTR(sastr))->sa_family != AF_UNIX)
@@ -231,10 +231,10 @@ _addrinfo_unix_path(_state *mrb, _value self)
 }
 #endif
 
-static _value
-sa2addrlist(_state *mrb, const struct sockaddr *sa, socklen_t salen)
+static value
+sa2addrlist(state *mrb, const struct sockaddr *sa, socklen_t salen)
 {
-  _value ary, host;
+  value ary, host;
   unsigned short port;
   const char *afstr;
 
@@ -265,7 +265,7 @@ sa2addrlist(_state *mrb, const struct sockaddr *sa, socklen_t salen)
 }
 
 static int
-socket_fd(_state *mrb, _value sock)
+socket_fd(state *mrb, value sock)
 {
   return (int)_fixnum(_funcall(mrb, sock, "fileno", 0));
 }
@@ -282,11 +282,11 @@ socket_family(int s)
   return ss.ss_family;
 }
 
-static _value
-_basicsocket_getpeereid(_state *mrb, _value self)
+static value
+_basicsocket_getpeereid(state *mrb, value self)
 {
 #ifdef HAVE_GETPEEREID
-  _value ary;
+  value ary;
   gid_t egid;
   uid_t euid;
   int s;
@@ -305,8 +305,8 @@ _basicsocket_getpeereid(_state *mrb, _value self)
 #endif
 }
 
-static _value
-_basicsocket_getpeername(_state *mrb, _value self)
+static value
+_basicsocket_getpeername(state *mrb, value self)
 {
   struct sockaddr_storage ss;
   socklen_t salen;
@@ -318,8 +318,8 @@ _basicsocket_getpeername(_state *mrb, _value self)
   return _str_new(mrb, (char*)&ss, salen);
 }
 
-static _value
-_basicsocket_getsockname(_state *mrb, _value self)
+static value
+_basicsocket_getsockname(state *mrb, value self)
 {
   struct sockaddr_storage ss;
   socklen_t salen;
@@ -331,13 +331,13 @@ _basicsocket_getsockname(_state *mrb, _value self)
   return _str_new(mrb, (char*)&ss, salen);
 }
 
-static _value
-_basicsocket_getsockopt(_state *mrb, _value self)
+static value
+_basicsocket_getsockopt(state *mrb, value self)
 {
   char opt[8];
   int s;
   _int family, level, optname;
-  _value c, data;
+  value c, data;
   socklen_t optlen;
 
   _get_args(mrb, "ii", &level, &optname);
@@ -351,12 +351,12 @@ _basicsocket_getsockopt(_state *mrb, _value self)
   return _funcall(mrb, c, "new", 4, _fixnum_value(family), _fixnum_value(level), _fixnum_value(optname), data);
 }
 
-static _value
-_basicsocket_recv(_state *mrb, _value self)
+static value
+_basicsocket_recv(state *mrb, value self)
 {
   ssize_t n;
   _int maxlen, flags = 0;
-  _value buf;
+  value buf;
 
   _get_args(mrb, "i|i", &maxlen, &flags);
   buf = _str_buf_new(mrb, maxlen);
@@ -367,12 +367,12 @@ _basicsocket_recv(_state *mrb, _value self)
   return buf;
 }
 
-static _value
-_basicsocket_recvfrom(_state *mrb, _value self)
+static value
+_basicsocket_recvfrom(state *mrb, value self)
 {
   ssize_t n;
   _int maxlen, flags = 0;
-  _value ary, buf, sa;
+  value ary, buf, sa;
   socklen_t socklen;
 
   _get_args(mrb, "i|i", &maxlen, &flags);
@@ -390,12 +390,12 @@ _basicsocket_recvfrom(_state *mrb, _value self)
   return ary;
 }
 
-static _value
-_basicsocket_send(_state *mrb, _value self)
+static value
+_basicsocket_send(state *mrb, value self)
 {
   ssize_t n;
   _int flags;
-  _value dest, mesg;
+  value dest, mesg;
 
   dest = _nil_value();
   _get_args(mrb, "Si|S", &mesg, &flags, &dest);
@@ -409,8 +409,8 @@ _basicsocket_send(_state *mrb, _value self)
   return _fixnum_value((_int)n);
 }
 
-static _value
-_basicsocket_setnonblock(_state *mrb, _value self)
+static value
+_basicsocket_setnonblock(state *mrb, value self)
 {
   int fd, flags;
   _bool nonblocking;
@@ -438,12 +438,12 @@ _basicsocket_setnonblock(_state *mrb, _value self)
   return _nil_value();
 }
 
-static _value
-_basicsocket_setsockopt(_state *mrb, _value self)
+static value
+_basicsocket_setsockopt(state *mrb, value self)
 {
   int s;
   _int argc, level = 0, optname;
-  _value optval, so;
+  value optval, so;
 
   argc = _get_args(mrb, "o|io", &so, &optname, &optval);
   if (argc == 3) {
@@ -483,8 +483,8 @@ _basicsocket_setsockopt(_state *mrb, _value self)
   return _fixnum_value(0);
 }
 
-static _value
-_basicsocket_shutdown(_state *mrb, _value self)
+static value
+_basicsocket_shutdown(state *mrb, value self)
 {
   _int how = SHUT_RDWR;
 
@@ -494,8 +494,8 @@ _basicsocket_shutdown(_state *mrb, _value self)
   return _fixnum_value(0);
 }
 
-static _value
-_basicsocket_set_is_socket(_state *mrb, _value self)
+static value
+_basicsocket_set_is_socket(state *mrb, value self)
 {
   _bool b;
   struct _io *io_p;
@@ -509,8 +509,8 @@ _basicsocket_set_is_socket(_state *mrb, _value self)
   return _bool_value(b);
 }
 
-static _value
-_ipsocket_ntop(_state *mrb, _value klass)
+static value
+_ipsocket_ntop(state *mrb, value klass)
 {
   _int af, n;
   char *addr, buf[50];
@@ -523,8 +523,8 @@ _ipsocket_ntop(_state *mrb, _value klass)
   return _str_new_cstr(mrb, buf);
 }
 
-static _value
-_ipsocket_pton(_state *mrb, _value klass)
+static value
+_ipsocket_pton(state *mrb, value klass)
 {
   _int af, n;
   char *bp, buf[50];
@@ -553,12 +553,12 @@ invalid:
   return _nil_value(); /* dummy */
 }
 
-static _value
-_ipsocket_recvfrom(_state *mrb, _value self)
+static value
+_ipsocket_recvfrom(state *mrb, value self)
 {
   struct sockaddr_storage ss;
   socklen_t socklen;
-  _value a, buf, pair;
+  value a, buf, pair;
   _int flags, maxlen;
   ssize_t n;
   int fd;
@@ -581,10 +581,10 @@ _ipsocket_recvfrom(_state *mrb, _value self)
   return pair;
 }
 
-static _value
-_socket_gethostname(_state *mrb, _value cls)
+static value
+_socket_gethostname(state *mrb, value cls)
 {
-  _value buf;
+  value buf;
   size_t bufsize;
 
 #ifdef HOST_NAME_MAX
@@ -599,8 +599,8 @@ _socket_gethostname(_state *mrb, _value cls)
   return buf;
 }
 
-static _value
-_socket_accept(_state *mrb, _value klass)
+static value
+_socket_accept(state *mrb, value klass)
 {
   int s1;
   _int s0;
@@ -613,10 +613,10 @@ _socket_accept(_state *mrb, _value klass)
   return _fixnum_value(s1);
 }
 
-static _value
-_socket_accept2(_state *mrb, _value klass)
+static value
+_socket_accept2(state *mrb, value klass)
 {
-  _value ary, sastr;
+  value ary, sastr;
   int s1;
   _int s0;
   socklen_t socklen;
@@ -636,10 +636,10 @@ _socket_accept2(_state *mrb, _value klass)
   return ary;
 }
 
-static _value
-_socket_bind(_state *mrb, _value klass)
+static value
+_socket_bind(state *mrb, value klass)
 {
-  _value sastr;
+  value sastr;
   _int s;
 
   _get_args(mrb, "iS", &s, &sastr);
@@ -649,10 +649,10 @@ _socket_bind(_state *mrb, _value klass)
   return _nil_value();
 }
 
-static _value
-_socket_connect(_state *mrb, _value klass)
+static value
+_socket_connect(state *mrb, value klass)
 {
-  _value sastr;
+  value sastr;
   _int s;
 
   _get_args(mrb, "iS", &s, &sastr);
@@ -662,8 +662,8 @@ _socket_connect(_state *mrb, _value klass)
   return _nil_value();
 }
 
-static _value
-_socket_listen(_state *mrb, _value klass)
+static value
+_socket_listen(state *mrb, value klass)
 {
   _int backlog, s;
 
@@ -674,11 +674,11 @@ _socket_listen(_state *mrb, _value klass)
   return _nil_value();
 }
 
-static _value
-_socket_sockaddr_family(_state *mrb, _value klass)
+static value
+_socket_sockaddr_family(state *mrb, value klass)
 {
   const struct sockaddr *sa;
-  _value str;
+  value str;
 
   _get_args(mrb, "S", &str);
   if ((size_t)RSTRING_LEN(str) < offsetof(struct sockaddr, sa_family) + sizeof(sa->sa_family)) {
@@ -688,15 +688,15 @@ _socket_sockaddr_family(_state *mrb, _value klass)
   return _fixnum_value(sa->sa_family);
 }
 
-static _value
-_socket_sockaddr_un(_state *mrb, _value klass)
+static value
+_socket_sockaddr_un(state *mrb, value klass)
 {
 #ifdef _WIN32
   _raise(mrb, E_NOTIMP_ERROR, "sockaddr_un unsupported on Windows");
   return _nil_value();
 #else
   struct sockaddr_un *sunp;
-  _value path, s;
+  value path, s;
 
   _get_args(mrb, "S", &path);
   if ((size_t)RSTRING_LEN(path) > sizeof(sunp->sun_path) - 1) {
@@ -715,14 +715,14 @@ _socket_sockaddr_un(_state *mrb, _value klass)
 #endif
 }
 
-static _value
-_socket_socketpair(_state *mrb, _value klass)
+static value
+_socket_socketpair(state *mrb, value klass)
 {
 #ifdef _WIN32
   _raise(mrb, E_NOTIMP_ERROR, "socketpair unsupported on Windows");
   return _nil_value();
 #else
-  _value ary;
+  value ary;
   _int domain, type, protocol;
   int sv[2];
 
@@ -738,8 +738,8 @@ _socket_socketpair(_state *mrb, _value klass)
 #endif
 }
 
-static _value
-_socket_socket(_state *mrb, _value klass)
+static value
+_socket_socket(state *mrb, value klass)
 {
   _int domain, type, protocol;
   int s;
@@ -751,8 +751,8 @@ _socket_socket(_state *mrb, _value klass)
   return _fixnum_value(s);
 }
 
-static _value
-_tcpsocket_allocate(_state *mrb, _value klass)
+static value
+_tcpsocket_allocate(state *mrb, value klass)
 {
   struct RClass *c = _class_ptr(klass);
   enum _vtype ttype = MRB_INSTANCE_TT(c);
@@ -768,8 +768,8 @@ _tcpsocket_allocate(_state *mrb, _value klass)
  * will break on socket descriptors.
  */
 #ifdef _WIN32
-static _value
-_win32_basicsocket_close(_state *mrb, _value self)
+static value
+_win32_basicsocket_close(state *mrb, value self)
 {
   if (closesocket(socket_fd(mrb, self)) != NO_ERROR)
     _raise(mrb, E_SOCKET_ERROR, "closesocket unsuccessful");
@@ -777,11 +777,11 @@ _win32_basicsocket_close(_state *mrb, _value self)
 }
 
 #define E_EOF_ERROR                (_class_get(mrb, "EOFError"))
-static _value
-_win32_basicsocket_sysread(_state *mrb, _value self)
+static value
+_win32_basicsocket_sysread(state *mrb, value self)
 {
   int sd, ret;
-  _value buf = _nil_value();
+  value buf = _nil_value();
   _int maxlen;
 
   _get_args(mrb, "i|S", &maxlen, &buf);
@@ -820,19 +820,19 @@ _win32_basicsocket_sysread(_state *mrb, _value self)
   return buf;
 }
 
-static _value
-_win32_basicsocket_sysseek(_state *mrb, _value self)
+static value
+_win32_basicsocket_sysseek(state *mrb, value self)
 {
   _raise(mrb, E_NOTIMP_ERROR, "sysseek not implemented for windows sockets");
   return _nil_value();
 }
 
-static _value
-_win32_basicsocket_syswrite(_state *mrb, _value self)
+static value
+_win32_basicsocket_syswrite(state *mrb, value self)
 {
   int n;
   SOCKET sd;
-  _value str;
+  value str;
 
   sd = socket_fd(mrb, self);
   _get_args(mrb, "S", &str);
@@ -845,7 +845,7 @@ _win32_basicsocket_syswrite(_state *mrb, _value self)
 #endif
 
 void
-_mruby_socket_gem_init(_state* mrb)
+_mruby_socket_gem_init(state* mrb)
 {
   struct RClass *io, *ai, *sock, *bsock, *ipsock, *tcpsock;
   struct RClass *constants;
@@ -942,9 +942,9 @@ _mruby_socket_gem_init(_state* mrb)
 }
 
 void
-_mruby_socket_gem_final(_state* mrb)
+_mruby_socket_gem_final(state* mrb)
 {
-  _value ai;
+  value ai;
   ai = _mod_cv_get(mrb, _class_get(mrb, "Addrinfo"), _intern_lit(mrb, "_lastai"));
   if (_cptr_p(ai)) {
     freeaddrinfo((struct addrinfo*)_cptr(ai));

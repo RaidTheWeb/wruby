@@ -62,8 +62,8 @@ mkdtemp(char *temp)
 #include "mruby/string.h"
 #include "mruby/variable.h"
 
-static _value
-_io_test_io_setup(_state *mrb, _value self)
+static value
+_io_test_io_setup(state *mrb, value self)
 {
   char rfname[]      = "tmp.mruby-io-test-r.XXXXXXXX";
   char wfname[]      = "tmp.mruby-io-test-w.XXXXXXXX";
@@ -146,13 +146,13 @@ _io_test_io_setup(_state *mrb, _value self)
   return _true_value();
 }
 
-static _value
-_io_test_io_cleanup(_state *mrb, _value self)
+static value
+_io_test_io_cleanup(state *mrb, value self)
 {
-  _value rfname = _gv_get(mrb, _intern_cstr(mrb, "$mrbtest_io_rfname"));
-  _value wfname = _gv_get(mrb, _intern_cstr(mrb, "$mrbtest_io_wfname"));
-  _value symlinkname = _gv_get(mrb, _intern_cstr(mrb, "$mrbtest_io_symlinkname"));
-  _value socketname = _gv_get(mrb, _intern_cstr(mrb, "$mrbtest_io_socketname"));
+  value rfname = _gv_get(mrb, _intern_cstr(mrb, "$mrbtest_io_rfname"));
+  value wfname = _gv_get(mrb, _intern_cstr(mrb, "$mrbtest_io_wfname"));
+  value symlinkname = _gv_get(mrb, _intern_cstr(mrb, "$mrbtest_io_symlinkname"));
+  value socketname = _gv_get(mrb, _intern_cstr(mrb, "$mrbtest_io_socketname"));
 
   if (_type(rfname) == MRB_TT_STRING) {
     remove(RSTRING_PTR(rfname));
@@ -176,10 +176,10 @@ _io_test_io_cleanup(_state *mrb, _value self)
   return _nil_value();
 }
 
-static _value
-_io_test_file_setup(_state *mrb, _value self)
+static value
+_io_test_file_setup(state *mrb, value self)
 {
-  _value ary = _io_test_io_setup(mrb, self);
+  value ary = _io_test_io_setup(mrb, self);
 #if !defined(_WIN32) && !defined(_WIN64)
   if (symlink("/usr/bin", "test-bin") == -1) {
     _raise(mrb, E_RUNTIME_ERROR, "can't make a symbolic link");
@@ -189,8 +189,8 @@ _io_test_file_setup(_state *mrb, _value self)
   return ary;
 }
 
-static _value
-_io_test_file_cleanup(_state *mrb, _value self)
+static value
+_io_test_file_cleanup(state *mrb, value self)
 {
   _io_test_io_cleanup(mrb, self);
   remove("test-bin");
@@ -198,10 +198,10 @@ _io_test_file_cleanup(_state *mrb, _value self)
   return _nil_value();
 }
 
-static _value
-_io_test_mkdtemp(_state *mrb, _value klass)
+static value
+_io_test_mkdtemp(state *mrb, value klass)
 {
-  _value str;
+  value str;
   char *cp;
 
   _get_args(mrb, "S", &str);
@@ -212,10 +212,10 @@ _io_test_mkdtemp(_state *mrb, _value klass)
   return _str_new_cstr(mrb, cp);
 }
 
-static _value
-_io_test_rmdir(_state *mrb, _value klass)
+static value
+_io_test_rmdir(state *mrb, value klass)
 {
-  _value str;
+  value str;
   char *cp;
 
   _get_args(mrb, "S", &str);
@@ -226,8 +226,8 @@ _io_test_rmdir(_state *mrb, _value klass)
   return _true_value();
 }
 
-_value
-_io_win_p(_state *mrb, _value klass)
+value
+_io_win_p(state *mrb, value klass)
 {
 #if defined(_WIN32) || defined(_WIN64)
 # if defined(__CYGWIN__) || defined(__CYGWIN32__)
@@ -241,7 +241,7 @@ _io_win_p(_state *mrb, _value klass)
 }
 
 void
-_mruby_io_gem_test(_state* mrb)
+_mruby_io_gem_test(state* mrb)
 {
   struct RClass *io_test = _define_module(mrb, "MRubyIOTestUtil");
   _define_class_method(mrb, io_test, "io_test_setup", _io_test_io_setup, MRB_ARGS_NONE());

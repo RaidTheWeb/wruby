@@ -4,10 +4,10 @@
 #include <mruby/hash.h>
 #include <mruby/range.h>
 
-static _value
-_f_caller(_state *mrb, _value self)
+static value
+_f_caller(state *mrb, value self)
 {
-  _value bt, v, length;
+  value bt, v, length;
   _int bt_len, argc, lev, n;
 
   bt = _get_backtrace(mrb);
@@ -70,8 +70,8 @@ _f_caller(_state *mrb, _value self)
  *  If called outside of a method, it returns <code>nil</code>.
  *
  */
-static _value
-_f_method(_state *mrb, _value self)
+static value
+_f_method(state *mrb, value self)
 {
   _callinfo *ci = mrb->c->ci;
   ci--;
@@ -104,10 +104,10 @@ _f_method(_state *mrb, _value self)
  *     Integer("111", 2)   #=> 7
  *     Integer(nil)        #=> TypeError
  */
-static _value
-_f_integer(_state *mrb, _value self)
+static value
+_f_integer(state *mrb, value self)
 {
-  _value arg;
+  value arg;
   _int base = 0;
 
   _get_args(mrb, "o|i", &arg, &base);
@@ -127,10 +127,10 @@ _f_integer(_state *mrb, _value self)
  *     Float("123.456")   #=> 123.456
  *     Float(nil)         #=> TypeError
  */
-static _value
-_f_float(_state *mrb, _value self)
+static value
+_f_float(state *mrb, value self)
 {
-  _value arg;
+  value arg;
 
   _get_args(mrb, "o", &arg);
   return _Float(mrb, arg);
@@ -149,10 +149,10 @@ _f_float(_state *mrb, _value self)
  *     String(self.class)  #=> "Object"
  *     String(123456)      #=> "123456"
  */
-static _value
-_f_string(_state *mrb, _value self)
+static value
+_f_string(state *mrb, value self)
 {
-  _value arg, tmp;
+  value arg, tmp;
 
   _get_args(mrb, "o", &arg);
   tmp = _check_convert_type(mrb, arg, MRB_TT_STRING, "String", "to_str");
@@ -173,10 +173,10 @@ _f_string(_state *mrb, _value self)
  *     Array(1..5)   #=> [1, 2, 3, 4, 5]
  *
  */
-static _value
-_f_array(_state *mrb, _value self)
+static value
+_f_array(state *mrb, value self)
 {
-  _value arg, tmp;
+  value arg, tmp;
 
   _get_args(mrb, "o", &arg);
   tmp = _check_convert_type(mrb, arg, MRB_TT_ARRAY, "Array", "to_ary");
@@ -204,10 +204,10 @@ _f_array(_state *mrb, _value self)
  *      Hash([1, 2, 3])   #=> TypeError
  *
  */
-static _value
-_f_hash(_state *mrb, _value self)
+static value
+_f_hash(state *mrb, value self)
 {
-  _value arg, tmp;
+  value arg, tmp;
 
   _get_args(mrb, "o", &arg);
   if (_nil_p(arg)) {
@@ -234,14 +234,14 @@ _f_hash(_state *mrb, _value self)
  *      string.itself.object_id == string.object_id #=> true
  *
  */
-static _value
-_f_itself(_state *mrb, _value self)
+static value
+_f_itself(state *mrb, value self)
 {
   return self;
 }
 
 void
-_mruby_kernel_ext_gem_init(_state *mrb)
+_mruby_kernel_ext_gem_init(state *mrb)
 {
   struct RClass *krn = mrb->kernel_module;
 
@@ -259,6 +259,6 @@ _mruby_kernel_ext_gem_init(_state *mrb)
 }
 
 void
-_mruby_kernel_ext_gem_final(_state *mrb)
+_mruby_kernel_ext_gem_final(state *mrb)
 {
 }

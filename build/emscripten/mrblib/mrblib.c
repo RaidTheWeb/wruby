@@ -4,7 +4,7 @@
 extern const uint8_t mrblib_irep[];
 
 void
-_init_mrblib(_state *mrb)
+_init_mrblib(state *mrb)
 {
   _load_irep(mrb, mrblib_irep);
 }

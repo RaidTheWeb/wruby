@@ -3,12 +3,12 @@
 #include <mruby/string.h>
 #include <mruby/istruct.h>
 
-static _value
-istruct_test_initialize(_state *mrb, _value self)
+static value
+istruct_test_initialize(state *mrb, value self)
 {
   char *string = (char*)_istruct_ptr(self);
   _int size = _istruct_size();
-  _value object;
+  value object;
   _get_args(mrb, "o", &object);
 
   if (_float_p(object)) {
@@ -28,22 +28,22 @@ istruct_test_initialize(_state *mrb, _value self)
   return self;
 }
 
-static _value
-istruct_test_to_s(_state *mrb, _value self)
+static value
+istruct_test_to_s(state *mrb, value self)
 {
   return _str_new_cstr(mrb, (const char*)_istruct_ptr(self));
 }
 
-static _value
-istruct_test_length(_state *mrb, _value self)
+static value
+istruct_test_length(state *mrb, value self)
 {
   return _fixnum_value(_istruct_size());
 }
 
-static _value
-istruct_test_test_receive(_state *mrb, _value self)
+static value
+istruct_test_test_receive(state *mrb, value self)
 {
-  _value object;
+  value object;
   _get_args(mrb, "o", &object);
   if (_obj_class(mrb, object) != _class_get(mrb, "InlineStructTest"))
   {
@@ -52,23 +52,23 @@ istruct_test_test_receive(_state *mrb, _value self)
   return _bool_value(((char*)_istruct_ptr(object))[0] == 's');
 }
 
-static _value
-istruct_test_test_receive_direct(_state *mrb, _value self)
+static value
+istruct_test_test_receive_direct(state *mrb, value self)
 {
   char *ptr;
   _get_args(mrb, "I", &ptr);
   return _bool_value(ptr[0] == 's');
 }
 
-static _value
-istruct_test_mutate(_state *mrb, _value self)
+static value
+istruct_test_mutate(state *mrb, value self)
 {
   char *ptr = (char*)_istruct_ptr(self);
   memcpy(ptr, "mutate", 6);
   return _nil_value();
 }
 
-void _mruby_inline_struct_gem_test(_state *mrb)
+void _mruby_inline_struct_gem_test(state *mrb)
 {
   struct RClass *cls;
 

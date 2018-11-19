@@ -66,16 +66,16 @@ static const uint8_t __m_either[] = {0x03, 0x0c, 0x30, 0xc0};
     khkey_t *keys;                                                      \
     khval_t *vals;                                                      \
   } kh_##name##_t;                                                      \
-  void kh_alloc_##name(_state *mrb, kh_##name##_t *h);               \
-  kh_##name##_t *kh_init_##name##_size(_state *mrb, khint_t size);   \
-  kh_##name##_t *kh_init_##name(_state *mrb);                        \
-  void kh_destroy_##name(_state *mrb, kh_##name##_t *h);             \
-  void kh_clear_##name(_state *mrb, kh_##name##_t *h);               \
-  khint_t kh_get_##name(_state *mrb, kh_##name##_t *h, khkey_t key);           \
-  khint_t kh_put_##name(_state *mrb, kh_##name##_t *h, khkey_t key, int *ret); \
-  void kh_resize_##name(_state *mrb, kh_##name##_t *h, khint_t new_n_buckets); \
-  void kh_del_##name(_state *mrb, kh_##name##_t *h, khint_t x);                \
-  kh_##name##_t *kh_copy_##name(_state *mrb, kh_##name##_t *h);
+  void kh_alloc_##name(state *mrb, kh_##name##_t *h);               \
+  kh_##name##_t *kh_init_##name##_size(state *mrb, khint_t size);   \
+  kh_##name##_t *kh_init_##name(state *mrb);                        \
+  void kh_destroy_##name(state *mrb, kh_##name##_t *h);             \
+  void kh_clear_##name(state *mrb, kh_##name##_t *h);               \
+  khint_t kh_get_##name(state *mrb, kh_##name##_t *h, khkey_t key);           \
+  khint_t kh_put_##name(state *mrb, kh_##name##_t *h, khkey_t key, int *ret); \
+  void kh_resize_##name(state *mrb, kh_##name##_t *h, khint_t new_n_buckets); \
+  void kh_del_##name(state *mrb, kh_##name##_t *h, khint_t x);                \
+  kh_##name##_t *kh_copy_##name(state *mrb, kh_##name##_t *h);
 
 static inline void
 kh_fill_flags(uint8_t *p, uint8_t c, size_t len)
@@ -95,7 +95,7 @@ kh_fill_flags(uint8_t *p, uint8_t c, size_t len)
    __hash_equal: hash comparation function
 */
 #define KHASH_DEFINE(name, khkey_t, khval_t, kh_is_map, __hash_func, __hash_equal) \
-  void kh_alloc_##name(_state *mrb, kh_##name##_t *h)                \
+  void kh_alloc_##name(state *mrb, kh_##name##_t *h)                \
   {                                                                     \
     khint_t sz = h->n_buckets;                                          \
     size_t len = sizeof(khkey_t) + (kh_is_map ? sizeof(khval_t) : 0);   \
@@ -106,7 +106,7 @@ kh_fill_flags(uint8_t *p, uint8_t c, size_t len)
     h->ed_flags = p+len*sz;                                             \
     kh_fill_flags(h->ed_flags, 0xaa, sz/4);                             \
   }                                                                     \
-  kh_##name##_t *kh_init_##name##_size(_state *mrb, khint_t size) {  \
+  kh_##name##_t *kh_init_##name##_size(state *mrb, khint_t size) {  \
     kh_##name##_t *h = (kh_##name##_t*)_calloc(mrb, 1, sizeof(kh_##name##_t)); \
     if (size < KHASH_MIN_SIZE)                                          \
       size = KHASH_MIN_SIZE;                                            \
@@ -115,17 +115,17 @@ kh_fill_flags(uint8_t *p, uint8_t c, size_t len)
     kh_alloc_##name(mrb, h);                                            \
     return h;                                                           \
   }                                                                     \
-  kh_##name##_t *kh_init_##name(_state *mrb) {                       \
+  kh_##name##_t *kh_init_##name(state *mrb) {                       \
     return kh_init_##name##_size(mrb, KHASH_DEFAULT_SIZE);              \
   }                                                                     \
-  void kh_destroy_##name(_state *mrb, kh_##name##_t *h)              \
+  void kh_destroy_##name(state *mrb, kh_##name##_t *h)              \
   {                                                                     \
     if (h) {                                                            \
       _free(mrb, h->keys);                                           \
       _free(mrb, h);                                                 \
     }                                                                   \
   }                                                                     \
-  void kh_clear_##name(_state *mrb, kh_##name##_t *h)                \
+  void kh_clear_##name(state *mrb, kh_##name##_t *h)                \
   {                                                                     \
     (void)mrb;                                                          \
     if (h && h->ed_flags) {                                             \
@@ -133,7 +133,7 @@ kh_fill_flags(uint8_t *p, uint8_t c, size_t len)
       h->size = h->n_occupied = 0;                                      \
     }                                                                   \
   }                                                                     \
-  khint_t kh_get_##name(_state *mrb, kh_##name##_t *h, khkey_t key)  \
+  khint_t kh_get_##name(state *mrb, kh_##name##_t *h, khkey_t key)  \
   {                                                                     \
     khint_t k = __hash_func(mrb,key) & khash_mask(h), step = 0;         \
     (void)mrb;                                                          \
@@ -145,7 +145,7 @@ kh_fill_flags(uint8_t *p, uint8_t c, size_t len)
     }                                                                   \
     return kh_end(h);                                                   \
   }                                                                     \
-  void kh_resize_##name(_state *mrb, kh_##name##_t *h, khint_t new_n_buckets) \
+  void kh_resize_##name(state *mrb, kh_##name##_t *h, khint_t new_n_buckets) \
   {                                                                     \
     if (new_n_buckets < KHASH_MIN_SIZE)                                 \
       new_n_buckets = KHASH_MIN_SIZE;                                   \
@@ -171,7 +171,7 @@ kh_fill_flags(uint8_t *p, uint8_t c, size_t len)
       _free(mrb, old_keys);                                          \
     }                                                                   \
   }                                                                     \
-  khint_t kh_put_##name(_state *mrb, kh_##name##_t *h, khkey_t key, int *ret) \
+  khint_t kh_put_##name(state *mrb, kh_##name##_t *h, khkey_t key, int *ret) \
   {                                                                     \
     khint_t k, del_k, step = 0;                                         \
     if (h->n_occupied >= khash_upper_bound(h)) {                        \
@@ -209,14 +209,14 @@ kh_fill_flags(uint8_t *p, uint8_t c, size_t len)
       return k;                                                         \
     }                                                                   \
   }                                                                     \
-  void kh_del_##name(_state *mrb, kh_##name##_t *h, khint_t x)       \
+  void kh_del_##name(state *mrb, kh_##name##_t *h, khint_t x)       \
   {                                                                     \
     (void)mrb;                                                          \
     _assert(x != h->n_buckets && !__ac_iseither(h->ed_flags, x));    \
     h->ed_flags[x/4] |= __m_del[x%4];                                   \
     h->size--;                                                          \
   }                                                                     \
-  kh_##name##_t *kh_copy_##name(_state *mrb, kh_##name##_t *h)       \
+  kh_##name##_t *kh_copy_##name(state *mrb, kh_##name##_t *h)       \
   {                                                                     \
     kh_##name##_t *h2;                                                  \
     khiter_t k, k2;                                                     \

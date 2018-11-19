@@ -32,12 +32,12 @@ MRB_INLINE _int _istruct_size()
   return ISTRUCT_DATA_SIZE;
 }
 
-MRB_INLINE void* _istruct_ptr(_value object)
+MRB_INLINE void* _istruct_ptr(value object)
 {
   return ISTRUCT_PTR(object);
 }
 
-MRB_INLINE void _istruct_copy(_value dest, _value src)
+MRB_INLINE void _istruct_copy(value dest, value src)
 {
   memcpy(ISTRUCT_PTR(dest), ISTRUCT_PTR(src), ISTRUCT_DATA_SIZE);
 }

@@ -34,7 +34,7 @@ const char _digitmap[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 #define _obj_alloc_string(mrb) ((struct RString*)_obj_alloc((mrb), MRB_TT_STRING, (mrb)->string_class))
 
 static struct RString*
-str_new_static(_state *mrb, const char *p, size_t len)
+str_new_static(state *mrb, const char *p, size_t len)
 {
   struct RString *s;
 
@@ -51,7 +51,7 @@ str_new_static(_state *mrb, const char *p, size_t len)
 }
 
 static struct RString*
-str_new(_state *mrb, const char *p, size_t len)
+str_new(state *mrb, const char *p, size_t len)
 {
   struct RString *s;
 
@@ -82,13 +82,13 @@ str_new(_state *mrb, const char *p, size_t len)
 }
 
 static inline void
-str_with_class(_state *mrb, struct RString *s, _value obj)
+str_with_class(state *mrb, struct RString *s, value obj)
 {
   s->c = _str_ptr(obj)->c;
 }
 
-static _value
-_str_new_empty(_state *mrb, _value str)
+static value
+_str_new_empty(state *mrb, value str)
 {
   struct RString *s = str_new(mrb, 0, 0);
 
@@ -96,8 +96,8 @@ _str_new_empty(_state *mrb, _value str)
   return _obj_value(s);
 }
 
-MRB_API _value
-_str_new_capa(_state *mrb, size_t capa)
+MRB_API value
+_str_new_capa(state *mrb, size_t capa)
 {
   struct RString *s;
 
@@ -118,8 +118,8 @@ _str_new_capa(_state *mrb, size_t capa)
 # define MRB_STR_BUF_MIN_SIZE 128
 #endif
 
-MRB_API _value
-_str_buf_new(_state *mrb, size_t capa)
+MRB_API value
+_str_buf_new(state *mrb, size_t capa)
 {
   if (capa < MRB_STR_BUF_MIN_SIZE) {
     capa = MRB_STR_BUF_MIN_SIZE;
@@ -128,7 +128,7 @@ _str_buf_new(_state *mrb, size_t capa)
 }
 
 static void
-resize_capa(_state *mrb, struct RString *s, size_t capacity)
+resize_capa(state *mrb, struct RString *s, size_t capacity)
 {
 #if SIZE_MAX > MRB_INT_MAX
     _assert(capacity < MRB_INT_MAX);
@@ -150,8 +150,8 @@ resize_capa(_state *mrb, struct RString *s, size_t capacity)
   }
 }
 
-MRB_API _value
-_str_new(_state *mrb, const char *p, size_t len)
+MRB_API value
+_str_new(state *mrb, const char *p, size_t len)
 {
   return _obj_value(str_new(mrb, p, len));
 }
@@ -163,8 +163,8 @@ _str_new(_state *mrb, const char *p, size_t len)
  *  Returns a new string object containing a copy of <i>str</i>.
  */
 
-MRB_API _value
-_str_new_cstr(_state *mrb, const char *p)
+MRB_API value
+_str_new_cstr(state *mrb, const char *p)
 {
   struct RString *s;
   size_t len;
@@ -181,15 +181,15 @@ _str_new_cstr(_state *mrb, const char *p)
   return _obj_value(s);
 }
 
-MRB_API _value
-_str_new_static(_state *mrb, const char *p, size_t len)
+MRB_API value
+_str_new_static(state *mrb, const char *p, size_t len)
 {
   struct RString *s = str_new_static(mrb, p, len);
   return _obj_value(s);
 }
 
 static void
-str_decref(_state *mrb, _shared_string *shared)
+str_decref(state *mrb, _shared_string *shared)
 {
   shared->refcnt--;
   if (shared->refcnt == 0) {
@@ -201,7 +201,7 @@ str_decref(_state *mrb, _shared_string *shared)
 }
 
 void
-_gc_free_str(_state *mrb, struct RString *str)
+_gc_free_str(state *mrb, struct RString *str)
 {
   if (RSTR_EMBED_P(str))
     /* no code */;
@@ -239,7 +239,7 @@ utf8len(const char* p, const char* e)
 }
 
 static _int
-utf8_strlen(_value str, _int len)
+utf8_strlen(value str, _int len)
 {
   _int total = 0;
   char* p = RSTRING_PTR(str);
@@ -262,7 +262,7 @@ utf8_strlen(_value str, _int len)
 
 /* map character index to byte offset index */
 static _int
-chars2bytes(_value s, _int off, _int idx)
+chars2bytes(value s, _int off, _int idx)
 {
   _int i, b, n;
   const char *p = RSTRING_PTR(s) + off;
@@ -344,7 +344,7 @@ _memsearch(const void *x0, _int m, const void *y0, _int n)
 }
 
 static void
-str_make_shared(_state *mrb, struct RString *orig, struct RString *s)
+str_make_shared(state *mrb, struct RString *orig, struct RString *s)
 {
   _shared_string *shared;
   _int len = RSTR_LEN(orig);
@@ -398,8 +398,8 @@ str_make_shared(_state *mrb, struct RString *orig, struct RString *s)
   }
 }
 
-static _value
-byte_subseq(_state *mrb, _value str, _int beg, _int len)
+static value
+byte_subseq(state *mrb, value str, _int beg, _int len)
 {
   struct RString *orig, *s;
 
@@ -416,8 +416,8 @@ byte_subseq(_state *mrb, _value str, _int beg, _int len)
   return _obj_value(s);
 }
 #ifdef MRB_UTF8_STRING
-static inline _value
-str_subseq(_state *mrb, _value str, _int beg, _int len)
+static inline value
+str_subseq(state *mrb, value str, _int beg, _int len)
 {
   beg = chars2bytes(str, 0, beg);
   len = chars2bytes(str, beg, len);
@@ -428,8 +428,8 @@ str_subseq(_state *mrb, _value str, _int beg, _int len)
 #define str_subseq(mrb, str, beg, len) byte_subseq(mrb, str, beg, len)
 #endif
 
-static _value
-str_substr(_state *mrb, _value str, _int beg, _int len)
+static value
+str_substr(state *mrb, value str, _int beg, _int len)
 {
   _int clen = RSTRING_CHAR_LEN(str);
 
@@ -454,7 +454,7 @@ str_substr(_state *mrb, _value str, _int beg, _int len)
 }
 
 MRB_API _int
-_str_index(_state *mrb, _value str, const char *sptr, _int slen, _int offset)
+_str_index(state *mrb, value str, const char *sptr, _int slen, _int offset)
 {
   _int pos;
   char *s;
@@ -479,7 +479,7 @@ _str_index(_state *mrb, _value str, const char *sptr, _int slen, _int offset)
 }
 
 static _int
-str_index_str(_state *mrb, _value str, _value str2, _int offset)
+str_index_str(state *mrb, value str, value str2, _int offset)
 {
   const char *ptr;
   _int len;
@@ -491,15 +491,15 @@ str_index_str(_state *mrb, _value str, _value str2, _int offset)
 }
 
 static void
-check_frozen(_state *mrb, struct RString *s)
+check_frozen(state *mrb, struct RString *s)
 {
   if (MRB_FROZEN_P(s)) {
     _raise(mrb, E_FROZEN_ERROR, "can't modify frozen string");
   }
 }
 
-static _value
-str_replace(_state *mrb, struct RString *s1, struct RString *s2)
+static value
+str_replace(state *mrb, struct RString *s1, struct RString *s2)
 {
   _int len;
 
@@ -534,7 +534,7 @@ str_replace(_state *mrb, struct RString *s1, struct RString *s2)
 }
 
 static _int
-str_rindex(_state *mrb, _value str, _value sub, _int pos)
+str_rindex(state *mrb, value str, value sub, _int pos)
 {
   char *s, *sbeg, *t;
   struct RString *ps = _str_ptr(str);
@@ -563,7 +563,7 @@ str_rindex(_state *mrb, _value str, _value sub, _int pos)
 }
 
 MRB_API _int
-_str_strlen(_state *mrb, struct RString *s)
+_str_strlen(state *mrb, struct RString *s)
 {
   _int i, max = RSTR_LEN(s);
   char *p = RSTR_PTR(s);
@@ -641,7 +641,7 @@ _locale_from_utf8(const char *utf8, int len)
 #endif
 
 MRB_API void
-_str_modify(_state *mrb, struct RString *s)
+_str_modify(state *mrb, struct RString *s)
 {
   check_frozen(mrb, s);
   s->flags &= ~MRB_STR_NO_UTF;
@@ -702,8 +702,8 @@ _str_modify(_state *mrb, struct RString *s)
   }
 }
 
-MRB_API _value
-_str_resize(_state *mrb, _value str, _int len)
+MRB_API value
+_str_resize(state *mrb, value str, _int len)
 {
   _int slen;
   struct RString *s = _str_ptr(str);
@@ -724,7 +724,7 @@ _str_resize(_state *mrb, _value str, _int len)
 }
 
 MRB_API char*
-_str_to_cstr(_state *mrb, _value str0)
+_str_to_cstr(state *mrb, value str0)
 {
   struct RString *s;
 
@@ -746,7 +746,7 @@ _str_to_cstr(_state *mrb, _value str0)
  *  Returns a new string object containing a copy of <i>str</i>.
  */
 MRB_API void
-_str_concat(_state *mrb, _value self, _value other)
+_str_concat(state *mrb, value self, value other)
 {
   if (!_string_p(other)) {
     other = _str_to_str(mrb, other);
@@ -760,8 +760,8 @@ _str_concat(_state *mrb, _value self, _value other)
  *
  *  Returns a new string object containing a copy of <i>str</i>.
  */
-MRB_API _value
-_str_plus(_state *mrb, _value a, _value b)
+MRB_API value
+_str_plus(state *mrb, value a, value b)
 {
   struct RString *s = _str_ptr(a);
   struct RString *s2 = _str_ptr(b);
@@ -782,10 +782,10 @@ _str_plus(_state *mrb, _value a, _value b)
  *
  *  Returns a new string object containing a copy of <i>str</i>.
  */
-static _value
-_str_plus_m(_state *mrb, _value self)
+static value
+_str_plus_m(state *mrb, value self)
 {
-  _value str;
+  value str;
 
   _get_args(mrb, "S", &str);
   return _str_plus(mrb, self, str);
@@ -799,15 +799,15 @@ _str_plus_m(_state *mrb, _value self)
  *
  *  Returns the length of string.
  */
-static _value
-_str_size(_state *mrb, _value self)
+static value
+_str_size(state *mrb, value self)
 {
   _int len = RSTRING_CHAR_LEN(self);
   return _fixnum_value(len);
 }
 
-static _value
-_str_bytesize(_state *mrb, _value self)
+static value
+_str_bytesize(state *mrb, value self)
 {
   _int len = RSTRING_LEN(self);
   return _fixnum_value(len);
@@ -823,8 +823,8 @@ _str_bytesize(_state *mrb, _value self)
  *
  *     "Ho! " * 3   #=> "Ho! Ho! Ho! "
  */
-static _value
-_str_times(_state *mrb, _value self)
+static value
+_str_times(state *mrb, value self)
 {
   _int n,len,times;
   struct RString *str2;
@@ -862,13 +862,13 @@ _str_times(_state *mrb, _value self)
 /* ---------------------------*/
 /*
  *  call-seq:
- *     _value str1 <=> _value str2   => int
+ *     value str1 <=> value str2   => int
  *                     >  1
  *                     =  0
  *                     <  -1
  */
 MRB_API int
-_str_cmp(_state *mrb, _value str1, _value str2)
+_str_cmp(state *mrb, value str1, value str2)
 {
   _int len;
   _int retval;
@@ -912,10 +912,10 @@ _str_cmp(_state *mrb, _value str1, _value str2)
  *     "abcdef" <=> "abcdefg"   #=> -1
  *     "abcdef" <=> "ABCDEF"    #=> 1
  */
-static _value
-_str_cmp_m(_state *mrb, _value str1)
+static value
+_str_cmp_m(state *mrb, value str1)
 {
-  _value str2;
+  value str2;
   _int result;
 
   _get_args(mrb, "o", &str2);
@@ -927,7 +927,7 @@ _str_cmp_m(_state *mrb, _value str1)
       return _nil_value();
     }
     else {
-      _value tmp = _funcall(mrb, str2, "<=>", 1, str1);
+      value tmp = _funcall(mrb, str2, "<=>", 1, str1);
 
       if (_nil_p(tmp)) return _nil_value();
       if (!_fixnum_p(tmp)) {
@@ -943,7 +943,7 @@ _str_cmp_m(_state *mrb, _value str1)
 }
 
 static _bool
-str_eql(_state *mrb, const _value str1, const _value str2)
+str_eql(state *mrb, const value str1, const value str2)
 {
   const _int len = RSTRING_LEN(str1);
 
@@ -954,7 +954,7 @@ str_eql(_state *mrb, const _value str1, const _value str2)
 }
 
 MRB_API _bool
-_str_equal(_state *mrb, _value str1, _value str2)
+_str_equal(state *mrb, value str1, value str2)
 {
   if (_immediate_p(str2)) return FALSE;
   if (!_string_p(str2)) {
@@ -979,20 +979,20 @@ _str_equal(_state *mrb, _value str1, _value str2)
  *
  *   caution:if <i>str</i> <code><=></code> <i>obj</i> returns zero.
  */
-static _value
-_str_equal_m(_state *mrb, _value str1)
+static value
+_str_equal_m(state *mrb, value str1)
 {
-  _value str2;
+  value str2;
 
   _get_args(mrb, "o", &str2);
 
   return _bool_value(_str_equal(mrb, str1, str2));
 }
 /* ---------------------------------- */
-MRB_API _value
-_str_to_str(_state *mrb, _value str)
+MRB_API value
+_str_to_str(state *mrb, value str)
 {
-  _value s;
+  value s;
 
   if (!_string_p(str)) {
     s = _check_convert_type(mrb, str, MRB_TT_STRING, "String", "to_str");
@@ -1005,35 +1005,35 @@ _str_to_str(_state *mrb, _value str)
 }
 
 MRB_API const char*
-_string_value_ptr(_state *mrb, _value ptr)
+_string_value_ptr(state *mrb, value ptr)
 {
-  _value str = _str_to_str(mrb, ptr);
+  value str = _str_to_str(mrb, ptr);
   return RSTRING_PTR(str);
 }
 
 MRB_API _int
-_string_value_len(_state *mrb, _value ptr)
+_string_value_len(state *mrb, value ptr)
 {
-  _value str = _str_to_str(mrb, ptr);
+  value str = _str_to_str(mrb, ptr);
   return RSTRING_LEN(str);
 }
 
 void
-_noregexp(_state *mrb, _value self)
+_noregexp(state *mrb, value self)
 {
   _raise(mrb, E_NOTIMP_ERROR, "Regexp class not implemented");
 }
 
 void
-_regexp_check(_state *mrb, _value obj)
+_regexp_check(state *mrb, value obj)
 {
   if (_regexp_p(mrb, obj)) {
     _noregexp(mrb, obj);
   }
 }
 
-MRB_API _value
-_str_dup(_state *mrb, _value str)
+MRB_API value
+_str_dup(state *mrb, value str)
 {
   struct RString *s = _str_ptr(str);
   struct RString *dup = str_new(mrb, 0, 0);
@@ -1042,8 +1042,8 @@ _str_dup(_state *mrb, _value str)
   return str_replace(mrb, dup, s);
 }
 
-static _value
-_str_aref(_state *mrb, _value str, _value indx)
+static value
+_str_aref(state *mrb, value str, value indx)
 {
   _int idx;
 
@@ -1130,10 +1130,10 @@ num_index:
  *     a["lo"]                #=> "lo"
  *     a["bye"]               #=> nil
  */
-static _value
-_str_aref_m(_state *mrb, _value str)
+static value
+_str_aref_m(state *mrb, value str)
 {
-  _value a1, a2;
+  value a1, a2;
   _int argc;
 
   argc = _get_args(mrb, "o|o", &a1, &a2);
@@ -1163,8 +1163,8 @@ _str_aref_m(_state *mrb, _value str)
  *     a               #=> "Hello"
  *     a.capitalize!   #=> nil
  */
-static _value
-_str_capitalize_bang(_state *mrb, _value str)
+static value
+_str_capitalize_bang(state *mrb, value str)
 {
   char *p, *pend;
   _bool modify = FALSE;
@@ -1199,10 +1199,10 @@ _str_capitalize_bang(_state *mrb, _value str)
  *     "HELLO".capitalize    #=> "Hello"
  *     "123ABC".capitalize   #=> "123abc"
  */
-static _value
-_str_capitalize(_state *mrb, _value self)
+static value
+_str_capitalize(state *mrb, value self)
 {
-  _value str;
+  value str;
 
   str = _str_dup(mrb, self);
   _str_capitalize_bang(mrb, str);
@@ -1217,10 +1217,10 @@ _str_capitalize(_state *mrb, _value self)
  *  Modifies <i>str</i> in place as described for <code>String#chomp</code>,
  *  returning <i>str</i>, or <code>nil</code> if no modifications were made.
  */
-static _value
-_str_chomp_bang(_state *mrb, _value str)
+static value
+_str_chomp_bang(state *mrb, value str)
 {
-  _value rs;
+  value rs;
   _int newline;
   char *p, *pp;
   _int rslen;
@@ -1304,10 +1304,10 @@ _str_chomp_bang(_state *mrb, _value str)
  *     "hello \n there".chomp   #=> "hello \n there"
  *     "hello".chomp("llo")     #=> "he"
  */
-static _value
-_str_chomp(_state *mrb, _value self)
+static value
+_str_chomp(state *mrb, value self)
 {
-  _value str;
+  value str;
 
   str = _str_dup(mrb, self);
   _str_chomp_bang(mrb, str);
@@ -1323,8 +1323,8 @@ _str_chomp(_state *mrb, _value self)
  *  or <code>nil</code> if <i>str</i> is the empty string.  See also
  *  <code>String#chomp!</code>.
  */
-static _value
-_str_chop_bang(_state *mrb, _value str)
+static value
+_str_chop_bang(state *mrb, value str)
 {
   struct RString *s = _str_ptr(str);
 
@@ -1373,10 +1373,10 @@ _str_chop_bang(_state *mrb, _value str)
  *     "string".chop       #=> "strin"
  *     "x".chop            #=> ""
  */
-static _value
-_str_chop(_state *mrb, _value self)
+static value
+_str_chop(state *mrb, value self)
 {
-  _value str;
+  value str;
   str = _str_dup(mrb, self);
   _str_chop_bang(mrb, str);
   return str;
@@ -1390,8 +1390,8 @@ _str_chop(_state *mrb, _value self)
  *  Downcases the contents of <i>str</i>, returning <code>nil</code> if no
  *  changes were made.
  */
-static _value
-_str_downcase_bang(_state *mrb, _value str)
+static value
+_str_downcase_bang(state *mrb, value str)
 {
   char *p, *pend;
   _bool modify = FALSE;
@@ -1423,10 +1423,10 @@ _str_downcase_bang(_state *mrb, _value str)
  *
  *     "hEllO".downcase   #=> "hello"
  */
-static _value
-_str_downcase(_state *mrb, _value self)
+static value
+_str_downcase(state *mrb, value self)
 {
-  _value str;
+  value str;
 
   str = _str_dup(mrb, self);
   _str_downcase_bang(mrb, str);
@@ -1443,8 +1443,8 @@ _str_downcase(_state *mrb, _value self)
  *     "hello".empty?   #=> false
  *     "".empty?        #=> true
  */
-static _value
-_str_empty_p(_state *mrb, _value self)
+static value
+_str_empty_p(state *mrb, value self)
 {
   struct RString *s = _str_ptr(self);
 
@@ -1458,10 +1458,10 @@ _str_empty_p(_state *mrb, _value self)
  *
  * Two strings are equal if the have the same length and content.
  */
-static _value
-_str_eql(_state *mrb, _value self)
+static value
+_str_eql(state *mrb, value self)
 {
-  _value str2;
+  value str2;
   _bool eql_p;
 
   _get_args(mrb, "o", &str2);
@@ -1470,14 +1470,14 @@ _str_eql(_state *mrb, _value self)
   return _bool_value(eql_p);
 }
 
-MRB_API _value
-_str_substr(_state *mrb, _value str, _int beg, _int len)
+MRB_API value
+_str_substr(state *mrb, value str, _int beg, _int len)
 {
   return str_substr(mrb, str, beg, len);
 }
 
 uint32_t
-_str_hash(_state *mrb, _value str)
+_str_hash(state *mrb, value str)
 {
   /* 1-8-7 */
   struct RString *s = _str_ptr(str);
@@ -1499,8 +1499,8 @@ _str_hash(_state *mrb, _value str)
  *
  * Return a hash based on the string's length and content.
  */
-static _value
-_str_hash_m(_state *mrb, _value self)
+static value
+_str_hash_m(state *mrb, value self)
 {
   _int key = _str_hash(mrb, self);
   return _fixnum_value(key);
@@ -1519,10 +1519,10 @@ _str_hash_m(_state *mrb, _value self)
  *     "hello".include? "ol"   #=> false
  *     "hello".include? ?h     #=> true
  */
-static _value
-_str_include(_state *mrb, _value self)
+static value
+_str_include(state *mrb, value self)
 {
-  _value str2;
+  value str2;
 
   _get_args(mrb, "S", &str2);
   if (str_index_str(mrb, self, str2, 0) < 0)
@@ -1551,12 +1551,12 @@ _str_include(_state *mrb, _value self)
  *     "hello".index(101)             #=> 1(101=0x65='e')
  *     "hello".index(/[aeiou]/, -3)   #=> 4
  */
-static _value
-_str_index_m(_state *mrb, _value str)
+static value
+_str_index_m(state *mrb, value str)
 {
-  _value *argv;
+  value *argv;
   _int argc;
-  _value sub;
+  value sub;
   _int pos, clen;
 
   _get_args(mrb, "*!", &argv, &argc);
@@ -1583,7 +1583,7 @@ _str_index_m(_state *mrb, _value str)
 
   switch (_type(sub)) {
     default: {
-      _value tmp;
+      value tmp;
 
       tmp = _check_string_type(mrb, sub);
       if (_nil_p(tmp)) {
@@ -1614,10 +1614,10 @@ _str_index_m(_state *mrb, _value str)
  *     s = "hello"         #=> "hello"
  *     s.replace "world"   #=> "world"
  */
-static _value
-_str_replace(_state *mrb, _value str)
+static value
+_str_replace(state *mrb, value str)
 {
-  _value str2;
+  value str2;
 
   _get_args(mrb, "S", &str2);
   return str_replace(mrb, _str_ptr(str), _str_ptr(str2));
@@ -1630,10 +1630,10 @@ _str_replace(_state *mrb, _value str)
  *
  *  Returns a new string object containing a copy of <i>str</i>.
  */
-static _value
-_str_init(_state *mrb, _value self)
+static value
+_str_init(state *mrb, value self)
 {
-  _value str2;
+  value str2;
 
   if (_get_args(mrb, "|S", &str2) == 0) {
     struct RString *s = str_new(mrb, 0, 0);
@@ -1664,16 +1664,16 @@ _str_init(_state *mrb, _value self)
  *
  *     'cat and dog'.to_sym   #=> :"cat and dog"
  */
-MRB_API _value
-_str_intern(_state *mrb, _value self)
+MRB_API value
+_str_intern(state *mrb, value self)
 {
   return _symbol_value(_intern_str(mrb, self));
 }
 /* ---------------------------------- */
-MRB_API _value
-_obj_as_string(_state *mrb, _value obj)
+MRB_API value
+_obj_as_string(state *mrb, value obj)
 {
-  _value str;
+  value str;
 
   if (_string_p(obj)) {
     return obj;
@@ -1684,8 +1684,8 @@ _obj_as_string(_state *mrb, _value obj)
   return str;
 }
 
-MRB_API _value
-_ptr_to_str(_state *mrb, void *p)
+MRB_API value
+_ptr_to_str(state *mrb, void *p)
 {
   struct RString *p_str;
   char *p1;
@@ -1714,14 +1714,14 @@ _ptr_to_str(_state *mrb, void *p)
   return _obj_value(p_str);
 }
 
-MRB_API _value
-_string_type(_state *mrb, _value str)
+MRB_API value
+_string_type(state *mrb, value str)
 {
   return _convert_type(mrb, str, MRB_TT_STRING, "String", "to_str");
 }
 
-MRB_API _value
-_check_string_type(_state *mrb, _value str)
+MRB_API value
+_check_string_type(state *mrb, value str)
 {
   return _check_convert_type(mrb, str, MRB_TT_STRING, "String", "to_str");
 }
@@ -1733,8 +1733,8 @@ _check_string_type(_state *mrb, _value str)
  *
  *  Reverses <i>str</i> in place.
  */
-static _value
-_str_reverse_bang(_state *mrb, _value str)
+static value
+_str_reverse_bang(state *mrb, value str)
 {
 #ifdef MRB_UTF8_STRING
   _int utf8_len = RSTRING_CHAR_LEN(str);
@@ -1795,10 +1795,10 @@ _str_reverse_bang(_state *mrb, _value str)
  *
  *     "stressed".reverse   #=> "desserts"
  */
-static _value
-_str_reverse(_state *mrb, _value str)
+static value
+_str_reverse(state *mrb, value str)
 {
-  _value str2 = _str_dup(mrb, str);
+  value str2 = _str_dup(mrb, str);
   _str_reverse_bang(mrb, str2);
   return str2;
 }
@@ -1822,12 +1822,12 @@ _str_reverse(_state *mrb, _value str)
  *     "hello".rindex(101)             #=> 1
  *     "hello".rindex(/[aeiou]/, -2)   #=> 1
  */
-static _value
-_str_rindex(_state *mrb, _value str)
+static value
+_str_rindex(state *mrb, value str)
 {
-  _value *argv;
+  value *argv;
   _int argc;
-  _value sub;
+  value sub;
   _int pos, len = RSTRING_CHAR_LEN(str);
 
   _get_args(mrb, "*!", &argv, &argc);
@@ -1854,7 +1854,7 @@ _str_rindex(_state *mrb, _value str)
 
   switch (_type(sub)) {
     default: {
-      _value tmp;
+      value tmp;
 
       tmp = _check_string_type(mrb, sub);
       if (_nil_p(tmp)) {
@@ -1917,18 +1917,18 @@ _str_rindex(_state *mrb, _value str)
  *     "1,2,,3,4,,".split(',', -4)     #=> ["1", "2", "", "3", "4", "", ""]
  */
 
-static _value
-_str_split_m(_state *mrb, _value str)
+static value
+_str_split_m(state *mrb, value str)
 {
   _int argc;
-  _value spat = _nil_value();
+  value spat = _nil_value();
   enum {awk, string, regexp} split_type = string;
   _int i = 0;
   _int beg;
   _int end;
   _int lim = 0;
   _bool lim_p;
-  _value result, tmp;
+  value result, tmp;
 
   argc = _get_args(mrb, "|oi", &spat, &lim);
   lim_p = (lim > 0 && argc == 2);
@@ -2033,8 +2033,8 @@ _str_split_m(_state *mrb, _value str)
   return result;
 }
 
-MRB_API _value
-_str_len_to_inum(_state *mrb, const char *str, _int len, _int base, int badcheck)
+MRB_API value
+_str_len_to_inum(state *mrb, const char *str, _int len, _int base, int badcheck)
 {
   const char *p = str;
   const char *pend = str + len;
@@ -2200,16 +2200,16 @@ _str_len_to_inum(_state *mrb, const char *str, _int len, _int base, int badcheck
   return _fixnum_value(0);
 }
 
-MRB_API _value
-_cstr_to_inum(_state *mrb, const char *str, int base, int badcheck)
+MRB_API value
+_cstr_to_inum(state *mrb, const char *str, int base, int badcheck)
 {
   return _str_len_to_inum(mrb, str, strlen(str), base, badcheck);
 }
 
 MRB_API const char*
-_string_value_cstr(_state *mrb, _value *ptr)
+_string_value_cstr(state *mrb, value *ptr)
 {
-  _value str = _str_to_str(mrb, *ptr);
+  value str = _str_to_str(mrb, *ptr);
   struct RString *ps = _str_ptr(str);
   _int len = _str_strlen(mrb, ps);
   char *p = RSTR_PTR(ps);
@@ -2225,8 +2225,8 @@ _string_value_cstr(_state *mrb, _value *ptr)
   return p;
 }
 
-MRB_API _value
-_str_to_inum(_state *mrb, _value str, _int base, _bool badcheck)
+MRB_API value
+_str_to_inum(state *mrb, value str, _int base, _bool badcheck)
 {
   const char *s;
   _int len;
@@ -2257,8 +2257,8 @@ _str_to_inum(_state *mrb, _value str, _int base, _bool badcheck)
  *     "1100101".to_i(10)       #=> 1100101
  *     "1100101".to_i(16)       #=> 17826049
  */
-static _value
-_str_to_i(_state *mrb, _value self)
+static value
+_str_to_i(state *mrb, value self)
 {
   _int base = 10;
 
@@ -2271,7 +2271,7 @@ _str_to_i(_state *mrb, _value self)
 
 #ifndef MRB_WITHOUT_FLOAT
 MRB_API double
-_cstr_to_dbl(_state *mrb, const char * p, _bool badcheck)
+_cstr_to_dbl(state *mrb, const char * p, _bool badcheck)
 {
   char *end;
   char buf[DBL_DIG * 4 + 10];
@@ -2334,7 +2334,7 @@ bad:
 }
 
 MRB_API double
-_str_to_dbl(_state *mrb, _value str, _bool badcheck)
+_str_to_dbl(state *mrb, value str, _bool badcheck)
 {
   char *s;
   _int len;
@@ -2368,8 +2368,8 @@ _str_to_dbl(_state *mrb, _value str, _bool badcheck)
  *     "45.67 degrees".to_f   #=> 45.67
  *     "thx1138".to_f         #=> 0.0
  */
-static _value
-_str_to_f(_state *mrb, _value self)
+static value
+_str_to_f(state *mrb, value self)
 {
   return _float_value(mrb, _str_to_dbl(mrb, self, FALSE));
 }
@@ -2383,8 +2383,8 @@ _str_to_f(_state *mrb, _value self)
  *
  *  Returns the receiver.
  */
-static _value
-_str_to_s(_state *mrb, _value self)
+static value
+_str_to_s(state *mrb, value self)
 {
   if (_obj_class(mrb, self) != mrb->string_class) {
     return _str_dup(mrb, self);
@@ -2400,8 +2400,8 @@ _str_to_s(_state *mrb, _value self)
  *  Upcases the contents of <i>str</i>, returning <code>nil</code> if no changes
  *  were made.
  */
-static _value
-_str_upcase_bang(_state *mrb, _value str)
+static value
+_str_upcase_bang(state *mrb, value str)
 {
   struct RString *s = _str_ptr(str);
   char *p, *pend;
@@ -2433,10 +2433,10 @@ _str_upcase_bang(_state *mrb, _value str)
  *
  *     "hEllO".upcase   #=> "HELLO"
  */
-static _value
-_str_upcase(_state *mrb, _value self)
+static value
+_str_upcase(state *mrb, value self)
 {
-  _value str;
+  value str;
 
   str = _str_dup(mrb, self);
   _str_upcase_bang(mrb, str);
@@ -2452,8 +2452,8 @@ _str_upcase(_state *mrb, _value self)
  *  Produces a version of <i>str</i> with all nonprinting characters replaced by
  *  <code>\nnn</code> notation and all special characters escaped.
  */
-_value
-_str_dump(_state *mrb, _value str)
+value
+_str_dump(state *mrb, value str)
 {
   _int len;
   const char *p, *pend;
@@ -2564,8 +2564,8 @@ _str_dump(_state *mrb, _value str)
   return _obj_value(result);
 }
 
-MRB_API _value
-_str_cat(_state *mrb, _value str, const char *ptr, size_t len)
+MRB_API value
+_str_cat(state *mrb, value str, const char *ptr, size_t len)
 {
   struct RString *s = _str_ptr(str);
   size_t capa;
@@ -2609,14 +2609,14 @@ _str_cat(_state *mrb, _value str, const char *ptr, size_t len)
   return str;
 }
 
-MRB_API _value
-_str_cat_cstr(_state *mrb, _value str, const char *ptr)
+MRB_API value
+_str_cat_cstr(state *mrb, value str, const char *ptr)
 {
   return _str_cat(mrb, str, ptr, strlen(ptr));
 }
 
-MRB_API _value
-_str_cat_str(_state *mrb, _value str, _value str2)
+MRB_API value
+_str_cat_str(state *mrb, value str, value str2)
 {
   if (_str_ptr(str) == _str_ptr(str2)) {
     _str_modify(mrb, _str_ptr(str));
@@ -2624,8 +2624,8 @@ _str_cat_str(_state *mrb, _value str, _value str2)
   return _str_cat(mrb, str, RSTRING_PTR(str2), RSTRING_LEN(str2));
 }
 
-MRB_API _value
-_str_append(_state *mrb, _value str1, _value str2)
+MRB_API value
+_str_append(state *mrb, value str1, value str2)
 {
   str2 = _str_to_str(mrb, str2);
   return _str_cat_str(mrb, str1, str2);
@@ -2644,12 +2644,12 @@ _str_append(_state *mrb, _value str1, _value str2)
  *    str[3] = "\b"
  *    str.inspect       #=> "\"hel\\bo\""
  */
-_value
-_str_inspect(_state *mrb, _value str)
+value
+_str_inspect(state *mrb, value str)
 {
   const char *p, *pend;
   char buf[CHAR_ESC_LEN + 1];
-  _value result = _str_new_lit(mrb, "\"");
+  value result = _str_new_lit(mrb, "\"");
 
   p = RSTRING_PTR(str); pend = RSTRING_END(str);
   for (;p < pend; p++) {
@@ -2720,11 +2720,11 @@ _str_inspect(_state *mrb, _value str)
  *    str = "hello"
  *    str.bytes       #=> [104, 101, 108, 108, 111]
  */
-static _value
-_str_bytes(_state *mrb, _value str)
+static value
+_str_bytes(state *mrb, value str)
 {
   struct RString *s = _str_ptr(str);
-  _value a = _ary_new_capa(mrb, RSTR_LEN(s));
+  value a = _ary_new_capa(mrb, RSTR_LEN(s));
   unsigned char *p = (unsigned char *)(RSTR_PTR(s)), *pend = p + RSTR_LEN(s);
 
   while (p < pend) {
@@ -2736,7 +2736,7 @@ _str_bytes(_state *mrb, _value str)
 
 /* ---------------------------*/
 void
-_init_string(_state *mrb)
+_init_string(state *mrb)
 {
   struct RClass *s;
 

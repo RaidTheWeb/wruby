@@ -19,8 +19,8 @@ static const struct _data_type mt_state_type = {
   MT_STATE_KEY, _free,
 };
 
-static _value _random_rand(_state *mrb, _value self);
-static _value _random_srand(_state *mrb, _value self);
+static value _random_rand(state *mrb, value self);
+static value _random_srand(state *mrb, value self);
 
 static void
 mt_srand(mt_state *t, unsigned long seed)
@@ -40,8 +40,8 @@ mt_rand_real(mt_state *t)
   return _random_genrand_real1(t);
 }
 
-static _value
-_random_mt_srand(_state *mrb, mt_state *t, _value seed)
+static value
+_random_mt_srand(state *mrb, mt_state *t, value seed)
 {
   if (_nil_p(seed)) {
     seed = _fixnum_value((_int)(time(NULL) + mt_rand(t)));
@@ -55,10 +55,10 @@ _random_mt_srand(_state *mrb, mt_state *t, _value seed)
   return seed;
 }
 
-static _value
-_random_mt_rand(_state *mrb, mt_state *t, _value max)
+static value
+_random_mt_rand(state *mrb, mt_state *t, value max)
 {
-  _value value;
+  value value;
 
   if (_fixnum(max) == 0) {
     value = _float_value(mrb, mt_rand_real(t));
@@ -70,10 +70,10 @@ _random_mt_rand(_state *mrb, mt_state *t, _value max)
   return value;
 }
 
-static _value
-get_opt(_state* mrb)
+static value
+get_opt(state* mrb)
 {
-  _value arg;
+  value arg;
 
   arg = _nil_value();
   _get_args(mrb, "|o", &arg);
@@ -90,38 +90,38 @@ get_opt(_state* mrb)
   return arg;
 }
 
-static _value
-get_random(_state *mrb) {
+static value
+get_random(state *mrb) {
   return _const_get(mrb,
              _obj_value(_class_get(mrb, "Random")),
              _intern_lit(mrb, "DEFAULT"));
 }
 
 static mt_state *
-get_random_state(_state *mrb)
+get_random_state(state *mrb)
 {
-  _value random_val = get_random(mrb);
+  value random_val = get_random(mrb);
   return DATA_GET_PTR(mrb, random_val, &mt_state_type, mt_state);
 }
 
-static _value
-_random_g_rand(_state *mrb, _value self)
+static value
+_random_g_rand(state *mrb, value self)
 {
-  _value random = get_random(mrb);
+  value random = get_random(mrb);
   return _random_rand(mrb, random);
 }
 
-static _value
-_random_g_srand(_state *mrb, _value self)
+static value
+_random_g_srand(state *mrb, value self)
 {
-  _value random = get_random(mrb);
+  value random = get_random(mrb);
   return _random_srand(mrb, random);
 }
 
-static _value
-_random_init(_state *mrb, _value self)
+static value
+_random_init(state *mrb, value self)
 {
-  _value seed;
+  value seed;
   mt_state *t;
 
   seed = get_opt(mrb);
@@ -152,17 +152,17 @@ _random_init(_state *mrb, _value self)
 }
 
 static void
-_random_rand_seed(_state *mrb, mt_state *t)
+_random_rand_seed(state *mrb, mt_state *t)
 {
   if (!t->has_seed) {
     _random_mt_srand(mrb, t, _nil_value());
   }
 }
 
-static _value
-_random_rand(_state *mrb, _value self)
+static value
+_random_rand(state *mrb, value self)
 {
-  _value max;
+  value max;
   mt_state *t = DATA_GET_PTR(mrb, self, &mt_state_type, mt_state);
 
   max = get_opt(mrb);
@@ -170,11 +170,11 @@ _random_rand(_state *mrb, _value self)
   return _random_mt_rand(mrb, t, max);
 }
 
-static _value
-_random_srand(_state *mrb, _value self)
+static value
+_random_srand(state *mrb, value self)
 {
-  _value seed;
-  _value old_seed;
+  value seed;
+  value old_seed;
   mt_state *t = DATA_GET_PTR(mrb, self, &mt_state_type, mt_state);
 
   seed = get_opt(mrb);
@@ -199,8 +199,8 @@ _random_srand(_state *mrb, _value self)
  *  Shuffles elements in self in place.
  */
 
-static _value
-_ary_shuffle_bang(_state *mrb, _value ary)
+static value
+_ary_shuffle_bang(state *mrb, value ary)
 {
   _int i;
   mt_state *random = NULL;
@@ -217,8 +217,8 @@ _ary_shuffle_bang(_state *mrb, _value ary)
 
     for (i = RARRAY_LEN(ary) - 1; i > 0; i--)  {
       _int j;
-      _value *ptr = RARRAY_PTR(ary);
-      _value tmp;
+      value *ptr = RARRAY_PTR(ary);
+      value tmp;
 
 
       j = _fixnum(_random_mt_rand(mrb, random, _fixnum_value(RARRAY_LEN(ary))));
@@ -239,10 +239,10 @@ _ary_shuffle_bang(_state *mrb, _value ary)
  *  Returns a new array with elements of self shuffled.
  */
 
-static _value
-_ary_shuffle(_state *mrb, _value ary)
+static value
+_ary_shuffle(state *mrb, value ary)
 {
-  _value new_ary = _ary_new_from_values(mrb, RARRAY_LEN(ary), RARRAY_PTR(ary));
+  value new_ary = _ary_new_from_values(mrb, RARRAY_LEN(ary), RARRAY_PTR(ary));
   _ary_shuffle_bang(mrb, new_ary);
 
   return new_ary;
@@ -263,8 +263,8 @@ _ary_shuffle(_state *mrb, _value ary)
  *  returns an empty array.
  */
 
-static _value
-_ary_sample(_state *mrb, _value ary)
+static value
+_ary_sample(state *mrb, value ary)
 {
   _int n = 0;
   _bool given;
@@ -289,7 +289,7 @@ _ary_sample(_state *mrb, _value ary)
     }
   }
   else {
-    _value result;
+    value result;
     _int i, j;
 
     if (n < 0) _raise(mrb, E_ARGUMENT_ERROR, "negative sample number");
@@ -319,7 +319,7 @@ _ary_sample(_state *mrb, _value ary)
 }
 
 
-void _mruby_random_gem_init(_state *mrb)
+void _mruby_random_gem_init(state *mrb)
 {
   struct RClass *random;
   struct RClass *array = mrb->array_class;
@@ -344,6 +344,6 @@ void _mruby_random_gem_init(_state *mrb)
           _obj_new(mrb, random, 0, NULL));
 }
 
-void _mruby_random_gem_final(_state *mrb)
+void _mruby_random_gem_final(state *mrb)
 {
 }

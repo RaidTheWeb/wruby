@@ -12,7 +12,7 @@
 #include <mruby/irep.h>
 
 MRB_API struct RData*
-_data_object_alloc(_state *mrb, struct RClass *klass, void *ptr, const _data_type *type)
+_data_object_alloc(state *mrb, struct RClass *klass, void *ptr, const _data_type *type)
 {
   struct RData *data;
 
@@ -24,7 +24,7 @@ _data_object_alloc(_state *mrb, struct RClass *klass, void *ptr, const _data_typ
 }
 
 MRB_API void
-_data_check_type(_state *mrb, _value obj, const _data_type *type)
+_data_check_type(state *mrb, value obj, const _data_type *type)
 {
   if (_type(obj) != MRB_TT_DATA) {
     _check_type(mrb, obj, MRB_TT_DATA);
@@ -46,7 +46,7 @@ _data_check_type(_state *mrb, _value obj, const _data_type *type)
 }
 
 MRB_API void*
-_data_check_get_ptr(_state *mrb, _value obj, const _data_type *type)
+_data_check_get_ptr(state *mrb, value obj, const _data_type *type)
 {
   if (_type(obj) != MRB_TT_DATA) {
     return NULL;
@@ -58,14 +58,14 @@ _data_check_get_ptr(_state *mrb, _value obj, const _data_type *type)
 }
 
 MRB_API void*
-_data_get_ptr(_state *mrb, _value obj, const _data_type *type)
+_data_get_ptr(state *mrb, value obj, const _data_type *type)
 {
   _data_check_type(mrb, obj, type);
   return DATA_PTR(obj);
 }
 
 MRB_API _sym
-_obj_to_sym(_state *mrb, _value name)
+_obj_to_sym(state *mrb, value name)
 {
   _sym id;
 
@@ -112,7 +112,7 @@ _float_id(_float f)
 }
 
 MRB_API _int
-_obj_id(_value obj)
+_obj_id(value obj)
 {
   _int tt = _type(obj);
 
@@ -160,18 +160,18 @@ _obj_id(_value obj)
 
 #ifdef MRB_WORD_BOXING
 #ifndef MRB_WITHOUT_FLOAT
-MRB_API _value
-_word_boxing_float_value(_state *mrb, _float f)
+MRB_API value
+_word_boxing_float_value(state *mrb, _float f)
 {
-  _value v;
+  value v;
 
   v.value.p = _obj_alloc(mrb, MRB_TT_FLOAT, mrb->float_class);
   v.value.fp->f = f;
   return v;
 }
 
-MRB_API _value
-_word_boxing_float_pool(_state *mrb, _float f)
+MRB_API value
+_word_boxing_float_pool(state *mrb, _float f)
 {
   struct RFloat *nf = (struct RFloat *)_malloc(mrb, sizeof(struct RFloat));
   nf->tt = MRB_TT_FLOAT;
@@ -181,10 +181,10 @@ _word_boxing_float_pool(_state *mrb, _float f)
 }
 #endif  /* MRB_WITHOUT_FLOAT */
 
-MRB_API _value
-_word_boxing_cptr_value(_state *mrb, void *p)
+MRB_API value
+_word_boxing_cptr_value(state *mrb, void *p)
 {
-  _value v;
+  value v;
 
   v.value.p = _obj_alloc(mrb, MRB_TT_CPTR, mrb->object_class);
   v.value.vp->p = p;
@@ -193,7 +193,7 @@ _word_boxing_cptr_value(_state *mrb, void *p)
 #endif  /* MRB_WORD_BOXING */
 
 MRB_API _bool
-_regexp_p(_state *mrb, _value v)
+_regexp_p(state *mrb, value v)
 {
   if (mrb->flags & MRB_STATE_NO_REGEXP) {
     return FALSE;

@@ -56,7 +56,7 @@ parse_args(int argc, char **argv, struct strip_args *args)
 }
 
 static int
-strip(_state *mrb, struct strip_args *args)
+strip(state *mrb, struct strip_args *args)
 {
   int i;
 
@@ -112,7 +112,7 @@ main(int argc, char **argv)
 {
   struct strip_args args;
   int args_result;
-  _state *mrb;
+  state *mrb;
   int ret;
 
   if (argc <= 1) {
@@ -128,7 +128,7 @@ main(int argc, char **argv)
   }
   mrb = _open_core(_default_allocf, NULL);
   if (mrb == NULL) {
-    fputs("Invalid _state, exiting mruby-strip\n", stderr);
+    fputs("Invalid state, exiting mruby-strip\n", stderr);
     return EXIT_FAILURE;
   }
 

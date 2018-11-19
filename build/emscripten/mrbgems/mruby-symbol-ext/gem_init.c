@@ -75,10 +75,10 @@ gem_mrblib_irep_mruby_symbol_ext[] = {
 0x04,0x00,0x04,0x00,0x01,0x00,0x00,0x00,0x02,0x00,0x05,0x00,0x03,0x00,0x00,0x00,
 0x01,0x45,0x4e,0x44,0x00,0x00,0x00,0x00,0x08,
 };
-void _mruby_symbol_ext_gem_init(_state *mrb);
-void _mruby_symbol_ext_gem_final(_state *mrb);
+void _mruby_symbol_ext_gem_init(state *mrb);
+void _mruby_symbol_ext_gem_final(state *mrb);
 
-void GENERATED_TMP__mruby_symbol_ext_gem_init(_state *mrb) {
+void GENERATED_TMP__mruby_symbol_ext_gem_init(state *mrb) {
   int ai = _gc_arena_save(mrb);
   _mruby_symbol_ext_gem_init(mrb);
   _load_irep(mrb, gem_mrblib_irep_mruby_symbol_ext);
@@ -90,6 +90,6 @@ void GENERATED_TMP__mruby_symbol_ext_gem_init(_state *mrb) {
   _gc_arena_restore(mrb, ai);
 }
 
-void GENERATED_TMP__mruby_symbol_ext_gem_final(_state *mrb) {
+void GENERATED_TMP__mruby_symbol_ext_gem_final(state *mrb) {
   _mruby_symbol_ext_gem_final(mrb);
 }

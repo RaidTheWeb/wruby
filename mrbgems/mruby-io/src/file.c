@@ -85,8 +85,8 @@ flock(int fd, int operation) {
 }
 #endif
 
-_value
-_file_s_umask(_state *mrb, _value klass)
+value
+_file_s_umask(state *mrb, value klass)
 {
 #if defined(_WIN32) || defined(_WIN64)
   /* nothing to do on windows */
@@ -104,11 +104,11 @@ _file_s_umask(_state *mrb, _value klass)
 #endif
 }
 
-static _value
-_file_s_unlink(_state *mrb, _value obj)
+static value
+_file_s_unlink(state *mrb, value obj)
 {
-  _value *argv;
-  _value pathv;
+  value *argv;
+  value pathv;
   _int argc, i;
   char *path;
 
@@ -127,10 +127,10 @@ _file_s_unlink(_state *mrb, _value obj)
   return _fixnum_value(argc);
 }
 
-static _value
-_file_s_rename(_state *mrb, _value obj)
+static value
+_file_s_rename(state *mrb, value obj)
 {
-  _value from, to;
+  value from, to;
   char *src, *dst;
 
   _get_args(mrb, "SS", &from, &to);
@@ -153,15 +153,15 @@ _file_s_rename(_state *mrb, _value obj)
   return _fixnum_value(0);
 }
 
-static _value
-_file_dirname(_state *mrb, _value klass)
+static value
+_file_dirname(state *mrb, value klass)
 {
 #if defined(_WIN32) || defined(_WIN64)
   char dname[_MAX_DIR], vname[_MAX_DRIVE];
   char buffer[_MAX_DRIVE + _MAX_DIR];
   char *path;
   size_t ridx;
-  _value s;
+  value s;
   _get_args(mrb, "S", &s);
   path = _locale_from_utf8(_str_to_cstr(mrb, s), -1);
   _splitpath((const char*)path, vname, dname, NULL, NULL);
@@ -180,7 +180,7 @@ _file_dirname(_state *mrb, _value klass)
   return _str_new_cstr(mrb, buffer);
 #else
   char *dname, *path;
-  _value s;
+  value s;
   _get_args(mrb, "S", &s);
   path = _locale_from_utf8(_str_to_cstr(mrb, s), -1);
 
@@ -193,8 +193,8 @@ _file_dirname(_state *mrb, _value klass)
 #endif
 }
 
-static _value
-_file_basename(_state *mrb, _value klass)
+static value
+_file_basename(state *mrb, value klass)
 {
   // NOTE: Do not use _locale_from_utf8 here
 #if defined(_WIN32) || defined(_WIN64)
@@ -203,7 +203,7 @@ _file_basename(_state *mrb, _value klass)
   char *path;
   size_t ridx;
   char buffer[_MAX_DIR + _MAX_EXT];
-  _value s;
+  value s;
 
   _get_args(mrb, "S", &s);
   path = _str_to_cstr(mrb, s);
@@ -223,7 +223,7 @@ _file_basename(_state *mrb, _value klass)
   return _str_new_cstr(mrb, buffer);
 #else
   char *bname, *path;
-  _value s;
+  value s;
   _get_args(mrb, "S", &s);
   path = _str_to_cstr(mrb, s);
   if ((bname = basename(path)) == NULL) {
@@ -234,10 +234,10 @@ _file_basename(_state *mrb, _value klass)
 #endif
 }
 
-static _value
-_file_realpath(_state *mrb, _value klass)
+static value
+_file_realpath(state *mrb, value klass)
 {
-  _value pathname, dir_string, s, result;
+  value pathname, dir_string, s, result;
   _int argc;
   char *cpath;
 
@@ -259,10 +259,10 @@ _file_realpath(_state *mrb, _value klass)
   return result;
 }
 
-_value
-_file__getwd(_state *mrb, _value klass)
+value
+_file__getwd(state *mrb, value klass)
 {
-  _value path;
+  value path;
   char buf[MAXPATHLEN], *utf8;
 
   if (GETCWD(buf, MAXPATHLEN) == NULL) {
@@ -280,15 +280,15 @@ _file_is_absolute_path(const char *path)
   return (path[0] == '/');
 }
 
-static _value
-_file__gethome(_state *mrb, _value klass)
+static value
+_file__gethome(state *mrb, value klass)
 {
   _int argc;
   char *home;
-  _value path;
+  value path;
 
 #ifndef _WIN32
-  _value username;
+  value username;
 
   argc = _get_args(mrb, "|S", &username);
   if (argc == 0) {
@@ -334,10 +334,10 @@ _file__gethome(_state *mrb, _value klass)
 #endif
 }
 
-static _value
-_file_mtime(_state *mrb, _value self)
+static value
+_file_mtime(state *mrb, value self)
 {
-  _value obj;
+  value obj;
   struct stat st;
   int fd;
 
@@ -348,8 +348,8 @@ _file_mtime(_state *mrb, _value self)
   return _funcall(mrb, obj, "at", 1, _fixnum_value(st.st_mtime));
 }
 
-_value
-_file_flock(_state *mrb, _value self)
+value
+_file_flock(state *mrb, value self)
 {
 #if defined(sun)
   _raise(mrb, E_NOTIMP_ERROR, "flock is not supported on Illumos/Solaris/Windows");
@@ -382,13 +382,13 @@ _file_flock(_state *mrb, _value self)
   return _fixnum_value(0);
 }
 
-static _value
-_file_s_symlink(_state *mrb, _value klass)
+static value
+_file_s_symlink(state *mrb, value klass)
 {
 #if defined(_WIN32) || defined(_WIN64)
   _raise(mrb, E_NOTIMP_ERROR, "symlink is not supported on this platform");
 #else
-  _value from, to;
+  value from, to;
   const char *src, *dst;
   int ai = _gc_arena_save(mrb);
 
@@ -408,11 +408,11 @@ _file_s_symlink(_state *mrb, _value klass)
   return _fixnum_value(0);
 }
 
-static _value
-_file_s_chmod(_state *mrb, _value klass) {
+static value
+_file_s_chmod(state *mrb, value klass) {
   _int mode;
   _int argc, i;
-  _value *filenames;
+  value *filenames;
   int ai = _gc_arena_save(mrb);
 
   _get_args(mrb, "i*", &mode, &filenames, &argc);
@@ -430,8 +430,8 @@ _file_s_chmod(_state *mrb, _value klass) {
   return _fixnum_value(argc);
 }
 
-static _value
-_file_s_readlink(_state *mrb, _value klass) {
+static value
+_file_s_readlink(state *mrb, value klass) {
 #if defined(_WIN32) || defined(_WIN64)
   _raise(mrb, E_NOTIMP_ERROR, "readlink is not supported on this platform");
   return _nil_value(); // unreachable
@@ -439,7 +439,7 @@ _file_s_readlink(_state *mrb, _value klass) {
   char *path, *buf, *tmp;
   size_t bufsize = 100;
   ssize_t rc;
-  _value ret;
+  value ret;
   int ai = _gc_arena_save(mrb);
 
   _get_args(mrb, "z", &path);
@@ -466,7 +466,7 @@ _file_s_readlink(_state *mrb, _value klass) {
 }
 
 void
-_init_file(_state *mrb)
+_init_file(state *mrb)
 {
   struct RClass *io, *file, *cnst;
 

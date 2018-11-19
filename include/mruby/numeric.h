@@ -27,19 +27,19 @@ MRB_BEGIN_DECL
 #endif
 
 #ifndef MRB_WITHOUT_FLOAT
-MRB_API _value _flo_to_fixnum(_state *mrb, _value val);
+MRB_API value _flo_to_fixnum(state *mrb, value val);
 #endif
-MRB_API _value _fixnum_to_str(_state *mrb, _value x, _int base);
+MRB_API value _fixnum_to_str(state *mrb, value x, _int base);
 /* ArgumentError if format string doesn't match /%(\.[0-9]+)?[aAeEfFgG]/ */
 #ifndef MRB_WITHOUT_FLOAT
-MRB_API _value _float_to_str(_state *mrb, _value x, const char *fmt);
-MRB_API _float _to_flo(_state *mrb, _value x);
+MRB_API value _float_to_str(state *mrb, value x, const char *fmt);
+MRB_API _float _to_flo(state *mrb, value x);
 #endif
 
-_value _fixnum_plus(_state *mrb, _value x, _value y);
-_value _fixnum_minus(_state *mrb, _value x, _value y);
-_value _fixnum_mul(_state *mrb, _value x, _value y);
-_value _num_div(_state *mrb, _value x, _value y);
+value _fixnum_plus(state *mrb, value x, value y);
+value _fixnum_minus(state *mrb, value x, value y);
+value _fixnum_mul(state *mrb, value x, value y);
+value _num_div(state *mrb, value x, value y);
 
 #ifndef __has_builtin
   #define __has_builtin(x) 0

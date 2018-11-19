@@ -58,13 +58,13 @@
 # endif
 #endif
 
-/* represent _value in boxed double; conflict with MRB_USE_FLOAT and MRB_WITHOUT_FLOAT */
+/* represent value in boxed double; conflict with MRB_USE_FLOAT and MRB_WITHOUT_FLOAT */
 //#define MRB_NAN_BOXING
 
 /* define on big endian machines; used by MRB_NAN_BOXING */
 //#define MRB_ENDIAN_BIG
 
-/* represent _value as a word (natural unit of data for the processor) */
+/* represent value as a word (natural unit of data for the processor) */
 //#define MRB_WORD_BOXING
 
 /* string class to handle UTF-8 encoding */

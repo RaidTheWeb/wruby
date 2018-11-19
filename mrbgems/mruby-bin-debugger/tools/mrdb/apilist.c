@@ -22,7 +22,7 @@ typedef struct source_file {
 } source_file;
 
 static void
-source_file_free(_state *mrb, source_file *file)
+source_file_free(state *mrb, source_file *file)
 {
   if (file != NULL) {
     if (file->path != NULL) {
@@ -37,7 +37,7 @@ source_file_free(_state *mrb, source_file *file)
 }
 
 static char*
-build_path(_state *mrb, const char *dir, const char *base)
+build_path(state *mrb, const char *dir, const char *base)
 {
   int len;
   char *path = NULL;
@@ -61,7 +61,7 @@ build_path(_state *mrb, const char *dir, const char *base)
 }
 
 static char*
-dirname(_state *mrb, const char *path)
+dirname(state *mrb, const char *path)
 {
   size_t len;
   const char *p;
@@ -82,7 +82,7 @@ dirname(_state *mrb, const char *path)
 }
 
 static source_file*
-source_file_new(_state *mrb, _debug_context *dbg, char *filename)
+source_file_new(state *mrb, _debug_context *dbg, char *filename)
 {
   source_file *file;
 
@@ -169,7 +169,7 @@ show_lines(source_file *file, uint16_t line_min, uint16_t line_max)
 }
 
 char*
-_debug_get_source(_state *mrb, mrdb_state *mrdb, const char *srcpath, const char *filename)
+_debug_get_source(state *mrb, mrdb_state *mrdb, const char *srcpath, const char *filename)
 {
   int i;
   FILE *fp;
@@ -208,7 +208,7 @@ _debug_get_source(_state *mrb, mrdb_state *mrdb, const char *srcpath, const char
 }
 
 int32_t
-_debug_list(_state *mrb, _debug_context *dbg, char *filename, uint16_t line_min, uint16_t line_max)
+_debug_list(state *mrb, _debug_context *dbg, char *filename, uint16_t line_min, uint16_t line_max)
 {
   char *ext;
   source_file *file;

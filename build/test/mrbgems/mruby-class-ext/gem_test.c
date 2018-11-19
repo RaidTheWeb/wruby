@@ -204,18 +204,18 @@ gem_test_irep_mruby_class_ext_0[] = {
 0x07,0x00,0x03,0x00,0x08,0x00,0x04,0x00,0x08,0x00,0x01,0x00,0x09,0x00,0x01,0x00,
 0x08,0x00,0x02,0x00,0x08,0x00,0x01,0x45,0x4e,0x44,0x00,0x00,0x00,0x00,0x08,
 };
-void _mruby_class_ext_gem_test(_state *mrb);
-void GENERATED_TMP__mruby_class_ext_gem_init(_state *mrb);
-void GENERATED_TMP__mruby_class_ext_gem_final(_state *mrb);
-void _init_test_driver(_state *mrb, _bool verbose);
-void _t_pass_result(_state *dst, _state *src);
-void GENERATED_TMP__mruby_class_ext_gem_test(_state *mrb) {
-  _state *mrb2;
+void _mruby_class_ext_gem_test(state *mrb);
+void GENERATED_TMP__mruby_class_ext_gem_init(state *mrb);
+void GENERATED_TMP__mruby_class_ext_gem_final(state *mrb);
+void _init_test_driver(state *mrb, _bool verbose);
+void _t_pass_result(state *dst, state *src);
+void GENERATED_TMP__mruby_class_ext_gem_test(state *mrb) {
+  state *mrb2;
   int ai;
   ai = _gc_arena_save(mrb);
   mrb2 = _open_core(_default_allocf, NULL);
   if (mrb2 == NULL) {
-    fprintf(stderr, "Invalid _state, exiting %s", __FUNCTION__);
+    fprintf(stderr, "Invalid state, exiting %s", __FUNCTION__);
     exit(EXIT_FAILURE);
   }
   GENERATED_TMP__mruby_class_ext_gem_init(mrb2);

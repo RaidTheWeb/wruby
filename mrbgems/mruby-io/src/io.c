@@ -57,25 +57,25 @@ typedef _int pid_t;
 #include <string.h>
 
 
-static void _io_free(_state *mrb, void *ptr);
+static void _io_free(state *mrb, void *ptr);
 struct _data_type _io_type = { "IO", _io_free };
 
 
-static struct _io *io_get_open_fptr(_state *mrb, _value self);
-static int _io_modestr_to_flags(_state *mrb, const char *modestr);
-static int _io_flags_to_modenum(_state *mrb, int flags);
-static void fptr_finalize(_state *mrb, struct _io *fptr, int quiet);
+static struct _io *io_get_open_fptr(state *mrb, value self);
+static int _io_modestr_to_flags(state *mrb, const char *modestr);
+static int _io_flags_to_modenum(state *mrb, int flags);
+static void fptr_finalize(state *mrb, struct _io *fptr, int quiet);
 
 #if MRUBY_RELEASE_NO < 10000
 static struct RClass *
-_module_get(_state *mrb, const char *name)
+_module_get(state *mrb, const char *name)
 {
   return _class_get(mrb, name);
 }
 #endif
 
 static struct _io *
-io_get_open_fptr(_state *mrb, _value self)
+io_get_open_fptr(state *mrb, value self)
 {
   struct _io *fptr;
 
@@ -90,10 +90,10 @@ io_get_open_fptr(_state *mrb, _value self)
 }
 
 static void
-io_set_process_status(_state *mrb, pid_t pid, int status)
+io_set_process_status(state *mrb, pid_t pid, int status)
 {
   struct RClass *c_process, *c_status;
-  _value v;
+  value v;
 
   c_status = NULL;
   if (_class_defined(mrb, "Process")) {
@@ -111,7 +111,7 @@ io_set_process_status(_state *mrb, pid_t pid, int status)
 }
 
 static int
-_io_modestr_to_flags(_state *mrb, const char *mode)
+_io_modestr_to_flags(state *mrb, const char *mode)
 {
   int flags = 0;
   const char *m = mode;
@@ -149,7 +149,7 @@ _io_modestr_to_flags(_state *mrb, const char *mode)
 }
 
 static int
-_io_flags_to_modenum(_state *mrb, int flags)
+_io_flags_to_modenum(state *mrb, int flags)
 {
   int modenum = 0;
 
@@ -184,7 +184,7 @@ _io_flags_to_modenum(_state *mrb, int flags)
 }
 
 static void
-_fd_cloexec(_state *mrb, int fd)
+_fd_cloexec(state *mrb, int fd)
 {
 #if defined(F_GETFD) && defined(F_SETFD) && defined(FD_CLOEXEC)
   int flags, flags2;
@@ -211,7 +211,7 @@ _fd_cloexec(_state *mrb, int fd)
 
 #if !defined(_WIN32) && !TARGET_OS_IPHONE
 static int
-_cloexec_pipe(_state *mrb, int fildes[2])
+_cloexec_pipe(state *mrb, int fildes[2])
 {
   int ret;
   ret = pipe(fildes);
@@ -223,7 +223,7 @@ _cloexec_pipe(_state *mrb, int fildes[2])
 }
 
 static int
-_pipe(_state *mrb, int pipes[2])
+_pipe(state *mrb, int pipes[2])
 {
   int ret;
   ret = _cloexec_pipe(mrb, pipes);
@@ -256,7 +256,7 @@ _proc_exec(const char *pname)
 #endif
 
 static void
-_io_free(_state *mrb, void *ptr)
+_io_free(state *mrb, void *ptr)
 {
   struct _io *io = (struct _io *)ptr;
   if (io != NULL) {
@@ -266,7 +266,7 @@ _io_free(_state *mrb, void *ptr)
 }
 
 static struct _io *
-_io_alloc(_state *mrb)
+_io_alloc(state *mrb)
 {
   struct _io *fptr;
 
@@ -286,9 +286,9 @@ _io_alloc(_state *mrb)
 #endif
 
 static int
-option_to_fd(_state *mrb, _value obj, const char *key)
+option_to_fd(state *mrb, value obj, const char *key)
 {
-  _value opt = _funcall(mrb, obj, "[]", 1, _symbol_value(_intern_static(mrb, key, strlen(key))));
+  value opt = _funcall(mrb, obj, "[]", 1, _symbol_value(_intern_static(mrb, key, strlen(key))));
   if (_nil_p(opt)) {
     return -1;
   }
@@ -306,12 +306,12 @@ option_to_fd(_state *mrb, _value obj, const char *key)
 }
 
 #ifdef _WIN32
-_value
-_io_s_popen(_state *mrb, _value klass)
+value
+_io_s_popen(state *mrb, value klass)
 {
-  _value cmd, io;
-  _value mode = _str_new_cstr(mrb, "r");
-  _value opt  = _hash_new(mrb);
+  value cmd, io;
+  value mode = _str_new_cstr(mrb, "r");
+  value opt  = _hash_new(mrb);
 
   struct _io *fptr;
   const char *pname;
@@ -404,19 +404,19 @@ _io_s_popen(_state *mrb, _value klass)
   return io;
 }
 #elif TARGET_OS_IPHONE
-_value
-_io_s_popen(_state *mrb, _value klass)
+value
+_io_s_popen(state *mrb, value klass)
 {
   _raise(mrb, E_NOTIMP_ERROR, "IO#popen is not supported on the platform");
   return _false_value();
 }
 #else
-_value
-_io_s_popen(_state *mrb, _value klass)
+value
+_io_s_popen(state *mrb, value klass)
 {
-  _value cmd, io, result;
-  _value mode = _str_new_cstr(mrb, "r");
-  _value opt  = _hash_new(mrb);
+  value cmd, io, result;
+  value mode = _str_new_cstr(mrb, "r");
+  value opt  = _hash_new(mrb);
 
   struct _io *fptr;
   const char *pname;
@@ -548,7 +548,7 @@ _io_s_popen(_state *mrb, _value klass)
 #endif
 
 static int
-_dup(_state *mrb, int fd, _bool *failed)
+_dup(state *mrb, int fd, _bool *failed)
 {
   int new_fd;
 
@@ -561,11 +561,11 @@ _dup(_state *mrb, int fd, _bool *failed)
   return new_fd;
 }
 
-_value
-_io_initialize_copy(_state *mrb, _value copy)
+value
+_io_initialize_copy(state *mrb, value copy)
 {
-  _value orig;
-  _value buf;
+  value orig;
+  value buf;
   struct _io *fptr_copy;
   struct _io *fptr_orig;
   _bool failed = TRUE;
@@ -610,12 +610,12 @@ _io_initialize_copy(_state *mrb, _value copy)
   return copy;
 }
 
-_value
-_io_initialize(_state *mrb, _value io)
+value
+_io_initialize(state *mrb, value io)
 {
   struct _io *fptr;
   _int fd;
-  _value mode, opt;
+  value mode, opt;
   int flags;
 
   mode = opt = _nil_value();
@@ -650,7 +650,7 @@ _io_initialize(_state *mrb, _value io)
 }
 
 static void
-fptr_finalize(_state *mrb, struct _io *fptr, int quiet)
+fptr_finalize(state *mrb, struct _io *fptr, int quiet)
 {
   int saved_errno = 0;
 
@@ -712,8 +712,8 @@ fptr_finalize(_state *mrb, struct _io *fptr, int quiet)
   }
 }
 
-_value
-_io_check_readable(_state *mrb, _value self)
+value
+_io_check_readable(state *mrb, value self)
 {
   struct _io *fptr = io_get_open_fptr(mrb, self);
   if (! fptr->readable) {
@@ -722,8 +722,8 @@ _io_check_readable(_state *mrb, _value self)
   return _nil_value();
 }
 
-_value
-_io_isatty(_state *mrb, _value self)
+value
+_io_isatty(state *mrb, value self)
 {
   struct _io *fptr;
 
@@ -733,12 +733,12 @@ _io_isatty(_state *mrb, _value self)
   return _true_value();
 }
 
-_value
-_io_s_for_fd(_state *mrb, _value klass)
+value
+_io_s_for_fd(state *mrb, value klass)
 {
   struct RClass *c = _class_ptr(klass);
   enum _vtype ttype = MRB_INSTANCE_TT(c);
-  _value obj;
+  value obj;
 
   /* copied from _instance_alloc() */
   if (ttype == 0) ttype = MRB_TT_OBJECT;
@@ -746,8 +746,8 @@ _io_s_for_fd(_state *mrb, _value klass)
   return _io_initialize(mrb, obj);
 }
 
-_value
-_io_s_sysclose(_state *mrb, _value klass)
+value
+_io_s_sysclose(state *mrb, value klass)
 {
   _int fd;
   _get_args(mrb, "i", &fd);
@@ -758,9 +758,9 @@ _io_s_sysclose(_state *mrb, _value klass)
 }
 
 int
-_cloexec_open(_state *mrb, const char *pathname, _int flags, _int mode)
+_cloexec_open(state *mrb, const char *pathname, _int flags, _int mode)
 {
-  _value emsg;
+  value emsg;
   int fd, retry = FALSE;
   char* fname = _locale_from_utf8(pathname, -1);
 
@@ -795,11 +795,11 @@ reopen:
   return fd;
 }
 
-_value
-_io_s_sysopen(_state *mrb, _value klass)
+value
+_io_s_sysopen(state *mrb, value klass)
 {
-  _value path = _nil_value();
-  _value mode = _nil_value();
+  value path = _nil_value();
+  value mode = _nil_value();
   _int fd, perm = -1;
   const char *pat;
   int flags, modenum;
@@ -819,11 +819,11 @@ _io_s_sysopen(_state *mrb, _value klass)
   return _fixnum_value(fd);
 }
 
-_value
-_io_sysread(_state *mrb, _value io)
+value
+_io_sysread(state *mrb, value io)
 {
   struct _io *fptr;
-  _value buf = _nil_value();
+  value buf = _nil_value();
   _int maxlen;
   int ret;
 
@@ -871,8 +871,8 @@ _io_sysread(_state *mrb, _value io)
   return buf;
 }
 
-_value
-_io_sysseek(_state *mrb, _value io)
+value
+_io_sysseek(state *mrb, value io)
 {
   struct _io *fptr;
   off_t pos;
@@ -899,11 +899,11 @@ _io_sysseek(_state *mrb, _value io)
   }
 }
 
-_value
-_io_syswrite(_state *mrb, _value io)
+value
+_io_syswrite(state *mrb, value io)
 {
   struct _io *fptr;
-  _value str, buf;
+  value str, buf;
   int fd, length;
 
   fptr = io_get_open_fptr(mrb, io);
@@ -931,8 +931,8 @@ _io_syswrite(_state *mrb, _value io)
   return _fixnum_value(length);
 }
 
-_value
-_io_close(_state *mrb, _value self)
+value
+_io_close(state *mrb, value self)
 {
   struct _io *fptr;
   fptr = io_get_open_fptr(mrb, self);
@@ -940,8 +940,8 @@ _io_close(_state *mrb, _value self)
   return _nil_value();
 }
 
-_value
-_io_close_write(_state *mrb, _value self)
+value
+_io_close_write(state *mrb, value self)
 {
   struct _io *fptr;
   fptr = io_get_open_fptr(mrb, self);
@@ -951,8 +951,8 @@ _io_close_write(_state *mrb, _value self)
   return _nil_value();
 }
 
-_value
-_io_closed(_state *mrb, _value io)
+value
+_io_closed(state *mrb, value io)
 {
   struct _io *fptr;
   fptr = (struct _io *)_get_datatype(mrb, io, &_io_type);
@@ -963,8 +963,8 @@ _io_closed(_state *mrb, _value io)
   return _true_value();
 }
 
-_value
-_io_pid(_state *mrb, _value io)
+value
+_io_pid(state *mrb, value io)
 {
   struct _io *fptr;
   fptr = io_get_open_fptr(mrb, io);
@@ -977,7 +977,7 @@ _io_pid(_state *mrb, _value io)
 }
 
 static struct timeval
-time2timeval(_state *mrb, _value time)
+time2timeval(state *mrb, value time)
 {
   struct timeval t = { 0, 0 };
 
@@ -1002,9 +1002,9 @@ time2timeval(_state *mrb, _value time)
 }
 
 static int
-_io_read_data_pending(_state *mrb, _value io)
+_io_read_data_pending(state *mrb, value io)
 {
-  _value buf = _iv_get(mrb, io, _intern_cstr(mrb, "@buf"));
+  value buf = _iv_get(mrb, io, _intern_cstr(mrb, "@buf"));
   if (_type(buf) == MRB_TT_STRING && RSTRING_LEN(buf) > 0) {
     return 1;
   }
@@ -1012,11 +1012,11 @@ _io_read_data_pending(_state *mrb, _value io)
 }
 
 #if !defined(_WIN32) && !TARGET_OS_IPHONE
-static _value
-_io_s_pipe(_state *mrb, _value klass)
+static value
+_io_s_pipe(state *mrb, value klass)
 {
-  _value r = _nil_value();
-  _value w = _nil_value();
+  value r = _nil_value();
+  value w = _nil_value();
   struct _io *fptr_r;
   struct _io *fptr_w;
   int pipes[2];
@@ -1049,18 +1049,18 @@ _io_s_pipe(_state *mrb, _value klass)
 }
 #endif
 
-static _value
-_io_s_select(_state *mrb, _value klass)
+static value
+_io_s_select(state *mrb, value klass)
 {
-  _value *argv;
+  value *argv;
   _int argc;
-  _value read, read_io, write, except, timeout, list;
+  value read, read_io, write, except, timeout, list;
   struct timeval *tp, timerec;
   fd_set pset, rset, wset, eset;
   fd_set *rp, *wp, *ep;
   struct _io *fptr;
   int pending = 0;
-  _value result;
+  value result;
   int max = 0;
   int interrupt_flag = 0;
   int i, n;
@@ -1211,16 +1211,16 @@ retry:
   return result;
 }
 
-_value
-_io_fileno(_state *mrb, _value io)
+value
+_io_fileno(state *mrb, value io)
 {
   struct _io *fptr;
   fptr = io_get_open_fptr(mrb, io);
   return _fixnum_value(fptr->fd);
 }
 
-_value
-_io_close_on_exec_p(_state *mrb, _value self)
+value
+_io_close_on_exec_p(state *mrb, value self)
 {
 #if defined(F_GETFD) && defined(F_SETFD) && defined(FD_CLOEXEC)
   struct _io *fptr;
@@ -1243,8 +1243,8 @@ _io_close_on_exec_p(_state *mrb, _value self)
 #endif
 }
 
-_value
-_io_set_close_on_exec(_state *mrb, _value self)
+value
+_io_set_close_on_exec(state *mrb, value self)
 {
 #if defined(F_GETFD) && defined(F_SETFD) && defined(FD_CLOEXEC)
   struct _io *fptr;
@@ -1279,8 +1279,8 @@ _io_set_close_on_exec(_state *mrb, _value self)
 #endif
 }
 
-_value
-_io_set_sync(_state *mrb, _value self)
+value
+_io_set_sync(state *mrb, value self)
 {
   struct _io *fptr;
   _bool b;
@@ -1291,8 +1291,8 @@ _io_set_sync(_state *mrb, _value self)
   return _bool_value(b);
 }
 
-_value
-_io_sync(_state *mrb, _value self)
+value
+_io_sync(state *mrb, value self)
 {
   struct _io *fptr;
   fptr = io_get_open_fptr(mrb, self);
@@ -1300,7 +1300,7 @@ _io_sync(_state *mrb, _value self)
 }
 
 void
-_init_io(_state *mrb)
+_init_io(state *mrb)
 {
   struct RClass *io;
 

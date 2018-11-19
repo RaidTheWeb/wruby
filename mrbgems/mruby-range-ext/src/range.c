@@ -3,9 +3,9 @@
 #include <math.h>
 
 static _bool
-r_le(_state *mrb, _value a, _value b)
+r_le(state *mrb, value a, value b)
 {
-  _value r = _funcall(mrb, a, "<=>", 1, b); /* compare result */
+  value r = _funcall(mrb, a, "<=>", 1, b); /* compare result */
   /* output :a < b => -1, a = b =>  0, a > b => +1 */
 
   if (_fixnum_p(r)) {
@@ -17,9 +17,9 @@ r_le(_state *mrb, _value a, _value b)
 }
 
 static _bool
-r_lt(_state *mrb, _value a, _value b)
+r_lt(state *mrb, value a, value b)
 {
-  _value r = _funcall(mrb, a, "<=>", 1, b);
+  value r = _funcall(mrb, a, "<=>", 1, b);
   /* output :a < b => -1, a = b =>  0, a > b => +1 */
 
   return _fixnum_p(r) && _fixnum(r) == -1;
@@ -39,12 +39,12 @@ r_lt(_state *mrb, _value a, _value b)
  *     ("a".."z").cover?("5")    #=> false
  *     ("a".."z").cover?("cc")   #=> true
  */
-static _value
-_range_cover(_state *mrb, _value range)
+static value
+_range_cover(state *mrb, value range)
 {
-  _value val;
+  value val;
   struct RRange *r = _range_ptr(mrb, range);
-  _value beg, end;
+  value beg, end;
 
   _get_args(mrb, "o", &val);
 
@@ -81,11 +81,11 @@ _range_cover(_state *mrb, _value range)
  *    (10..20).last(3)   #=> [18, 19, 20]
  *    (10...20).last(3)  #=> [17, 18, 19]
  */
-static _value
-_range_last(_state *mrb, _value range)
+static value
+_range_last(state *mrb, value range)
 {
-  _value num;
-  _value array;
+  value num;
+  value array;
   struct RRange *r = _range_ptr(mrb, range);
 
   if (_get_args(mrb, "|o", &num) == 0) {
@@ -107,11 +107,11 @@ _range_last(_state *mrb, _value range)
  *    ('a'..'z').size  #=> nil
  */
 
-static _value
-_range_size(_state *mrb, _value range)
+static value
+_range_size(state *mrb, value range)
 {
   struct RRange *r = _range_ptr(mrb, range);
-  _value beg, end;
+  value beg, end;
   _float beg_f, end_f;
   _bool num_p = TRUE;
   _bool excl;
@@ -161,7 +161,7 @@ _range_size(_state *mrb, _value range)
 }
 
 void
-_mruby_range_ext_gem_init(_state* mrb)
+_mruby_range_ext_gem_init(state* mrb)
 {
   struct RClass * s = _class_get(mrb, "Range");
 
@@ -171,6 +171,6 @@ _mruby_range_ext_gem_init(_state* mrb)
 }
 
 void
-_mruby_range_ext_gem_final(_state* mrb)
+_mruby_range_ext_gem_final(state* mrb)
 {
 }

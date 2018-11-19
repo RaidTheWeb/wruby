@@ -14,7 +14,7 @@
 #include "apiprint.h"
 
 static void
-mrdb_check_syntax(_state *mrb, _debug_context *dbg, const char *expr, size_t len)
+mrdb_check_syntax(state *mrb, _debug_context *dbg, const char *expr, size_t len)
 {
   mrbc_context *c;
 
@@ -30,14 +30,14 @@ mrdb_check_syntax(_state *mrb, _debug_context *dbg, const char *expr, size_t len
   mrbc_context_free(mrb, c);
 }
 
-_value
-_debug_eval(_state *mrb, _debug_context *dbg, const char *expr, size_t len, _bool *exc)
+value
+_debug_eval(state *mrb, _debug_context *dbg, const char *expr, size_t len, _bool *exc)
 {
-  void (*tmp)(struct _state *, struct _irep *, _code *, _value *);
-  _value ruby_code;
-  _value s;
-  _value v;
-  _value recv;
+  void (*tmp)(struct state *, struct _irep *, _code *, value *);
+  value ruby_code;
+  value s;
+  value v;
+  value recv;
 
   /* disable code_fetch_hook */
   tmp = mrb->code_fetch_hook;

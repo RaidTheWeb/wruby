@@ -13,7 +13,7 @@
 #endif
 
 static void
-printstr(_state *mrb, _value obj)
+printstr(state *mrb, value obj)
 {
   if (_string_p(obj)) {
 #if defined(_WIN32)
@@ -39,10 +39,10 @@ printstr(_state *mrb, _value obj)
 
 /* 15.3.1.2.9  */
 /* 15.3.1.3.34 */
-_value
-_printstr(_state *mrb, _value self)
+value
+_printstr(state *mrb, value self)
 {
-  _value argv;
+  value argv;
 
   _get_args(mrb, "o", &argv);
   printstr(mrb, argv);
@@ -51,7 +51,7 @@ _printstr(_state *mrb, _value self)
 }
 
 void
-_mruby_print_gem_init(_state* mrb)
+_mruby_print_gem_init(state* mrb)
 {
   struct RClass *krn;
   krn = mrb->kernel_module;
@@ -59,6 +59,6 @@ _mruby_print_gem_init(_state* mrb)
 }
 
 void
-_mruby_print_gem_final(_state* mrb)
+_mruby_print_gem_final(state* mrb)
 {
 }

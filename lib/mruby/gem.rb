@@ -166,25 +166,25 @@ module MRuby
         open(fname, 'w') do |f|
           print_gem_init_header f
           build.mrbc.run f, rbfiles, "gem_mrblib_irep_#{funcname}" unless rbfiles.empty?
-          f.puts %Q[void mrb_#{funcname}_gem_init(mrb_state *mrb);]
-          f.puts %Q[void mrb_#{funcname}_gem_final(mrb_state *mrb);]
+          f.puts %Q[void _#{funcname}_gem_init(state *mrb);]
+          f.puts %Q[void _#{funcname}_gem_final(state *mrb);]
           f.puts %Q[]
-          f.puts %Q[void GENERATED_TMP_mrb_#{funcname}_gem_init(mrb_state *mrb) {]
-          f.puts %Q[  int ai = mrb_gc_arena_save(mrb);]
-          f.puts %Q[  mrb_#{funcname}_gem_init(mrb);] if objs != [objfile("#{build_dir}/gem_init")]
+          f.puts %Q[void GENERATED_TMP__#{funcname}_gem_init(state *mrb) {]
+          f.puts %Q[  int ai = _gc_arena_save(mrb);]
+          f.puts %Q[  _#{funcname}_gem_init(mrb);] if objs != [objfile("#{build_dir}/gem_init")]
           unless rbfiles.empty?
-            f.puts %Q[  mrb_load_irep(mrb, gem_mrblib_irep_#{funcname});]
+            f.puts %Q[  _load_irep(mrb, gem_mrblib_irep_#{funcname});]
             f.puts %Q[  if (mrb->exc) {]
-            f.puts %Q[    mrb_print_error(mrb);]
-            f.puts %Q[    mrb_close(mrb);]
+            f.puts %Q[    _print_error(mrb);]
+            f.puts %Q[    _close(mrb);]
             f.puts %Q[    exit(EXIT_FAILURE);]
             f.puts %Q[  }]
           end
-          f.puts %Q[  mrb_gc_arena_restore(mrb, ai);]
+          f.puts %Q[  _gc_arena_restore(mrb, ai);]
           f.puts %Q[}]
           f.puts %Q[]
-          f.puts %Q[void GENERATED_TMP_mrb_#{funcname}_gem_final(mrb_state *mrb) {]
-          f.puts %Q[  mrb_#{funcname}_gem_final(mrb);] if objs != [objfile("#{build_dir}/gem_init")]
+          f.puts %Q[void GENERATED_TMP__#{funcname}_gem_final(state *mrb) {]
+          f.puts %Q[  _#{funcname}_gem_final(mrb);] if objs != [objfile("#{build_dir}/gem_init")]
           f.puts %Q[}]
         end
       end # generate_gem_init

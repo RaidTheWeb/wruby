@@ -109,7 +109,7 @@ _debug_get_line(_irep *irep, ptrdiff_t pc)
 }
 
 MRB_API _irep_debug_info*
-_debug_info_alloc(_state *mrb, _irep *irep)
+_debug_info_alloc(state *mrb, _irep *irep)
 {
   static const _irep_debug_info initial = { 0, 0, NULL };
   _irep_debug_info *ret;
@@ -122,7 +122,7 @@ _debug_info_alloc(_state *mrb, _irep *irep)
 }
 
 MRB_API _irep_debug_info_file*
-_debug_info_append_file(_state *mrb, _irep *irep,
+_debug_info_append_file(state *mrb, _irep *irep,
                            uint32_t start_pos, uint32_t end_pos)
 {
   _irep_debug_info *info;
@@ -201,7 +201,7 @@ _debug_info_append_file(_state *mrb, _irep *irep,
 }
 
 MRB_API void
-_debug_info_free(_state *mrb, _irep_debug_info *d)
+_debug_info_free(state *mrb, _irep_debug_info *d)
 {
   uint32_t i;
 

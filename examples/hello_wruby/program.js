@@ -1840,7 +1840,7 @@ var ASM_CONSTS = [];
 
 STATIC_BASE = GLOBAL_BASE;
 
-STATICTOP = STATIC_BASE + 337808;
+STATICTOP = STATIC_BASE + 337792;
 /* global initializers */  __ATINIT__.push({ func: function() { ___emscripten_environ_constructor() } });
 
 
@@ -1849,7 +1849,7 @@ STATICTOP = STATIC_BASE + 337808;
 
 
 
-var STATIC_BUMP = 337808;
+var STATIC_BUMP = 337792;
 Module["STATIC_BASE"] = STATIC_BASE;
 Module["STATIC_BUMP"] = STATIC_BUMP;
 
@@ -9837,6 +9837,5 @@ try {
 	TextDecoder = require('text-encoding').TextDecoder // node.js vs window.TextDecoder
 	decoder = new TextDecoder('utf-8')
 	encoder = new TextEncoder('utf-8')
-  decode = new TextDecoder('utf-8').decode
 } catch (x) {
 }

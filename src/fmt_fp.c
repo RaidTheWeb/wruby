@@ -39,8 +39,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <mruby/string.h>
 
 struct fmt_args {
-  _state *mrb;
-  _value str;
+  state *mrb;
+  value str;
 };
 
 #define MAX(a,b) ((a)>(b) ? (a) : (b))
@@ -360,8 +360,8 @@ fmt_core(struct fmt_args *f, const char *fmt, _float flo)
   }
 }
 
-_value
-_float_to_str(_state *mrb, _value flo, const char *fmt)
+value
+_float_to_str(state *mrb, value flo, const char *fmt)
 {
   struct fmt_args f;
 
@@ -376,8 +376,8 @@ _float_to_str(_state *mrb, _value flo, const char *fmt)
 #include <mruby.h>
 #include <stdio.h>
 
-_value
-_float_to_str(_state *mrb, _value flo, const char *fmt)
+value
+_float_to_str(state *mrb, value flo, const char *fmt)
 {
   char buf[25];
 
