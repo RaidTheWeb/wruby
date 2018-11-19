@@ -106,7 +106,7 @@ _open_allocf(_allocf f, void *ud)
   }
 
 #ifndef DISABLE_GEMS
-//  _init_mrbgems(mrb);
+  _init_mrbgems(mrb);
   _gc_arena_restore(mrb, 0);
 #endif
   return mrb;
